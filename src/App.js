@@ -2,6 +2,7 @@ import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import Button from 'material-ui/Button'
 import Handsontable from 'handsontable';
+import firebaseConf from './conf/firebase';
 import logo from './logo.svg';
 import './App.css';
 import 'handsontable/dist/handsontable.full.css';
