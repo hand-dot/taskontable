@@ -1,3 +1,6 @@
+#app configuration
+/src/conf/
+
 # Logs
 logs
 *.log
