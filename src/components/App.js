@@ -4,8 +4,8 @@ import React, { Component } from "react";
 import Grid from "material-ui/Grid";
 
 import Handsontable from "handsontable";
-import firebaseConf from "./conf/firebase";
-import "./App.css";
+import firebaseConf from "../confings/firebase";
+import "../styles/App.css";
 import "handsontable/dist/handsontable.full.css";
 
 class App extends Component {
