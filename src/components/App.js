@@ -3,6 +3,8 @@ import React, { Component } from "react";
 
 import Grid from "material-ui/Grid";
 
+import TodaySummary from "./TodaySummary";
+
 import Handsontable from "handsontable";
 import firebaseConf from "../confings/firebase";
 import "../styles/App.css";
@@ -26,10 +28,10 @@ class App extends Component {
       <div className="App">
         <div>
           <Grid container>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
+              <TodaySummary />
             </Grid>
-            <Grid item xs={12} sm={6}>
-            </Grid>
+            <Grid item xs={6} />
             <Grid item xs={12}>
               <div id="hot" />
             </Grid>
