@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 import { withStyles } from "material-ui/styles";
 import Table, { TableBody, TableCell, TableRow } from "material-ui/Table";
 
-const styles = theme => ({});
+const styles = theme => ({
+  table: {
+    maxWidth: 700
+  }
+});
 
 let id = 0;
 function createData({ title, hour, task }) {
@@ -12,10 +16,10 @@ function createData({ title, hour, task }) {
 }
 
 function BasicTable(props) {
-  const { datas } = props;
+  const { datas, classes } = props;
 
   return (
-    <Table>
+    <Table className={classes.table}>
       <TableBody>
         {datas.map(data => {
           let n = createData(data);
