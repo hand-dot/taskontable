@@ -30,40 +30,46 @@ class App extends Component {
       <div>
         <GlobalHeader />
         <div className="App">
+          <Typography gutterBottom={true} type="headline">
+            概要
+          </Typography>
           <div>
             <Grid container spacing={40}>
               <Grid item xs={6}>
-                <Typography gutterBottom type="title">
-                  今日のサマリ
+                <Typography gutterBottom={true} type="subheading">
+                  本日のサマリ
                 </Typography>
                 <DatePicker />
                 <TodaySummary
                   datas={[
-                    { title: "見積もり", hour: 159, task: 6.0 },
-                    { title: "消化", hour: 237, task: 9.0 },
-                    { title: "残", hour: 262, task: 16.0 }
+                    { title: "見積", hour: 8, task: 10 },
+                    { title: "消化", hour: 4, task: 6 },
+                    { title: "残", hour: 4, task: 4 }
                   ]}
                 />
               </Grid>
               <Grid item xs={6}>
                 <Grid item xs={12}>
-                  <Typography gutterBottom type="title">
-                    終了予定
+                  <Typography gutterBottom={true} type="subheading">
+                    現在時刻
                   </Typography>
-                  <Typography align="justify" type="display2" gutterBottom>
-                    22:20
+                  <Typography type="display2">
+                    16:20
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography gutterBottom type="title">
+                  <Typography gutterBottom={true} type="subheading">
                     終了予定
                   </Typography>
-                  <Typography align="justify" type="display2" gutterBottom>
+                  <Typography type="display2" >
                     22:20
                   </Typography>
                 </Grid>
               </Grid>
               <Grid item xs={12}>
+                <Typography gutterBottom={true} type="headline">
+                  タスク一覧
+                </Typography>
                 <div id="hot" />
               </Grid>
             </Grid>
