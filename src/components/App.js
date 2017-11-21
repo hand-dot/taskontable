@@ -10,6 +10,7 @@ import DatePicker from "./DatePicker";
 
 import Handsontable from "handsontable";
 import firebaseConf from "../confings/firebase";
+import hotConf from "../confings/hot";
 import "../styles/App.css";
 import "handsontable/dist/handsontable.full.css";
 
@@ -22,63 +23,7 @@ class App extends Component {
     });
   }
   componentDidMount() {
-    let hot = new Handsontable(document.getElementById("hot"), {
-      stretchH: "all",
-      rowHeaders: true,
-      manualRowMove: true,
-      colWidths: Math.round(window.innerWidth / 9),
-      columns: [
-        {
-          title: "済",
-          data: "done",
-          type: "checkbox",
-          colWidths: 30,
-          readOnly: true,
-          className: "htCenter htMiddle"
-        },
-        {
-          title: "カテゴリ",
-          data: "category",
-          type: "text"
-        },
-        {
-          title: "タイトル",
-          data: "title",
-          type: "text"
-        },
-        {
-          title: "見積(分)",
-          data: "estimate",
-          type: "numeric"
-        },
-        {
-          title: "実績(分)",
-          data: "actually",
-          type: "numeric",
-          readOnly: true
-        },
-        {
-          title: "開始時刻",
-          type: "time",
-          timeFormat: "hh:mm a",
-          correctFormat: true
-        },
-        {
-          title: "終了時刻",
-          type: "time",
-          timeFormat: "hh:mm a",
-          correctFormat: true
-        },
-        {
-          title: "備考",
-          type: "text"
-        },
-        {
-          title: "感想",
-          type: "text"
-        }
-      ]
-    });
+    let hot = new Handsontable(document.getElementById("hot"), hotConf);
   }
   render() {
     return (
@@ -101,12 +46,22 @@ class App extends Component {
                 />
               </Grid>
               <Grid item xs={6}>
-                <Typography gutterBottom type="title">
-                  終了予定
-                </Typography>
-                <Typography align="justify" type="display3" gutterBottom>
-                  22:20
-                </Typography>
+                <Grid item xs={12}>
+                  <Typography gutterBottom type="title">
+                    終了予定
+                  </Typography>
+                  <Typography align="justify" type="display2" gutterBottom>
+                    22:20
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography gutterBottom type="title">
+                    終了予定
+                  </Typography>
+                  <Typography align="justify" type="display2" gutterBottom>
+                    22:20
+                  </Typography>
+                </Grid>
               </Grid>
               <Grid item xs={12}>
                 <div id="hot" />
