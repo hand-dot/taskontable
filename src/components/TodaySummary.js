@@ -15,29 +15,34 @@ function createData({ title, hour, task }) {
   return { id, title, hour, task };
 }
 
-function BasicTable(props) {
-  const { datas, classes } = props;
+function TodaySummary(props) {
+  const { data, classes } = props;
 
   return (
     <Table className={classes.table}>
       <TableBody>
-        {datas.map(data => {
-          let n = createData(data);
-          return (
-            <TableRow key={n.id}>
-              <TableCell padding="none">{n.title}</TableCell>
-              <TableCell padding="none">{n.hour}h</TableCell>
-              <TableCell padding="none">{n.task}タスク</TableCell>
-            </TableRow>
-          );
-        })}
+          <TableRow>
+            <TableCell padding="none">見積</TableCell>
+            <TableCell padding="none">{data.estimate.hour}h</TableCell>
+            <TableCell padding="none">{data.estimate.task}タスク</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell padding="none">消化</TableCell>
+            <TableCell padding="none">{data.done.hour}h</TableCell>
+            <TableCell padding="none">{data.done.task}タスク</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell padding="none">残</TableCell>
+            <TableCell padding="none">{data.estimate.hour - data.done.hour}h</TableCell>
+            <TableCell padding="none">{data.estimate.task - data.done.task}タスク</TableCell>
+          </TableRow>
       </TableBody>
     </Table>
   );
 }
 
-BasicTable.propTypes = {
-  datas: PropTypes.array.isRequired
+TodaySummary.propTypes = {
+  data: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(BasicTable);
+export default withStyles(styles)(TodaySummary);

@@ -41,11 +41,10 @@ class App extends Component {
                 </Typography>
                 <DatePicker />
                 <TodaySummary
-                  datas={[
-                    { title: "見積", hour: 8, task: 10 },
-                    { title: "消化", hour: 4, task: 6 },
-                    { title: "残", hour: 4, task: 4 }
-                  ]}
+                  data={{
+                    estimate: { hour: 8, task: 10 },
+                    done: { hour: 4, task: 6 }
+                  }}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -53,17 +52,13 @@ class App extends Component {
                   <Typography gutterBottom={true} type="subheading">
                     現在時刻
                   </Typography>
-                  <Typography type="display2">
-                    16:20
-                  </Typography>
+                  <Typography type="display2">16:20</Typography>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography gutterBottom={true} type="subheading">
                     終了予定
                   </Typography>
-                  <Typography type="display2" >
-                    22:20
-                  </Typography>
+                  <Typography type="display2">22:20</Typography>
                 </Grid>
               </Grid>
               <Grid item xs={12}>
