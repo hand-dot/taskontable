@@ -36,13 +36,13 @@ export default {
       {
         title: "開始時刻",
         type: "time",
-        timeFormat: "hh:mm a",
+        timeFormat: "HH:mm",
         correctFormat: true
       },
       {
         title: "終了時刻",
         type: "time",
-        timeFormat: "hh:mm a",
+        timeFormat: "HH:mm",
         correctFormat: true
       },
       {
