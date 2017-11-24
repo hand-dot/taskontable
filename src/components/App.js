@@ -66,6 +66,12 @@ class App extends Component {
                 <Typography gutterBottom type="headline">
                   タスク一覧
                 </Typography>
+                <Typography type="caption" gutterBottom>
+                  *行を選択、ドラッグアンドドロップすることでタスクを入れ替えることができます。
+                </Typography>
+                <Typography type="caption" gutterBottom>
+                  *セルの上で右クリックすることで行の追加、削除を行うことができます。
+                </Typography>
                 <div id="hot" />
               </Grid>
             </Grid>
