@@ -2,7 +2,7 @@ import moment from 'moment';
 
 const columns = [
   {
-    title: '済',
+    title: '<span title="タスクが完了するとチェックされます。(編集不可)">済</span>',
     data: 'done',
     type: 'checkbox',
     colWidths: 30,
@@ -10,24 +10,24 @@ const columns = [
     className: 'htCenter htMiddle',
   },
   {
-    title: 'カテゴリ',
+    title: '<span title="タスクの分類項目として使用する。">カテゴリ</span>',
     data: 'category',
     type: 'text',
     colWidths: 100,
   },
   {
-    title: 'タイトル',
+    title: '<span title="具体的な作業(タスク)の内容">作業内容</span>',
     data: 'title',
     type: 'text',
   },
   {
-    title: '見積(分)',
+    title: '<span title="見積時間">見積(分)</span>',
     data: 'estimate',
     type: 'numeric',
     colWidths: 60,
   },
   {
-    title: '開始時刻',
+    title: '<span title="HH:mm の形式で入力してください。(例)19:20">開始時刻</span>',
     data: 'startTime',
     type: 'time',
     colWidths: 60,
@@ -35,7 +35,7 @@ const columns = [
     correctFormat: true,
   },
   {
-    title: '終了時刻',
+    title: '<span title="HH:mm の形式で入力してください。(例)19:20">終了時刻</span>',
     data: 'endTime',
     type: 'time',
     colWidths: 60,
@@ -43,7 +43,7 @@ const columns = [
     correctFormat: true,
   },
   {
-    title: '実績(分)',
+    title: '<span title="実績時間(編集不可)">実績(分)</span>',
     data: 'actually',
     type: 'numeric',
     validator: false,
@@ -61,11 +61,11 @@ const columns = [
     },
   },
   {
-    title: '備考',
+    title: '<span title="タスクの実行に役立つ参照情報(メモ)を入力します。">備考</span>',
     type: 'text',
   },
   {
-    title: '感想',
+    title: '<span title="タスクの実行後に所感を入力します。">感想</span>',
     type: 'text',
   },
 ];
