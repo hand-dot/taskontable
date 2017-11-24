@@ -5,16 +5,26 @@ import 'handsontable/dist/handsontable.full.css';
 
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
+import Input from 'material-ui/Input';
 
 import GlobalHeader from './GlobalHeader';
 import TodaySummary from './TodaySummary';
 import DatePicker from './DatePicker';
+import CategoryList from './CategoryList';
 
 import firebaseConf from '../confings/firebase';
 import hotConf from '../confings/hot';
 import '../styles/App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      categories: [],
+      categoryInput: '',
+    };
+  }
+
   componentWillMount() {
     firebase.initializeApp(firebaseConf);
     const starCountRef = firebase.database().ref('/test/msg');
@@ -22,18 +32,36 @@ class App extends Component {
       console.log(snapshot.val());
     });
   }
+
   componentDidMount() {
     const hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
     }));
   }
+
+  handleChange(e) {
+    this.setState({ categoryInput: e.target.value });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    if (!this.state.categoryInput.length) {
+      return;
+    }
+    const newItem = {
+      text: this.state.categoryInput,
+      id: Date.now(),
+    };
+    this.setState(prevState => ({
+      categories: prevState.categories.concat(newItem),
+      categoryInput: '',
+    }));
+  }
+
   render() {
     return (
       <div>
         <GlobalHeader />
         <div className="App">
-          <Typography gutterBottom type="headline">
-            概要
-          </Typography>
           <div>
             <Grid container spacing={40}>
               <Grid item xs={6}>
@@ -48,7 +76,7 @@ class App extends Component {
                   }}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={3}>
                 <Grid item xs={12}>
                   <Typography gutterBottom type="subheading">
                     現在時刻
@@ -61,6 +89,20 @@ class App extends Component {
                   </Typography>
                   <Typography type="display2">22:20</Typography>
                 </Grid>
+              </Grid>
+              <Grid item xs={3}>
+                <div>
+                  <Typography gutterBottom type="subheading">
+                    カテゴリ
+                  </Typography>
+                  <CategoryList categories={this.state.categories} />
+                  <form onSubmit={this.handleSubmit.bind(this)}>
+                    <Input
+                      onChange={this.handleChange.bind(this)}
+                      value={this.state.categoryInput}
+                    />
+                  </form>
+                </div>
               </Grid>
               <Grid item xs={12}>
                 <Typography gutterBottom type="headline">

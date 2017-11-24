@@ -3,17 +3,17 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table';
 
-const styles = theme => ({
+const styles = () => ({
   table: {
     maxWidth: 700,
   },
 });
 
 function TodaySummary(props) {
-  const { data, classes } = props;
+  const { data } = props;
 
   return (
-    <Table className={classes.table}>
+    <Table>
       <TableBody>
         <TableRow>
           <TableCell padding="none">見積</TableCell>
@@ -36,7 +36,16 @@ function TodaySummary(props) {
 }
 
 TodaySummary.propTypes = {
-  data: PropTypes.object.isRequired,
+  data: PropTypes.shape({
+    estimate: PropTypes.shape({
+      hour: PropTypes.number.isRequired,
+      task: PropTypes.number.isRequired,
+    }),
+    done: PropTypes.shape({
+      hour: PropTypes.number.isRequired,
+      task: PropTypes.number.isRequired,
+    }),
+  }).isRequired,
 };
 
 export default withStyles(styles)(TodaySummary);
