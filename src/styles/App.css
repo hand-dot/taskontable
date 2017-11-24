@@ -1,3 +1,3 @@
-.App{
-  padding: 10px;
+.handsontable td.htInvalid {
+  background-color: #ff9b9b !important;
 }

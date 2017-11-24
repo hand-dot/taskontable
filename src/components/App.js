@@ -23,7 +23,8 @@ class App extends Component {
     });
   }
   componentDidMount() {
-    const hot = new Handsontable(document.getElementById('hot'), hotConf);
+    const hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
+    }));
   }
   render() {
     return (
