@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import Handsontable from 'handsontable';
@@ -15,6 +16,15 @@ import CategoryList from './CategoryList';
 import firebaseConf from '../confings/firebase';
 import hotConf from '../confings/hot';
 import '../styles/App.css';
+
+let hot;
+function updateHotCategory(source) {
+  const $hotConf = _.cloneDeep(hotConf);
+  $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
+  hot.updateSettings({
+    columns: $hotConf.columns,
+  });
+}
 
 class App extends Component {
   constructor(props) {
@@ -34,15 +44,15 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
+    hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
     }));
   }
 
-  handleChange(e) {
+  changeCategoryInput(e) {
     this.setState({ categoryInput: e.target.value });
   }
 
-  handleSubmit(e) {
+  addCategory(e) {
     e.preventDefault();
     if (!this.state.categoryInput.length) {
       return;
@@ -55,6 +65,16 @@ class App extends Component {
       categories: prevState.categories.concat(newItem),
       categoryInput: '',
     }));
+    updateHotCategory(this.state.categories.concat(newItem).map(cat => cat.text));
+  }
+
+  removeCategory(index) {
+    const categories = _.cloneDeep(this.state.categories);
+    categories.splice(index, 1);
+    this.setState(() => ({
+      categories,
+    }));
+    updateHotCategory(categories.map(cat => cat.text));
   }
 
   render() {
@@ -95,10 +115,10 @@ class App extends Component {
                   <Typography gutterBottom type="subheading">
                     カテゴリ
                   </Typography>
-                  <CategoryList categories={this.state.categories} />
-                  <form onSubmit={this.handleSubmit.bind(this)}>
+                  <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
+                  <form onSubmit={this.addCategory.bind(this)}>
                     <Input
-                      onChange={this.handleChange.bind(this)}
+                      onChange={this.changeCategoryInput.bind(this)}
                       value={this.state.categoryInput}
                     />
                   </form>

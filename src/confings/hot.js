@@ -12,8 +12,10 @@ const columns = [
   {
     title: '<span title="タスクの分類項目として使用する。">カテゴリ</span>',
     data: 'category',
-    type: 'text',
+    type: 'autocomplete',
+    source: [],
     colWidths: 100,
+    validator: false,
   },
   {
     title: '<span title="具体的な作業(タスク)の内容">作業内容</span>',
@@ -78,13 +80,13 @@ export default {
   contextMenu: {
     items: {
       row_above: {
-        name: '上に行を追加する',                
+        name: '上に行を追加する',
         disabled() {
           return this.getSelected()[0] === 0;
         },
       },
       row_below: {
-        name: '下に行を追加する',        
+        name: '下に行を追加する',
       },
       hsep1: '---------',
       remove_row: {
@@ -128,7 +130,12 @@ export default {
   afterBeginEditing(row, col) {
     const prop = this.colToProp(col);
     const data = this.getDataAtCell(row, col);
-    if (prop === 'endTime' &&
+    if (prop === 'startTime' &&
+    (data === null || data === '')) {
+    // 編集を始めたセルが開始時刻かつ、セルが空の場合
+    // 現在時刻を入力する
+      this.setDataAtCell(row, col, moment().format('HH:mm'));
+    } else if (prop === 'endTime' &&
       (data === null || data === '')) {
       // 編集を始めたセルが終了時刻かつ、セルが空の場合
       const startTimeVal = this.getDataAtRowProp(row, 'startTime');
@@ -140,7 +147,7 @@ export default {
         // 現在時刻を入力する
         this.setDataAtCell(row, col, moment().format('HH:mm'));
       }
-    }
+    } 
   },
   afterChange(changes) {
     if (!changes) return;
