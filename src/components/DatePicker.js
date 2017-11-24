@@ -1,20 +1,20 @@
-import React from "react";
-import { withStyles } from "material-ui/styles";
-import TextField from "material-ui/TextField";
+import React from 'react';
+import { withStyles } from 'material-ui/styles';
+import TextField from 'material-ui/TextField';
 
 const styles = theme => ({
   container: {
-    display: "flex",
-    flexWrap: "wrap"
+    display: 'flex',
+    flexWrap: 'wrap',
   },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 200
-  }
+    width: 200,
+  },
 });
 
-function DatePickers(props) {
+function DatePickers() {
   return (
     <form noValidate>
       <TextField
@@ -23,7 +23,7 @@ function DatePickers(props) {
         type="date"
         defaultValue="2017-05-24"
         InputLabelProps={{
-          shrink: true
+          shrink: true,
         }}
       />
     </form>
