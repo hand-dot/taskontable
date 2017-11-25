@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash.clonedeep';
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import Handsontable from 'handsontable';
@@ -21,7 +21,7 @@ import '../styles/App.css';
 
 let hot;
 function updateHotCategory(source) {
-  const $hotConf = _.cloneDeep(hotConf);
+  const $hotConf = cloneDeep(hotConf);
   $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
   hot.updateSettings({
     columns: $hotConf.columns,
@@ -71,7 +71,7 @@ class App extends Component {
   }
 
   removeCategory(index) {
-    const categories = _.cloneDeep(this.state.categories);
+    const categories = cloneDeep(this.state.categories);
     categories.splice(index, 1);
     this.setState(() => ({
       categories,
