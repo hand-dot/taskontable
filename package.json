@@ -11,6 +11,7 @@
   "dependencies": {
     "firebase": "^4.6.2",
     "handsontable": "^0.34.5",
+    "jquery": "^3.2.1",
     "lodash": "^4.17.4",
     "material-ui": "^1.0.0-beta.21",
     "material-ui-icons": "^1.0.0-beta.17",

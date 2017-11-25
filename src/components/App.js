@@ -12,6 +12,8 @@ import GlobalHeader from './GlobalHeader';
 import TodaySummary from './TodaySummary';
 import DatePicker from './DatePicker';
 import CategoryList from './CategoryList';
+import Clock from './Clock';
+
 
 import firebaseConf from '../confings/firebase';
 import hotConf from '../confings/hot';
@@ -98,10 +100,7 @@ class App extends Component {
               </Grid>
               <Grid item xs={3}>
                 <Grid item xs={12}>
-                  <Typography gutterBottom type="subheading">
-                    現在時刻
-                  </Typography>
-                  <Typography type="display2">16:20</Typography>
+                  <Clock></Clock>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography gutterBottom type="subheading">
