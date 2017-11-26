@@ -24,9 +24,11 @@ let hot;
 function updateHotCategory(source) {
   const $hotConf = cloneDeep(hotConf);
   $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
-  hot.updateSettings({
-    columns: $hotConf.columns,
-  });
+  if (hot) {
+    hot.updateSettings({
+      columns: $hotConf.columns,
+    });
+  }
 }
 
 class App extends Component {
@@ -48,7 +50,34 @@ class App extends Component {
 
   componentDidMount() {
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
+      afterCreateRow(index, amount, source) {
+        // TODO 本日のサマリ用の見積もりタスクの計算に使用する
+        console.log('afterCreateRow');
+        console.log(index, amount, source);
+      },
+      afterRemoveRow(index, amount) {
+        // TODO 本日のサマリ用の見積もりタスクの計算に使用する
+        console.log('afterRemoveRow');
+        console.log(index, amount);
+      },
     }));
+    const defaultCategories = [{
+      text: 'ライフスタイル',
+      id: Date.now() + 1,
+    },
+    {
+      text: '業務',
+      id: Date.now() + 2,
+    },
+    {
+      text: '雑務',
+      id: Date.now() + 3,
+    }];
+    this.setState(() => ({
+      categories: defaultCategories,
+      categoryInput: '',
+    }));
+    updateHotCategory(defaultCategories.map(cat => cat.text));
   }
 
   changeCategoryInput(e) {
@@ -104,7 +133,7 @@ class App extends Component {
                   <Clock title={'現在時刻'} moment={moment()} updateFlg />
                 </Grid>
                 <Grid item xs={12}>
-                  <Clock title={'終了時刻'} moment={moment({ hour: 13, minute: 10 })} updateFlg={false} />
+                  <Clock title={'終了時刻'} moment={moment().add(4, 'hours')} updateFlg={false} />
                 </Grid>
               </Grid>
               <Grid item xs={3}>
@@ -126,10 +155,13 @@ class App extends Component {
                   タスク一覧
                 </Typography>
                 <Typography type="caption" gutterBottom>
+                  *セルの上で右クリックすることで行の追加、削除を行うことができます。
+                </Typography>
+                <Typography type="caption" gutterBottom>
                   *行を選択、ドラッグアンドドロップすることでタスクを入れ替えることができます。
                 </Typography>
                 <Typography type="caption" gutterBottom>
-                  *セルの上で右クリックすることで行の追加、削除を行うことができます。
+                  *マウスカーソルを列ヘッダーに上に重ねると各列の説明を見ることができます。
                 </Typography>
                 <div id="hot" />
               </Grid>

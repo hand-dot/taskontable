@@ -1,8 +1,9 @@
 import moment from 'moment';
 
+const data = [{ done: false, category: '', title: '', estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null }];
 const columns = [
   {
-    title: '<span title="タスクが完了するとチェックされます。(編集不可)">済</span>',
+    title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
     data: 'done',
     type: 'checkbox',
     colWidths: 30,
@@ -23,7 +24,7 @@ const columns = [
     type: 'text',
   },
   {
-    title: '<span title="見積時間">見積(分)</span>',
+    title: '<span title="見積時間 数値で入力してください。">見積(分)</span>',
     data: 'estimate',
     type: 'numeric',
     colWidths: 60,
@@ -45,7 +46,7 @@ const columns = [
     correctFormat: true,
   },
   {
-    title: '<span title="実績時間(編集不可)">実績(分)</span>',
+    title: '<span title="終了時刻を記入後、自動入力されます。 (編集不可)">実績(分)</span>',
     data: 'actually',
     type: 'numeric',
     validator: false,
@@ -64,10 +65,12 @@ const columns = [
   },
   {
     title: '<span title="タスクの実行に役立つ参照情報(メモ)を入力します。">備考</span>',
+    data: 'memo',
     type: 'text',
   },
   {
     title: '<span title="タスクの実行後に所感を入力します。">感想</span>',
+    data: 'impre',
     type: 'text',
   },
 ];
@@ -99,18 +102,7 @@ export default {
   },
   colWidths: Math.round(window.innerWidth / 9),
   columns,
-  cell: [
-    {
-      row: 0,
-      col: columns.findIndex(col => col.data === 'done'),
-      comment: { value: '終了時刻を記入後、自動入力されます。' },
-    },
-    {
-      row: 0,
-      col: columns.findIndex(col => col.data === 'actually'),
-      comment: { value: '終了時刻を記入後、自動入力されます。' },
-    },
-  ],
+  data,
   afterValidate(isValid, value, row, prop) {
     const commentsPlugin = this.getPlugin('comments');
     const col = this.propToCol(prop);
@@ -129,14 +121,14 @@ export default {
   },
   afterBeginEditing(row, col) {
     const prop = this.colToProp(col);
-    const data = this.getDataAtCell(row, col);
+    const cellData = this.getDataAtCell(row, col);
     if (prop === 'startTime' &&
-    (data === null || data === '')) {
+    (cellData === null || cellData === '')) {
     // 編集を始めたセルが開始時刻かつ、セルが空の場合
     // 現在時刻を入力する
       this.setDataAtCell(row, col, moment().format('HH:mm'));
     } else if (prop === 'endTime' &&
-      (data === null || data === '')) {
+      (cellData === null || cellData === '')) {
       // 編集を始めたセルが終了時刻かつ、セルが空の場合
       const startTimeVal = this.getDataAtRowProp(row, 'startTime');
       if (startTimeVal === null || startTimeVal === '') {
@@ -147,7 +139,7 @@ export default {
         // 現在時刻を入力する
         this.setDataAtCell(row, col, moment().format('HH:mm'));
       }
-    } 
+    }
   },
   afterChange(changes) {
     if (!changes) return;

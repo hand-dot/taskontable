@@ -1,22 +1,13 @@
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
 import TextField from 'material-ui/TextField';
 
-const styles = theme => ({
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 200,
-  },
-});
+const marginBottom30 = {
+  marginBottom: 30,
+};
 
 function DatePickers() {
   return (
-    <form noValidate>
+    <form noValidate style={marginBottom30}>
       <TextField
         id="date"
         label="基準"
@@ -30,4 +21,4 @@ function DatePickers() {
   );
 }
 
-export default withStyles(styles)(DatePickers);
+export default DatePickers;
