@@ -116,7 +116,7 @@ class App extends Component {
         <div className="App">
           <div>
             <Grid container spacing={40}>
-              <Grid item xs={6}>
+              <Grid item xs={3}>
                 <Typography gutterBottom type="subheading">
                   本日のサマリ
                 </Typography>
@@ -127,6 +127,11 @@ class App extends Component {
                     done: { hour: 4, task: 6 },
                   }}
                 />
+              </Grid>
+              <Grid item xs={3}>
+                <Typography gutterBottom type="subheading">
+                  日別サマリ
+                </Typography>
               </Grid>
               <Grid item xs={3}>
                 <Grid item xs={12}>
