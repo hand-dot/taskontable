@@ -1,0 +1,60 @@
+.circle {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  position: relative;
+  border: 4px solid #ddd;
+  border-radius: 50%;
+}
+
+.face:after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    background: #ddd;
+    border-radius: 4px;
+    content: "";
+    display: block;
+}
+
+.hour {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -2px 0 -2px -25%;
+  padding: 2px 0 2px 25%;
+  background: #ddd;
+  -ms-transform-origin: 100% 50%;
+  transform-origin: 100% 50%;
+  border-radius: 2px 0 0 2px;
+}
+.minute {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -40% -2px 0;
+  padding: 40% 2px 0;
+  background: #ddd;
+  -ms-transform-origin: 50% 100%;
+  transform-origin: 50% 100%;
+  border-radius: 2px 2px 0 0;
+}
+.second {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -40% -1px 0 0;
+  padding: 40% 1px 0;
+  background: #ddd;
+  -ms-transform-origin: 50% 100%;
+  transform-origin: 50% 100%;
+}

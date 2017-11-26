@@ -1,6 +1,7 @@
 import cloneDeep from 'lodash.clonedeep';
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
+import moment from 'moment';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 
@@ -100,13 +101,10 @@ class App extends Component {
               </Grid>
               <Grid item xs={3}>
                 <Grid item xs={12}>
-                  <Clock></Clock>
+                  <Clock title={'現在時刻'} moment={moment()} updateFlg />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography gutterBottom type="subheading">
-                    終了予定
-                  </Typography>
-                  <Typography type="display2">22:20</Typography>
+                  <Clock title={'終了時刻'} moment={moment({ hour: 13, minute: 10 })} updateFlg={false} />
                 </Grid>
               </Grid>
               <Grid item xs={3}>
