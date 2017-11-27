@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-const data = [{ done: false, category: null, title: null, estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null }];
+const data = [{ done: null, category: null, title: null, estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null }];
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',

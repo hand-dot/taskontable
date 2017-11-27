@@ -35,6 +35,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      estimate: { hour: 0, task: 0 },
+      done: { hour: 0, task: 0 },
       categories: [],
       categoryInput: '',
     };
@@ -49,19 +51,21 @@ class App extends Component {
   }
 
   componentDidMount() {
+    const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
-      afterCreateRow(index, amount, source) {
+      beforeChangeRender() {
         // TODO 本日のサマリ用の見積もりタスクの計算に使用する
-        console.log('afterCreateRow');
-        console.log(index, amount, source);
-      },
-      afterRemoveRow(index, amount) {
-        // TODO 本日のサマリ用の見積もりタスクの計算に使用する
-        console.log('afterRemoveRow');
-        console.log(index, amount);
+        console.log('beforeChangeRender');
+        const sourceData = hot.getSourceData();
+        const estimateMinute = sourceData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+        const doneData = sourceData.filter(data => data.done);
+        const doneMinute = doneData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+        self.setState(() => ({
+          estimate: { hour: Math.floor(((estimateMinute / 60) * 100)) / 100, task: sourceData.length },
+          done: { hour: Math.floor(((doneMinute / 60) * 100)) / 100, task: doneData.length },
+        }));
       },
     }));
-    console.log(hot.getSourceData());
     this.setDefaultCategories();
   }
 
@@ -128,8 +132,8 @@ class App extends Component {
                 <DatePicker />
                 <TodaySummary
                   data={{
-                    estimate: { hour: 8, task: 10 },
-                    done: { hour: 4, task: 6 },
+                    estimate: this.state.estimate,
+                    done: this.state.done,
                   }}
                 />
               </Grid>
