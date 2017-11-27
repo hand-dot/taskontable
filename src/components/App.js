@@ -61,6 +61,11 @@ class App extends Component {
         console.log(index, amount);
       },
     }));
+    console.log(hot.getSourceData());
+    this.setDefaultCategories();
+  }
+
+  setDefaultCategories() {
     const defaultCategories = [{
       text: 'ライフスタイル',
       id: Date.now() + 1,

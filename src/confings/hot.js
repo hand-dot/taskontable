@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-const data = [{ done: false, category: '', title: '', estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null }];
+const data = [{ done: false, category: null, title: null, estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null }];
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
@@ -19,7 +19,7 @@ const columns = [
     validator: false,
   },
   {
-    title: '<span title="具体的な作業(タスク)の内容">作業内容</span>',
+    title: '<span title="具体的な作業(タスク)の内容を入力してください。">作業内容</span>',
     data: 'title',
     type: 'text',
   },
