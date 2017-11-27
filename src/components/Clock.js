@@ -56,6 +56,22 @@ class Clock extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      second: nextProps.moment.seconds(),
+      minute: nextProps.moment.minutes(),
+      hour: nextProps.moment.hours(),
+    });
+
+    const $hour = this.hour;
+    const $minute = this.minute;
+    const $second = this.second;
+
+    $hour.style.transform = `rotate(${((nextProps.moment.hours() % 12) / 12) * 360 + 90 + nextProps.moment.minutes() / 12}deg)`;
+    $minute.style.transform = `rotate(${nextProps.moment.minutes() * 6 + nextProps.moment.seconds() / 60}deg)`;
+    $second.style.transform = `rotate(${0}deg)`;
+  }
+
   render() {
     return (
       <div>

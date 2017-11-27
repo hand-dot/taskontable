@@ -35,8 +35,9 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      estimate: { hour: 0, task: 0 },
-      done: { hour: 0, task: 0 },
+      estimate: { minute: 0, task: 0 },
+      done: { minute: 0, task: 0 },
+      endMoment: moment(),
       categories: [],
       categoryInput: '',
     };
@@ -61,8 +62,9 @@ class App extends Component {
         const doneData = sourceData.filter(data => data.done);
         const doneMinute = doneData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
         self.setState(() => ({
-          estimate: { hour: Math.floor(((estimateMinute / 60) * 100)) / 100, task: sourceData.length },
-          done: { hour: Math.floor(((doneMinute / 60) * 100)) / 100, task: doneData.length },
+          estimate: { minute: estimateMinute, task: sourceData.length },
+          done: { minute: doneMinute, task: doneData.length },
+          endMoment: moment().add(estimateMinute - doneMinute, 'minutes'),
         }));
       },
     }));
@@ -147,7 +149,7 @@ class App extends Component {
                   <Clock title={'現在時刻'} moment={moment()} updateFlg />
                 </Grid>
                 <Grid item xs={12}>
-                  <Clock title={'終了時刻'} moment={moment().add(4, 'hours')} updateFlg={false} />
+                  <Clock title={'終了時刻'} moment={this.state.endMoment} updateFlg={false} />
                 </Grid>
               </Grid>
               <Grid item xs={3}>

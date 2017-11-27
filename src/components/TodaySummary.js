@@ -17,17 +17,17 @@ function TodaySummary(props) {
       <TableBody>
         <TableRow>
           <TableCell padding="none">見積</TableCell>
-          <TableCell padding="none">{data.estimate.hour}h</TableCell>
+          <TableCell padding="none">{Math.floor(((data.estimate.minute / 60) * 100)) / 100}h</TableCell>
           <TableCell padding="none">{data.estimate.task}タスク</TableCell>
         </TableRow>
         <TableRow>
           <TableCell padding="none">消化</TableCell>
-          <TableCell padding="none">{data.done.hour}h</TableCell>
+          <TableCell padding="none">{Math.floor(((data.done.minute / 60) * 100)) / 100}h</TableCell>
           <TableCell padding="none">{data.done.task}タスク</TableCell>
         </TableRow>
         <TableRow>
           <TableCell padding="none">残</TableCell>
-          <TableCell padding="none">{data.estimate.hour - data.done.hour}h</TableCell>
+          <TableCell padding="none">{Math.floor((((data.estimate.minute - data.done.minute) / 60) * 100)) / 100}h</TableCell>
           <TableCell padding="none">{data.estimate.task - data.done.task}タスク</TableCell>
         </TableRow>
       </TableBody>
@@ -38,11 +38,11 @@ function TodaySummary(props) {
 TodaySummary.propTypes = {
   data: PropTypes.shape({
     estimate: PropTypes.shape({
-      hour: PropTypes.number.isRequired,
+      minute: PropTypes.number.isRequired,
       task: PropTypes.number.isRequired,
     }),
     done: PropTypes.shape({
-      hour: PropTypes.number.isRequired,
+      minute: PropTypes.number.isRequired,
       task: PropTypes.number.isRequired,
     }),
   }).isRequired,
