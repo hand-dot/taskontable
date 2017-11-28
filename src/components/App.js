@@ -8,6 +8,8 @@ import 'handsontable/dist/handsontable.full.css';
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import Input from 'material-ui/Input';
+import Button from 'material-ui/Button';
+import AddIcon from 'material-ui-icons/Add';
 
 import GlobalHeader from './GlobalHeader';
 import TodaySummary from './TodaySummary';
@@ -31,6 +33,12 @@ function updateHotCategory(source) {
   }
 }
 
+function addTask() {
+  if (hot) {
+    hot.alter('insert_row');
+  }
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -40,6 +48,7 @@ class App extends Component {
       endMoment: moment(), // FIXME momentオブジェクトをstateで持つのは違和感がある
       categories: [],
       categoryInput: '',
+      taskDatas: [],
     };
   }
 
@@ -55,18 +64,30 @@ class App extends Component {
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       beforeChangeRender() {
-        const sourceData = hot.getSourceData();
-        const estimateMinute = sourceData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
-        const doneData = sourceData.filter(data => data.done);
-        const doneMinute = doneData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
-        self.setState(() => ({
-          estimate: { minute: estimateMinute, task: sourceData.length },
-          done: { minute: doneMinute, task: doneData.length },
-          endMoment: moment().add(estimateMinute - doneMinute, 'minutes'),
-        }));
+        self.setStateFromHot();
+      },
+      afterCreateRow() {
+        self.setStateFromHot();
+      },
+      afterRemoveRow() {
+        self.setStateFromHot();
       },
     }));
+    this.setStateFromHot();
     this.setDefaultCategories();
+  }
+
+  setStateFromHot() {
+    const sourceData = hot.getSourceData();
+    const estimateMinute = sourceData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+    const doneData = sourceData.filter(data => data.done);
+    const doneMinute = doneData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+    this.setState(() => ({
+      taskDatas: sourceData,
+      estimate: { minute: estimateMinute, task: sourceData.length },
+      done: { minute: doneMinute, task: doneData.length },
+      endMoment: moment().add(estimateMinute - doneMinute, 'minutes'),
+    }));
   }
 
   setDefaultCategories() {
@@ -169,7 +190,7 @@ class App extends Component {
                   タスク一覧
                 </Typography>
                 <Typography type="caption" gutterBottom>
-                  *セルの上で右クリックすることで行の追加、削除を行うことができます。
+                  *セルの上で右クリックすることで行の追加、削除を行うこともできます。
                 </Typography>
                 <Typography type="caption" gutterBottom>
                   *行を選択、ドラッグアンドドロップすることでタスクを入れ替えることができます。
@@ -178,6 +199,12 @@ class App extends Component {
                   *マウスカーソルを列ヘッダーに上に重ねると各列の説明を見ることができます。
                 </Typography>
                 <div id="hot" />
+              </Grid>
+              <Grid container justify="center">
+                <Button onClick={addTask} color="default">
+                  <AddIcon />
+                    タスクを追加する
+                </Button>
               </Grid>
             </Grid>
           </div>

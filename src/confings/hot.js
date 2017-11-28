@@ -1,6 +1,6 @@
 import moment from 'moment';
-
-const data = [{ done: null, category: null, title: null, estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null }];
+const dataSchema = { done: null, category: null, title: null, estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null };
+const data = [dataSchema];
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
@@ -103,6 +103,7 @@ export default {
   colWidths: Math.round(window.innerWidth / 9),
   columns,
   data,
+  dataSchema,
   afterValidate(isValid, value, row, prop) {
     const commentsPlugin = this.getPlugin('comments');
     const col = this.propToCol(prop);
