@@ -9,6 +9,10 @@ import '../styles/Clock.css';
 const styles = () => ({
 });
 
+const getHourRotate = (hour, minute) => `rotate(${((hour % 12) / 12) * 360 + 90 + minute / 12}deg)`;
+const getMinuteRotate = (minute, second) => `rotate(${minute * 6 + second / 60}deg)`;
+const getSecondRotate = second => `rotate(${second * 6}deg)`;
+
 class Clock extends Component {
   constructor(props) {
     super(props);
@@ -32,33 +36,35 @@ class Clock extends Component {
     const $minute = this.minute;
     const $second = this.second;
 
-    $hour.style.transform = `rotate(${((this.state.hour % 12) / 12) * 360 + 90 + this.state.minute / 12}deg)`;
-    $minute.style.transform = `rotate(${this.state.minute * 6 + this.state.second / 60}deg)`;
-    $second.style.transform = `rotate(${this.state.second * 6}deg)`;
+    $hour.style.transform = getHourRotate(this.state.hour, this.state.minute);
+    $minute.style.transform = getMinuteRotate(this.state.minute, this.state.second);
+    $second.style.transform = getSecondRotate(this.state.second);
 
-    const timedUpdate = () => {
-      this.props.moment.add(1, 'seconds');
-      const second = this.props.moment.seconds();
-      const minute = this.props.moment.minutes();
-      const hour = this.props.moment.hours();
-      this.setState({
-        second,
-        minute,
-        hour,
-      });
-      $hour.style.transform = `rotate(${((hour % 12) / 12) * 360 + 90 + minute / 12}deg)`;
-      $minute.style.transform = `rotate(${minute * 6 + second / 60}deg)`;
-      $second.style.transform = `rotate(${second * 6}deg)`;
-      setTimeout(timedUpdate, 1000);
-    };
     if (this.props.updateFlg) {
+      const timedUpdate = () => {
+        this.props.moment.add(1, 'seconds');
+        const second = this.props.moment.seconds();
+        const minute = this.props.moment.minutes();
+        const hour = this.props.moment.hours();
+        this.setState({
+          second,
+          minute,
+          hour,
+        });
+        $hour.style.transform = getHourRotate(hour, minute);
+        $minute.style.transform = getMinuteRotate(minute, second);
+        $second.style.transform = getSecondRotate(second);
+        setTimeout(timedUpdate, 1000);
+      };
       timedUpdate();
     }
   }
 
   componentWillReceiveProps(nextProps) {
+    // 更新フラグが立っていればここでstateの設定はしない
+    if (this.props.updateFlg) return;
+
     this.setState({
-      second: nextProps.moment.seconds(),
       minute: nextProps.moment.minutes(),
       hour: nextProps.moment.hours(),
     });
@@ -67,9 +73,9 @@ class Clock extends Component {
     const $minute = this.minute;
     const $second = this.second;
 
-    $hour.style.transform = `rotate(${((nextProps.moment.hours() % 12) / 12) * 360 + 90 + nextProps.moment.minutes() / 12}deg)`;
-    $minute.style.transform = `rotate(${nextProps.moment.minutes() * 6 + nextProps.moment.seconds() / 60}deg)`;
-    $second.style.transform = `rotate(${0}deg)`;
+    $hour.style.transform = getHourRotate(nextProps.moment.hours(), nextProps.moment.minutes());
+    $minute.style.transform = getMinuteRotate(nextProps.moment.minutes(), nextProps.moment.seconds());
+    $second.style.transform = getSecondRotate(0);
   }
 
   render() {
@@ -80,9 +86,9 @@ class Clock extends Component {
         </Typography>
         <div className="circle">
           <div className="face">
-            <div ref={node => this.hour = node} className="hour" />
-            <div ref={node => this.minute = node} className="minute" />
-            <div ref={node => this.second = node} className="second" />
+            <div ref={(node) => { this.hour = node; }} className="hour" />
+            <div ref={(node) => { this.minute = node; }} className="minute" />
+            <div ref={(node) => { this.second = node; }} className="second" />
           </div>
         </div>
         <Typography type="title" align="center">{`${(`00${this.state.hour}`).slice(-2)}:${(`00${this.state.minute}`).slice(-2)}`}</Typography>

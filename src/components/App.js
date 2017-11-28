@@ -37,7 +37,7 @@ class App extends Component {
     this.state = {
       estimate: { minute: 0, task: 0 },
       done: { minute: 0, task: 0 },
-      endMoment: moment(),
+      endMoment: moment(), // FIXME momentオブジェクトをstateで持つのは違和感がある
       categories: [],
       categoryInput: '',
     };
@@ -55,8 +55,6 @@ class App extends Component {
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       beforeChangeRender() {
-        // TODO 本日のサマリ用の見積もりタスクの計算に使用する
-        console.log('beforeChangeRender');
         const sourceData = hot.getSourceData();
         const estimateMinute = sourceData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
         const doneData = sourceData.filter(data => data.done);
