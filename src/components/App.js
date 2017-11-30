@@ -156,8 +156,8 @@ class App extends Component {
         <div className="App">
           <div>
             <Grid container spacing={40}>
-              <Grid item xs={3}>
-                <Typography gutterBottom type="subheading">
+              <Grid item xs={5}>
+                <Typography gutterBottom type="title">
                   本日のサマリ
                 </Typography>
                 <DatePicker />
@@ -169,31 +169,28 @@ class App extends Component {
                     remainingTasks: this.state.remainingTasks,
                   }}
                 />
-                <Typography type="caption" gutterBottom>
-                  *消化は済んだタスクの見積の合計です。
-                </Typography>
-                <Typography type="caption" gutterBottom>
-                  *消費は済んだタスクの実績の合計です。
-                </Typography>
               </Grid>
-              <Grid item xs={3}>
-                <Typography gutterBottom type="subheading">
-                  日別サマリ
+              <Grid item xs={4}>
+                <Typography gutterBottom type="title">
+                  時刻
                 </Typography>
-              </Grid>
-              <Grid item xs={3}>
-                <Grid item xs={12}>
-                  <Clock title={'現在時刻'} moment={moment()} updateFlg />
-                </Grid>
-                <Grid item xs={12}>
-                  <Clock title={'終了時刻'} moment={this.state.endMoment} updateFlg={false} />
+                <Grid container spacing={40}>
+                  <Grid item xs={6}>
+                    <Clock title={'現在時刻'} moment={moment()} updateFlg />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Clock title={'終了時刻'} caption="*終了時間は残タスクの合計時間です。" moment={this.state.endMoment} updateFlg={false} />
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={3}>
                 <div>
-                  <Typography gutterBottom type="subheading">
+                  <Typography gutterBottom type="title">
                     カテゴリ
                   </Typography>
+                  <Typography type="caption" gutterBottom>
+                  *追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。
+                </Typography>
                   <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
                   <form onSubmit={this.addCategory.bind(this)}>
                     <Input
@@ -204,7 +201,7 @@ class App extends Component {
                 </div>
               </Grid>
               <Grid item xs={12}>
-                <Typography gutterBottom type="headline">
+                <Typography gutterBottom type="title">
                   タスク一覧
                 </Typography>
                 <Typography type="caption" gutterBottom>

@@ -81,7 +81,7 @@ class Clock extends Component {
   render() {
     return (
       <div>
-        <Typography gutterBottom type="subheading">
+        <Typography gutterBottom type="subheading" align="center">
           {this.props.title}
         </Typography>
         <div className="circle">
@@ -91,7 +91,10 @@ class Clock extends Component {
             <div ref={(node) => { this.second = node; }} className="second" />
           </div>
         </div>
-        <Typography type="title" align="center">{`${(`00${this.state.hour}`).slice(-2)}:${(`00${this.state.minute}`).slice(-2)}`}</Typography>
+        <Typography gutterBottom type="title" align="center">{`${(`00${this.state.hour}`).slice(-2)}:${(`00${this.state.minute}`).slice(-2)}`}</Typography>
+        <Typography type="caption" align="center">
+          {this.props.caption}
+        </Typography>
       </div>
     );
   }
@@ -99,6 +102,7 @@ class Clock extends Component {
 
 Clock.propTypes = {
   title: PropTypes.string.isRequired,
+  caption: PropTypes.string,
   moment: PropTypes.object.isRequired,
   updateFlg: PropTypes.bool.isRequired,
 };

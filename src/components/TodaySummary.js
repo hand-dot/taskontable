@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Typography from 'material-ui/Typography';
+import Grid from 'material-ui/Grid';
 import { withStyles } from 'material-ui/styles';
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table';
 
@@ -13,30 +15,47 @@ function TodaySummary(props) {
   const { data } = props;
 
   return (
-    <Table>
-      <TableBody>
-        <TableRow>
-          <TableCell padding="none">見積</TableCell>
-          <TableCell padding="none">{Math.floor(((data.estimateTasks.minute / 60) * 100)) / 100}h</TableCell>
-          <TableCell padding="none">{data.estimateTasks.taskNum}タスク</TableCell>
-        </TableRow>
-        <TableRow>
-        <TableCell padding="none">消化*</TableCell>
-          <TableCell padding="none">{Math.floor(((data.doneTasks.minute / 60) * 100)) / 100}h</TableCell>
-          <TableCell padding="none">{data.doneTasks.taskNum}タスク</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell padding="none">消費*</TableCell>
-          <TableCell padding="none">{Math.floor(((data.actuallyTasks.minute / 60) * 100)) / 100}h</TableCell>
-          <TableCell padding="none">{data.actuallyTasks.taskNum}タスク</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell padding="none">残</TableCell>
-          <TableCell padding="none">{Math.floor(((data.remainingTasks.minute / 60) * 100)) / 100}h</TableCell>
-          <TableCell padding="none">{data.remainingTasks.taskNum}タスク</TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
+
+    <Grid container spacing={40}>
+      <Grid item xs={6}>
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell padding="none">見積</TableCell>
+              <TableCell padding="none">{Math.floor(((data.estimateTasks.minute / 60) * 100)) / 100}h</TableCell>
+              <TableCell padding="none">{data.estimateTasks.taskNum}タスク</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell padding="none">残</TableCell>
+              <TableCell padding="none">{Math.floor(((data.remainingTasks.minute / 60) * 100)) / 100}h</TableCell>
+              <TableCell padding="none">{data.remainingTasks.taskNum}タスク</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Grid>
+      <Grid item xs={6}>
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell padding="none">消化*</TableCell>
+              <TableCell padding="none">{Math.floor(((data.doneTasks.minute / 60) * 100)) / 100}h</TableCell>
+              <TableCell padding="none">{data.doneTasks.taskNum}タスク</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell padding="none">消費*</TableCell>
+              <TableCell padding="none">{Math.floor(((data.actuallyTasks.minute / 60) * 100)) / 100}h</TableCell>
+              <TableCell padding="none">{data.actuallyTasks.taskNum}タスク</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <Typography type="caption" gutterBottom>
+                  *消化は済タスクの見積の合計です。
+        </Typography>
+        <Typography type="caption" gutterBottom>
+                  *消費は済タスクの実績の合計です。
+        </Typography>
+      </Grid>
+    </Grid>
   );
 }
 

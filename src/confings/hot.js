@@ -15,7 +15,7 @@ const columns = [
   {
     title: '<span title="タスクの分類項目として使用する。">カテゴリ</span>',
     data: 'category',
-    type: 'autocomplete',
+    type: 'dropdown',
     source: [],
     colWidths: 100,
     validator: false,
