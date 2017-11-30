@@ -43,12 +43,14 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      estimate: { minute: 0, task: 0 },
-      done: { minute: 0, task: 0 },
+      estimateTasks: { minute: 0, taskNum: 0 },
+      doneTasks: { minute: 0, taskNum: 0 },
+      actuallyTasks: { minute: 0, taskNum: 0 },
+      remainingTasks: { minute: 0, taskNum: 0 },
       endMoment: moment(), // FIXME momentオブジェクトをstateで持つのは違和感がある
       categories: [],
       categoryInput: '',
-      taskDatas: [],
+      allTasks: [],
     };
   }
 
@@ -79,14 +81,22 @@ class App extends Component {
 
   setStateFromHot() {
     const sourceData = hot.getSourceData();
+    const estimateData = sourceData;
     const estimateMinute = sourceData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
     const doneData = sourceData.filter(data => data.done);
     const doneMinute = doneData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+    const actuallyData = doneData;
+    const actuallyMinute = actuallyData.map(data => (typeof data.actually === 'number' ? data.actually : 0)).reduce((p, c) => p + c, 0);
+    const remainingData = sourceData.filter(data => !data.done);
+    const remainingMinute = remainingData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+
     this.setState(() => ({
-      taskDatas: sourceData,
-      estimate: { minute: estimateMinute, task: sourceData.length },
-      done: { minute: doneMinute, task: doneData.length },
-      endMoment: moment().add(estimateMinute - doneMinute, 'minutes'),
+      allTasks: sourceData,
+      estimateTasks: { minute: estimateMinute, taskNum: estimateData.length },
+      doneTasks: { minute: doneMinute, taskNum: doneData.length },
+      actuallyTasks: { minute: actuallyMinute, taskNum: actuallyData.length },
+      remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
+      endMoment: moment().add(remainingMinute, 'minutes'),
     }));
   }
 
@@ -153,10 +163,18 @@ class App extends Component {
                 <DatePicker />
                 <TodaySummary
                   data={{
-                    estimate: this.state.estimate,
-                    done: this.state.done,
+                    estimateTasks: this.state.estimateTasks,
+                    doneTasks: this.state.doneTasks,
+                    actuallyTasks: this.state.actuallyTasks,
+                    remainingTasks: this.state.remainingTasks,
                   }}
                 />
+                <Typography type="caption" gutterBottom>
+                  *消化は済んだタスクの見積の合計です。
+                </Typography>
+                <Typography type="caption" gutterBottom>
+                  *消費は済んだタスクの実績の合計です。
+                </Typography>
               </Grid>
               <Grid item xs={3}>
                 <Typography gutterBottom type="subheading">

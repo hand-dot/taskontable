@@ -17,18 +17,23 @@ function TodaySummary(props) {
       <TableBody>
         <TableRow>
           <TableCell padding="none">見積</TableCell>
-          <TableCell padding="none">{Math.floor(((data.estimate.minute / 60) * 100)) / 100}h</TableCell>
-          <TableCell padding="none">{data.estimate.task}タスク</TableCell>
+          <TableCell padding="none">{Math.floor(((data.estimateTasks.minute / 60) * 100)) / 100}h</TableCell>
+          <TableCell padding="none">{data.estimateTasks.taskNum}タスク</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell padding="none">消化</TableCell>
-          <TableCell padding="none">{Math.floor(((data.done.minute / 60) * 100)) / 100}h</TableCell>
-          <TableCell padding="none">{data.done.task}タスク</TableCell>
+        <TableCell padding="none">消化*</TableCell>
+          <TableCell padding="none">{Math.floor(((data.doneTasks.minute / 60) * 100)) / 100}h</TableCell>
+          <TableCell padding="none">{data.doneTasks.taskNum}タスク</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell padding="none">消費*</TableCell>
+          <TableCell padding="none">{Math.floor(((data.actuallyTasks.minute / 60) * 100)) / 100}h</TableCell>
+          <TableCell padding="none">{data.actuallyTasks.taskNum}タスク</TableCell>
         </TableRow>
         <TableRow>
           <TableCell padding="none">残</TableCell>
-          <TableCell padding="none">{Math.floor((((data.estimate.minute - data.done.minute) / 60) * 100)) / 100}h</TableCell>
-          <TableCell padding="none">{data.estimate.task - data.done.task}タスク</TableCell>
+          <TableCell padding="none">{Math.floor(((data.remainingTasks.minute / 60) * 100)) / 100}h</TableCell>
+          <TableCell padding="none">{data.remainingTasks.taskNum}タスク</TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -37,13 +42,17 @@ function TodaySummary(props) {
 
 TodaySummary.propTypes = {
   data: PropTypes.shape({
-    estimate: PropTypes.shape({
+    estimateTasks: PropTypes.shape({
       minute: PropTypes.number.isRequired,
-      task: PropTypes.number.isRequired,
+      taskNum: PropTypes.number.isRequired,
     }),
-    done: PropTypes.shape({
+    actuallyTasks: PropTypes.shape({
       minute: PropTypes.number.isRequired,
-      task: PropTypes.number.isRequired,
+      taskNum: PropTypes.number.isRequired,
+    }),
+    remainingTasks: PropTypes.shape({
+      minute: PropTypes.number.isRequired,
+      taskNum: PropTypes.number.isRequired,
     }),
   }).isRequired,
 };
