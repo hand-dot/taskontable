@@ -1,6 +1,8 @@
 import moment from 'moment';
+import cloneDeep from 'lodash.clonedeep';
+
 const dataSchema = { done: null, category: null, title: null, estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null };
-const data = [dataSchema];
+const data = [cloneDeep(dataSchema)];
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
@@ -79,6 +81,7 @@ export default {
   stretchH: 'all',
   comments: true,
   rowHeaders: true,
+  autoInsertRow: false,
   manualRowMove: true,
   contextMenu: {
     items: {
