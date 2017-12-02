@@ -21,17 +21,23 @@ function TodaySummary(props) {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell padding="none">見積</TableCell>
+              <TableCell padding="none">見積*</TableCell>
               <TableCell padding="none">{Math.floor(((data.estimateTasks.minute / 60) * 100)) / 100}h</TableCell>
               <TableCell padding="none">{data.estimateTasks.taskNum}タスク</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none">残</TableCell>
+              <TableCell padding="none">残*</TableCell>
               <TableCell padding="none">{Math.floor(((data.remainingTasks.minute / 60) * 100)) / 100}h</TableCell>
               <TableCell padding="none">{data.remainingTasks.taskNum}タスク</TableCell>
             </TableRow>
           </TableBody>
         </Table>
+        <Typography type="caption" gutterBottom>
+                  *見積は全タスクの見積の合計です。
+        </Typography>
+        <Typography type="caption" gutterBottom>
+                  *残は残タスクの見積の合計です。
+        </Typography>
       </Grid>
       <Grid item xs={6}>
         <Table>
