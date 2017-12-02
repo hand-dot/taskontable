@@ -127,15 +127,14 @@ export default {
     const prop = this.colToProp(col);
     const cellData = this.getDataAtCell(row, col);
     if (prop === 'startTime' &&
-    (cellData === null || cellData === '')) {
+    (cellData === '')) {
     // 編集を始めたセルが開始時刻かつ、セルが空の場合
     // 現在時刻を入力する
       this.setDataAtCell(row, col, moment().format('HH:mm'));
-    } else if (prop === 'endTime' &&
-      (cellData === null || cellData === '')) {
+    } else if (prop === 'endTime' && cellData === '') {
       // 編集を始めたセルが終了時刻かつ、セルが空の場合
       const startTimeVal = this.getDataAtRowProp(row, 'startTime');
-      if (startTimeVal === null || startTimeVal === '') {
+      if (startTimeVal === '') {
         // 開始時刻が入力されていない場合開始時間を入力させる
         alert('開始時刻を入力してください');
         this.selectCell(row, this.propToCol('startTime'));
@@ -154,7 +153,7 @@ export default {
         // 変更したセルが開始時刻 or 終了時刻の場合、実績を自動入力し、済をチェックする処理
         const startTimeVal = this.getDataAtRowProp(row, 'startTime');
         const endTimeVal = this.getDataAtRowProp(row, 'endTime');
-        if (startTimeVal === null || endTimeVal === null || startTimeVal === '' || endTimeVal === '') {
+        if (startTimeVal === '' || endTimeVal === '') {
           // 入力値が空の場合、実績を空にし、済のチェックをはずす
           this.setDataAtRowProp(row, 'done', false);
           this.setDataAtRowProp(row, 'actually', '');
@@ -200,7 +199,7 @@ export default {
         // 見積もりに対して実績がむしろマイナスだった場合はoverdueをfalseにする
         const estimateVal = this.getDataAtRowProp(row, 'estimate');
         const actuallyVal = this.getDataAtRowProp(row, 'actually');
-        if (estimateVal === null || estimateVal === '' || actuallyVal === null || actuallyVal === '') return;
+        if (estimateVal === '' || actuallyVal === '') return;
         if (!Number.isInteger(+estimateVal) && !Number.isInteger(+actuallyVal)) return;
         const overdue = Math.sign(actuallyVal - estimateVal);
         const cellMeta = this.getCellMeta(row, this.propToCol('actually'));
