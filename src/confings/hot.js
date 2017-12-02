@@ -77,6 +77,109 @@ const columns = [
   },
 ];
 
+const setValidtionMessage = (hotInstance, row, prop, isValid) => {
+  const commentsPlugin = hotInstance.getPlugin('comments');
+  const col = hotInstance.propToCol(prop);
+  if (isValid) {
+    commentsPlugin.removeCommentAtCell(row, col);
+  } else {
+    let comment = '';
+    if (prop === 'estimate') {
+      comment = '半角数値で入力してください';
+    } else if (prop === 'startTime' || prop === 'endTime') {
+      comment = '半角数値,カンマ区切りで有効な時刻を入力してください';
+    }
+    commentsPlugin.setCommentAtCell(row, col, comment);
+    commentsPlugin.showAtCell(row, col);
+  }
+}
+
+const setStartOrEndTime = (hotInstance, row, prop) => {
+  const cellData = hotInstance.getDataAtRowProp(row, prop);
+  if (prop === 'startTime' && cellData === '') {
+  // 編集を始めたセルが開始時刻かつ、セルが空の場合
+  // 現在時刻を入力する
+    hotInstance.setDataAtRowProp(row, prop, moment().format('HH:mm'));
+  } else if (prop === 'endTime' && cellData === '') {
+    // 編集を始めたセルが終了時刻かつ、セルが空の場合
+    const startTimeVal = hotInstance.getDataAtRowProp(row, 'startTime');
+    if (startTimeVal === '') {
+      // 開始時刻が入力されていない場合開始時間を入力させる
+      alert('開始時刻を入力してください');
+      hotInstance.selectCell(row, hotInstance.propToCol('startTime'));
+    } else {
+      // 現在時刻を入力する
+      hotInstance.setDataAtRowProp(row, prop, moment().format('HH:mm'));
+    }
+  }
+}
+
+const calculateTask = (hotInstance, row, prop) => {
+  const col = hotInstance.propToCol(prop);  
+  if (prop === 'startTime' || prop === 'endTime') {
+    // 変更したセルが開始時刻 or 終了時刻の場合、実績を自動入力し、済をチェックする処理
+    const startTimeVal = hotInstance.getDataAtRowProp(row, 'startTime');
+    const endTimeVal = hotInstance.getDataAtRowProp(row, 'endTime');
+    if (startTimeVal === '' || endTimeVal === '') {
+      // 入力値が空の場合、実績を空にし、済のチェックをはずす
+      hotInstance.setDataAtRowProp(row, 'done', false);
+      hotInstance.setDataAtRowProp(row, 'actually', '');
+    } else if (hotInstance.getCellMeta(row, hotInstance.propToCol('endTime')).valid &&
+    hotInstance.getCellMeta(row, hotInstance.propToCol('startTime')).valid) {
+      // 実績を入力し、済をチェックする処理の開始
+      const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
+      const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
+      // 入力値のチェック
+      if (!Number.isInteger(+startTimeHour) && !Number.isInteger(+startTimeMinute) &&
+      !Number.isInteger(+endTimeHour) && !Number.isInteger(+endTimeMinute)) return;
+      // 開始時刻、終了時刻が有効な値の場合
+      const diff = moment().hour(endTimeHour).minute(endTimeMinute).diff(moment().hour(startTimeHour).minute(startTimeMinute), 'minutes');
+      const commentsPlugin = hotInstance.getPlugin('comments');
+      if (!isNaN(diff) && Math.sign(diff) !== -1) {
+        // 実績を入力し、済をチェックする
+        hotInstance.setDataAtRowProp(row, 'actually', diff);
+        hotInstance.setDataAtRowProp(row, 'done', true);
+        // ヴァリデーションエラーを消す処理
+        const targetCellMeta = hotInstance.getCellMeta(row, hotInstance.propToCol(prop === 'startTime' ? 'endTime' : 'startTime'));
+        if (!targetCellMeta.valid) {
+          targetCellMeta.valid = true;
+          commentsPlugin.removeCommentAtCell(targetCellMeta.row, targetCellMeta.col);
+        }
+      } else {
+        // 開始時刻と終了時刻の関係がおかしい
+        // 実績、済をクリアする
+        hotInstance.setDataAtRowProp(row, 'actually', '');
+        hotInstance.setDataAtRowProp(row, 'done', false);
+        // ヴァリデーションエラーを追加する処理
+        const cellMeta = hotInstance.getCellMeta(row, col);
+        if (cellMeta.valid) {
+          cellMeta.valid = false;
+          commentsPlugin.setCommentAtCell(row, col, '開始時刻に対して終了時刻が不正です。');
+          commentsPlugin.showAtCell(row, col);
+        }
+      }
+    }
+  } else if (prop === 'estimate' || prop === 'actually') {
+    // 変更したセルが見積 or 実績の場合、実績のメタ情報を変更する処理
+    // 見積もりに対して実績がオーバーしていれば編集したセルにoverdueという属性をtrueにする
+    // 見積もりに対して実績がむしろマイナスだった場合はoverdueをfalseにする
+    const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
+    const actuallyVal = hotInstance.getDataAtRowProp(row, 'actually');
+    if (estimateVal === '' || actuallyVal === '') return;
+    if (!Number.isInteger(+estimateVal) && !Number.isInteger(+actuallyVal)) return;
+    const overdue = Math.sign(actuallyVal - estimateVal);
+    const cellMeta = hotInstance.getCellMeta(row, hotInstance.propToCol('actually'));
+    if (overdue === 1) {
+      cellMeta.overdue = true;
+    } else if (overdue === -1) {
+      cellMeta.overdue = false;
+    } else {
+      cellMeta.overdue = undefined;
+    }
+    hotInstance.render();
+  }
+};
+
 export default {
   stretchH: 'all',
   comments: true,
@@ -108,110 +211,16 @@ export default {
   data,
   dataSchema,
   afterValidate(isValid, value, row, prop) {
-    const commentsPlugin = this.getPlugin('comments');
-    const col = this.propToCol(prop);
-    if (isValid) {
-      commentsPlugin.removeCommentAtCell(row, col);
-    } else {
-      let comment = '';
-      if (prop === 'estimate') {
-        comment = '半角数値で入力してください';
-      } else if (prop === 'startTime' || prop === 'endTime') {
-        comment = '半角数値,カンマ区切りで有効な時刻を入力してください';
-      }
-      commentsPlugin.setCommentAtCell(row, col, comment);
-      commentsPlugin.showAtCell(row, col);
-    }
+    setValidtionMessage(this, row, prop, isValid);
   },
   afterBeginEditing(row, col) {
-    const prop = this.colToProp(col);
-    const cellData = this.getDataAtCell(row, col);
-    if (prop === 'startTime' &&
-    (cellData === '')) {
-    // 編集を始めたセルが開始時刻かつ、セルが空の場合
-    // 現在時刻を入力する
-      this.setDataAtCell(row, col, moment().format('HH:mm'));
-    } else if (prop === 'endTime' && cellData === '') {
-      // 編集を始めたセルが終了時刻かつ、セルが空の場合
-      const startTimeVal = this.getDataAtRowProp(row, 'startTime');
-      if (startTimeVal === '') {
-        // 開始時刻が入力されていない場合開始時間を入力させる
-        alert('開始時刻を入力してください');
-        this.selectCell(row, this.propToCol('startTime'));
-      } else {
-        // 現在時刻を入力する
-        this.setDataAtCell(row, col, moment().format('HH:mm'));
-      }
-    }
+    setStartOrEndTime(this, row, this.colToProp(col));
   },
   afterChange(changes) {
     if (!changes) return;
     changes.forEach((change) => {
-      const [row, prop, newVal] = [change[0], change[1], change[3]];
-      const col = this.propToCol(prop);
-      if (prop === 'startTime' || prop === 'endTime') {
-        // 変更したセルが開始時刻 or 終了時刻の場合、実績を自動入力し、済をチェックする処理
-        const startTimeVal = this.getDataAtRowProp(row, 'startTime');
-        const endTimeVal = this.getDataAtRowProp(row, 'endTime');
-        if (startTimeVal === '' || endTimeVal === '') {
-          // 入力値が空の場合、実績を空にし、済のチェックをはずす
-          this.setDataAtRowProp(row, 'done', false);
-          this.setDataAtRowProp(row, 'actually', '');
-        } else if (startTimeVal.indexOf(':') !== -1 && endTimeVal.indexOf(':') !== -1) {
-          // 実績を入力し、済をチェックする処理の開始
-          const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
-          const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
-          // 入力値のチェック
-          if (!Number.isInteger(+startTimeHour) && !Number.isInteger(+startTimeMinute) &&
-          !Number.isInteger(+endTimeHour) && !Number.isInteger(+endTimeMinute)) return;
-          // 開始時刻、終了時刻が有効な値の場合
-          const startTime = moment().hour(startTimeHour).minute(startTimeMinute);
-          const endTime = moment().hour(endTimeHour).minute(endTimeMinute);
-          const diff = endTime.diff(startTime, 'minutes');
-          const commentsPlugin = this.getPlugin('comments');
-          if (!isNaN(diff) && Math.sign(diff) !== -1) {
-            // 実績を入力し、済をチェックする
-            this.setDataAtRowProp(row, 'actually', diff);
-            this.setDataAtRowProp(row, 'done', true);
-            // ヴァリデーションエラーを消す処理
-            const targetCellMeta = this.getCellMeta(row, this.propToCol(prop === 'startTime' ? 'endTime' : 'startTime'));
-            if (!targetCellMeta.valid) {
-              targetCellMeta.valid = true;
-              commentsPlugin.removeCommentAtCell(targetCellMeta.row, targetCellMeta.col);
-            }
-          } else {
-            // 開始時刻と終了時刻の関係がおかしい
-            // 実績、済をクリアする
-            this.setDataAtRowProp(row, 'actually', '');
-            this.setDataAtRowProp(row, 'done', false);
-            // ヴァリデーションエラーを追加する処理
-            const cellMeta = this.getCellMeta(row, col);
-            if (cellMeta.valid) {
-              cellMeta.valid = false;
-              commentsPlugin.setCommentAtCell(row, col, '開始時刻に対して終了時刻が不正です。');
-              commentsPlugin.showAtCell(row, col);
-            }
-          }
-        }
-      } else if (prop === 'estimate' || prop === 'actually') {
-        // 変更したセルが見積 or 実績の場合、実績のメタ情報を変更する処理
-        // 見積もりに対して実績がオーバーしていれば編集したセルにoverdueという属性をtrueにする
-        // 見積もりに対して実績がむしろマイナスだった場合はoverdueをfalseにする
-        const estimateVal = this.getDataAtRowProp(row, 'estimate');
-        const actuallyVal = this.getDataAtRowProp(row, 'actually');
-        if (estimateVal === '' || actuallyVal === '') return;
-        if (!Number.isInteger(+estimateVal) && !Number.isInteger(+actuallyVal)) return;
-        const overdue = Math.sign(actuallyVal - estimateVal);
-        const cellMeta = this.getCellMeta(row, this.propToCol('actually'));
-        if (overdue === 1) {
-          cellMeta.overdue = true;
-        } else if (overdue === -1) {
-          cellMeta.overdue = false;
-        } else {
-          cellMeta.overdue = undefined;
-        }
-        this.render();
-      }
+      const [row, prop] = [change[0], change[1]];
+      calculateTask(this, row, prop);
     });
   },
 };
