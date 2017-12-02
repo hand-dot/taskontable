@@ -12,7 +12,7 @@
     "firebase": "^4.6.2",
     "handsontable": "^0.34.5",
     "lodash.clonedeep": "^4.5.0",
-    "material-ui": "^1.0.0-beta.21",
+    "material-ui": "^1.0.0-beta.22",
     "material-ui-icons": "^1.0.0-beta.17",
     "moment": "^2.19.2",
     "prop-types": "^15.6.0",

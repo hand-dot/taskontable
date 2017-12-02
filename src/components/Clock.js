@@ -92,7 +92,7 @@ class Clock extends Component {
           </div>
         </div>
         <Typography gutterBottom type="title" align="center">{`${(`00${this.state.hour}`).slice(-2)}:${(`00${this.state.minute}`).slice(-2)}`}</Typography>
-        <Typography type="caption" align="center">
+        <Typography type="caption">
           {this.props.caption}
         </Typography>
       </div>

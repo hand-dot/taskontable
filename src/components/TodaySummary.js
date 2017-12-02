@@ -33,10 +33,10 @@ function TodaySummary(props) {
           </TableBody>
         </Table>
         <Typography type="caption" gutterBottom>
-                  *見積は全タスクの見積の合計です。
+                  *見積は全タスクの見積の合計
         </Typography>
         <Typography type="caption" gutterBottom>
-                  *残は残タスクの見積の合計です。
+                  *残は残タスクの見積の合計
         </Typography>
       </Grid>
       <Grid item xs={6}>
@@ -55,10 +55,10 @@ function TodaySummary(props) {
           </TableBody>
         </Table>
         <Typography type="caption" gutterBottom>
-                  *消化は済タスクの見積の合計です。
+                  *消化は済タスクの見積の合計
         </Typography>
         <Typography type="caption" gutterBottom>
-                  *消費は済タスクの実績の合計です。
+                  *消費は済タスクの実績の合計
         </Typography>
       </Grid>
     </Grid>
