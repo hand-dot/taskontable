@@ -190,7 +190,7 @@ class App extends Component {
                   </Typography>
                   <Typography type="caption" gutterBottom>
                   *追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。
-                </Typography>
+                  </Typography>
                   <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
                   <form onSubmit={this.addCategory.bind(this)}>
                     <Input

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 
-const dataSchema = { done: null, category: null, title: null, estimate: null, startTime: null, endTime: null, actually: null, memo: null, impre: null };
+const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '', impre: '' };
 const data = [cloneDeep(dataSchema)];
 const columns = [
   {
