@@ -214,10 +214,10 @@ class App extends Component {
                   <Grid item xs={3}>
                     <div>
                       <Typography gutterBottom type="title">
-                    カテゴリ
+                        カテゴリ
                       </Typography>
                       <Typography type="caption" gutterBottom>
-                  *追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。
+                        *追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。
                       </Typography>
                       <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
                       <form onSubmit={this.addCategory.bind(this)}>
@@ -236,7 +236,7 @@ class App extends Component {
                   タスク一覧
                 </Typography>
                 <Typography type="caption" gutterBottom>
-                  *セルの上で右クリックすることで行の追加、削除を行うこともできます。
+                  *セル上で右クリックすることで行の追加・削除を行うことができます。
                 </Typography>
                 <Typography type="caption" gutterBottom>
                   *行を選択、ドラッグアンドドロップすることでタスクを入れ替えることができます。
@@ -252,10 +252,16 @@ class App extends Component {
                         onChange={this.toggleNotifiable.bind(this)}
                       />
                     }
-                    label="ブラウザからデスクトップへのプッシュ通知を許可する"
+                    label="タスクが終了時刻になったら通知する"
                   />
                   <Typography type="caption" gutterBottom>
-                    *プッシュ通知は見積を入力したタスクの開始時刻が入力されたら予約を発行します。
+                    *通知予約を行うためには見積を入力したタスクの開始時刻を入力(変更)する必要があります。
+                  </Typography>
+                  <Typography type="caption" gutterBottom>
+                    *通知が予約されたら開始時刻のセルに　[ ! ]　マークがつきます。
+                  </Typography>
+                  <Typography type="caption" gutterBottom>
+                    *通知予約がされているタスクの開始時刻を削除、もしくは終了時刻を入力すると予約を削除することができます。
                   </Typography>
                 </FormGroup>
                 <div id="hot" />

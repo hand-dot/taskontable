@@ -192,10 +192,21 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
   if (!('Notification' in window && Notification)) return;
   const col = hotInstance.propToCol(prop);
   if (prop === 'startTime') {
-    const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
-    // 開始時刻,見積もり時刻が空か0
+    // 新しい値が空の場合は既に登録されている通知を削除
+    if (newVal === '') {
+      const notification = hotInstance.getCellMeta(row, col).notification;
+      if (notification) {
+        clearTimeout(notification.id);
+        hotInstance.removeCellMeta(row, col, 'notification');
+        hotInstance.render();
+        return;
+      }
+    }
+
+    const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');    
+    // 見積もり時刻が空か0
     // もしくは開始時刻がヴァリデーションエラーもしくは見積もり時間が不正な場合は処理を抜ける
-    if (newVal === '' || estimateVal === '' || estimateVal === 0 ||
+    if (estimateVal === '' || estimateVal === 0 ||
     !hotInstance.getCellMeta(row, col).valid || !Number.isInteger(+estimateVal)) {
       return;
     }
@@ -204,7 +215,6 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
 終了予定時刻(${notifiTime})に通知を設定しますか？
 (初回は通知の許可が求められます。)`;
     if (window.confirm(notifiRegistMsg)) {
-      const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
       // 権限を取得し通知を登録
       Notification
         .requestPermission()
@@ -213,9 +223,11 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
           hotInstance.removeCellMeta(row, col, 'notification');
           // タイマーを登録(セルにタイマーIDを設定)
           const notifiId = setTimeout(() => {
+            // タイマーが削除されていた場合には何もしない
+            if (!hotInstance.getCellMeta(row, col).notification) return;
             hotInstance.removeCellMeta(row, col, 'notification');
-            const title = taskTitle ? `${taskTitle}の終了時刻です。` : 'タスクの終了時刻です。';
-            const notifi = new Notification(title, {
+            const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
+            const notifi = new Notification(taskTitle ? `${taskTitle}の終了時刻です。` : 'タスクの終了時刻です。', {
               body: 'クリックしてタスクに終了時刻を入力し完了させてください。',
               icon: `${window.location.href}favicon.ico`,
             });
@@ -233,7 +245,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
     // startTimeのセルにタイマーIDがあれば確認をして削除
     const startTimeCol = hotInstance.propToCol('startTime');
     const notification = hotInstance.getCellMeta(row, startTimeCol).notification;
-    if (notification && window.confirm('このタスクの終了予定時刻に設定されている通知がありますが、削除してもよろしいですか？')) {
+    if (notification && window.confirm('このタスクの終了予定時刻に予約されている通知がありますが、削除してもよろしいですか？')) {
       clearTimeout(notification.id);
       hotInstance.removeCellMeta(row, startTimeCol, 'notification');
     }
@@ -246,13 +258,14 @@ export default {
   rowHeaders: true,
   autoInsertRow: false,
   manualRowMove: true,
+  colWidths: Math.round(960 / 9),
+  columns,
+  data,
+  dataSchema,
   contextMenu: {
     items: {
       row_above: {
         name: '上に行を追加する',
-        disabled() {
-          return this.getSelected()[0] === 0;
-        },
       },
       row_below: {
         name: '下に行を追加する',
@@ -260,16 +273,9 @@ export default {
       hsep1: '---------',
       remove_row: {
         name: '行を削除する',
-        disabled() {
-          return this.getSelected()[0] === 0;
-        },
       },
     },
   },
-  colWidths: Math.round(960 / 9),
-  columns,
-  data,
-  dataSchema,
   afterValidate(isValid, value, row, prop) {
     setValidtionMessage(this, row, prop, isValid);
   },
@@ -283,7 +289,6 @@ export default {
       if (oldVal !== newVal) {
         calculateTask(this, row, prop);
         manageNotification(this, row, prop, newVal);
-        setTimeout(() => this.render(), 0);
       }
     });
   },
