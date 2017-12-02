@@ -42,7 +42,7 @@ const columns = [
       td.innerHTML = value;
       const notification = cellProperties.notification;
       if (notification) {
-        td.innerHTML = `<span title="${notification.time}通知予約済">${value}*</span>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<div title="${notification.time}通知予約済">${value}<span style="font-size: 10pt;">[!]</span></div>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
