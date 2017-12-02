@@ -10,6 +10,14 @@ import Grid from 'material-ui/Grid';
 import Input from 'material-ui/Input';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
+import Switch from 'material-ui/Switch';
+import { FormControlLabel, FormGroup } from 'material-ui/Form';
+import ExpansionPanel, {
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
+} from 'material-ui/ExpansionPanel';
+import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+
 
 import GlobalHeader from './GlobalHeader';
 import TodaySummary from './TodaySummary';
@@ -21,6 +29,8 @@ import Clock from './Clock';
 import firebaseConf from '../confings/firebase';
 import hotConf from '../confings/hot';
 import '../styles/App.css';
+
+const NotificationClone = cloneDeep(Notification);
 
 let hot;
 function updateHotCategory(source) {
@@ -38,11 +48,11 @@ function addTask() {
     hot.alter('insert_row');
   }
 }
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      notifiable: true,
       date: moment().format('YYYY-MM-DD'),
       estimateTasks: { minute: 0, taskNum: 0 },
       doneTasks: { minute: 0, taskNum: 0 },
@@ -155,6 +165,13 @@ class App extends Component {
     updateHotCategory(categories.map(cat => cat.text));
   }
 
+  toggleNotifiable(event, checked) {
+    Notification = checked ? NotificationClone : false;
+    this.setState(() => ({
+      notifiable: checked,
+    }));
+  }
+
   render() {
     return (
       <div>
@@ -162,50 +179,58 @@ class App extends Component {
         <div className="App">
           <div>
             <Grid container spacing={40}>
-              <Grid item xs={5}>
-                <Typography gutterBottom type="title">
-                  本日のサマリ
-                </Typography>
-                <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} />
-                <TodaySummary
-                  data={{
-                    estimateTasks: this.state.estimateTasks,
-                    doneTasks: this.state.doneTasks,
-                    actuallyTasks: this.state.actuallyTasks,
-                    remainingTasks: this.state.remainingTasks,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <Typography gutterBottom type="title">
-                  時刻
-                </Typography>
-                <Grid container spacing={40}>
-                  <Grid item xs={6}>
-                    <Clock title={'現在時刻'} moment={moment()} updateFlg />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Clock title={'終了時刻'} caption="*終了時間は残タスクの合計時間です。" moment={this.state.endMoment} updateFlg={false} />
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={3}>
-                <div>
+              <ExpansionPanel defaultExpanded>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>ダッシュボード</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid item xs={5}>
                   <Typography gutterBottom type="title">
-                    カテゴリ
-                  </Typography>
-                  <Typography type="caption" gutterBottom>
-                  *追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。
-                  </Typography>
-                  <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
-                  <form onSubmit={this.addCategory.bind(this)}>
-                    <Input
-                      onChange={this.changeCategoryInput.bind(this)}
-                      value={this.state.categoryInput}
+                  本日のサマリ
+                    </Typography>
+                    <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} />
+                    <TodaySummary
+                      data={{
+                        estimateTasks: this.state.estimateTasks,
+                        doneTasks: this.state.doneTasks,
+                        actuallyTasks: this.state.actuallyTasks,
+                        remainingTasks: this.state.remainingTasks,
+                      }}
                     />
-                  </form>
-                </div>
-              </Grid>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography gutterBottom type="title">
+                  時刻
+                    </Typography>
+                    <Grid container spacing={40}>
+                      <Grid item xs={6}>
+                        <Clock title={'現在時刻'} moment={moment()} updateFlg />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Clock title={'終了時刻'} caption="*終了時間は残タスクの合計時間" moment={this.state.endMoment} updateFlg={false} />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <div>
+                      <Typography gutterBottom type="title">
+                    カテゴリ
+                      </Typography>
+                      <Typography type="caption" gutterBottom>
+                  *追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。
+                      </Typography>
+                      <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
+                      <form onSubmit={this.addCategory.bind(this)}>
+                        <Input
+                          onChange={this.changeCategoryInput.bind(this)}
+                          value={this.state.categoryInput}
+                        />
+                      </form>
+                    </div>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+
               <Grid item xs={12}>
                 <Typography gutterBottom type="title">
                   タスク一覧
@@ -219,6 +244,20 @@ class App extends Component {
                 <Typography type="caption" gutterBottom>
                   *マウスカーソルを列ヘッダーに上に重ねると各列の説明を見ることができます。
                 </Typography>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={this.state.notifiable}
+                        onChange={this.toggleNotifiable.bind(this)}
+                      />
+                    }
+                    label="ブラウザからデスクトップへのプッシュ通知を許可する"
+                  />
+                  <Typography type="caption" gutterBottom>
+                    *プッシュ通知は見積を入力したタスクの開始時刻が入力されたら予約を発行します。
+                  </Typography>
+                </FormGroup>
                 <div id="hot" />
               </Grid>
               <Grid container justify="center">

@@ -189,7 +189,7 @@ const calculateTask = (hotInstance, row, prop) => {
 
 const manageNotification = (hotInstance, row, prop, newVal) => {
   // ブラウザ通知をサポートしていなければ処理を抜ける
-  if (!('Notification' in window)) return;
+  if (!('Notification' in window && Notification)) return;
   const col = hotInstance.propToCol(prop);
   if (prop === 'startTime') {
     const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
@@ -224,6 +224,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
               window.focus();
               hotInstance.selectCell(row, hotInstance.propToCol('endTime'));
             };
+            hotInstance.render();
           }, estimateVal * 60 * 1000);
           hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiTime });
         });
@@ -265,7 +266,7 @@ export default {
       },
     },
   },
-  colWidths: Math.round(window.innerWidth / 9),
+  colWidths: Math.round(960 / 9),
   columns,
   data,
   dataSchema,
