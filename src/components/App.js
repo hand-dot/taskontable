@@ -43,6 +43,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      date: moment().format('YYYY-MM-DD'),
       estimateTasks: { minute: 0, taskNum: 0 },
       doneTasks: { minute: 0, taskNum: 0 },
       actuallyTasks: { minute: 0, taskNum: 0 },
@@ -120,6 +121,11 @@ class App extends Component {
     updateHotCategory(defaultCategories.map(cat => cat.text));
   }
 
+  changeDate(event) {
+    event.persist();
+    this.setState({ date: event.target.value });
+  }
+
   changeCategoryInput(e) {
     this.setState({ categoryInput: e.target.value });
   }
@@ -160,7 +166,7 @@ class App extends Component {
                 <Typography gutterBottom type="title">
                   本日のサマリ
                 </Typography>
-                <DatePicker />
+                <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} />
                 <TodaySummary
                   data={{
                     estimateTasks: this.state.estimateTasks,

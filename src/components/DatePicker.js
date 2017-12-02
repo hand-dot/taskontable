@@ -1,18 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 
-const marginBottom30 = {
-  marginBottom: 30,
-};
-
-function DatePickers() {
+function DatePickers(props) {
+  const { value, changeDate } = props;
   return (
-    <form noValidate style={marginBottom30}>
+    <form
+      noValidate
+      style={{ marginBottom: 30, marginTop: 15,
+      }}
+    >
       <TextField
         id="date"
         label="基準"
         type="date"
-        defaultValue="2017-05-24"
+        value={value}
+        onChange={changeDate}
         InputLabelProps={{
           shrink: true,
         }}
@@ -20,5 +23,10 @@ function DatePickers() {
     </form>
   );
 }
+
+DatePickers.propTypes = {
+  value: PropTypes.string.isRequired,
+  changeDate: PropTypes.func.isRequired,
+};
 
 export default DatePickers;
