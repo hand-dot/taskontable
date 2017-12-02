@@ -38,6 +38,14 @@ const columns = [
     colWidths: 60,
     timeFormat: 'HH:mm',
     correctFormat: true,
+    renderer(instance, td, row, col, prop, value, cellProperties) {
+      td.innerHTML = value;
+      const notification = cellProperties.notification;
+      if (notification) {
+        td.innerHTML = `<span title="${notification.time}通知予約済">${value}*</span>`; // eslint-disable-line no-param-reassign
+      }
+      return td;
+    },
   },
   {
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">終了時刻</span>',
@@ -85,14 +93,14 @@ const setValidtionMessage = (hotInstance, row, prop, isValid) => {
   } else {
     let comment = '';
     if (prop === 'estimate') {
-      comment = '半角数値で入力してください';
+      comment = '半角数値を入力してください';
     } else if (prop === 'startTime' || prop === 'endTime') {
       comment = '半角数値,カンマ区切りで有効な時刻を入力してください';
     }
     commentsPlugin.setCommentAtCell(row, col, comment);
     commentsPlugin.showAtCell(row, col);
   }
-}
+};
 
 const setStartOrEndTime = (hotInstance, row, prop) => {
   const cellData = hotInstance.getDataAtRowProp(row, prop);
@@ -104,7 +112,7 @@ const setStartOrEndTime = (hotInstance, row, prop) => {
     // 編集を始めたセルが終了時刻かつ、セルが空の場合
     const startTimeVal = hotInstance.getDataAtRowProp(row, 'startTime');
     if (startTimeVal === '') {
-      // 開始時刻が入力されていない場合開始時間を入力させる
+      // 開始時刻が入力されていない場合開始時刻を入力させる
       alert('開始時刻を入力してください');
       hotInstance.selectCell(row, hotInstance.propToCol('startTime'));
     } else {
@@ -112,10 +120,10 @@ const setStartOrEndTime = (hotInstance, row, prop) => {
       hotInstance.setDataAtRowProp(row, prop, moment().format('HH:mm'));
     }
   }
-}
+};
 
 const calculateTask = (hotInstance, row, prop) => {
-  const col = hotInstance.propToCol(prop);  
+  const col = hotInstance.propToCol(prop);
   if (prop === 'startTime' || prop === 'endTime') {
     // 変更したセルが開始時刻 or 終了時刻の場合、実績を自動入力し、済をチェックする処理
     const startTimeVal = hotInstance.getDataAtRowProp(row, 'startTime');
@@ -124,8 +132,7 @@ const calculateTask = (hotInstance, row, prop) => {
       // 入力値が空の場合、実績を空にし、済のチェックをはずす
       hotInstance.setDataAtRowProp(row, 'done', false);
       hotInstance.setDataAtRowProp(row, 'actually', '');
-    } else if (hotInstance.getCellMeta(row, hotInstance.propToCol('endTime')).valid &&
-    hotInstance.getCellMeta(row, hotInstance.propToCol('startTime')).valid) {
+    } else if (startTimeVal.indexOf(':') !== -1 && endTimeVal.indexOf(':') !== -1) {
       // 実績を入力し、済をチェックする処理の開始
       const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
       const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
@@ -140,9 +147,10 @@ const calculateTask = (hotInstance, row, prop) => {
         hotInstance.setDataAtRowProp(row, 'actually', diff);
         hotInstance.setDataAtRowProp(row, 'done', true);
         // ヴァリデーションエラーを消す処理
-        const targetCellMeta = hotInstance.getCellMeta(row, hotInstance.propToCol(prop === 'startTime' ? 'endTime' : 'startTime'));
+        const targetCol = hotInstance.propToCol(prop === 'startTime' ? 'endTime' : 'startTime');
+        const targetCellMeta = hotInstance.getCellMeta(row, targetCol);
         if (!targetCellMeta.valid) {
-          targetCellMeta.valid = true;
+          hotInstance.setCellMeta(row, targetCol, 'valid', true);
           commentsPlugin.removeCommentAtCell(targetCellMeta.row, targetCellMeta.col);
         }
       } else {
@@ -153,7 +161,7 @@ const calculateTask = (hotInstance, row, prop) => {
         // ヴァリデーションエラーを追加する処理
         const cellMeta = hotInstance.getCellMeta(row, col);
         if (cellMeta.valid) {
-          cellMeta.valid = false;
+          hotInstance.setCellMeta(row, col, 'valid', false);
           commentsPlugin.setCommentAtCell(row, col, '開始時刻に対して終了時刻が不正です。');
           commentsPlugin.showAtCell(row, col);
         }
@@ -167,16 +175,67 @@ const calculateTask = (hotInstance, row, prop) => {
     const actuallyVal = hotInstance.getDataAtRowProp(row, 'actually');
     if (estimateVal === '' || actuallyVal === '') return;
     if (!Number.isInteger(+estimateVal) && !Number.isInteger(+actuallyVal)) return;
-    const overdue = Math.sign(actuallyVal - estimateVal);
-    const cellMeta = hotInstance.getCellMeta(row, hotInstance.propToCol('actually'));
-    if (overdue === 1) {
-      cellMeta.overdue = true;
-    } else if (overdue === -1) {
-      cellMeta.overdue = false;
-    } else {
-      cellMeta.overdue = undefined;
+    const overdueSign = Math.sign(actuallyVal - estimateVal);
+    let overdue;
+    if (overdueSign === 1) {
+      overdue = true;
+    } else if (overdueSign === -1) {
+      overdue = false;
     }
+    hotInstance.setCellMeta(row, hotInstance.propToCol('actually'), 'overdue', overdue);
     hotInstance.render();
+  }
+};
+
+const manageNotification = (hotInstance, row, prop, newVal) => {
+  // ブラウザ通知をサポートしていなければ処理を抜ける
+  if (!('Notification' in window)) return;
+  const col = hotInstance.propToCol(prop);
+  if (prop === 'startTime') {
+    const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
+    // 開始時刻,見積もり時刻が空か0
+    // もしくは開始時刻がヴァリデーションエラーもしくは見積もり時間が不正な場合は処理を抜ける
+    if (newVal === '' || estimateVal === '' || estimateVal === 0 ||
+    !hotInstance.getCellMeta(row, col).valid || !Number.isInteger(+estimateVal)) {
+      return;
+    }
+    const notifiTime = moment(newVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
+    const notifiRegistMsg = `見積時刻の設定されたタスクが開始されました。
+終了予定時刻(${notifiTime})に通知を設定しますか？
+(初回は通知の許可が求められます。)`;
+    if (window.confirm(notifiRegistMsg)) {
+      const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
+      // 権限を取得し通知を登録
+      Notification
+        .requestPermission()
+        .then(() => {
+          // 既に設定されているタイマーを削除
+          hotInstance.removeCellMeta(row, col, 'notification');
+          // タイマーを登録(セルにタイマーIDを設定)
+          const notifiId = setTimeout(() => {
+            hotInstance.removeCellMeta(row, col, 'notification');
+            const title = taskTitle ? `${taskTitle}の終了時刻です。` : 'タスクの終了時刻です。';
+            const notifi = new Notification(title, {
+              body: 'クリックしてタスクに終了時刻を入力し完了させてください。',
+              icon: `${window.location.href}favicon.ico`,
+            });
+            notifi.onclick = () => {
+              notifi.close();
+              window.focus();
+              hotInstance.selectCell(row, hotInstance.propToCol('endTime'));
+            };
+          }, estimateVal * 60 * 1000);
+          hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiTime });
+        });
+    }
+  } else if (prop === 'endTime') {
+    // startTimeのセルにタイマーIDがあれば確認をして削除
+    const startTimeCol = hotInstance.propToCol('startTime');
+    const notification = hotInstance.getCellMeta(row, startTimeCol).notification;
+    if (notification && window.confirm('このタスクの終了予定時刻に設定されている通知がありますが、削除してもよろしいですか？')) {
+      clearTimeout(notification.id);
+      hotInstance.removeCellMeta(row, startTimeCol, 'notification');
+    }
   }
 };
 
@@ -219,8 +278,12 @@ export default {
   afterChange(changes) {
     if (!changes) return;
     changes.forEach((change) => {
-      const [row, prop] = [change[0], change[1]];
-      calculateTask(this, row, prop);
+      const [row, prop, oldVal, newVal] = [change[0], change[1], change[2], change[3]];
+      if (oldVal !== newVal) {
+        calculateTask(this, row, prop);
+        manageNotification(this, row, prop, newVal);
+        setTimeout(() => this.render(), 0);
+      }
     });
   },
 };
