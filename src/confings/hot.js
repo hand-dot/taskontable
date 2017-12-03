@@ -203,16 +203,16 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
       }
     }
 
-    const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');    
+    const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
     // 見積もり時刻が空か0
     // もしくは開始時刻がヴァリデーションエラーもしくは見積もり時間が不正な場合は処理を抜ける
     if (estimateVal === '' || estimateVal === 0 ||
     !hotInstance.getCellMeta(row, col).valid || !Number.isInteger(+estimateVal)) {
       return;
     }
-    const notifiTime = moment(newVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
+    const notifiMoment = moment(newVal, 'HH:mm').add(estimateVal, 'minutes');
     const notifiRegistMsg = `見積時刻の設定されたタスクが開始されました。
-終了予定時刻(${notifiTime})に通知を設定しますか？
+終了予定時刻(${notifiMoment.format('HH:mm')})に通知を設定しますか？
 (初回は通知の許可が求められます。)`;
     if (window.confirm(notifiRegistMsg)) {
       // 権限を取得し通知を登録
@@ -237,8 +237,8 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
               hotInstance.selectCell(row, hotInstance.propToCol('endTime'));
             };
             hotInstance.render();
-          }, estimateVal * 60 * 1000);
-          hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiTime });
+          }, notifiMoment.toDate().getTime() - Date.now());
+          hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiMoment.format('HH:mm') });
         });
     }
   } else if (prop === 'endTime') {
