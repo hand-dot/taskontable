@@ -30,7 +30,7 @@ import firebaseConf from '../confings/firebase';
 import hotConf from '../confings/hot';
 import '../styles/App.css';
 
-const NotificationClone = cloneDeep(Notification);
+const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
 
 let hot;
 function updateHotCategory(source) {
@@ -112,22 +112,9 @@ class App extends Component {
   }
 
   setDefaultCategories() {
-    const defaultCategories = [{
-      text: '生活',
-      id: Date.now() + 1,
-    },
-    {
-      text: '業務',
-      id: Date.now() + 2,
-    },
-    {
-      text: '雑務',
-      id: Date.now() + 3,
-    },
-    {
-      text: '休憩',
-      id: Date.now() + 4,
-    }];
+    const labels = ['生活', '業務', '雑務', '休憩'];
+    const timestamp = Date.now();
+    const defaultCategories = labels.map((label, index) => ({ id: timestamp + index, text: label }));
     this.setState(() => ({
       categories: defaultCategories,
       categoryInput: '',
@@ -170,10 +157,12 @@ class App extends Component {
   }
 
   toggleNotifiable(event, checked) {
-    Notification = checked ? NotificationClone : false;
-    this.setState(() => ({
-      notifiable: checked,
-    }));
+    if ('Notification' in window) {
+      Notification = checked ? NotificationClone : false;
+      this.setState(() => ({
+        notifiable: checked,
+      }));
+    }
   }
 
   render() {
@@ -251,11 +240,12 @@ class App extends Component {
                   <FormControlLabel
                     control={
                       <Switch
+                        disabled={!('Notification' in window)}
                         checked={this.state.notifiable}
                         onChange={this.toggleNotifiable.bind(this)}
                       />
                     }
-                    label="タスクが終了時刻になったら通知する"
+                    label={`開始したタスクの終了時刻通知${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
                   />
                   <Typography type="caption" gutterBottom>
                     *通知予約を行うには見積を入力したタスクの開始時刻を入力(変更)してください。
