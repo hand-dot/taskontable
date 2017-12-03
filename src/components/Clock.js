@@ -81,7 +81,7 @@ class Clock extends Component {
   render() {
     return (
       <div>
-        <Typography gutterBottom type="subheading" align="center">
+        <Typography gutterBottom type="subheading" align="center" title={this.props.caption}>
           {this.props.title}
         </Typography>
         <div className="circle">
@@ -92,9 +92,6 @@ class Clock extends Component {
           </div>
         </div>
         <Typography gutterBottom type="title" align="center">{`${(`00${this.state.hour}`).slice(-2)}:${(`00${this.state.minute}`).slice(-2)}`}</Typography>
-        <Typography type="caption">
-          {this.props.caption}
-        </Typography>
       </div>
     );
   }

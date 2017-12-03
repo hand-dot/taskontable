@@ -113,7 +113,7 @@ class App extends Component {
 
   setDefaultCategories() {
     const defaultCategories = [{
-      text: 'ライフスタイル',
+      text: '生活',
       id: Date.now() + 1,
     },
     {
@@ -123,6 +123,10 @@ class App extends Component {
     {
       text: '雑務',
       id: Date.now() + 3,
+    },
+    {
+      text: '休憩',
+      id: Date.now() + 4,
     }];
     this.setState(() => ({
       categories: defaultCategories,
@@ -179,59 +183,56 @@ class App extends Component {
         <div className="App">
           <div>
             <Grid container spacing={40}>
-              <ExpansionPanel defaultExpanded>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>ダッシュボード</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid item xs={5}>
-                  <Typography gutterBottom type="title">
-                  本日のサマリ
-                    </Typography>
-                    <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} />
-                    <TodaySummary
-                      data={{
-                        estimateTasks: this.state.estimateTasks,
-                        doneTasks: this.state.doneTasks,
-                        actuallyTasks: this.state.actuallyTasks,
-                        remainingTasks: this.state.remainingTasks,
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Typography gutterBottom type="title">
-                  時刻
-                    </Typography>
-                    <Grid container spacing={40}>
-                      <Grid item xs={6}>
-                        <Clock title={'現在時刻'} moment={moment()} updateFlg />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Clock title={'終了時刻'} caption="*終了時間は残タスクの合計時間" moment={this.state.endMoment} updateFlg={false} />
+              <Grid item xs={12} className="dashboad">
+                <ExpansionPanel defaultExpanded>
+                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>ダッシュボード</Typography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <Grid item xs={4}>
+                      <Typography gutterBottom type="title">
+                      本日のサマリ
+                      </Typography>
+                      <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} />
+                      <TodaySummary
+                        data={{
+                          estimateTasks: this.state.estimateTasks,
+                          doneTasks: this.state.doneTasks,
+                          actuallyTasks: this.state.actuallyTasks,
+                          remainingTasks: this.state.remainingTasks,
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography gutterBottom type="title">
+                      時刻
+                      </Typography>
+                      <Grid container spacing={40}>
+                        <Grid item xs={6}>
+                          <Clock title={'現在時刻'} moment={moment()} updateFlg />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Clock title={'終了時刻*'} caption="*残タスクの合計時間" moment={this.state.endMoment} updateFlg={false} />
+                        </Grid>
                       </Grid>
                     </Grid>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <div>
-                      <Typography gutterBottom type="title">
-                        カテゴリ
-                      </Typography>
-                      <Typography type="caption" gutterBottom>
-                        *追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。
+                    <Grid item xs={4}>
+                      <Typography title="*追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。" gutterBottom type="title">
+                      カテゴリ*
                       </Typography>
                       <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
                       <form onSubmit={this.addCategory.bind(this)}>
                         <Input
+                          placeholder="カテゴリを追加"
                           onChange={this.changeCategoryInput.bind(this)}
                           value={this.state.categoryInput}
                         />
                       </form>
-                    </div>
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-
-              <Grid item xs={12}>
+                    </Grid>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              </Grid>
+              <Grid item xs={6}>
                 <Typography gutterBottom type="title">
                   タスク一覧
                 </Typography>
@@ -239,11 +240,13 @@ class App extends Component {
                   *セル上で右クリックすることで行の追加・削除を行うことができます。
                 </Typography>
                 <Typography type="caption" gutterBottom>
-                  *行を選択、ドラッグアンドドロップすることでタスクを入れ替えることができます。
+                  *行を選択しドラッグアンドドロップでタスクを入れ替えることができます。
                 </Typography>
                 <Typography type="caption" gutterBottom>
                   *マウスカーソルを列ヘッダーに上に重ねると各列の説明を見ることができます。
                 </Typography>
+              </Grid>
+              <Grid item xs={6}>
                 <FormGroup>
                   <FormControlLabel
                     control={
@@ -255,15 +258,17 @@ class App extends Component {
                     label="タスクが終了時刻になったら通知する"
                   />
                   <Typography type="caption" gutterBottom>
-                    *通知予約を行うためには見積を入力したタスクの開始時刻を入力(変更)する必要があります。
+                    *通知予約を行うには見積を入力したタスクの開始時刻を入力(変更)してください。
                   </Typography>
                   <Typography type="caption" gutterBottom>
                     *通知が予約されたら開始時刻のセルに　[ ! ]　マークがつきます。
                   </Typography>
                   <Typography type="caption" gutterBottom>
-                    *通知予約がされているタスクの開始時刻を削除、もしくは終了時刻を入力すると予約を削除することができます。
+                    *開始時刻を削除、もしくは終了時刻を入力すると予約を削除することができます。
                   </Typography>
                 </FormGroup>
+              </Grid>
+              <Grid item xs={12}>
                 <div id="hot" />
               </Grid>
               <Grid container justify="center">
