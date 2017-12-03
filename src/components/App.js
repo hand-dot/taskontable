@@ -6,6 +6,7 @@ import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 
 import Typography from 'material-ui/Typography';
+import TextField from 'material-ui/TextField';
 import Grid from 'material-ui/Grid';
 import Input from 'material-ui/Input';
 import Button from 'material-ui/Button';
@@ -17,9 +18,14 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { LinearProgress } from 'material-ui/Progress';
-
 
 import GlobalHeader from './GlobalHeader';
 import TodaySummary from './TodaySummary';
@@ -27,14 +33,11 @@ import DatePicker from './DatePicker';
 import CategoryList from './CategoryList';
 import Clock from './Clock';
 
-
 import firebaseConf from '../confings/firebase';
 import hotConf from '../confings/hot';
 import '../styles/App.css';
 
 const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
-
-const userId = 'tanakataro'; // FIXME!! issues #26
 firebase.initializeApp(firebaseConf);
 
 let hot;
@@ -54,7 +57,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,      
+      loading: true,
       notifiable: true,
       date: moment().format('YYYY-MM-DD'),
       estimateTasks: { minute: 0, taskNum: 0 },
@@ -65,6 +68,8 @@ class App extends Component {
       categories: [],
       categoryInput: '',
       allTasks: [],
+      openingUserIdDialog: false,
+      userId: '',
     };
   }
 
@@ -72,6 +77,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.openUserIdDialog();
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       beforeChangeRender() {
@@ -86,15 +92,6 @@ class App extends Component {
     }));
     this.setStateFromHot();
     this.setDefaultCategories();
-    // データの初回読み込み
-    firebase.database().ref(`/${userId}/${this.state.date}`).once('value').then((snapshot) => {
-      if (snapshot.exists()) {
-        hot.updateSettings({ data: snapshot.val() });
-        this.setState(() => ({
-          loading: false,
-        }));
-      }
-    });
   }
 
   setStateFromHot() {
@@ -136,7 +133,7 @@ class App extends Component {
       date: event.target.value,
       loading: true,
     }));
-    firebase.database().ref(`/${userId}/${event.target.value}`).once('value').then((snapshot) => {
+    firebase.database().ref(`/${this.state.userId}/${event.target.value}`).once('value').then((snapshot) => {
       if (snapshot.exists()) {
         // データが存在していたら読み込む
         hot.updateSettings({ data: snapshot.val() });
@@ -202,7 +199,7 @@ class App extends Component {
         this.setState(() => ({
           loading: true,
         }));
-        firebase.database().ref(`/${userId}/${this.state.date}`).set(sourceData).then(() => {
+        firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(sourceData).then(() => {
           alert(`${this.state.date} のタスク一覧を保存しました。`);
           this.setState(() => ({
             loading: false,
@@ -212,6 +209,29 @@ class App extends Component {
         alert('タスクがありません。');
       }
     }
+  }
+
+  openUserIdDialog() {
+    this.setState({ openingUserIdDialog: true });
+  }
+
+  closeUserIdDialog() {
+    if (this.state.userId !== '') {
+      // データの初回読み込み
+      firebase.database().ref(`/${this.state.userId}/${this.state.date}`).once('value').then((snapshot) => {
+        if (snapshot.exists()) {
+          hot.updateSettings({ data: snapshot.val() });
+        }
+        this.setState(() => ({
+          loading: false,
+          openingUserIdDialog: false,
+        }));
+      });
+    }
+  }
+
+  changeUserId(e) {
+    this.setState({ userId: e.target.value });
   }
 
   render() {
@@ -272,7 +292,7 @@ class App extends Component {
               </Grid>
               <Grid item xs={12} className="tasklist">
                 <Typography gutterBottom type="title">
-                    タスク一覧
+                  {this.state.date.replace(/-/g, '/')}のタスク一覧
                 </Typography>
                 <Grid container spacing={5}>
                   <Grid item xs={6}>
@@ -311,15 +331,15 @@ class App extends Component {
                     <div style={{ margin: '15px 0', textAlign: 'right' }}>
                       <Button raised onClick={addTask} color="default">
                         <AddIcon />
-                          タスク追加
+                          追加
                       </Button>
                       <Button raised onClick={this.saveTask.bind(this)} color="default">
                         <SaveIcon />
-                         一覧保存
+                         保存
                       </Button>
                     </div>
                   </Grid>
-                  <Grid item xs={12} justify="center" style={{ paddingTop: 0 }}>
+                  <Grid item xs={12} style={{ paddingTop: 0 }}>
                     <LinearProgress style={{ display: this.state.loading ? 'block' : 'none' }} />
                     <div id="hot" />
                   </Grid>
@@ -328,6 +348,44 @@ class App extends Component {
             </Grid>
           </div>
         </div>
+
+
+        <Dialog open={this.state.openingUserIdDialog} onRequestClose={this.closeUserIdDialog.bind(this)}>
+          <DialogTitle>ユーザーIDを入力して下さい</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+                TaskChute WEB はただいま開発中です。<br />
+                しかし一部機能を試していただくことは可能です。<br />
+              <br />
+                タスクの入力・保存・読み込みはできますが、
+                現時点ではユーザー登録を行いませんので、あなた自身でユーザーIDを入力して下さい。<br />
+              <br />
+                以降、同じユーザーIDを入力すると<br />
+                保存したタスクを読み込むことができます。<br />
+              <br />
+            </DialogContentText>
+            <TextField
+              value={this.state.userId}
+              onChange={this.changeUserId.bind(this)}
+              required
+              autoFocus
+              margin="dense"
+              id="userId"
+              label="ユーザーID"
+              fullWidth
+            />
+            <Typography type="caption" gutterBottom>
+               *ログイン機能実装後に以前に保存したデータは削除されます。あらかじめご了承ください。
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.closeUserIdDialog.bind(this)} color="primary">
+                はじめる
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+
       </div>
     );
   }
