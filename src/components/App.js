@@ -17,6 +17,7 @@ import ExpansionPanel, {
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+import { LinearProgress } from 'material-ui/Progress';
 
 
 import GlobalHeader from './GlobalHeader';
@@ -44,6 +45,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,      
       notifiable: true,
       date: moment().format('YYYY-MM-DD'),
       estimateTasks: { minute: 0, taskNum: 0 },
@@ -79,6 +81,9 @@ class App extends Component {
     firebase.database().ref(`/${userId}/${this.state.date}`).once('value').then((snapshot) => {
       if (snapshot.exists()) {
         hot.updateSettings({ data: snapshot.val() });
+        this.setState(() => ({
+          loading: false,
+        }));
       }
     });
   }
@@ -118,7 +123,10 @@ class App extends Component {
   changeDate(event) {
     if (!hot) return;
     event.persist();
-    this.setState({ date: event.target.value });
+    this.setState(() => ({
+      date: event.target.value,
+      loading: true,
+    }));
     firebase.database().ref(`/${userId}/${event.target.value}`).once('value').then((snapshot) => {
       if (snapshot.exists()) {
         // データが存在していたら読み込む
@@ -127,6 +135,9 @@ class App extends Component {
         // データが存在していないので、データを空にする
         hot.updateSettings({ data: {} });
       }
+      this.setState(() => ({
+        loading: false,
+      }));
     });
   }
 
@@ -179,8 +190,14 @@ class App extends Component {
       });
       // タスク一覧に何もデータが入っていなかったら保存しない
       if (!isEmpty) {
+        this.setState(() => ({
+          loading: true,
+        }));
         firebase.database().ref(`/${userId}/${this.state.date}`).set(sourceData).then(() => {
           alert(`${this.state.date} のタスク一覧を保存しました。`);
+          this.setState(() => ({
+            loading: false,
+          }));
         });
       } else {
         alert('タスクがありません。');
@@ -289,7 +306,8 @@ class App extends Component {
                       </Button>
                     </div>
                   </Grid>
-                  <Grid item xs={12} style={{ paddingTop: 0 }}>
+                  <Grid item xs={12} justify="center" style={{ paddingTop: 0 }}>
+                    <LinearProgress style={{ display: this.state.loading ? 'block' : 'none' }} />
                     <div id="hot" />
                   </Grid>
                 </Grid>
