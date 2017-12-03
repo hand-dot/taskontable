@@ -311,11 +311,11 @@ class App extends Component {
                     <div style={{ margin: '15px 0', textAlign: 'right' }}>
                       <Button raised onClick={addTask} color="default">
                         <AddIcon />
-                          タスクを追加する
+                          タスク追加
                       </Button>
                       <Button raised onClick={this.saveTask.bind(this)} color="default">
                         <SaveIcon />
-                         保存
+                         一覧保存
                       </Button>
                     </div>
                   </Grid>
