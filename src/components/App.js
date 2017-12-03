@@ -237,7 +237,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <GlobalHeader />
+        <GlobalHeader userId={this.state.userId} />
         <div className="App">
           <div>
             <Grid container spacing={5}>
@@ -292,7 +292,7 @@ class App extends Component {
               </Grid>
               <Grid item xs={12} className="tasklist">
                 <Typography gutterBottom type="title">
-                  {this.state.date.replace(/-/g, '/')}のタスク一覧
+                  {this.state.date.replace(/-/g, '/')} のタスク一覧
                 </Typography>
                 <Grid container spacing={5}>
                   <Grid item xs={6}>
