@@ -10,6 +10,7 @@ import Grid from 'material-ui/Grid';
 import Input from 'material-ui/Input';
 import Button from 'material-ui/Button';
 import SaveIcon from 'material-ui-icons/Save';
+import AddIcon from 'material-ui-icons/Add';
 import Switch from 'material-ui/Switch';
 import { FormControlLabel, FormGroup } from 'material-ui/Form';
 import ExpansionPanel, {
@@ -32,14 +33,22 @@ import hotConf from '../confings/hot';
 import '../styles/App.css';
 
 const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
+
 const userId = 'tanakataro'; // FIXME!! issues #26
 firebase.initializeApp(firebaseConf);
 
 let hot;
+
 function updateHotCategory(source) {
   const $hotConf = cloneDeep(hotConf);
   $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
   if (hot) hot.updateSettings({ columns: $hotConf.columns });
+}
+
+function addTask() {
+  if (hot) {
+    hot.alter('insert_row');
+  }
 }
 class App extends Component {
   constructor(props) {
@@ -300,6 +309,10 @@ class App extends Component {
                         *マウスカーソルを列ヘッダーに上に重ねると各列の説明を見ることができます。
                     </Typography>
                     <div style={{ margin: '15px 0', textAlign: 'right' }}>
+                      <Button raised onClick={addTask} color="default">
+                        <AddIcon />
+                          タスクを追加する
+                      </Button>
                       <Button raised onClick={this.saveTask.bind(this)} color="default">
                         <SaveIcon />
                          保存

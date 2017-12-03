@@ -266,6 +266,9 @@ export default {
     items: {
       row_above: {
         name: '上に行を追加する',
+        disabled() {
+          return this.getSelected()[0] === 0;
+        },
       },
       row_below: {
         name: '下に行を追加する',
@@ -273,6 +276,9 @@ export default {
       hsep1: '---------',
       remove_row: {
         name: '行を削除する',
+        disabled() {
+          return this.getSelected()[0] === 0;
+        },
       },
     },
   },
