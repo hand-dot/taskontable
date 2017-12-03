@@ -9,7 +9,7 @@ import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import Input from 'material-ui/Input';
 import Button from 'material-ui/Button';
-import AddIcon from 'material-ui-icons/Add';
+import SaveIcon from 'material-ui-icons/Save';
 import Switch from 'material-ui/Switch';
 import { FormControlLabel, FormGroup } from 'material-ui/Form';
 import ExpansionPanel, {
@@ -31,22 +31,14 @@ import hotConf from '../confings/hot';
 import '../styles/App.css';
 
 const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
+const userId = 'tanakataro'; // FIXME!! issues #26
+firebase.initializeApp(firebaseConf);
 
 let hot;
 function updateHotCategory(source) {
   const $hotConf = cloneDeep(hotConf);
   $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
-  if (hot) {
-    hot.updateSettings({
-      columns: $hotConf.columns,
-    });
-  }
-}
-
-function addTask() {
-  if (hot) {
-    hot.alter('insert_row');
-  }
+  if (hot) hot.updateSettings({ columns: $hotConf.columns });
 }
 class App extends Component {
   constructor(props) {
@@ -58,7 +50,7 @@ class App extends Component {
       doneTasks: { minute: 0, taskNum: 0 },
       actuallyTasks: { minute: 0, taskNum: 0 },
       remainingTasks: { minute: 0, taskNum: 0 },
-      endMoment: moment(), // FIXME momentオブジェクトをstateで持つのは違和感がある
+      endMoment: moment(), // FIXME!! issues #22
       categories: [],
       categoryInput: '',
       allTasks: [],
@@ -66,11 +58,6 @@ class App extends Component {
   }
 
   componentWillMount() {
-    firebase.initializeApp(firebaseConf);
-    const starCountRef = firebase.database().ref('/test/msg');
-    starCountRef.on('value', (snapshot) => {
-      console.log(snapshot.val());
-    });
   }
 
   componentDidMount() {
@@ -88,6 +75,12 @@ class App extends Component {
     }));
     this.setStateFromHot();
     this.setDefaultCategories();
+    // データの初回読み込み
+    firebase.database().ref(`/${userId}/${this.state.date}`).once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        hot.updateSettings({ data: snapshot.val() });
+      }
+    });
   }
 
   setStateFromHot() {
@@ -123,8 +116,18 @@ class App extends Component {
   }
 
   changeDate(event) {
+    if (!hot) return;
     event.persist();
     this.setState({ date: event.target.value });
+    firebase.database().ref(`/${userId}/${event.target.value}`).once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        // データが存在していたら読み込む
+        hot.updateSettings({ data: snapshot.val() });
+      } else {
+        // データが存在していないので、データを空にする
+        hot.updateSettings({ data: {} });
+      }
+    });
   }
 
   changeCategoryInput(e) {
@@ -165,13 +168,33 @@ class App extends Component {
     }
   }
 
+  saveTask() {
+    if (hot) {
+      const sourceData = hot.getSourceData();
+      let isEmpty = true;
+      sourceData.forEach((data) => {
+        Object.entries(data).forEach((entry) => {
+          if (entry[1]) isEmpty = false;
+        });
+      });
+      // タスク一覧に何もデータが入っていなかったら保存しない
+      if (!isEmpty) {
+        firebase.database().ref(`/${userId}/${this.state.date}`).set(sourceData).then(() => {
+          alert(`${this.state.date} のタスク一覧を保存しました。`);
+        });
+      } else {
+        alert('タスクがありません。');
+      }
+    }
+  }
+
   render() {
     return (
       <div>
         <GlobalHeader />
         <div className="App">
           <div>
-            <Grid container spacing={40}>
+            <Grid container spacing={5}>
               <Grid item xs={12} className="dashboad">
                 <ExpansionPanel defaultExpanded>
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -180,7 +203,7 @@ class App extends Component {
                   <ExpansionPanelDetails>
                     <Grid item xs={4}>
                       <Typography gutterBottom type="title">
-                      本日のサマリ
+                        本日のサマリ
                       </Typography>
                       <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} />
                       <TodaySummary
@@ -194,9 +217,9 @@ class App extends Component {
                     </Grid>
                     <Grid item xs={4}>
                       <Typography gutterBottom type="title">
-                      時刻
+                       時刻
                       </Typography>
-                      <Grid container spacing={40}>
+                      <Grid container spacing={5}>
                         <Grid item xs={6}>
                           <Clock title={'現在時刻'} moment={moment()} updateFlg />
                         </Grid>
@@ -207,7 +230,7 @@ class App extends Component {
                     </Grid>
                     <Grid item xs={4}>
                       <Typography title="*追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。" gutterBottom type="title">
-                      カテゴリ*
+                        カテゴリ*
                       </Typography>
                       <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
                       <form onSubmit={this.addCategory.bind(this)}>
@@ -221,51 +244,55 @@ class App extends Component {
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} className="tasklist">
                 <Typography gutterBottom type="title">
-                  タスク一覧
+                    タスク一覧
                 </Typography>
-                <Typography type="caption" gutterBottom>
-                  *セル上で右クリックすることで行の追加・削除を行うことができます。
-                </Typography>
-                <Typography type="caption" gutterBottom>
-                  *行を選択しドラッグアンドドロップでタスクを入れ替えることができます。
-                </Typography>
-                <Typography type="caption" gutterBottom>
-                  *マウスカーソルを列ヘッダーに上に重ねると各列の説明を見ることができます。
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        disabled={!('Notification' in window)}
-                        checked={this.state.notifiable}
-                        onChange={this.toggleNotifiable.bind(this)}
+                <Grid container spacing={5}>
+                  <Grid item xs={6}>
+                    <FormGroup>
+                      <Typography type="caption" gutterBottom>
+                         *通知予約を行うには見積を入力したタスクの開始時刻を入力(変更)してください。
+                      </Typography>
+                      <Typography type="caption" gutterBottom>
+                         *通知が予約されたら開始時刻のセルに　[ ! ]　マークがつきます。
+                      </Typography>
+                      <Typography type="caption" gutterBottom>
+                        *開始時刻を削除、もしくは終了時刻を入力すると予約を削除することができます。
+                      </Typography>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            disabled={!('Notification' in window)}
+                            checked={this.state.notifiable}
+                            onChange={this.toggleNotifiable.bind(this)}
+                          />
+                        }
+                        label={`開始したタスクの終了時刻通知${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
                       />
-                    }
-                    label={`開始したタスクの終了時刻通知${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
-                  />
-                  <Typography type="caption" gutterBottom>
-                    *通知予約を行うには見積を入力したタスクの開始時刻を入力(変更)してください。
-                  </Typography>
-                  <Typography type="caption" gutterBottom>
-                    *通知が予約されたら開始時刻のセルに　[ ! ]　マークがつきます。
-                  </Typography>
-                  <Typography type="caption" gutterBottom>
-                    *開始時刻を削除、もしくは終了時刻を入力すると予約を削除することができます。
-                  </Typography>
-                </FormGroup>
-              </Grid>
-              <Grid item xs={12}>
-                <div id="hot" />
-              </Grid>
-              <Grid container justify="center">
-                <Button onClick={addTask} color="default">
-                  <AddIcon />
-                    タスクを追加する
-                </Button>
+                    </FormGroup>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography type="caption" gutterBottom>
+                      *セル上で右クリックすることで行の追加・削除を行うことができます。
+                    </Typography>
+                    <Typography type="caption" gutterBottom>
+                      *行を選択しドラッグアンドドロップでタスクを入れ替えることができます。
+                    </Typography>
+                    <Typography type="caption" gutterBottom>
+                        *マウスカーソルを列ヘッダーに上に重ねると各列の説明を見ることができます。
+                    </Typography>
+                    <div style={{ margin: '15px 0', textAlign: 'right' }}>
+                      <Button raised onClick={this.saveTask.bind(this)} color="default">
+                        <SaveIcon />
+                         保存
+                      </Button>
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} style={{ paddingTop: 0 }}>
+                    <div id="hot" />
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </div>
