@@ -271,7 +271,7 @@ class App extends Component {
                           <Clock title={'現在時刻'} moment={moment()} updateFlg />
                         </Grid>
                         <Grid item xs={6}>
-                          <Clock title={'終了時刻*'} caption="*残タスクの合計時間" moment={this.state.endMoment} updateFlg={false} />
+                          <Clock title={'終了時刻*'} caption="*残タスクの合計時間" moment={this.state.endMoment} />
                         </Grid>
                       </Grid>
                     </Grid>

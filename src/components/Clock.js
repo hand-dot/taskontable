@@ -39,31 +39,25 @@ class Clock extends Component {
     $hour.style.transform = getHourRotate(this.state.hour, this.state.minute);
     $minute.style.transform = getMinuteRotate(this.state.minute, this.state.second);
     $second.style.transform = getSecondRotate(this.state.second);
-
-    if (this.props.updateFlg) {
-      const timedUpdate = () => {
-        this.props.moment.add(1, 'seconds');
-        const second = this.props.moment.seconds();
-        const minute = this.props.moment.minutes();
-        const hour = this.props.moment.hours();
-        this.setState({
-          second,
-          minute,
-          hour,
-        });
-        $hour.style.transform = getHourRotate(hour, minute);
-        $minute.style.transform = getMinuteRotate(minute, second);
-        $second.style.transform = getSecondRotate(second);
-        setTimeout(timedUpdate, 1000);
-      };
-      timedUpdate();
-    }
+    const timedUpdate = () => {
+      this.props.moment.add(1, 'seconds');
+      const second = this.props.moment.seconds();
+      const minute = this.props.moment.minutes();
+      const hour = this.props.moment.hours();
+      this.setState({
+        second,
+        minute,
+        hour,
+      });
+      $hour.style.transform = getHourRotate(hour, minute);
+      $minute.style.transform = getMinuteRotate(minute, second);
+      $second.style.transform = getSecondRotate(second);
+      setTimeout(timedUpdate, 1000);
+    };
+    timedUpdate();
   }
 
   componentWillReceiveProps(nextProps) {
-    // 更新フラグが立っていればここでstateの設定はしない
-    if (this.props.updateFlg) return;
-
     this.setState({
       minute: nextProps.moment.minutes(),
       hour: nextProps.moment.hours(),
@@ -101,7 +95,6 @@ Clock.propTypes = {
   title: PropTypes.string.isRequired,
   caption: PropTypes.string,
   moment: PropTypes.object.isRequired,
-  updateFlg: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styles)(Clock);
