@@ -121,7 +121,7 @@ class App extends Component {
     const actuallyData = doneData;
     const actuallyMinute = actuallyData.map(data => (typeof data.actually === 'number' ? data.actually : 0)).reduce((p, c) => p + c, 0);
 
-    const currentMoment = moment();    
+    const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState(() => ({
       allTasks: sourceData,
@@ -152,7 +152,7 @@ class App extends Component {
       date: event.target.value,
       loading: true,
     }));
-    firebase.database().ref(`/${this.state.userId}/${event.target.value}`).once('value').then((snapshot) => {
+    this.fetchTask(this.state.userId, event.target.value).then((snapshot) => {
       if (snapshot.exists()) {
         // データが存在していたら読み込む
         hot.updateSettings({ data: snapshot.val() });
@@ -160,9 +160,6 @@ class App extends Component {
         // データが存在していないので、データを空にする
         hot.updateSettings({ data: {} });
       }
-      this.setState(() => ({
-        loading: false,
-      }));
       this.setStateFromHot();
     });
   }
@@ -233,21 +230,39 @@ class App extends Component {
 
   openUserIdDialog() {
     this.setState({ openingUserIdDialog: true });
+    const localStorageUserId = localStorage.getItem('userId');
+    if (localStorageUserId) {
+      this.setState({
+        userId: localStorageUserId,
+      });
+      setTimeout(this.closeUserIdDialog.bind(this), 0);
+    }
   }
 
   closeUserIdDialog() {
+    this.setState({ openingUserIdDialog: false });    
     if (this.state.userId !== '') {
+      // ローカルストレージにuserIdを入れる
+      localStorage.setItem('userId', this.state.userId);
       // データの初回読み込み
-      firebase.database().ref(`/${this.state.userId}/${this.state.date}`).once('value').then((snapshot) => {
+      this.fetchTask(this.state.userId, this.state.date).then((snapshot) => {
         if (snapshot.exists()) {
           hot.updateSettings({ data: snapshot.val() });
         }
-        this.setState(() => ({
-          loading: false,
-          openingUserIdDialog: false,
-        }));
       });
     }
+  }
+
+  fetchTask(userId, date) {
+    this.setState(() => ({
+      loading: true,
+    }));
+    return firebase.database().ref(`/${userId}/${date}`).once('value').then((snapshot) => {
+      this.setState(() => ({
+        loading: false,
+      }));
+      return snapshot;
+    });
   }
 
   changeUserId(e) {
@@ -368,8 +383,6 @@ class App extends Component {
             </Grid>
           </div>
         </div>
-
-
         <Dialog open={this.state.openingUserIdDialog} onRequestClose={this.closeUserIdDialog.bind(this)}>
           <DialogTitle>ユーザーIDを入力して下さい</DialogTitle>
           <DialogContent>
@@ -404,8 +417,6 @@ class App extends Component {
             </Button>
           </DialogActions>
         </Dialog>
-
-
       </div>
     );
   }
