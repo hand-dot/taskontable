@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
@@ -17,17 +18,17 @@ class Clock extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      second: '',
-      minute: '',
-      hour: '',
+      moment: moment(),
     };
   }
 
   componentWillMount() {
+    const currentMoment = moment();
     this.setState({
-      second: this.props.moment.seconds(),
-      minute: this.props.moment.minutes(),
-      hour: this.props.moment.hours(),
+      currentTime: {
+        hour: currentMoment.hour(),
+        minute: currentMoment.minute(),
+        second: currentMoment.second() },
     });
   }
 
@@ -35,20 +36,11 @@ class Clock extends Component {
     const $hour = this.hour;
     const $minute = this.minute;
     const $second = this.second;
-
-    $hour.style.transform = getHourRotate(this.state.hour, this.state.minute);
-    $minute.style.transform = getMinuteRotate(this.state.minute, this.state.second);
-    $second.style.transform = getSecondRotate(this.state.second);
     const timedUpdate = () => {
-      this.props.moment.add(1, 'seconds');
-      const second = this.props.moment.seconds();
-      const minute = this.props.moment.minutes();
-      const hour = this.props.moment.hours();
-      this.setState({
-        second,
-        minute,
-        hour,
-      });
+      this.state.moment.add(1, 'seconds');
+      const hour = this.state.moment.hour();
+      const minute = this.state.moment.minute();
+      const second = this.state.moment.second();
       $hour.style.transform = getHourRotate(hour, minute);
       $minute.style.transform = getMinuteRotate(minute, second);
       $second.style.transform = getSecondRotate(second);
@@ -58,18 +50,12 @@ class Clock extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    this.state.moment.hour(nextProps.time.hour);
+    this.state.moment.minute(nextProps.time.minute);
+    this.state.moment.second(nextProps.time.second);
     this.setState({
-      minute: nextProps.moment.minutes(),
-      hour: nextProps.moment.hours(),
+      moment: this.state.moment,
     });
-
-    const $hour = this.hour;
-    const $minute = this.minute;
-    const $second = this.second;
-
-    $hour.style.transform = getHourRotate(nextProps.moment.hours(), nextProps.moment.minutes());
-    $minute.style.transform = getMinuteRotate(nextProps.moment.minutes(), nextProps.moment.seconds());
-    $second.style.transform = getSecondRotate(0);
   }
 
   render() {
@@ -85,7 +71,7 @@ class Clock extends Component {
             <div ref={(node) => { this.second = node; }} className="second" />
           </div>
         </div>
-        <Typography gutterBottom type="title" align="center">{`${(`00${this.state.hour}`).slice(-2)}:${(`00${this.state.minute}`).slice(-2)}`}</Typography>
+        <Typography gutterBottom type="title" align="center">{`${(`00${this.state.moment.hour()}`).slice(-2)}:${(`00${this.state.moment.minute()}`).slice(-2)}`}</Typography>
       </div>
     );
   }
@@ -93,8 +79,8 @@ class Clock extends Component {
 
 Clock.propTypes = {
   title: PropTypes.string.isRequired,
-  caption: PropTypes.string,
-  moment: PropTypes.object.isRequired,
+  caption: PropTypes.string.isRequired,
+  time: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Clock);

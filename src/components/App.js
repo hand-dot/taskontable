@@ -64,7 +64,8 @@ class App extends Component {
       doneTasks: { minute: 0, taskNum: 0 },
       actuallyTasks: { minute: 0, taskNum: 0 },
       remainingTasks: { minute: 0, taskNum: 0 },
-      endMoment: moment(), // FIXME!! issues #22
+      currentTime: { hour: 0, minute: 0, second: 0 },
+      endTime: { hour: 0, minute: 0, second: 0 },
       categories: [],
       categoryInput: '',
       allTasks: [],
@@ -74,6 +75,20 @@ class App extends Component {
   }
 
   componentWillMount() {
+    // 初期値の現在時刻と終了時刻
+    const currentMoment = moment();
+    this.setState({
+      currentTime: {
+        hour: currentMoment.hour(),
+        minute: currentMoment.minute(),
+        second: currentMoment.second(),
+      },
+      endTime: {
+        hour: currentMoment.hour(),
+        minute: currentMoment.minute(),
+        second: currentMoment.second(),
+      },
+    });
   }
 
   componentDidMount() {
@@ -95,23 +110,27 @@ class App extends Component {
   }
 
   setStateFromHot() {
-    const sourceData = hot.getSourceData();
+    const sourceData = cloneDeep(hot.getSourceData());
+    if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
     const estimateData = sourceData;
     const estimateMinute = sourceData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+    const remainingData = sourceData.filter(data => !data.done);
+    const remainingMinute = remainingData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
     const doneData = sourceData.filter(data => data.done);
     const doneMinute = doneData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
     const actuallyData = doneData;
     const actuallyMinute = actuallyData.map(data => (typeof data.actually === 'number' ? data.actually : 0)).reduce((p, c) => p + c, 0);
-    const remainingData = sourceData.filter(data => !data.done);
-    const remainingMinute = remainingData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
 
+    const currentMoment = moment();    
+    const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState(() => ({
       allTasks: sourceData,
       estimateTasks: { minute: estimateMinute, taskNum: estimateData.length },
+      remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
       doneTasks: { minute: doneMinute, taskNum: doneData.length },
       actuallyTasks: { minute: actuallyMinute, taskNum: actuallyData.length },
-      remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
-      endMoment: moment().add(remainingMinute, 'minutes'),
+      currentTime: { hour: currentMoment.hour(), minute: currentMoment.minute(), second: currentMoment.second() },
+      endTime: { hour: endMoment.hour(), minute: endMoment.minute(), second: endMoment.second() },
     }));
   }
 
@@ -144,7 +163,7 @@ class App extends Component {
       this.setState(() => ({
         loading: false,
       }));
-      this.setStateFromHot();      
+      this.setStateFromHot();
     });
   }
 
@@ -268,10 +287,10 @@ class App extends Component {
                       </Typography>
                       <Grid container spacing={5}>
                         <Grid item xs={6}>
-                          <Clock title={'現在時刻'} moment={moment()} updateFlg />
+                          <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
                         </Grid>
                         <Grid item xs={6}>
-                          <Clock title={'終了時刻*'} caption="*残タスクの合計時間" moment={this.state.endMoment} />
+                          <Clock title={'終了時刻*'} caption="*残タスクの合計時間" time={this.state.endTime} updateFlg />
                         </Grid>
                       </Grid>
                     </Grid>
