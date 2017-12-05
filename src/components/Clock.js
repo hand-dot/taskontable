@@ -37,7 +37,9 @@ class Clock extends Component {
     const $minute = this.minute;
     const $second = this.second;
     const timedUpdate = () => {
-      this.state.moment.add(1, 'seconds');
+      this.setState({
+        moment: this.state.moment.add(1, 'seconds'),
+      });
       const hour = this.state.moment.hour();
       const minute = this.state.moment.minute();
       const second = this.state.moment.second();
@@ -50,11 +52,12 @@ class Clock extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.state.moment.hour(nextProps.time.hour);
-    this.state.moment.minute(nextProps.time.minute);
-    this.state.moment.second(nextProps.time.second);
+    const myMoment = moment();
+    myMoment.hour(nextProps.time.hour);
+    myMoment.minute(nextProps.time.minute);
+    myMoment.second(nextProps.time.second);
     this.setState({
-      moment: this.state.moment,
+      moment: myMoment,
     });
   }
 
