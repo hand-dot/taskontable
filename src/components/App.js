@@ -26,6 +26,7 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { LinearProgress } from 'material-ui/Progress';
+import Tooltip from 'material-ui/Tooltip';
 
 import GlobalHeader from './GlobalHeader';
 import TodaySummary from './TodaySummary';
@@ -68,6 +69,7 @@ const initialState = {
   remainingTasks: { minute: 0, taskNum: 0 },
   currentTime: { hour: 0, minute: 0, second: 0 },
   endTime: { hour: 0, minute: 0, second: 0 },
+  lastSaveTime: { hour: 0, minute: 0, second: 0 },
   categories: [],
   categoryInput: '',
   allTasks: [],
@@ -94,6 +96,11 @@ class App extends Component {
         hour: currentMoment.hour(),
         minute: currentMoment.minute(),
         second: currentMoment.second(),
+      },
+      lastSaveTime: {
+        hour: currentMoment.hour(),
+        minute: currentMoment.minute(),
+        second: currentMoment.second(),      
       },
     });
   }
@@ -275,6 +282,7 @@ class App extends Component {
   saveTask(data) {
     this.setState(() => ({
       loading: true,
+      lastSaveTime: cloneDeep(this.state.currentTime),
     }));
     firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(data).then(() => {
       setTimeout(() => {
@@ -402,10 +410,13 @@ class App extends Component {
                         <AddIcon />
                           追加
                       </Button>
-                      <Button raised onClick={this.saveHot.bind(this)} color="default">
-                        <SaveIcon />
+                      <Tooltip id="tooltip-top" title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
+                        <Button raised onClick={this.saveHot.bind(this)} color="default">
+                          <SaveIcon />
                          保存
-                      </Button>
+                        </Button>
+                      </Tooltip>
+
                     </div>
                   </Grid>
                   <Grid item xs={12} style={{ paddingTop: 0 }}>
