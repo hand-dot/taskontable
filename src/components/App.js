@@ -28,6 +28,8 @@ import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { LinearProgress } from 'material-ui/Progress';
 import Tooltip from 'material-ui/Tooltip';
 
+import initialState from '../state/initialState'
+
 import GlobalHeader from './GlobalHeader';
 import TodaySummary from './TodaySummary';
 import DatePicker from './DatePicker';
@@ -58,24 +60,6 @@ function addTask() {
     hot.alter('insert_row');
   }
 }
-
-const initialState = {
-  loading: true,
-  notifiable: true,
-  date: moment().format('YYYY-MM-DD'),
-  estimateTasks: { minute: 0, taskNum: 0 },
-  doneTasks: { minute: 0, taskNum: 0 },
-  actuallyTasks: { minute: 0, taskNum: 0 },
-  remainingTasks: { minute: 0, taskNum: 0 },
-  currentTime: { hour: 0, minute: 0, second: 0 },
-  endTime: { hour: 0, minute: 0, second: 0 },
-  lastSaveTime: { hour: 0, minute: 0, second: 0 },
-  categories: [],
-  categoryInput: '',
-  allTasks: [],
-  isOpenLoginDialog: false,
-  userId: '',
-};
 
 class App extends Component {
   constructor(props) {
