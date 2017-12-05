@@ -57,25 +57,28 @@ function addTask() {
     hot.alter('insert_row');
   }
 }
+
+const initialState = {
+  loading: true,
+  notifiable: true,
+  date: moment().format('YYYY-MM-DD'),
+  estimateTasks: { minute: 0, taskNum: 0 },
+  doneTasks: { minute: 0, taskNum: 0 },
+  actuallyTasks: { minute: 0, taskNum: 0 },
+  remainingTasks: { minute: 0, taskNum: 0 },
+  currentTime: { hour: 0, minute: 0, second: 0 },
+  endTime: { hour: 0, minute: 0, second: 0 },
+  categories: [],
+  categoryInput: '',
+  allTasks: [],
+  isOpenLoginDialog: false,
+  userId: '',
+};
+
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      loading: true,
-      notifiable: true,
-      date: moment().format('YYYY-MM-DD'),
-      estimateTasks: { minute: 0, taskNum: 0 },
-      doneTasks: { minute: 0, taskNum: 0 },
-      actuallyTasks: { minute: 0, taskNum: 0 },
-      remainingTasks: { minute: 0, taskNum: 0 },
-      currentTime: { hour: 0, minute: 0, second: 0 },
-      endTime: { hour: 0, minute: 0, second: 0 },
-      categories: [],
-      categoryInput: '',
-      allTasks: [],
-      openingUserIdDialog: false,
-      userId: '',
-    };
+    this.state = initialState;
   }
 
   componentWillMount() {
@@ -96,7 +99,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.openUserIdDialog();
+    this.logIn();
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       beforeChangeRender() {
@@ -111,6 +114,10 @@ class App extends Component {
     }));
     this.setStateFromHot();
     this.setDefaultCategories();
+  }
+
+  setAInitialState() {
+    this.setState(initialState);
   }
 
   setStateFromHot() {
@@ -205,30 +212,46 @@ class App extends Component {
     }
   }
 
-  openUserIdDialog() {
-    const localStorageUserId = localStorage.getItem('userId');
-    if (localStorageUserId) {
-      this.setState({
-        userId: localStorageUserId,
-      });
-      setTimeout(this.closeUserIdDialog.bind(this), 0);
+  logIn() {
+    // FIXME localstrage実装は暫時対応
+    const userId = localStorage.getItem('userId') || this.state.userId;
+    if (userId) {
+      localStorage.setItem('userId', userId);
+      this.setState({ userId });
+      // テーブルの初期化
+      setTimeout(() => {
+        this.fetchTask(this.state.userId, this.state.date).then((snapshot) => {
+          if (hot && snapshot.exists()) {
+            hot.updateSettings({ data: snapshot.val() });
+          }
+        });
+      }, 0);
+      this.closeLoginDialog();
     } else {
-      this.setState({ openingUserIdDialog: true });
+      this.openLoginDialog();
     }
   }
 
-  closeUserIdDialog() {
-    this.setState({ openingUserIdDialog: false });
-    if (this.state.userId !== '') {
-      // ローカルストレージにuserIdを入れる
-      localStorage.setItem('userId', this.state.userId);
-      // データの初回読み込み
-      this.fetchTask(this.state.userId, this.state.date).then((snapshot) => {
-        if (snapshot.exists()) {
-          hot.updateSettings({ data: snapshot.val() });
-        }
-      });
-    }
+  logOut() {
+    // FIXME localstrage実装は暫時対応
+    localStorage.removeItem('userId');
+    // stateの初期化
+    this.setAInitialState();
+    // テーブルのクリア
+    setTimeout(() => {
+      if (hot) {
+        hot.updateSettings({ data: {} });
+      }
+    }, 0);
+    this.openLoginDialog();
+  }
+
+  openLoginDialog() {
+    this.setState({ isOpenLoginDialog: true });
+  }
+
+  closeLoginDialog() {
+    this.setState({ isOpenLoginDialog: false });
   }
 
   saveHot() {
@@ -283,7 +306,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <GlobalHeader userId={this.state.userId} />
+        <GlobalHeader userId={this.state.userId} logOut={this.logOut.bind(this)} />
         <div className="App">
           <div>
             <Grid container spacing={5}>
@@ -394,7 +417,7 @@ class App extends Component {
             </Grid>
           </div>
         </div>
-        <Dialog open={this.state.openingUserIdDialog} onRequestClose={this.closeUserIdDialog.bind(this)}>
+        <Dialog open={this.state.isOpenLoginDialog}>
           <DialogTitle>ユーザーIDを入力して下さい</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -423,7 +446,7 @@ class App extends Component {
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.closeUserIdDialog.bind(this)} color="primary">
+            <Button onClick={this.logIn.bind(this)} color="primary">
                 はじめる
             </Button>
           </DialogActions>
