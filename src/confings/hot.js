@@ -1,14 +1,14 @@
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 
-const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '', impre: '' };
+const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '' };
 const data = [cloneDeep(dataSchema)];
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
     data: 'done',
     type: 'checkbox',
-    colWidths: 30,
+    colWidths: 20,
     readOnly: true,
     className: 'htCenter htMiddle',
   },
@@ -17,7 +17,7 @@ const columns = [
     data: 'category',
     type: 'dropdown',
     source: [],
-    colWidths: 100,
+    colWidths: 50,
     validator: false,
   },
   {
@@ -29,13 +29,13 @@ const columns = [
     title: '<span title="見積時間 数値で入力してください。">見積(分)</span>',
     data: 'estimate',
     type: 'numeric',
-    colWidths: 60,
+    colWidths: 45,
   },
   {
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">開始時刻</span>',
     data: 'startTime',
     type: 'time',
-    colWidths: 60,
+    colWidths: 45,
     timeFormat: 'HH:mm',
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
@@ -51,7 +51,7 @@ const columns = [
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">終了時刻</span>',
     data: 'endTime',
     type: 'time',
-    colWidths: 60,
+    colWidths: 45,
     timeFormat: 'HH:mm',
     correctFormat: true,
   },
@@ -60,7 +60,7 @@ const columns = [
     data: 'actually',
     type: 'numeric',
     validator: false,
-    colWidths: 60,
+    colWidths: 45,
     readOnly: true,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value, cellProperties) {
@@ -76,11 +76,6 @@ const columns = [
   {
     title: '<span title="タスクの実行に役立つ参照情報(メモ)を入力します。">備考</span>',
     data: 'memo',
-    type: 'text',
-  },
-  {
-    title: '<span title="タスクの実行後に所感を入力します。">感想</span>',
-    data: 'impre',
     type: 'text',
   },
 ];
@@ -258,7 +253,7 @@ export default {
   rowHeaders: true,
   autoInsertRow: false,
   manualRowMove: true,
-  colWidths: Math.round(960 / 9),
+  colWidths: Math.round(960 / 8),
   columns,
   data,
   dataSchema,
