@@ -86,22 +86,15 @@ class App extends Component {
   componentWillMount() {
     // 初期値の現在時刻と終了時刻
     const currentMoment = moment();
+    const timeObj = {
+      hour: currentMoment.hour(),
+      minute: currentMoment.minute(),
+      second: currentMoment.second(),
+    };
     this.setState({
-      currentTime: {
-        hour: currentMoment.hour(),
-        minute: currentMoment.minute(),
-        second: currentMoment.second(),
-      },
-      endTime: {
-        hour: currentMoment.hour(),
-        minute: currentMoment.minute(),
-        second: currentMoment.second(),
-      },
-      lastSaveTime: {
-        hour: currentMoment.hour(),
-        minute: currentMoment.minute(),
-        second: currentMoment.second(),      
-      },
+      currentTime: timeObj,
+      endTime: timeObj,
+      lastSaveTime: timeObj,
     });
   }
 
@@ -120,7 +113,7 @@ class App extends Component {
       },
     }));
     this.setStateFromHot();
-    this.setDefaultCategories();
+    this.initCategories();
   }
 
   setAInitialState() {
@@ -130,93 +123,25 @@ class App extends Component {
   setStateFromHot() {
     const sourceData = cloneDeep(hot.getSourceData());
     if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
-    const estimateData = sourceData;
-    const estimateMinute = sourceData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+    const totalMinute = (datas, prop) => datas.map(data => (typeof data[prop] === 'number' ? data[prop] : 0)).reduce((p, c) => p + c, 0);    
     const remainingData = sourceData.filter(data => !data.done);
-    const remainingMinute = remainingData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+    const remainingMinute = totalMinute(remainingData, 'estimate');
     const doneData = sourceData.filter(data => data.done);
-    const doneMinute = doneData.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
-    const actuallyData = doneData;
-    const actuallyMinute = actuallyData.map(data => (typeof data.actually === 'number' ? data.actually : 0)).reduce((p, c) => p + c, 0);
-
     const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState(() => ({
       allTasks: sourceData,
-      estimateTasks: { minute: estimateMinute, taskNum: estimateData.length },
+      estimateTasks: { minute: totalMinute(sourceData, 'estimate'), taskNum: sourceData.length },
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
-      doneTasks: { minute: doneMinute, taskNum: doneData.length },
-      actuallyTasks: { minute: actuallyMinute, taskNum: actuallyData.length },
+      doneTasks: { minute: totalMinute(doneData, 'estimate'), taskNum: doneData.length },
+      actuallyTasks: { minute: totalMinute(doneData, 'actually'), taskNum: doneData.length },
       currentTime: { hour: currentMoment.hour(), minute: currentMoment.minute(), second: currentMoment.second() },
       endTime: { hour: endMoment.hour(), minute: endMoment.minute(), second: endMoment.second() },
     }));
   }
 
-  setDefaultCategories() {
-    const labels = ['生活', '業務', '雑務', '休憩'];
-    const timestamp = Date.now();
-    const defaultCategories = labels.map((label, index) => ({ id: timestamp + index, text: label }));
-    this.setState(() => ({
-      categories: defaultCategories,
-      categoryInput: '',
-    }));
-    updateHotCategory(defaultCategories.map(cat => cat.text));
-  }
-
-  changeDate(event) {
-    if (!hot) return;
-    event.persist();
-    this.setState(() => ({
-      date: event.target.value,
-    }));
-    this.fetchTask(this.state.userId, event.target.value).then((snapshot) => {
-      if (snapshot.exists()) {
-        // データが存在していたら読み込む
-        hot.updateSettings({ data: snapshot.val() });
-      } else {
-        // データが存在していないので、データを空にする
-        hot.updateSettings({ data: {} });
-      }
-      this.setStateFromHot();
-    });
-  }
-
-  changeCategoryInput(e) {
-    this.setState({ categoryInput: e.target.value });
-  }
-
-  addCategory(e) {
-    e.preventDefault();
-    if (!this.state.categoryInput.length) {
-      return;
-    }
-    const newItem = {
-      text: this.state.categoryInput,
-      id: Date.now(),
-    };
-    this.setState(prevState => ({
-      categories: prevState.categories.concat(newItem),
-      categoryInput: '',
-    }));
-    updateHotCategory(this.state.categories.concat(newItem).map(cat => cat.text));
-  }
-
-  removeCategory(index) {
-    const categories = cloneDeep(this.state.categories);
-    categories.splice(index, 1);
-    this.setState(() => ({
-      categories,
-    }));
-    updateHotCategory(categories.map(cat => cat.text));
-  }
-
-  toggleNotifiable(event, checked) {
-    if ('Notification' in window) {
-      Notification = checked ? NotificationClone : false;
-      this.setState(() => ({
-        notifiable: checked,
-      }));
-    }
+  changeUserId(e) {
+    this.setState({ userId: e.target.value });
   }
 
   logIn() {
@@ -261,6 +186,73 @@ class App extends Component {
     this.setState({ isOpenLoginDialog: false });
   }
 
+  toggleNotifiable(event, checked) {
+    if ('Notification' in window) {
+      Notification = checked ? NotificationClone : false;　// eslint-disable-line
+      this.setState(() => ({
+        notifiable: checked,
+      }));
+    }
+  }
+
+  changeDate(event) {
+    if (!hot) return;
+    event.persist();
+    this.setState(() => ({
+      date: event.target.value,
+    }));
+    this.fetchTask(this.state.userId, event.target.value).then((snapshot) => {
+      if (snapshot.exists()) {
+        // データが存在していたら読み込む
+        hot.updateSettings({ data: snapshot.val() });
+      } else {
+        // データが存在していないので、テーブルを空にする
+        hot.updateSettings({ data: {} });
+      }
+      this.setStateFromHot();
+    });
+  }
+
+  initCategories() {
+    const labels = ['生活', '業務', '雑務', '休憩'];
+    const timestamp = Date.now();
+    const initCategories = labels.map((label, index) => ({ id: timestamp + index, text: label }));
+    this.setState(() => ({
+      categories: initCategories,
+      categoryInput: '',
+    }));
+    updateHotCategory(initCategories.map(cat => cat.text));
+  }
+
+  changeCategoryInput(e) {
+    this.setState({ categoryInput: e.target.value });
+  }
+
+  addCategory(e) {
+    e.preventDefault();
+    if (!this.state.categoryInput.length) {
+      return;
+    }
+    const newItem = {
+      text: this.state.categoryInput,
+      id: Date.now(),
+    };
+    this.setState(prevState => ({
+      categories: prevState.categories.concat(newItem),
+      categoryInput: '',
+    }));
+    updateHotCategory(this.state.categories.concat(newItem).map(cat => cat.text));
+  }
+
+  removeCategory(index) {
+    const categories = cloneDeep(this.state.categories);
+    categories.splice(index, 1);
+    this.setState(() => ({
+      categories,
+    }));
+    updateHotCategory(categories.map(cat => cat.text));
+  }
+
   saveHot() {
     if (hot) {
       const sourceData = hot.getSourceData();
@@ -280,9 +272,15 @@ class App extends Component {
   }
 
   saveTask(data) {
+    const currentMoment = moment();
+    const timeObj = {
+      hour: currentMoment.hour(),
+      minute: currentMoment.minute(),
+      second: currentMoment.second(),
+    };
     this.setState(() => ({
       loading: true,
-      lastSaveTime: cloneDeep(this.state.currentTime),
+      lastSaveTime: timeObj,
     }));
     firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(data).then(() => {
       setTimeout(() => {
@@ -305,10 +303,6 @@ class App extends Component {
       }, loadingDuration);
       return snapshot;
     });
-  }
-
-  changeUserId(e) {
-    this.setState({ userId: e.target.value });
   }
 
   render() {
