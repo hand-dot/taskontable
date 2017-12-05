@@ -123,7 +123,7 @@ class App extends Component {
   setStateFromHot() {
     const sourceData = cloneDeep(hot.getSourceData());
     if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
-    const totalMinute = (datas, prop) => datas.map(data => (typeof data[prop] === 'number' ? data[prop] : 0)).reduce((p, c) => p + c, 0);    
+    const totalMinute = (datas, prop) => datas.map(data => (typeof data[prop] === 'number' ? data[prop] : 0)).reduce((p, c) => p + c, 0);
     const remainingData = sourceData.filter(data => !data.done);
     const remainingMinute = totalMinute(remainingData, 'estimate');
     const doneData = sourceData.filter(data => data.done);
@@ -135,8 +135,15 @@ class App extends Component {
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
       doneTasks: { minute: totalMinute(doneData, 'estimate'), taskNum: doneData.length },
       actuallyTasks: { minute: totalMinute(doneData, 'actually'), taskNum: doneData.length },
-      currentTime: { hour: currentMoment.hour(), minute: currentMoment.minute(), second: currentMoment.second() },
-      endTime: { hour: endMoment.hour(), minute: endMoment.minute(), second: endMoment.second() },
+      currentTime: {
+        hour: currentMoment.hour(),
+        minute: currentMoment.minute(),
+        second: currentMoment.second(),
+      },
+      endTime: { hour: endMoment.hour(),
+        minute: endMoment.minute(),
+        second: endMoment.second(),
+      },
     }));
   }
 
@@ -372,7 +379,7 @@ class App extends Component {
                          *通知予約を行うには見積を入力したタスクの開始時刻を入力(変更)してください。
                       </Typography>
                       <Typography type="caption" gutterBottom>
-                         *通知が予約されたら開始時刻のセルに　[ ! ]　マークがつきます。
+                         *通知が予約されたら開始時刻のセルに [ ! ] マークがつきます。
                       </Typography>
                       <Typography type="caption" gutterBottom>
                         *開始時刻を削除、もしくは終了時刻を入力すると予約を削除することができます。
