@@ -37,6 +37,10 @@ import firebaseConf from '../confings/firebase';
 import hotConf from '../confings/hot';
 import '../styles/App.css';
 
+// ローディングが早すぎて一回もロードされてないように見えるため、
+// デザイン目的で最低でも1秒はローディングするようにしている。実際ないほうが良い。
+const loadingDuration = 1000;
+
 const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
 firebase.initializeApp(firebaseConf);
 
@@ -148,10 +152,6 @@ class App extends Component {
   changeDate(event) {
     if (!hot) return;
     event.persist();
-    this.setState(() => ({
-      date: event.target.value,
-      loading: true,
-    }));
     this.fetchTask(this.state.userId, event.target.value).then((snapshot) => {
       if (snapshot.exists()) {
         // データが存在していたら読み込む
@@ -202,45 +202,20 @@ class App extends Component {
     }
   }
 
-  saveTask() {
-    if (hot) {
-      const sourceData = hot.getSourceData();
-      let isEmpty = true;
-      sourceData.forEach((data) => {
-        Object.entries(data).forEach((entry) => {
-          if (entry[1]) isEmpty = false;
-        });
-      });
-      // タスク一覧に何もデータが入っていなかったら保存しない
-      if (!isEmpty) {
-        this.setState(() => ({
-          loading: true,
-        }));
-        firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(sourceData).then(() => {
-          alert(`${this.state.date} のタスク一覧を保存しました。`);
-          this.setState(() => ({
-            loading: false,
-          }));
-        });
-      } else {
-        alert('タスクがありません。');
-      }
-    }
-  }
-
   openUserIdDialog() {
-    this.setState({ openingUserIdDialog: true });
     const localStorageUserId = localStorage.getItem('userId');
     if (localStorageUserId) {
       this.setState({
         userId: localStorageUserId,
       });
       setTimeout(this.closeUserIdDialog.bind(this), 0);
+    } else {
+      this.setState({ openingUserIdDialog: true });
     }
   }
 
   closeUserIdDialog() {
-    this.setState({ openingUserIdDialog: false });    
+    this.setState({ openingUserIdDialog: false });
     if (this.state.userId !== '') {
       // ローカルストレージにuserIdを入れる
       localStorage.setItem('userId', this.state.userId);
@@ -253,14 +228,47 @@ class App extends Component {
     }
   }
 
+  saveHot() {
+    if (hot) {
+      const sourceData = hot.getSourceData();
+      let isEmptyTask = true;
+      sourceData.forEach((data) => {
+        Object.entries(data).forEach((entry) => {
+          if (entry[1]) isEmptyTask = false;
+        });
+      });
+      // タスク一覧に何もデータが入っていなかったら保存しない
+      if (!isEmptyTask) {
+        this.saveTask(sourceData);
+      } else {
+        alert('タスクがありません。');
+      }
+    }
+  }
+
+  saveTask(data) {
+    this.setState(() => ({
+      loading: true,
+    }));
+    firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(data).then(() => {
+      setTimeout(() => {
+        this.setState(() => ({
+          loading: false,
+        }));
+      }, loadingDuration);
+    });
+  }
+
   fetchTask(userId, date) {
     this.setState(() => ({
       loading: true,
     }));
     return firebase.database().ref(`/${userId}/${date}`).once('value').then((snapshot) => {
-      this.setState(() => ({
-        loading: false,
-      }));
+      setTimeout(() => {
+        this.setState(() => ({
+          loading: false,
+        }));
+      }, loadingDuration);
       return snapshot;
     });
   }
@@ -368,7 +376,7 @@ class App extends Component {
                         <AddIcon />
                           追加
                       </Button>
-                      <Button raised onClick={this.saveTask.bind(this)} color="default">
+                      <Button raised onClick={this.saveHot.bind(this)} color="default">
                         <SaveIcon />
                          保存
                       </Button>
