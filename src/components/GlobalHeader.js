@@ -58,7 +58,7 @@ class GlobalHeader extends Component {
               <IconButton
                 aria-owns={open ? 'menu-appbar' : null}
                 aria-haspopup="true"
-                onClick={this.handleMenu}
+                onClick={this.handleMenu.bind(this)}
               >
                 <AccountCircle />
               </IconButton>
@@ -74,10 +74,10 @@ class GlobalHeader extends Component {
                   horizontal: 'right',
                 }}
                 open={open}
-                onRequestClose={this.handleRequestClose}
+                onRequestClose={this.handleRequestClose.bind(this)}
               >
                 <MenuItem>ユーザーID: {userId}</MenuItem>
-                <MenuItem onClick={this.logOut}>ログアウト</MenuItem>
+                <MenuItem onClick={this.logOut.bind(this)}>ログアウト</MenuItem>
               </Menu>
             </div>
           </Toolbar>
