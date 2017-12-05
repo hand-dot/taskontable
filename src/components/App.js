@@ -152,6 +152,9 @@ class App extends Component {
   changeDate(event) {
     if (!hot) return;
     event.persist();
+    this.setState(() => ({
+      date: event.target.value,
+    }));
     this.fetchTask(this.state.userId, event.target.value).then((snapshot) => {
       if (snapshot.exists()) {
         // データが存在していたら読み込む
