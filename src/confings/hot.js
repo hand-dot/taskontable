@@ -248,7 +248,7 @@ export default {
   afterChange(changes) {
     if (!changes) return;
     changes.forEach((change) => {
-      const [row, prop, oldVal, newVal] = [change[0], change[1], change[2], change[3]];
+      const [row, prop, oldVal, newVal] = change;
       if (oldVal !== newVal) {
         calculateTask(this, row, prop);
         manageNotification(this, row, prop, newVal);
