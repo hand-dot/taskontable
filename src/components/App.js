@@ -146,6 +146,7 @@ class App extends Component {
         this.fetchTask(this.state.userId, this.state.date).then((snapshot) => {
           if (hot && snapshot.exists()) {
             hot.updateSettings({ data: snapshot.val() });
+            this.setStateFromHot();
           }
         });
       }, 0);
