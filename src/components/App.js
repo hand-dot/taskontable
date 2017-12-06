@@ -86,6 +86,41 @@ class App extends Component {
     this.logIn();
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
+      contextMenu: {
+        callback(key) {
+          if (key === 'set_current_time') {
+            const [row, col] = this.getSelected();        
+            this.setDataAtCell(row, col, moment().format('HH:mm'));    
+          }
+        },
+        items: {
+          set_current_time: {
+            name: '現在時刻を入力する',
+            disabled() {
+              const [startRow, startCol, endRow, endCol] = this.getSelected();
+              const prop = this.colToProp(startCol); 
+              return startRow !== endRow || startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
+            },
+          },
+          hsep1: '---------',
+          row_above: {
+            name: '上に行を追加する',
+            disabled() {
+              return this.getSelected()[0] === 0;
+            },
+          },
+          row_below: {
+            name: '下に行を追加する',
+          },
+          hsep2: '---------',
+          remove_row: {
+            name: '行を削除する',
+            disabled() {
+              return this.getSelected()[0] === 0;
+            },
+          },
+        },
+      },
       beforeChangeRender() {
         self.setStateFromHot();
       },

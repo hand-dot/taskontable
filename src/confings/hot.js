@@ -97,26 +97,6 @@ const setValidtionMessage = (hotInstance, row, prop, isValid) => {
   }
 };
 
-const setStartOrEndTime = (hotInstance, row, prop) => {
-  const cellData = hotInstance.getDataAtRowProp(row, prop);
-  if (prop === 'startTime' && cellData === '') {
-  // 編集を始めたセルが開始時刻かつ、セルが空の場合
-  // 現在時刻を入力する
-    hotInstance.setDataAtRowProp(row, prop, moment().format('HH:mm'));
-  } else if (prop === 'endTime' && cellData === '') {
-    // 編集を始めたセルが終了時刻かつ、セルが空の場合
-    const startTimeVal = hotInstance.getDataAtRowProp(row, 'startTime');
-    if (startTimeVal === '') {
-      // 開始時刻が入力されていない場合開始時刻を入力させる
-      alert('開始時刻を入力してください');
-      hotInstance.selectCell(row, hotInstance.propToCol('startTime'));
-    } else {
-      // 現在時刻を入力する
-      hotInstance.setDataAtRowProp(row, prop, moment().format('HH:mm'));
-    }
-  }
-};
-
 const calculateTask = (hotInstance, row, prop) => {
   const col = hotInstance.propToCol(prop);
   if (prop === 'startTime' || prop === 'endTime') {
@@ -199,13 +179,16 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
     }
 
     const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
-    // 見積もり時刻が空か0
+    const notifiMoment = moment(newVal, 'HH:mm').add(estimateVal, 'minutes');
+    // 終了予定時刻が不正
+    // もしくは見積もり時刻が空か0
     // もしくは開始時刻がヴァリデーションエラーもしくは見積もり時間が不正な場合は処理を抜ける
-    if (estimateVal === '' || estimateVal === 0 ||
+    if (!notifiMoment.isValid() ||
+      estimateVal === '' || estimateVal === 0 ||
     !hotInstance.getCellMeta(row, col).valid || !Number.isInteger(+estimateVal)) {
       return;
     }
-    const notifiMoment = moment(newVal, 'HH:mm').add(estimateVal, 'minutes');
+
     const notifiRegistMsg = `見積時刻の設定されたタスクが開始されました。
 終了予定時刻(${notifiMoment.format('HH:mm')})に通知を設定しますか？
 (初回は通知の許可が求められます。)`;
@@ -234,6 +217,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
             hotInstance.render();
           }, notifiMoment.toDate().getTime() - Date.now());
           hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiMoment.format('HH:mm') });
+          hotInstance.render();          
         });
     }
   } else if (prop === 'endTime') {
@@ -243,6 +227,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
     if (notification && window.confirm('このタスクの終了予定時刻に予約されている通知がありますが、削除してもよろしいですか？')) {
       clearTimeout(notification.id);
       hotInstance.removeCellMeta(row, startTimeCol, 'notification');
+      hotInstance.render();
     }
   }
 };
@@ -257,31 +242,8 @@ export default {
   columns,
   data,
   dataSchema,
-  contextMenu: {
-    items: {
-      row_above: {
-        name: '上に行を追加する',
-        disabled() {
-          return this.getSelected()[0] === 0;
-        },
-      },
-      row_below: {
-        name: '下に行を追加する',
-      },
-      hsep1: '---------',
-      remove_row: {
-        name: '行を削除する',
-        disabled() {
-          return this.getSelected()[0] === 0;
-        },
-      },
-    },
-  },
   afterValidate(isValid, value, row, prop) {
     setValidtionMessage(this, row, prop, isValid);
-  },
-  afterBeginEditing(row, col) {
-    setStartOrEndTime(this, row, this.colToProp(col));
   },
   afterChange(changes) {
     if (!changes) return;
