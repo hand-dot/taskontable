@@ -9,22 +9,23 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "firebase": "^4.6.2",
-    "handsontable": "^0.34.5",
+    "firebase": "^4.7.0",
+    "font-awesome": "^4.7.0",
+    "handsontable": "^0.35.0",
     "lodash.clonedeep": "^4.5.0",
     "material-ui": "^1.0.0-beta.22",
     "material-ui-icons": "^1.0.0-beta.17",
-    "moment": "^2.19.2",
+    "moment": "^2.19.3",
     "prop-types": "^15.6.0",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-scripts": "1.0.17"
   },
   "devDependencies": {
-    "eslint": "^4.4.1",
+    "eslint": "^4.12.1",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
-    "eslint-plugin-react": "^7.2.1"
+    "eslint-plugin-react": "^7.5.1"
   }
 }
