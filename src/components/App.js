@@ -28,7 +28,7 @@ import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { LinearProgress } from 'material-ui/Progress';
 import Tooltip from 'material-ui/Tooltip';
 
-import initialState from '../state/initialState'
+import initialState from '../state/initialState';
 
 import GlobalHeader from './GlobalHeader';
 import TodaySummary from './TodaySummary';
@@ -95,6 +95,9 @@ class App extends Component {
       afterRemoveRow() {
         self.setStateFromHot();
       },
+      afterUpdateSettings() {
+        self.setStateFromHot();
+      },
     }));
     this.setStateFromHot();
     this.initCategories();
@@ -146,7 +149,6 @@ class App extends Component {
         this.fetchTask(this.state.userId, this.state.date).then((snapshot) => {
           if (hot && snapshot.exists()) {
             hot.updateSettings({ data: snapshot.val() });
-            this.setStateFromHot();
           }
         });
       }, 0);
@@ -201,7 +203,6 @@ class App extends Component {
         // データが存在していないので、テーブルを空にする
         hot.updateSettings({ data: {} });
       }
-      this.setStateFromHot();
     });
   }
 
