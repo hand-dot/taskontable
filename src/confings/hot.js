@@ -42,7 +42,7 @@ const columns = [
       td.innerHTML = value;
       const notification = cellProperties.notification;
       if (notification) {
-        td.innerHTML = `<div title="${notification.time}通知予約済">${value}<span style="font-size: 10pt;">[!]</span></div>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<div title="${notification.time}通知予約済">${value} <i class="fa fa-clock-o"></i></div>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
@@ -189,42 +189,37 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
       return;
     }
 
-    const notifiRegistMsg = `見積時刻の設定されたタスクが開始されました。
-終了予定時刻(${notifiMoment.format('HH:mm')})に通知を設定しますか？
-(初回は通知の許可が求められます。)`;
-    if (window.confirm(notifiRegistMsg)) {
-      // 権限を取得し通知を登録
-      Notification
-        .requestPermission()
-        .then(() => {
-          // 既に設定されているタイマーを削除
+    // 権限を取得し通知を登録
+    Notification
+      .requestPermission()
+      .then(() => {
+        // 既に設定されているタイマーを削除
+        hotInstance.removeCellMeta(row, col, 'notification');
+        // タイマーを登録(セルにタイマーIDを設定)
+        const notifiId = setTimeout(() => {
+          // タイマーが削除されていた場合には何もしない
+          if (!hotInstance.getCellMeta(row, col).notification) return;
           hotInstance.removeCellMeta(row, col, 'notification');
-          // タイマーを登録(セルにタイマーIDを設定)
-          const notifiId = setTimeout(() => {
-            // タイマーが削除されていた場合には何もしない
-            if (!hotInstance.getCellMeta(row, col).notification) return;
-            hotInstance.removeCellMeta(row, col, 'notification');
-            const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-            const notifi = new Notification(taskTitle ? `${taskTitle}の終了時刻です。` : 'タスクの終了時刻です。', {
-              body: 'クリックしてタスクに終了時刻を入力し完了させてください。',
-              icon: `${window.location.href}favicon.ico`,
-            });
-            notifi.onclick = () => {
-              notifi.close();
-              window.focus();
-              hotInstance.selectCell(row, hotInstance.propToCol('endTime'));
-            };
-            hotInstance.render();
-          }, notifiMoment.toDate().getTime() - Date.now());
-          hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiMoment.format('HH:mm') });
-          hotInstance.render();          
-        });
-    }
+          const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
+          const notifi = new Notification(taskTitle ? `${taskTitle}の終了時刻です。` : 'タスクの終了時刻です。', {
+            body: 'クリックしてタスクに終了時刻を入力し完了させてください。',
+            icon: `${window.location.href}favicon.ico`,
+          });
+          notifi.onclick = () => {
+            notifi.close();
+            window.focus();
+            hotInstance.selectCell(row, hotInstance.propToCol('endTime'));
+          };
+          hotInstance.render();
+        }, notifiMoment.toDate().getTime() - Date.now());
+        hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiMoment.format('HH:mm') });
+        hotInstance.render();
+      });
   } else if (prop === 'endTime') {
     // startTimeのセルにタイマーIDがあれば確認をして削除
     const startTimeCol = hotInstance.propToCol('startTime');
     const notification = hotInstance.getCellMeta(row, startTimeCol).notification;
-    if (notification && window.confirm('このタスクの終了予定時刻に予約されている通知がありますが、削除してもよろしいですか？')) {
+    if (notification) {
       clearTimeout(notification.id);
       hotInstance.removeCellMeta(row, startTimeCol, 'notification');
       hotInstance.render();

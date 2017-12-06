@@ -89,8 +89,8 @@ class App extends Component {
       contextMenu: {
         callback(key) {
           if (key === 'set_current_time') {
-            const [row, col] = this.getSelected();        
-            this.setDataAtCell(row, col, moment().format('HH:mm'));    
+            const [row, col] = this.getSelected();
+            this.setDataAtCell(row, col, moment().format('HH:mm'));
           }
         },
         items: {
@@ -98,7 +98,7 @@ class App extends Component {
             name: '現在時刻を入力する',
             disabled() {
               const [startRow, startCol, endRow, endCol] = this.getSelected();
-              const prop = this.colToProp(startCol); 
+              const prop = this.colToProp(startCol);
               return startRow !== endRow || startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
             },
           },
@@ -397,13 +397,13 @@ class App extends Component {
                   <Grid item xs={6}>
                     <FormGroup>
                       <Typography type="caption" gutterBottom>
-                         *通知予約を行うには見積を入力したタスクの開始時刻を入力(変更)してください。
+                         *終了通知の予約を行うには見積を入力したタスクの開始時刻を入力してください。
                       </Typography>
                       <Typography type="caption" gutterBottom>
-                         *通知が予約されたら開始時刻のセルに [ ! ] マークがつきます。
+                         *通知予約されたタスクの開始時刻に <i className="fa fa-clock-o fa-lg" /> が表示されます。(マウスホバーで予約時刻)
                       </Typography>
                       <Typography type="caption" gutterBottom>
-                        *開始時刻を削除、もしくは終了時刻を入力すると予約を削除することができます。
+                        *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。
                       </Typography>
                       <FormControlLabel
                         control={
@@ -419,13 +419,13 @@ class App extends Component {
                   </Grid>
                   <Grid item xs={6}>
                     <Typography type="caption" gutterBottom>
-                      *セル上で右クリックすることで行の追加・削除を行うことができます。
+                      *セル上で右クリックすると現在時刻の入力・行の追加・削除を行えます。
                     </Typography>
                     <Typography type="caption" gutterBottom>
                       *行を選択しドラッグアンドドロップでタスクを入れ替えることができます。
                     </Typography>
                     <Typography type="caption" gutterBottom>
-                        *マウスカーソルを列ヘッダーに上に重ねると各列の説明を見ることができます。
+                        *列ヘッダーにマウスホバーすると各列の説明を見ることができます。
                     </Typography>
                     <div style={{ margin: '15px 0', textAlign: 'right' }}>
                       <Button raised onClick={addTask} color="default">
