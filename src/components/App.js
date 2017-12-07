@@ -8,37 +8,36 @@ import 'handsontable/dist/handsontable.full.css';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import Grid from 'material-ui/Grid';
-import Input from 'material-ui/Input';
 import Button from 'material-ui/Button';
 import SaveIcon from 'material-ui-icons/Save';
 import AddIcon from 'material-ui-icons/Add';
 import Switch from 'material-ui/Switch';
 import { FormControlLabel, FormGroup } from 'material-ui/Form';
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import { LinearProgress } from 'material-ui/Progress';
 import Tooltip from 'material-ui/Tooltip';
 
-import initialState from '../state/initialState';
-
+import Dashboad from './Dashboad';
 import GlobalHeader from './GlobalHeader';
-import TodaySummary from './TodaySummary';
-import DatePicker from './DatePicker';
-import CategoryList from './CategoryList';
-import Clock from './Clock';
 
 import firebaseConf from '../confings/firebase';
 import { hotConf, emptyHotData } from '../confings/hot';
 import '../styles/App.css';
+
+const initialState = {
+  userId: '',
+  loading: true,
+  isOpenLoginDialog: false,
+  notifiable: true,
+  date: moment().format('YYYY-MM-DD'),
+  lastSaveTime: { hour: 0, minute: 0, second: 0 },
+  allTasks: [],
+};
 
 // ローディングが早すぎて一回もロードされてないように見えるため、
 // デザイン目的で最低でも1秒はローディングするようにしている。実際ないほうが良い。
@@ -47,13 +46,7 @@ const loadingDuration = 1000;
 const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
 firebase.initializeApp(firebaseConf);
 
-let hot;
-
-function updateHotCategory(source) {
-  const $hotConf = cloneDeep(hotConf);
-  $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
-  if (hot) hot.updateSettings({ columns: $hotConf.columns });
-}
+let hot = null;
 
 function addTask() {
   if (hot) {
@@ -68,7 +61,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    // 初期値の現在時刻と終了時刻
+    // 初期値の最終保存時刻
     const currentMoment = moment();
     const timeObj = {
       hour: currentMoment.hour(),
@@ -76,8 +69,6 @@ class App extends Component {
       second: currentMoment.second(),
     };
     this.setState({
-      currentTime: timeObj,
-      endTime: timeObj,
       lastSaveTime: timeObj,
     });
   }
@@ -134,8 +125,8 @@ class App extends Component {
         self.setStateFromHot();
       },
     }));
+    window.hot = hot;
     this.setStateFromHot();
-    this.initCategories();
   }
 
   setAInitialState() {
@@ -143,30 +134,13 @@ class App extends Component {
   }
 
   setStateFromHot() {
-    const sourceData = cloneDeep(hot.getSourceData());
-    if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
-    const totalMinute = (datas, prop) => datas.map(data => (typeof data[prop] === 'number' ? data[prop] : 0)).reduce((p, c) => p + c, 0);
-    const remainingData = sourceData.filter(data => !data.done);
-    const remainingMinute = totalMinute(remainingData, 'estimate');
-    const doneData = sourceData.filter(data => data.done);
-    const currentMoment = moment();
-    const endMoment = moment().add(remainingMinute, 'minutes');
-    this.setState(() => ({
-      allTasks: sourceData,
-      estimateTasks: { minute: totalMinute(sourceData, 'estimate'), taskNum: sourceData.length },
-      remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
-      doneTasks: { minute: totalMinute(doneData, 'estimate'), taskNum: doneData.length },
-      actuallyTasks: { minute: totalMinute(doneData, 'actually'), taskNum: doneData.length },
-      currentTime: {
-        hour: currentMoment.hour(),
-        minute: currentMoment.minute(),
-        second: currentMoment.second(),
-      },
-      endTime: { hour: endMoment.hour(),
-        minute: endMoment.minute(),
-        second: endMoment.second(),
-      },
-    }));
+    if (hot) {
+      const sourceData = cloneDeep(hot.getSourceData());
+      if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
+      this.setState({
+        allTasks: sourceData,
+      });
+    }
   }
 
   changeUserId(e) {
@@ -241,46 +215,6 @@ class App extends Component {
     });
   }
 
-  initCategories() {
-    const labels = ['生活', '業務', '雑務', '休憩'];
-    const timestamp = Date.now();
-    const initCategories = labels.map((label, index) => ({ id: timestamp + index, text: label }));
-    this.setState(() => ({
-      categories: initCategories,
-      categoryInput: '',
-    }));
-    updateHotCategory(initCategories.map(cat => cat.text));
-  }
-
-  changeCategoryInput(e) {
-    this.setState({ categoryInput: e.target.value });
-  }
-
-  addCategory(e) {
-    e.preventDefault();
-    if (!this.state.categoryInput.length) {
-      return;
-    }
-    const newItem = {
-      text: this.state.categoryInput,
-      id: Date.now(),
-    };
-    this.setState(prevState => ({
-      categories: prevState.categories.concat(newItem),
-      categoryInput: '',
-    }));
-    updateHotCategory(this.state.categories.concat(newItem).map(cat => cat.text));
-  }
-
-  removeCategory(index) {
-    const categories = cloneDeep(this.state.categories);
-    categories.splice(index, 1);
-    this.setState(() => ({
-      categories,
-    }));
-    updateHotCategory(categories.map(cat => cat.text));
-  }
-
   saveHot() {
     if (hot) {
       const sourceData = hot.getSourceData();
@@ -340,56 +274,12 @@ class App extends Component {
         <div className="App">
           <div>
             <Grid container spacing={5}>
-              <Grid item xs={12} className="dashboad">
-                <ExpansionPanel defaultExpanded>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>ダッシュボード</Typography>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                    <Grid item xs={4}>
-                      <Typography gutterBottom type="title">
-                        本日のサマリ
-                      </Typography>
-                      <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} />
-                      <TodaySummary
-                        data={{
-                          estimateTasks: this.state.estimateTasks,
-                          doneTasks: this.state.doneTasks,
-                          actuallyTasks: this.state.actuallyTasks,
-                          remainingTasks: this.state.remainingTasks,
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Typography gutterBottom type="title">
-                       時刻
-                      </Typography>
-                      <Grid container spacing={5}>
-                        <Grid item xs={6}>
-                          <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Clock title={'終了時刻*'} caption="*残タスクの合計時間" time={this.state.endTime} updateFlg />
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Typography title="*追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。" gutterBottom type="title">
-                        カテゴリ*
-                      </Typography>
-                      <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
-                      <form onSubmit={this.addCategory.bind(this)}>
-                        <Input
-                          fullWidth
-                          placeholder="カテゴリを追加"
-                          onChange={this.changeCategoryInput.bind(this)}
-                          value={this.state.categoryInput}
-                        />
-                      </form>
-                    </Grid>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-              </Grid>
+              <Dashboad
+                date={this.state.date}
+                changeDate={this.changeDate.bind(this)}
+                allTasks={this.state.allTasks}
+              />
+
               <Grid item xs={12} className="tasklist">
                 <Typography gutterBottom type="title">
                   {this.state.date.replace(/-/g, '/')} のタスク一覧

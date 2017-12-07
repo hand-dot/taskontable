@@ -2,7 +2,6 @@ import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 
 const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '' };
-export const emptyHotData = [cloneDeep(dataSchema)];
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
@@ -228,6 +227,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
   }
 };
 
+export const emptyHotData = [cloneDeep(dataSchema)];
 export const hotConf = {
   stretchH: 'all',
   comments: true,
