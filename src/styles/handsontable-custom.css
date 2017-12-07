@@ -1,3 +1,7 @@
-.handsontable .htDimmed{
-    background-color: #f3f3f3;
+.handsontable .htDimmed {
+  background-color: #f3f3f3;
+}
+
+.handsontable td.htInvalid {
+  background-color: #ff9b9b !important;
 }

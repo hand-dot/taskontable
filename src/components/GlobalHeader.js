@@ -50,7 +50,7 @@ class GlobalHeader extends Component {
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
-          <Toolbar style={{ minWidth: 960, margin: '0 auto' }}>
+          <Toolbar style={{ minWidth: 1280, margin: '0 auto' }}>
             <Typography type="title" color="inherit" className={classes.flex}>
               TaskChute WEB
             </Typography>

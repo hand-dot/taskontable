@@ -380,6 +380,7 @@ class App extends Component {
                       <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
                       <form onSubmit={this.addCategory.bind(this)}>
                         <Input
+                          fullWidth
                           placeholder="カテゴリを追加"
                           onChange={this.changeCategoryInput.bind(this)}
                           value={this.state.categoryInput}

@@ -234,7 +234,7 @@ export const hotConf = {
   rowHeaders: true,
   autoInsertRow: false,
   manualRowMove: true,
-  colWidths: Math.round(960 / 8),
+  colWidths: Math.round(1280 / 8),
   columns,
   data: emptyHotData,
   dataSchema,
