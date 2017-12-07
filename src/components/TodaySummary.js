@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import { withStyles } from 'material-ui/styles';
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table';
-
-const styles = () => ({});
 
 function TodaySummary(props) {
   const { data } = props;
@@ -65,4 +62,4 @@ TodaySummary.propTypes = {
   }).isRequired,
 };
 
-export default withStyles(styles)(TodaySummary);
+export default TodaySummary;

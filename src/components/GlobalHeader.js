@@ -8,18 +8,18 @@ import IconButton from 'material-ui/IconButton';
 import AccountCircle from 'material-ui-icons/AccountCircle';
 import Menu, { MenuItem } from 'material-ui/Menu';
 
-const styles = () => ({
+const styles = {
   root: {
     width: '100%',
+  },
+  toolbar: {
+    minWidth: 1280,
+    margin: '0 auto',
   },
   flex: {
     flex: 1,
   },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-});
+};
 
 class GlobalHeader extends Component {
   constructor(props) {
@@ -43,14 +43,14 @@ class GlobalHeader extends Component {
   }
 
   render() {
-    const { classes, userId } = this.props;
+    const { userId, classes } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
-          <Toolbar style={{ minWidth: 1280, margin: '0 auto' }}>
+          <Toolbar className={classes.toolbar}>
             <Typography type="title" color="inherit" className={classes.flex}>
               TaskChute WEB
             </Typography>
@@ -88,9 +88,9 @@ class GlobalHeader extends Component {
 }
 
 GlobalHeader.propTypes = {
-  classes: PropTypes.object.isRequired,
   userId: PropTypes.string.isRequired,
   logOut: PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(GlobalHeader);

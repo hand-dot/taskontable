@@ -4,18 +4,14 @@ import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
 import DeleteIcon from 'material-ui-icons/Delete';
 
-const styles = theme => ({
+const styles = {
   root: {
     width: '100%',
-    background: theme.palette.background.paper,
     position: 'relative',
     overflow: 'auto',
     maxHeight: 170,
   },
-  listSection: {
-    background: 'inherit',
-  },
-});
+};
 
 function CategoryList(props) {
   const { categories, removeCategory, classes } = props;
