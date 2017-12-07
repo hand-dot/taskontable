@@ -37,7 +37,7 @@ import CategoryList from './CategoryList';
 import Clock from './Clock';
 
 import firebaseConf from '../confings/firebase';
-import hotConf from '../confings/hot';
+import { hotConf, emptyHotData } from '../confings/hot';
 import '../styles/App.css';
 
 // ローディングが早すぎて一回もロードされてないように見えるため、
@@ -201,7 +201,7 @@ class App extends Component {
     // テーブルのクリア
     setTimeout(() => {
       if (hot) {
-        hot.updateSettings({ data: {} });
+        hot.updateSettings({ data: emptyHotData });
       }
     }, 0);
     this.openLoginDialog();
@@ -236,7 +236,7 @@ class App extends Component {
         hot.updateSettings({ data: snapshot.val() });
       } else {
         // データが存在していないので、テーブルを空にする
-        hot.updateSettings({ data: {} });
+        hot.updateSettings({ data: emptyHotData });
       }
     });
   }

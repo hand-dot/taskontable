@@ -2,7 +2,7 @@ import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 
 const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '' };
-const data = [cloneDeep(dataSchema)];
+export const emptyHotData = [cloneDeep(dataSchema)];
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
@@ -103,6 +103,7 @@ const calculateTask = (hotInstance, row, prop) => {
     // 変更したセルが開始時刻 or 終了時刻の場合、実績を自動入力し、済をチェックする処理
     const startTimeVal = hotInstance.getDataAtRowProp(row, 'startTime');
     const endTimeVal = hotInstance.getDataAtRowProp(row, 'endTime');
+    if (startTimeVal === null || endTimeVal === null) return;
     if (startTimeVal === '' || endTimeVal === '') {
       // 入力値が空の場合、実績を空にし、済のチェックをはずす
       hotInstance.setDataAtRowProp(row, 'done', false);
@@ -227,7 +228,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
   }
 };
 
-export default {
+export const hotConf = {
   stretchH: 'all',
   comments: true,
   rowHeaders: true,
@@ -235,7 +236,7 @@ export default {
   manualRowMove: true,
   colWidths: Math.round(960 / 8),
   columns,
-  data,
+  data: emptyHotData,
   dataSchema,
   afterValidate(isValid, value, row, prop) {
     setValidtionMessage(this, row, prop, isValid);
