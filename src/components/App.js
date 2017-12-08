@@ -164,8 +164,8 @@ class App extends Component {
     this.setAInitialState();
     // テーブルのクリア
     setTimeout(() => {
-      if (window.hot) {
-        window.hot.updateSettings({ data: emptyHotData });
+      if (hot) {
+        hot.updateSettings({ data: emptyHotData });
       }
     }, 0);
   }
