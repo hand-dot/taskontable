@@ -22,7 +22,11 @@ import CategoryList from './CategoryList';
 import { hotConf } from '../confings/hot';
 
 
-const styles = {};
+const styles = {
+  root: {
+    padding: '0 0 20px',
+  },
+};
 
 function updateHotCategory(source) {
   const $hotConf = cloneDeep(hotConf);
@@ -137,7 +141,7 @@ class Dashboad extends Component {
   render() {
     const { classes, date, changeDate } = this.props;
     return (
-      <Grid item xs={12} className="dashboad">
+      <Grid item xs={12} className={classes.root}>
         <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>ダッシュボード</Typography>

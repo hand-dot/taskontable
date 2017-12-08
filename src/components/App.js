@@ -1,7 +1,9 @@
 import cloneDeep from 'lodash.clonedeep';
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
+
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 
@@ -22,12 +24,13 @@ import Dialog, {
 import { LinearProgress } from 'material-ui/Progress';
 import Tooltip from 'material-ui/Tooltip';
 
+import { withStyles } from 'material-ui/styles';
+
 import Dashboad from './Dashboad';
 import GlobalHeader from './GlobalHeader';
 
 import firebaseConf from '../confings/firebase';
 import { hotConf, emptyHotData } from '../confings/hot';
-import '../styles/App.css';
 
 const initialState = {
   userId: '',
@@ -38,6 +41,19 @@ const initialState = {
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   allTasks: [],
 };
+
+const styles = {
+  root: {
+    maxWidth: 1280,
+    margin: '0 auto',
+    background: '#fff',
+    boxShadow: '0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)',
+  },
+  tasklist: {
+    padding: 20,
+  },
+};
+
 
 // ローディングが早すぎて一回もロードされてないように見えるため、
 // デザイン目的で最低でも1秒はローディングするようにしている。実際ないほうが良い。
@@ -268,78 +284,77 @@ class App extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     return (
       <div>
         <GlobalHeader userId={this.state.userId} logOut={this.logOut.bind(this)} />
-        <div className="App">
-          <div>
-            <Grid container spacing={5}>
-              <Dashboad
-                date={this.state.date}
-                changeDate={this.changeDate.bind(this)}
-                allTasks={this.state.allTasks}
-              />
+        <div className={classes.root}>
+          <Grid container spacing={5}>
+            <Dashboad
+              date={this.state.date}
+              changeDate={this.changeDate.bind(this)}
+              allTasks={this.state.allTasks}
+            />
 
-              <Grid item xs={12} className="tasklist">
-                <Typography gutterBottom type="title">
-                  {this.state.date.replace(/-/g, '/')} のタスク一覧
-                </Typography>
-                <Grid container spacing={5}>
-                  <Grid item xs={6}>
-                    <FormGroup>
-                      <Typography type="caption" gutterBottom>
+            <Grid item xs={12} className={classes.tasklist}>
+              <Typography gutterBottom type="title">
+                {this.state.date.replace(/-/g, '/')} のタスク一覧
+              </Typography>
+              <Grid container spacing={5}>
+                <Grid item xs={6}>
+                  <FormGroup>
+                    <Typography type="caption" gutterBottom>
                          *終了通知の予約を行うには見積を入力したタスクの開始時刻を入力してください。
-                      </Typography>
-                      <Typography type="caption" gutterBottom>
+                    </Typography>
+                    <Typography type="caption" gutterBottom>
                          *通知予約されたタスクの開始時刻に <i className="fa fa-clock-o fa-lg" /> が表示されます。(マウスホバーで予約時刻)
-                      </Typography>
-                      <Typography type="caption" gutterBottom>
+                    </Typography>
+                    <Typography type="caption" gutterBottom>
                         *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。
-                      </Typography>
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            disabled={!('Notification' in window)}
-                            checked={this.state.notifiable}
-                            onChange={this.toggleNotifiable.bind(this)}
-                          />
-                        }
-                        label={`開始したタスクの終了時刻通知${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
-                      />
-                    </FormGroup>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography type="caption" gutterBottom>
+                    </Typography>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          disabled={!('Notification' in window)}
+                          checked={this.state.notifiable}
+                          onChange={this.toggleNotifiable.bind(this)}
+                        />
+                      }
+                      label={`開始したタスクの終了時刻通知${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
+                    />
+                  </FormGroup>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography type="caption" gutterBottom>
                       *セル上で右クリックすると現在時刻の入力・行の追加・削除を行えます。
-                    </Typography>
-                    <Typography type="caption" gutterBottom>
+                  </Typography>
+                  <Typography type="caption" gutterBottom>
                       *行を選択しドラッグアンドドロップでタスクを入れ替えることができます。
-                    </Typography>
-                    <Typography type="caption" gutterBottom>
+                  </Typography>
+                  <Typography type="caption" gutterBottom>
                         *列ヘッダーにマウスホバーすると各列の説明を見ることができます。
-                    </Typography>
-                    <div style={{ margin: '15px 0', textAlign: 'right' }}>
-                      <Button raised onClick={addTask} color="default">
-                        <AddIcon />
+                  </Typography>
+                  <div style={{ margin: '15px 0', textAlign: 'right' }}>
+                    <Button raised onClick={addTask} color="default">
+                      <AddIcon />
                           追加
-                      </Button>
-                      <Tooltip id="tooltip-top" title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
-                        <Button raised onClick={this.saveHot.bind(this)} color="default">
-                          <SaveIcon />
+                    </Button>
+                    <Tooltip id="tooltip-top" title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
+                      <Button raised onClick={this.saveHot.bind(this)} color="default">
+                        <SaveIcon />
                          保存
-                        </Button>
-                      </Tooltip>
+                      </Button>
+                    </Tooltip>
 
-                    </div>
-                  </Grid>
-                  <Grid item xs={12} style={{ paddingTop: 0 }}>
-                    <LinearProgress style={{ display: this.state.loading ? 'block' : 'none' }} />
-                    <div id="hot" />
-                  </Grid>
+                  </div>
+                </Grid>
+                <Grid item xs={12} style={{ paddingTop: 0 }}>
+                  <LinearProgress style={{ display: this.state.loading ? 'block' : 'none' }} />
+                  <div id="hot" />
                 </Grid>
               </Grid>
             </Grid>
-          </div>
+          </Grid>
         </div>
         <Dialog open={this.state.isOpenLoginDialog}>
           <DialogTitle>ユーザーIDを入力して下さい</DialogTitle>
@@ -380,4 +395,8 @@ class App extends Component {
   }
 }
 
-export default App;
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(App);
