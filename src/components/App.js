@@ -8,19 +8,13 @@ import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 
 import Typography from 'material-ui/Typography';
-import TextField from 'material-ui/TextField';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SaveIcon from 'material-ui-icons/Save';
 import AddIcon from 'material-ui-icons/Add';
 import Switch from 'material-ui/Switch';
 import { FormControlLabel, FormGroup } from 'material-ui/Form';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from 'material-ui/Dialog';
+import Card, { CardContent } from 'material-ui/Card';
 import { LinearProgress } from 'material-ui/Progress';
 import Tooltip from 'material-ui/Tooltip';
 
@@ -35,7 +29,6 @@ import { hotConf, emptyHotData } from '../confings/hot';
 const initialState = {
   userId: '',
   loading: true,
-  isOpenLoginDialog: false,
   notifiable: true,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
@@ -44,13 +37,8 @@ const initialState = {
 
 const styles = {
   root: {
-    maxWidth: 1280,
     margin: '0 auto',
-    background: '#fff',
-    boxShadow: '0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)',
-  },
-  tasklist: {
-    padding: 20,
+    maxWidth: 1280,
   },
 };
 
@@ -90,7 +78,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.logIn();
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       contextMenu: {
@@ -163,46 +150,24 @@ class App extends Component {
     this.setState({ userId: e.target.value });
   }
 
-  logIn() {
-    // FIXME localstrage実装は暫時対応
-    const userId = localStorage.getItem('userId') || this.state.userId;
-    if (userId) {
-      localStorage.setItem('userId', userId);
-      this.setState({ userId });
-      // テーブルの初期化
-      setTimeout(() => {
-        this.fetchTask(this.state.userId, this.state.date).then((snapshot) => {
-          if (hot && snapshot.exists()) {
-            hot.updateSettings({ data: snapshot.val() });
-          }
-        });
-      }, 0);
-      this.closeLoginDialog();
-    } else {
-      this.openLoginDialog();
-    }
+  loginCallback() {
+    // テーブルの初期化
+    this.fetchTask().then((snapshot) => {
+      if (hot && snapshot.exists()) {
+        hot.updateSettings({ data: snapshot.val() });
+      }
+    });
   }
 
-  logOut() {
-    // FIXME localstrage実装は暫時対応
-    localStorage.removeItem('userId');
+  logoutCallback() {
     // stateの初期化
     this.setAInitialState();
     // テーブルのクリア
     setTimeout(() => {
-      if (hot) {
-        hot.updateSettings({ data: emptyHotData });
+      if (window.hot) {
+        window.hot.updateSettings({ data: emptyHotData });
       }
     }, 0);
-    this.openLoginDialog();
-  }
-
-  openLoginDialog() {
-    this.setState({ isOpenLoginDialog: true });
-  }
-
-  closeLoginDialog() {
-    this.setState({ isOpenLoginDialog: false });
   }
 
   toggleNotifiable(event, checked) {
@@ -220,15 +185,18 @@ class App extends Component {
     this.setState(() => ({
       date: event.target.value,
     }));
-    this.fetchTask(this.state.userId, event.target.value).then((snapshot) => {
-      if (snapshot.exists()) {
-        // データが存在していたら読み込む
-        hot.updateSettings({ data: snapshot.val() });
-      } else {
-        // データが存在していないので、テーブルを空にする
-        hot.updateSettings({ data: emptyHotData });
-      }
-    });
+    setTimeout(() => {
+      this.fetchTask().then((snapshot) => {
+        if (snapshot.exists()) {
+          // データが存在していたら読み込む
+          console.log(snapshot.val());
+          hot.updateSettings({ data: snapshot.val() });
+        } else {
+          // データが存在していないので、テーブルを空にする
+          hot.updateSettings({ data: emptyHotData });
+        }
+      });
+    }, 0);
   }
 
   saveHot() {
@@ -269,11 +237,11 @@ class App extends Component {
     });
   }
 
-  fetchTask(userId, date) {
+  fetchTask() {
     this.setState(() => ({
       loading: true,
     }));
-    return firebase.database().ref(`/${userId}/${date}`).once('value').then((snapshot) => {
+    return firebase.database().ref(`/${this.state.userId}/${this.state.date}`).once('value').then((snapshot) => {
       setTimeout(() => {
         this.setState(() => ({
           loading: false,
@@ -287,22 +255,26 @@ class App extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <GlobalHeader userId={this.state.userId} logOut={this.logOut.bind(this)} />
-        <div className={classes.root}>
-          <Grid container spacing={5}>
-            <Dashboad
-              date={this.state.date}
-              changeDate={this.changeDate.bind(this)}
-              allTasks={this.state.allTasks}
-            />
-
-            <Grid item xs={12} className={classes.tasklist}>
-              <Typography gutterBottom type="title">
-                {this.state.date.replace(/-/g, '/')} のタスク一覧
-              </Typography>
-              <Grid container spacing={5}>
-                <Grid item xs={6}>
-                  <FormGroup>
+        <GlobalHeader
+          userId={this.state.userId}
+          changeUserId={this.changeUserId.bind(this)}
+          loginCallback={this.loginCallback.bind(this)}
+          logoutCallback={this.logoutCallback.bind(this)}
+        />
+        <Grid container spacing={5} className={classes.root}>
+          <Card>
+            <CardContent>
+              <Dashboad
+                date={this.state.date}
+                changeDate={this.changeDate.bind(this)}
+                allTasks={this.state.allTasks}
+              />
+              <Grid item xs={12}>
+                <Typography gutterBottom type="title">
+                  {this.state.date.replace(/-/g, '/')} のタスク一覧
+                </Typography>
+                <Grid container spacing={5}>
+                  <Grid item xs={6}>
                     <Typography type="caption" gutterBottom>
                          *終了通知の予約を行うには見積を入力したタスクの開始時刻を入力してください。
                     </Typography>
@@ -312,84 +284,55 @@ class App extends Component {
                     <Typography type="caption" gutterBottom>
                         *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。
                     </Typography>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          disabled={!('Notification' in window)}
-                          checked={this.state.notifiable}
-                          onChange={this.toggleNotifiable.bind(this)}
-                        />
-                      }
-                      label={`開始したタスクの終了時刻通知${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
-                    />
-                  </FormGroup>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography type="caption" gutterBottom>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography type="caption" gutterBottom>
                       *セル上で右クリックすると現在時刻の入力・行の追加・削除を行えます。
-                  </Typography>
-                  <Typography type="caption" gutterBottom>
+                    </Typography>
+                    <Typography type="caption" gutterBottom>
                       *行を選択しドラッグアンドドロップでタスクを入れ替えることができます。
-                  </Typography>
-                  <Typography type="caption" gutterBottom>
+                    </Typography>
+                    <Typography type="caption" gutterBottom>
                         *列ヘッダーにマウスホバーすると各列の説明を見ることができます。
-                  </Typography>
-                  <div style={{ margin: '15px 0', textAlign: 'right' }}>
-                    <Button raised onClick={addTask} color="default">
-                      <AddIcon />
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            disabled={!('Notification' in window)}
+                            checked={this.state.notifiable}
+                            onChange={this.toggleNotifiable.bind(this)}
+                          />
+                        }
+                        label={`開始したタスクの終了時刻通知${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
+                      />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <div style={{ textAlign: 'right' }}>
+                      <Button raised onClick={addTask} color="default">
+                        <AddIcon />
                           追加
-                    </Button>
-                    <Tooltip id="tooltip-top" title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
-                      <Button raised onClick={this.saveHot.bind(this)} color="default">
-                        <SaveIcon />
-                         保存
                       </Button>
-                    </Tooltip>
-
-                  </div>
-                </Grid>
-                <Grid item xs={12} style={{ paddingTop: 0 }}>
-                  <LinearProgress style={{ display: this.state.loading ? 'block' : 'none' }} />
-                  <div id="hot" />
+                      <Tooltip id="tooltip-top" title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
+                        <Button raised onClick={this.saveHot.bind(this)} color="default">
+                          <SaveIcon />
+                         保存
+                        </Button>
+                      </Tooltip>
+                    </div>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
+                    <div id="hot" />
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-        </div>
-        <Dialog open={this.state.isOpenLoginDialog}>
-          <DialogTitle>ユーザーIDを入力して下さい</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-                TaskChute WEB はただいま開発中です。<br />
-                しかし一部機能を試していただくことは可能です。<br />
-              <br />
-                タスクの入力・保存・読み込みはできますが、
-                現時点ではユーザー登録を行いませんので、あなた自身でユーザーIDを入力して下さい。<br />
-              <br />
-                以降、同じユーザーIDを入力すると<br />
-                保存したタスクを読み込むことができます。<br />
-              <br />
-            </DialogContentText>
-            <TextField
-              value={this.state.userId}
-              onChange={this.changeUserId.bind(this)}
-              required
-              autoFocus
-              margin="dense"
-              id="userId"
-              label="ユーザーID"
-              fullWidth
-            />
-            <Typography type="caption" gutterBottom>
-               *ログイン機能実装後に以前に保存したデータは削除されます。あらかじめご了承ください。
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.logIn.bind(this)} color="primary">
-                はじめる
-            </Button>
-          </DialogActions>
-        </Dialog>
+            </CardContent>
+          </Card>
+        </Grid>
       </div>
     );
   }

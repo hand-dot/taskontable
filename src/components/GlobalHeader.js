@@ -8,6 +8,8 @@ import IconButton from 'material-ui/IconButton';
 import AccountCircle from 'material-ui-icons/AccountCircle';
 import Menu, { MenuItem } from 'material-ui/Menu';
 
+import LoginDialog from './LoginDialog';
+
 const styles = {
   root: {
     width: '100%',
@@ -26,7 +28,12 @@ class GlobalHeader extends Component {
     super(props);
     this.state = {
       anchorEl: null,
+      isOpenLoginDialog: false,
     };
+  }
+
+  componentDidMount() {
+    this.login();
   }
 
   handleMenu(event) {
@@ -37,13 +44,36 @@ class GlobalHeader extends Component {
     this.setState({ anchorEl: null });
   }
 
-  logOut() {
+  login() {
+    // FIXME localstrage実装は暫時対応
+    const userId = localStorage.getItem('userId') || this.props.userId;
+    if (userId) {
+      localStorage.setItem('userId', userId);
+      this.props.loginCallback();
+      this.closeLoginDialog();
+    } else {
+      this.openLoginDialog();
+    }
+  }
+
+  logout() {
+    // FIXME localstrage実装は暫時対応
+    localStorage.removeItem('userId');
     this.handleRequestClose();
-    this.props.logOut();
+    this.props.logoutCallback();
+    this.openLoginDialog();
+  }
+
+  openLoginDialog() {
+    this.setState({ isOpenLoginDialog: true });
+  }
+
+  closeLoginDialog() {
+    this.setState({ isOpenLoginDialog: false });
   }
 
   render() {
-    const { userId, classes } = this.props;
+    const { userId, changeUserId, classes } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
@@ -77,11 +107,17 @@ class GlobalHeader extends Component {
                 onRequestClose={this.handleRequestClose.bind(this)}
               >
                 <MenuItem>ユーザーID: {userId}</MenuItem>
-                <MenuItem onClick={this.logOut.bind(this)}>ログアウト</MenuItem>
+                <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
               </Menu>
             </div>
           </Toolbar>
         </AppBar>
+        <LoginDialog
+          userId={userId}
+          isOpenLoginDialog={this.state.isOpenLoginDialog}
+          changeUserId={changeUserId}
+          login={this.login.bind(this)}
+        />
       </div>
     );
   }
@@ -89,7 +125,9 @@ class GlobalHeader extends Component {
 
 GlobalHeader.propTypes = {
   userId: PropTypes.string.isRequired,
-  logOut: PropTypes.func.isRequired,
+  changeUserId: PropTypes.func.isRequired,
+  loginCallback: PropTypes.func.isRequired,
+  logoutCallback: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
