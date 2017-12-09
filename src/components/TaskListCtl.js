@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
-import SaveIcon from 'material-ui-icons/Save';
-import AddIcon from 'material-ui-icons/Add';
 import Switch from 'material-ui/Switch';
 import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
@@ -58,13 +56,13 @@ function TaskListCtl(props) {
       <Grid item xs={6}>
         <div style={{ textAlign: 'right' }}>
           <Button raised onClick={addTask} color="default">
-            <AddIcon />
-            追加
+            <i className="fa fa-plus fa-lg" />
+            　追加
           </Button>
           <Tooltip id="tooltip-top" title={`最終保存時刻 : ${(`00${lastSaveTime.hour}`).slice(-2)}:${(`00${lastSaveTime.minute}`).slice(-2)}`} placement="top">
             <Button raised onClick={saveHot} color="default">
-              <SaveIcon />
-             保存
+              <i className="fa fa-floppy-o fa-lg" />
+              　保存
             </Button>
           </Tooltip>
         </div>

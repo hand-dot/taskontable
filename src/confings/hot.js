@@ -211,6 +211,8 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
             window.focus();
             hotInstance.selectCell(row, hotInstance.propToCol('endTime'));
           };
+          // クリックされなければ5分後に消す
+          setTimeout(notifi.close.bind(notifi), 300000);
           hotInstance.render();
         }, notifiMoment.toDate().getTime() - Date.now());
         hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiMoment.format('HH:mm') });

@@ -234,8 +234,7 @@ class App extends Component {
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.root}>
           <Grid item xs={1}>
             <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
-              {/* FIXME アイコンにすること */}
-              <div>＜</div>
+              <i className="fa fa-angle-left fa-lg" />
             </Button>
           </Grid>
           <Grid item xs={10}>
@@ -264,8 +263,7 @@ class App extends Component {
           </Grid>
           <Grid item xs={1}>
             <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="next" >
-              {/* FIXME アイコンにすること */}
-              <div>＞</div>
+              <i className="fa fa-angle-right fa-lg" />
             </Button>
           </Grid>
         </Grid>

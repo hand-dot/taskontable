@@ -6,7 +6,6 @@ import Toolbar from 'material-ui/Toolbar';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
-import AccountCircle from 'material-ui-icons/AccountCircle';
 import Menu, { MenuItem } from 'material-ui/Menu';
 
 import LoginDialog from './LoginDialog';
@@ -18,7 +17,7 @@ const styles = {
   },
   toolbar: {
     maxWidth: constants.appWidth,
-    margin: '0 auto',    
+    margin: '0 auto',
   },
   title: {
     marginRight: 'auto',
@@ -94,7 +93,7 @@ class GlobalHeader extends Component {
                   aria-haspopup="true"
                   onClick={this.handleMenu.bind(this)}
                 >
-                  <AccountCircle />
+                  <i className="fa fa-user-circle" />
                 </IconButton>
                 <Menu
                   id="menu-appbar"

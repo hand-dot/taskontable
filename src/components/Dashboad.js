@@ -9,8 +9,6 @@ import ExpansionPanel, {
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
 
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
-
 import TodaySummary from './TodaySummary';
 import DatePicker from './DatePicker';
 import Clock from './Clock';
@@ -129,8 +127,9 @@ class Dashboad extends Component {
     const { date, changeDate } = this.props;
     return (
       <ExpansionPanel defaultExpanded>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>ダッシュボード</Typography>
+        <ExpansionPanelSummary expandIcon={<i className="fa fa-angle-down fa-lg" />}>
+          <i className="fa fa-tachometer fa-lg" />
+          <Typography>　ダッシュボード</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Grid item xs={4}>

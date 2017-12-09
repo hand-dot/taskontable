@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
-import DeleteIcon from 'material-ui-icons/Delete';
 
 const styles = {
   root: {
@@ -21,8 +20,8 @@ function CategoryList(props) {
         {categories.map((category, index) => (
           <ListItem key={category.id} button>
             <ListItemText primary={category.text} />
-            <ListItemIcon onClick={() => removeCategory(index)} aria-label="Delete">
-              <DeleteIcon />
+            <ListItemIcon onClick={() => removeCategory(index)}>
+              <i className="fa fa-trash-o fa-lg" />
             </ListItemIcon>
           </ListItem>
         ))}
