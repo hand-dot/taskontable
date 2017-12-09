@@ -1,6 +1,8 @@
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 
+import constants from '../constants';
+
 const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '' };
 const columns = [
   {
@@ -234,7 +236,7 @@ export const hotConf = {
   rowHeaders: true,
   autoInsertRow: false,
   manualRowMove: true,
-  colWidths: Math.round(1280 / 8),
+  colWidths: Math.round(constants.appWidth / columns.length),
   columns,
   data: emptyHotData,
   dataSchema,

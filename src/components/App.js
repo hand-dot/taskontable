@@ -22,6 +22,8 @@ import TaskListCtl from './TaskListCtl';
 import firebaseConf from '../confings/firebase';
 import { hotConf, emptyHotData } from '../confings/hot';
 
+import constants from '../constants';
+
 const initialState = {
   userId: '',
   loading: true,
@@ -34,7 +36,7 @@ const initialState = {
 const styles = {
   root: {
     margin: '0 auto',
-    maxWidth: 1280,
+    maxWidth: constants.appWidth,
   },
 };
 

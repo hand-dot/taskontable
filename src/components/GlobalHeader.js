@@ -10,12 +10,14 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 
 import LoginDialog from './LoginDialog';
 
+import constants from '../constants';
+
 const styles = {
   root: {
     width: '100%',
   },
   toolbar: {
-    minWidth: 1280,
+    width: constants.appWidth,
     margin: '0 auto',
   },
   flex: {
