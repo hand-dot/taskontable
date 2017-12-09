@@ -2,6 +2,7 @@ import cloneDeep from 'lodash.clonedeep';
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
 
 import Handsontable from 'handsontable';
@@ -9,10 +10,10 @@ import 'handsontable/dist/handsontable.full.css';
 
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
-
 import { LinearProgress } from 'material-ui/Progress';
+import Button from 'material-ui/Button';
 
-import { withStyles } from 'material-ui/styles';
+import '../styles/handsontable-custom.css';
 
 import GlobalHeader from './GlobalHeader';
 import Dashboad from './Dashboad';
@@ -39,6 +40,10 @@ const styles = {
     margin: '0 auto',
     paddingBottom: 20,
     maxWidth: constants.appWidth,
+  },
+  navButton: {
+    height: '100%',
+    width: '100%',
   },
 };
 
@@ -186,9 +191,16 @@ class App extends Component {
 
   changeDate(event) {
     if (!hot) return;
-    event.persist();
+    const nav = event.currentTarget.getAttribute('data-date-nav');
+    let date;
+    if (nav) {
+      date = moment(this.state.date).add(nav === 'next' ? 1 : -1, 'day').format('YYYY-MM-DD');      
+    } else {
+      event.persist();
+      date = event.target.value;
+    }
     this.setState(() => ({
-      date: event.target.value,
+      date,
     }));
     setTimeout(() => {
       this.fetchTask().then((snapshot) => {
@@ -229,26 +241,42 @@ class App extends Component {
           loginCallback={this.loginCallback.bind(this)}
           logoutCallback={this.logoutCallback.bind(this)}
         />
-        <Grid container spacing={0} className={classes.root}>
-          <Grid item xs={12} className={classes.root}>
-            <Dashboad
-              date={this.state.date}
-              changeDate={this.changeDate.bind(this)}
-              allTasks={this.state.allTasks}
-            />
+        <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.root}>
+          <Grid item xs={1}>
+            <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
+              {/* FIXME アイコンにすること */}
+              <div>＜</div>
+            </Button>
           </Grid>
-          <Grid item xs={12}>
-            <Typography gutterBottom type="title">
-              {this.state.date.replace(/-/g, '/')} のタスク一覧
-            </Typography>
-            <TaskListCtl
-              lastSaveTime={this.state.lastSaveTime}
-              saveHot={this.saveHot.bind(this)}
-              notifiable={this.state.notifiable}
-              toggleNotifiable={this.toggleNotifiable.bind(this)}
-            />
-            <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
-            <div id="hot" />
+          <Grid item xs={10}>
+            <Grid item xs={12} className={classes.root}>
+              <Dashboad
+                date={this.state.date}
+                changeDate={this.changeDate.bind(this)}
+                allTasks={this.state.allTasks}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <div style={{ padding: '0 5px' }}>
+                <Typography gutterBottom type="title">
+                  {this.state.date.replace(/-/g, '/')} のタスク一覧
+                </Typography>
+                <TaskListCtl
+                  lastSaveTime={this.state.lastSaveTime}
+                  saveHot={this.saveHot.bind(this)}
+                  notifiable={this.state.notifiable}
+                  toggleNotifiable={this.toggleNotifiable.bind(this)}
+                />
+              </div>
+              <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
+              <div id="hot" />
+            </Grid>
+          </Grid>
+          <Grid item xs={1}>
+            <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="next" >
+              {/* FIXME アイコンにすること */}
+              <div>＞</div>
+            </Button>
           </Grid>
         </Grid>
       </div>

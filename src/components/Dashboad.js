@@ -51,7 +51,7 @@ class Dashboad extends Component {
 
   componentWillMount() {
     // 初期値の現在時刻と終了時刻
-    const timeObj = util.getCrrentTimeObj;
+    const timeObj = util.getCrrentTimeObj();
     this.setState({
       currentTime: timeObj,
       endTime: timeObj,
