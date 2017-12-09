@@ -12,8 +12,6 @@ import ExpansionPanel, {
 
 import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 
-import { withStyles } from 'material-ui/styles';
-
 import TodaySummary from './TodaySummary';
 import DatePicker from './DatePicker';
 import Clock from './Clock';
@@ -21,12 +19,6 @@ import CategoryList from './CategoryList';
 
 import { hotConf } from '../confings/hot';
 
-
-const styles = {
-  root: {
-    padding: '0 0 20px',
-  },
-};
 
 function updateHotCategory(source) {
   const $hotConf = cloneDeep(hotConf);
@@ -139,58 +131,56 @@ class Dashboad extends Component {
   }
 
   render() {
-    const { classes, date, changeDate } = this.props;
+    const { date, changeDate } = this.props;
     return (
-      <Grid item xs={12} className={classes.root}>
-        <ExpansionPanel defaultExpanded>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>ダッシュボード</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <Grid item xs={4}>
-              <Typography gutterBottom type="title">
+      <ExpansionPanel defaultExpanded>
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>ダッシュボード</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Grid item xs={4}>
+            <Typography gutterBottom type="title">
                  本日のサマリ
-              </Typography>
-              <DatePicker value={date} changeDate={changeDate} />
-              <TodaySummary
-                data={{
-                  estimateTasks: this.state.estimateTasks,
-                  doneTasks: this.state.doneTasks,
-                  actuallyTasks: this.state.actuallyTasks,
-                  remainingTasks: this.state.remainingTasks,
-                }}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Typography gutterBottom type="title">
+            </Typography>
+            <DatePicker value={date} changeDate={changeDate} />
+            <TodaySummary
+              data={{
+                estimateTasks: this.state.estimateTasks,
+                doneTasks: this.state.doneTasks,
+                actuallyTasks: this.state.actuallyTasks,
+                remainingTasks: this.state.remainingTasks,
+              }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Typography gutterBottom type="title">
                  時刻
-              </Typography>
-              <Grid container spacing={5}>
-                <Grid item xs={6}>
-                  <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
-                </Grid>
-                <Grid item xs={6}>
-                  <Clock title={'終了時刻*'} caption="*残タスクの合計時間" time={this.state.endTime} updateFlg />
-                </Grid>
+            </Typography>
+            <Grid container spacing={5}>
+              <Grid item xs={6}>
+                <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
+              </Grid>
+              <Grid item xs={6}>
+                <Clock title={'終了時刻*'} caption="*残タスクの合計時間" time={this.state.endTime} updateFlg />
               </Grid>
             </Grid>
-            <Grid item xs={4}>
-              <Typography title="*追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。" gutterBottom type="title">
+          </Grid>
+          <Grid item xs={4}>
+            <Typography title="*追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。" gutterBottom type="title">
         カテゴリ*
-              </Typography>
-              <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
-              <form onSubmit={this.addCategory.bind(this)}>
-                <Input
-                  fullWidth
-                  placeholder="カテゴリを追加"
-                  onChange={this.changeCategoryInput.bind(this)}
-                  value={this.state.categoryInput}
-                />
-              </form>
-            </Grid>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-      </Grid>
+            </Typography>
+            <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
+            <form onSubmit={this.addCategory.bind(this)}>
+              <Input
+                fullWidth
+                placeholder="カテゴリを追加"
+                onChange={this.changeCategoryInput.bind(this)}
+                value={this.state.categoryInput}
+              />
+            </form>
+          </Grid>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     );
   }
 }
@@ -199,7 +189,6 @@ Dashboad.propTypes = {
   date: PropTypes.string.isRequired,
   changeDate: PropTypes.func.isRequired,
   allTasks: PropTypes.array.isRequired,
-  classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Dashboad);
+export default Dashboad;

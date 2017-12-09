@@ -10,7 +10,6 @@ import 'handsontable/dist/handsontable.full.css';
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 
-import Card, { CardContent } from 'material-ui/Card';
 import { LinearProgress } from 'material-ui/Progress';
 
 import { withStyles } from 'material-ui/styles';
@@ -36,6 +35,7 @@ const initialState = {
 const styles = {
   root: {
     margin: '0 auto',
+    paddingBottom: 20,
     maxWidth: constants.appWidth,
   },
 };
@@ -130,7 +130,7 @@ class App extends Component {
 
   setStateFromHot() {
     if (hot) {
-      const sourceData = cloneDeep(hot.getSourceData());      
+      const sourceData = cloneDeep(hot.getSourceData());
       if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
       this.setState({
         allTasks: sourceData,
@@ -210,7 +210,7 @@ class App extends Component {
   saveHot() {
     if (hot) {
       // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTask(cloneDeep(hot.getSourceData()).map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index))));      
+      this.saveTask(cloneDeep(hot.getSourceData()).map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index))));
     }
   }
 
@@ -244,33 +244,27 @@ class App extends Component {
           loginCallback={this.loginCallback.bind(this)}
           logoutCallback={this.logoutCallback.bind(this)}
         />
-        <Grid container spacing={5} className={classes.root}>
-          <Card>
-            <CardContent>
-              <Dashboad
-                date={this.state.date}
-                changeDate={this.changeDate.bind(this)}
-                allTasks={this.state.allTasks}
-              />
-              <Grid item xs={12}>
-                <Typography gutterBottom type="title">
-                  {this.state.date.replace(/-/g, '/')} のタスク一覧
-                </Typography>
-                <Grid container spacing={5}>
-                  <TaskListCtl
-                    lastSaveTime={this.state.lastSaveTime}
-                    saveHot={this.saveHot.bind(this)}
-                    notifiable={this.state.notifiable}
-                    toggleNotifiable={this.toggleNotifiable.bind(this)}
-                  />
-                  <Grid item xs={12}>
-                    <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
-                    <div id="hot" />
-                  </Grid>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+        <Grid container spacing={0} className={classes.root}>
+          <Grid item xs={12} className={classes.root}>
+            <Dashboad
+              date={this.state.date}
+              changeDate={this.changeDate.bind(this)}
+              allTasks={this.state.allTasks}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography gutterBottom type="title">
+              {this.state.date.replace(/-/g, '/')} のタスク一覧
+            </Typography>
+            <TaskListCtl
+              lastSaveTime={this.state.lastSaveTime}
+              saveHot={this.saveHot.bind(this)}
+              notifiable={this.state.notifiable}
+              toggleNotifiable={this.toggleNotifiable.bind(this)}
+            />
+            <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
+            <div id="hot" />
+          </Grid>
         </Grid>
       </div>
     );
