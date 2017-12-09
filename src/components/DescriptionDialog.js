@@ -16,6 +16,7 @@ function DescriptionDialog(props) {
       <DialogTitle>サイトについて</DialogTitle>
       <DialogContent>
         <DialogContentText>
+          {/* FIXME issue/56 */}
           ・はじめに
           ・つかいかた
         </DialogContentText>
