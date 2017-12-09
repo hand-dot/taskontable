@@ -104,6 +104,9 @@ class App extends Component {
           },
         },
       },
+      afterRowMove() {
+        self.setStateFromHot();
+      },
       beforeChangeRender() {
         self.setStateFromHot();
       },
@@ -127,7 +130,7 @@ class App extends Component {
 
   setStateFromHot() {
     if (hot) {
-      const sourceData = cloneDeep(hot.getSourceData());
+      const sourceData = cloneDeep(hot.getSourceData());      
       if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
       this.setState({
         allTasks: sourceData,
@@ -180,7 +183,7 @@ class App extends Component {
     // テーブルのクリア
     setTimeout(() => {
       if (hot) {
-        hot.updateSettings({ data: emptyHotData });
+        hot.updateSettings({ data: cloneDeep(emptyHotData) });
       }
     }, 0);
   }
@@ -198,7 +201,7 @@ class App extends Component {
           hot.updateSettings({ data: snapshot.val() });
         } else {
           // データが存在していないので、テーブルを空にする
-          hot.updateSettings({ data: emptyHotData });
+          hot.updateSettings({ data: cloneDeep(emptyHotData) });
         }
       });
     }, 0);
@@ -206,19 +209,8 @@ class App extends Component {
 
   saveHot() {
     if (hot) {
-      const sourceData = hot.getSourceData();
-      let isEmptyTask = true;
-      sourceData.forEach((data) => {
-        Object.entries(data).forEach((entry) => {
-          if (entry[1]) isEmptyTask = false;
-        });
-      });
-      // タスク一覧に何もデータが入っていなかったら保存しない
-      if (!isEmptyTask) {
-        this.saveTask(sourceData);
-      } else {
-        alert('タスクがありません。');
-      }
+      // 並び変えられたデータを取得するために処理が入っている。
+      this.saveTask(cloneDeep(hot.getSourceData()).map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index))));      
     }
   }
 
