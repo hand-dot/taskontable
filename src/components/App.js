@@ -23,6 +23,8 @@ import { hotConf, emptyHotData } from '../confings/hot';
 
 import constants from '../constants';
 
+import util from '../util';
+
 const initialState = {
   userId: '',
   loading: true,
@@ -58,14 +60,8 @@ class App extends Component {
 
   componentWillMount() {
     // 初期値の最終保存時刻
-    const currentMoment = moment();
-    const timeObj = {
-      hour: currentMoment.hour(),
-      minute: currentMoment.minute(),
-      second: currentMoment.second(),
-    };
     this.setState({
-      lastSaveTime: timeObj,
+      lastSaveTime: util.getCrrentTimeObj(),
     });
   }
 
@@ -196,13 +192,8 @@ class App extends Component {
     }));
     setTimeout(() => {
       this.fetchTask().then((snapshot) => {
-        if (snapshot.exists()) {
-          // データが存在していたら読み込む
-          hot.updateSettings({ data: snapshot.val() });
-        } else {
-          // データが存在していないので、テーブルを空にする
-          hot.updateSettings({ data: cloneDeep(emptyHotData) });
-        }
+        const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
+        hot.updateSettings({ data });
       });
     }, 0);
   }
@@ -215,15 +206,9 @@ class App extends Component {
   }
 
   saveTask(data) {
-    const currentMoment = moment();
-    const timeObj = {
-      hour: currentMoment.hour(),
-      minute: currentMoment.minute(),
-      second: currentMoment.second(),
-    };
     this.setState(() => ({
       loading: true,
-      lastSaveTime: timeObj,
+      lastSaveTime: util.getCrrentTimeObj(),
     }));
     firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(data).then(() => {
       setTimeout(() => {

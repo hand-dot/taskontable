@@ -19,6 +19,7 @@ import CategoryList from './CategoryList';
 
 import { hotConf } from '../confings/hot';
 
+import util from '../util';
 
 function updateHotCategory(source) {
   const $hotConf = cloneDeep(hotConf);
@@ -50,12 +51,7 @@ class Dashboad extends Component {
 
   componentWillMount() {
     // 初期値の現在時刻と終了時刻
-    const currentMoment = moment();
-    const timeObj = {
-      hour: currentMoment.hour(),
-      minute: currentMoment.minute(),
-      second: currentMoment.second(),
-    };
+    const timeObj = util.getCrrentTimeObj;
     this.setState({
       currentTime: timeObj,
       endTime: timeObj,
