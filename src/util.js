@@ -16,8 +16,8 @@ export default {
     } else if (Array.isArray(object)) {
       node = object.slice(0) || [];
       node.forEach((n) => {
-        if (typeof n === 'object' && n !== {} || Array.isArray(n)) {
-          n = this.cloneDeep(n);
+        if ((typeof n === 'object' && n !== {}) || Array.isArray(n)) {
+          n = this.cloneDeep(n); // eslint-disable-line no-param-reassign
         }
       });
     } else if (typeof object === 'object') {
