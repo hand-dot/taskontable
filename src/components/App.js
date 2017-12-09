@@ -143,7 +143,6 @@ class App extends Component {
   }
 
   fetchTask() {
-    alert(this.state.userId);
     this.setState(() => ({
       loading: true,
     }));
