@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
+import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import AccountCircle from 'material-ui-icons/AccountCircle';
@@ -14,14 +15,13 @@ import constants from '../constants';
 
 const styles = {
   root: {
-    width: '100%',
   },
   toolbar: {
-    width: constants.appWidth,
-    margin: '0 auto',
+    maxWidth: constants.appWidth,
+    margin: '0 auto',    
   },
-  flex: {
-    flex: 1,
+  title: {
+    marginRight: 'auto',
   },
 };
 
@@ -80,47 +80,51 @@ class GlobalHeader extends Component {
     const open = Boolean(anchorEl);
 
     return (
-      <div className={classes.root}>
-        <AppBar position="static" color="default">
-          <Toolbar className={classes.toolbar}>
-            <Typography type="title" color="inherit" className={classes.flex}>
+      <AppBar position="static" color="default" className={classes.root}>
+        <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
+          <Grid item xs={1} />
+          <Grid item xs={10}>
+            <Toolbar>
+              <Typography type="title" color="inherit" className={classes.title}>
               TaskChute WEB
-            </Typography>
-            <div>
-              <IconButton
-                aria-owns={open ? 'menu-appbar' : null}
-                aria-haspopup="true"
-                onClick={this.handleMenu.bind(this)}
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={open}
-                onRequestClose={this.handleRequestClose.bind(this)}
-              >
-                <MenuItem>ユーザーID: {userId}</MenuItem>
-                <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
-              </Menu>
-            </div>
-          </Toolbar>
-        </AppBar>
+              </Typography>
+              <div>
+                <IconButton
+                  aria-owns={open ? 'menu-appbar' : null}
+                  aria-haspopup="true"
+                  onClick={this.handleMenu.bind(this)}
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={open}
+                  onRequestClose={this.handleRequestClose.bind(this)}
+                >
+                  <MenuItem>ユーザーID: {userId}</MenuItem>
+                  <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
+                </Menu>
+              </div>
+            </Toolbar>
+          </Grid>
+          <Grid item xs={1} />
+        </Grid>
         <LoginDialog
           userId={userId}
           isOpenLoginDialog={this.state.isOpenLoginDialog}
           changeUserId={changeUserId}
           login={this.login.bind(this)}
         />
-      </div>
+      </AppBar>
     );
   }
 }
