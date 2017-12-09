@@ -14,7 +14,7 @@ import DatePicker from './DatePicker';
 import Clock from './Clock';
 import CategoryList from './CategoryList';
 
-import { hotConf } from '../confings/hot';
+import { hotConf } from '../hot';
 
 import util from '../util';
 

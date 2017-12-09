@@ -19,7 +19,7 @@ import Dashboad from './Dashboad';
 import TaskListCtl from './TaskListCtl';
 
 import firebaseConf from '../confings/firebase';
-import { hotConf, emptyHotData } from '../confings/hot';
+import { hotConf, emptyHotData } from '../hot';
 
 import constants from '../constants';
 
