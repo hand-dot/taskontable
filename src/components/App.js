@@ -38,7 +38,7 @@ const styles = {
   root: {
     margin: '0 auto',
     paddingBottom: 20,
-    maxWidth: constants.appWidth,
+    maxWidth: constants.APPWIDTH,
   },
   navButton: {
     height: '100%',

@@ -18,10 +18,11 @@ function LoginDialog(props) {
       <DialogContent>
         <DialogContentText>
           TaskChute WEB はただいま開発中です。<br />
-          しかし一部機能を試していただくことは可能です。<br />
+          しかしベータ版として一部機能を試していただくことは可能です。<br />
           <br />
           タスクの入力・保存・読み込みはできますが、
-          現時点ではユーザー登録を行いませんので、あなた自身でユーザーIDを入力して下さい。<br />
+          現時点ではユーザー登録を行いませんので、
+          あなた自身でユーザーIDを入力して下さい。<br />
           <br />
           以降、同じユーザーIDを入力すると<br />
           保存したタスクを読み込むことができます。<br />
@@ -38,7 +39,7 @@ function LoginDialog(props) {
           fullWidth
         />
         <Typography type="caption" gutterBottom>
-         *ログイン機能実装後に以前に保存したデータは削除されます。あらかじめご了承ください。
+         *ベータ版で保存したデータはリリース後に削除されます。あらかじめご了承ください。
         </Typography>
       </DialogContent>
       <DialogActions>

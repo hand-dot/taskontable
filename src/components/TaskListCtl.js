@@ -22,7 +22,7 @@ function TaskListCtl(props) {
          *終了通知の予約を行うには見積を入力したタスクの開始時刻を入力してください。
         </Typography>
         <Typography type="caption" gutterBottom>
-         *通知予約されたタスクの開始時刻に <i className="fa fa-clock-o fa-lg" /> が表示されます。(マウスホバーで予約時刻)
+         *通知予約されたタスクの開始時刻に <i className="fa fa-bell-o fa-lg" /> が表示されます。(マウスホバーで予約時刻)
         </Typography>
         <Typography type="caption" gutterBottom>
         *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。

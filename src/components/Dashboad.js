@@ -126,7 +126,7 @@ class Dashboad extends Component {
   render() {
     const { date, changeDate } = this.props;
     return (
-      <ExpansionPanel defaultExpanded>
+      <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<i className="fa fa-angle-down fa-lg" />}>
           <i className="fa fa-tachometer fa-lg" />
           <Typography>　ダッシュボード</Typography>

@@ -1,3 +1,8 @@
 export default {
-  appWidth: 1280,
+  APPWIDTH: 1280,
+  menuItemKey: {
+    DESCRIPTION: 'description',
+    CONTACT: 'contact',
+    GIT: 'git',
+  }
 };

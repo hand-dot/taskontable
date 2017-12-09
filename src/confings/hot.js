@@ -42,7 +42,7 @@ const columns = [
       td.innerHTML = value;
       const notification = cellProperties.notification;
       if (notification) {
-        td.innerHTML = `<div title="${notification.time}通知予約済">${value} <i class="fa fa-clock-o"></i></div>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<div title="${notification.time}通知予約済">${value} <i class="fa fa-bell-o"></i></div>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
@@ -237,7 +237,7 @@ export const hotConf = {
   rowHeaders: true,
   autoInsertRow: false,
   manualRowMove: true,
-  colWidths: Math.round(constants.appWidth / columns.length),
+  colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
   data: emptyHotData,
   dataSchema,

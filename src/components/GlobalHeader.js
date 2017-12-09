@@ -10,17 +10,23 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 
 import LoginDialog from './LoginDialog';
 
+import { contact, repository } from '../confings/admin';
+
 import constants from '../constants';
 
 const styles = {
   root: {
   },
   toolbar: {
-    maxWidth: constants.appWidth,
+    maxWidth: constants.APPWIDTH,
     margin: '0 auto',
   },
   title: {
     marginRight: 'auto',
+  },
+  link: {
+    textDecoration: 'none',
+    color: 'rgba(0, 0, 0, 0.87)',
   },
 };
 
@@ -29,7 +35,9 @@ class GlobalHeader extends Component {
     super(props);
     this.state = {
       anchorEl: null,
+      openMenuKey: '',
       isOpenLoginDialog: false,
+      isOpenDescriptionDialog: false,
     };
   }
 
@@ -37,12 +45,24 @@ class GlobalHeader extends Component {
     this.login();
   }
 
-  handleMenu(event) {
-    this.setState({ anchorEl: event.currentTarget });
+  handleRequestClose() {
+    this.setState({ anchorEl: null, openMenuKey: '' });
   }
 
-  handleRequestClose() {
-    this.setState({ anchorEl: null });
+  handleMenu(event) {
+    const menuKey = event.currentTarget.getAttribute('data-menu-key');
+    this.setState({ anchorEl: event.currentTarget, openMenuKey: menuKey });
+  }
+
+  handleMenuItem(event) {
+    const menuItemKey = event.currentTarget.getAttribute('data-menu-item-key');
+    if (constants.menuItemKey.DESCRIPTION === menuItemKey) {
+      this.setState({ isOpenDescriptionDialog: true });
+    } else if (constants.menuItemKey.CONTACT === menuItemKey) {
+      window.open(contact);
+    } else if (constants.menuItemKey.GIT === menuItemKey) {
+      window.open(repository);
+    }
   }
 
   login() {
@@ -76,7 +96,6 @@ class GlobalHeader extends Component {
   render() {
     const { userId, changeUserId, classes } = this.props;
     const { anchorEl } = this.state;
-    const open = Boolean(anchorEl);
 
     return (
       <AppBar position="static" color="default" className={classes.root}>
@@ -88,29 +107,41 @@ class GlobalHeader extends Component {
               TaskChute WEB
               </Typography>
               <div>
-                <IconButton
-                  aria-owns={open ? 'menu-appbar' : null}
-                  aria-haspopup="true"
-                  onClick={this.handleMenu.bind(this)}
-                >
+                <IconButton onClick={this.handleMenu.bind(this)} data-menu-key="user">
                   <i className="fa fa-user-circle" />
                 </IconButton>
                 <Menu
-                  id="menu-appbar"
                   anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={open}
+                  open={this.state.openMenuKey === 'user'}
                   onRequestClose={this.handleRequestClose.bind(this)}
                 >
                   <MenuItem>ユーザーID: {userId}</MenuItem>
-                  <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
+                  <MenuItem onClick={this.logout.bind(this)}>
+                    <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
+                  </MenuItem>
+                </Menu>
+              </div>
+              <div>
+                <IconButton onClick={this.handleMenu.bind(this)} data-menu-key="info">
+                  <i className="fa fa-info-circle" />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={this.state.openMenuKey === 'info'}
+                  onRequestClose={this.handleRequestClose.bind(this)}
+                >
+                  <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.DESCRIPTION}>
+                    <i className="fa fa-question" aria-hidden="true" />
+                    　サイトについて
+                  </MenuItem>
+                  <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.CONTACT}>
+                    <i className="fa fa-envelope-o" aria-hidden="true" />
+                    　お問い合わせ
+                  </MenuItem>
+                  <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.GIT}>
+                    <i className="fa fa-github" aria-hidden="true" />
+                    　ソースコード
+                  </MenuItem>
                 </Menu>
               </div>
             </Toolbar>
