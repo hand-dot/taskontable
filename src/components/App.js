@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash.clonedeep';
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -47,12 +46,7 @@ const styles = {
   },
 };
 
-
-// ローディングが早すぎて一回もロードされてないように見えるため、
-// デザイン目的で最低でも1秒はローディングするようにしている。実際ないほうが良い。
-const loadingDuration = 1000;
-
-const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
+const NotificationClone = (() => ('Notification' in window ? util.cloneDeep(Notification) : false))();
 firebase.initializeApp(firebaseConf);
 
 let hot = null;
@@ -131,7 +125,7 @@ class App extends Component {
 
   setStateFromHot() {
     if (hot) {
-      const sourceData = cloneDeep(hot.getSourceData());
+      const sourceData = util.cloneDeep(hot.getSourceData());
       if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
       this.setState({
         allTasks: sourceData,
@@ -153,11 +147,9 @@ class App extends Component {
       loading: true,
     }));
     return firebase.database().ref(`/${this.state.userId}/${this.state.date}`).once('value').then((snapshot) => {
-      setTimeout(() => {
-        this.setState(() => ({
-          loading: false,
-        }));
-      }, loadingDuration);
+      this.setState(() => ({
+        loading: false,
+      }));
       return snapshot;
     });
   }
@@ -184,7 +176,7 @@ class App extends Component {
     // テーブルのクリア
     setTimeout(() => {
       if (hot) {
-        hot.updateSettings({ data: cloneDeep(emptyHotData) });
+        hot.updateSettings({ data: util.cloneDeep(emptyHotData) });
       }
     }, 0);
   }
@@ -194,7 +186,7 @@ class App extends Component {
     const nav = event.currentTarget.getAttribute('data-date-nav');
     let date;
     if (nav) {
-      date = moment(this.state.date).add(nav === 'next' ? 1 : -1, 'day').format('YYYY-MM-DD');      
+      date = moment(this.state.date).add(nav === 'next' ? 1 : -1, 'day').format('YYYY-MM-DD');
     } else {
       event.persist();
       date = event.target.value;
@@ -204,7 +196,7 @@ class App extends Component {
     }));
     setTimeout(() => {
       this.fetchTask().then((snapshot) => {
-        const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
+        const data = snapshot.exists() ? snapshot.val() : util.cloneDeep(emptyHotData);
         hot.updateSettings({ data });
       });
     }, 0);
@@ -213,7 +205,7 @@ class App extends Component {
   saveHot() {
     if (hot) {
       // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTask(cloneDeep(hot.getSourceData()).map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index))));
+      this.saveTask(util.cloneDeep(hot.getSourceData()).map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index))));
     }
   }
 
@@ -223,11 +215,9 @@ class App extends Component {
       lastSaveTime: util.getCrrentTimeObj(),
     }));
     firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(data).then(() => {
-      setTimeout(() => {
-        this.setState(() => ({
-          loading: false,
-        }));
-      }, loadingDuration);
+      this.setState(() => ({
+        loading: false,
+      }));
     });
   }
 
