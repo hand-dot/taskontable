@@ -89,9 +89,6 @@ class App extends Component {
           hsep1: '---------',
           row_above: {
             name: '上に行を追加する',
-            disabled() {
-              return this.getSelected()[0] === 0;
-            },
           },
           row_below: {
             name: '下に行を追加する',
@@ -136,17 +133,44 @@ class App extends Component {
     }
   }
 
+  toggleNotifiable(event, checked) {
+    if ('Notification' in window) {
+      Notification = checked ? NotificationClone : false;　// eslint-disable-line
+      this.setState(() => ({
+        notifiable: checked,
+      }));
+    }
+  }
+
+  fetchTask() {
+    alert(this.state.userId);
+    this.setState(() => ({
+      loading: true,
+    }));
+    return firebase.database().ref(`/${this.state.userId}/${this.state.date}`).once('value').then((snapshot) => {
+      setTimeout(() => {
+        this.setState(() => ({
+          loading: false,
+        }));
+      }, loadingDuration);
+      return snapshot;
+    });
+  }
+
   changeUserId(e) {
     this.setState({ userId: e.target.value });
   }
 
-  loginCallback() {
+  loginCallback(userId) {
+    this.setState({ userId });
     // テーブルの初期化
-    this.fetchTask().then((snapshot) => {
-      if (hot && snapshot.exists()) {
-        hot.updateSettings({ data: snapshot.val() });
-      }
-    });
+    setTimeout(() => {
+      this.fetchTask().then((snapshot) => {
+        if (hot && snapshot.exists()) {
+          hot.updateSettings({ data: snapshot.val() });
+        }
+      });
+    }, 0);
   }
 
   logoutCallback() {
@@ -160,15 +184,6 @@ class App extends Component {
     }, 0);
   }
 
-  toggleNotifiable(event, checked) {
-    if ('Notification' in window) {
-      Notification = checked ? NotificationClone : false;　// eslint-disable-line
-      this.setState(() => ({
-        notifiable: checked,
-      }));
-    }
-  }
-
   changeDate(event) {
     if (!hot) return;
     event.persist();
@@ -179,7 +194,6 @@ class App extends Component {
       this.fetchTask().then((snapshot) => {
         if (snapshot.exists()) {
           // データが存在していたら読み込む
-          console.log(snapshot.val());
           hot.updateSettings({ data: snapshot.val() });
         } else {
           // データが存在していないので、テーブルを空にする
@@ -224,20 +238,6 @@ class App extends Component {
           loading: false,
         }));
       }, loadingDuration);
-    });
-  }
-
-  fetchTask() {
-    this.setState(() => ({
-      loading: true,
-    }));
-    return firebase.database().ref(`/${this.state.userId}/${this.state.date}`).once('value').then((snapshot) => {
-      setTimeout(() => {
-        this.setState(() => ({
-          loading: false,
-        }));
-      }, loadingDuration);
-      return snapshot;
     });
   }
 

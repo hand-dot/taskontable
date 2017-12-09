@@ -49,7 +49,7 @@ class GlobalHeader extends Component {
     const userId = localStorage.getItem('userId') || this.props.userId;
     if (userId) {
       localStorage.setItem('userId', userId);
-      this.props.loginCallback();
+      this.props.loginCallback(userId);
       this.closeLoginDialog();
     } else {
       this.openLoginDialog();
