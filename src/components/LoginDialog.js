@@ -11,9 +11,9 @@ import Dialog, {
 } from 'material-ui/Dialog';
 
 function LoginDialog(props) {
-  const { userId, changeUserId, login, isOpenLoginDialog } = props;
+  const { userId, changeUserId, login, open } = props;
   return (
-    <Dialog open={isOpenLoginDialog}>
+    <Dialog open={open}>
       <DialogTitle>ユーザーIDを入力して下さい</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -53,7 +53,7 @@ function LoginDialog(props) {
 
 LoginDialog.propTypes = {
   userId: PropTypes.string.isRequired,
-  isOpenLoginDialog: PropTypes.bool.isRequired,
+  open: PropTypes.bool.isRequired,
   changeUserId: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
 };

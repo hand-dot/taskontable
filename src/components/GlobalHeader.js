@@ -9,6 +9,7 @@ import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
 
 import LoginDialog from './LoginDialog';
+import DescriptionDialog from './DescriptionDialog';
 
 import { contact, repository } from '../confings/admin';
 
@@ -45,7 +46,7 @@ class GlobalHeader extends Component {
     this.login();
   }
 
-  handleRequestClose() {
+  closeMenu() {
     this.setState({ anchorEl: null, openMenuKey: '' });
   }
 
@@ -65,6 +66,10 @@ class GlobalHeader extends Component {
     }
   }
 
+  closeDescriptionDialog() {
+    this.setState({ isOpenDescriptionDialog: false });
+  }
+
   login() {
     // FIXME localstrage実装は暫時対応
     const userId = localStorage.getItem('userId') || this.props.userId;
@@ -80,7 +85,7 @@ class GlobalHeader extends Component {
   logout() {
     // FIXME localstrage実装は暫時対応
     localStorage.removeItem('userId');
-    this.handleRequestClose();
+    this.closeMenu();
     this.props.logoutCallback();
     this.openLoginDialog();
   }
@@ -113,7 +118,7 @@ class GlobalHeader extends Component {
                 <Menu
                   anchorEl={anchorEl}
                   open={this.state.openMenuKey === 'user'}
-                  onRequestClose={this.handleRequestClose.bind(this)}
+                  onRequestClose={this.closeMenu.bind(this)}
                 >
                   <MenuItem>ユーザーID: {userId}</MenuItem>
                   <MenuItem onClick={this.logout.bind(this)}>
@@ -128,7 +133,7 @@ class GlobalHeader extends Component {
                 <Menu
                   anchorEl={anchorEl}
                   open={this.state.openMenuKey === 'info'}
-                  onRequestClose={this.handleRequestClose.bind(this)}
+                  onRequestClose={this.closeMenu.bind(this)}
                 >
                   <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.DESCRIPTION}>
                     <i className="fa fa-question" aria-hidden="true" />
@@ -150,9 +155,13 @@ class GlobalHeader extends Component {
         </Grid>
         <LoginDialog
           userId={userId}
-          isOpenLoginDialog={this.state.isOpenLoginDialog}
+          open={this.state.isOpenLoginDialog}
           changeUserId={changeUserId}
           login={this.login.bind(this)}
+        />
+        <DescriptionDialog
+          open={this.state.isOpenDescriptionDialog}
+          onRequestClose={this.closeDescriptionDialog.bind(this)}
         />
       </AppBar>
     );
