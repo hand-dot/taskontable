@@ -17,7 +17,7 @@ function LoginDialog(props) {
       <DialogTitle>ユーザーIDを入力して下さい</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          TaskChute WEB はただいま開発中です。<br />
+          Taskontable はただいま開発中です。<br />
           しかしベータ版として一部機能を試していただくことは可能です。<br />
           <br />
           タスクの入力・保存・読み込みはできますが、

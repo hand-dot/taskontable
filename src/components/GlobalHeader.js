@@ -109,7 +109,7 @@ class GlobalHeader extends Component {
           <Grid item xs={10}>
             <Toolbar>
               <Typography type="title" color="inherit" className={classes.title}>
-              TaskChute WEB
+              Taskontable
               </Typography>
               <div>
                 <IconButton onClick={this.handleMenu.bind(this)} data-menu-key="user">
