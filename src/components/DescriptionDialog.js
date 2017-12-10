@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Dialog, {
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
 import Typography from 'material-ui/Typography';
@@ -23,6 +22,9 @@ const styles = {
     marginLeft: 'auto',
     marginRight: 20,
   },
+  content: {
+    flex: 'initial',
+  },
 };
 
 function DescriptionDialog(props) {
@@ -36,7 +38,8 @@ function DescriptionDialog(props) {
       <AppBar className={classes.appBar}>
         <Toolbar>
           <Typography type="title" color="inherit" className={classes.flex}>
-            サイトについて
+            <i className="fa fa-question" aria-hidden="true" />
+            　サイトについて
           </Typography>
           <IconButton className={classes.closeBtn} color="contrast" onClick={onRequestClose}>
             <i className="fa fa-times" aria-hidden="true" />
@@ -44,28 +47,11 @@ function DescriptionDialog(props) {
         </Toolbar>
       </AppBar>
       <DialogTitle>タイトル</DialogTitle>
-      <DialogContent>
+      <DialogContent className={classes.content}>
         <Grid container spacing={40}>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <Typography gutterBottom>
-              テキスト
-            </Typography>
-            <Typography gutterBottom>
-              テキスト
-            </Typography>
-            <Typography gutterBottom>
-              テキスト
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography gutterBottom>
-              テキスト
-            </Typography>
-            <Typography gutterBottom>
-              テキスト
-            </Typography>
-            <Typography gutterBottom>
-              テキスト
+              現在作成中です
             </Typography>
           </Grid>
         </Grid>
@@ -77,7 +63,7 @@ function DescriptionDialog(props) {
 DescriptionDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired,  
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(DescriptionDialog);

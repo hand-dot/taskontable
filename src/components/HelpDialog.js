@@ -22,6 +22,9 @@ const styles = {
     marginLeft: 'auto',
     marginRight: 20,
   },
+  content: {
+    flex: 'initial',
+  },
 };
 
 function HelpDialog(props) {
@@ -35,29 +38,18 @@ function HelpDialog(props) {
       <AppBar className={classes.appBar}>
         <Toolbar>
           <Typography type="title" color="inherit" className={classes.flex}>
-            ヘルプ
+            <i className="fa fa-question-circle-o" aria-hidden="true" />
+            　ヘルプ
           </Typography>
           <IconButton className={classes.closeBtn} color="contrast" onClick={onRequestClose}>
             <i className="fa fa-times" aria-hidden="true" />
           </IconButton>
         </Toolbar>
       </AppBar>
-      <DialogTitle>使い方</DialogTitle>
-      <DialogContent>
+      <DialogTitle>タスクの入力について</DialogTitle>
+      <DialogContent className={classes.content}>
         <Grid container spacing={40}>
-
-          <Grid item xs={6}>
-            <Typography gutterBottom>
-                *終了通知の予約を行うには見積を入力したタスクの開始時刻を入力してください。
-            </Typography>
-            <Typography gutterBottom>
-                *通知予約されたタスクの開始時刻に <i className="fa fa-bell-o fa-lg" /> が表示されます。(マウスホバーで予約時刻)
-            </Typography>
-            <Typography gutterBottom>
-                *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <Typography gutterBottom>
                 *セル上で右クリックすると現在時刻の入力・行の追加・削除を行えます。
             </Typography>
@@ -66,6 +58,22 @@ function HelpDialog(props) {
             </Typography>
             <Typography gutterBottom>
                 *列ヘッダーにマウスホバーすると各列の説明を見ることができます。
+            </Typography>
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogTitle>終了時刻通知について</DialogTitle>
+      <DialogContent className={classes.content}>
+        <Grid container spacing={40}>
+          <Grid item xs={12}>
+            <Typography gutterBottom>
+                *終了通知の予約を行うには見積を入力したタスクの開始時刻を入力してください。
+            </Typography>
+            <Typography gutterBottom>
+                *通知予約されたタスクの開始時刻に <i className="fa fa-bell-o fa-lg" /> が表示されます。(マウスホバーで予約時刻)
+            </Typography>
+            <Typography gutterBottom>
+                *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。
             </Typography>
           </Grid>
         </Grid>

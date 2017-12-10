@@ -50,7 +50,7 @@ const styles = {
     width: '100%',
   },
   helpButton: {
-    fontSize: 10,
+    fontSize: 15,
     width: 20,
     height: 20,
   },
