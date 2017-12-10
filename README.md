@@ -15,3 +15,22 @@
  * バックエンド - [firebase](https://firebase.google.com/)
  * フロントエンド - [react](https://reactjs.org/)
  * UI - [material-ui](https://material-ui-next.com/) / [handsontable](https://handsontable.com/)
+
+### アプリ起動
+
+1.レポジトリのクローンとライブラリのダウンロード
+```
+$ git clone https://github.com/hand-dot/taskontable.git
+$ cd taskontable
+$ npm install
+```
+
+2.設定ファイルの作成と記入
+
+[`src/`](https://github.com/hand-dot/taskontable/tree/master/src) 配下に `confings`ディレクトリを作成し、
+`firebase.js`を作ってfirebaseの設定情報を記入してください。
+
+3.taskontableディレクトリ上でアプリを起動
+```
+$ npm run start
+```
