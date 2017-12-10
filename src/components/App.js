@@ -125,6 +125,13 @@ class App extends Component {
     }));
     window.hot = hot;
     this.setStateFromHot();
+    window.addEventListener('beforeunload', (e) => {
+      if (this.state.saveable) {
+        const dialogText = '保存していない内容があります。';
+        e.returnValue = dialogText;
+        return dialogText;
+      }
+    });
   }
 
   setAInitialState() {
@@ -214,7 +221,7 @@ class App extends Component {
           hot.updateSettings({ data });
         });
       }, 0);
-    }  
+    }
   }
 
   saveHot() {
