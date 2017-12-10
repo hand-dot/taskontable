@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import cloneDeep from 'lodash.clonedeep';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Input from 'material-ui/Input';
@@ -19,7 +20,7 @@ import { hotConf } from '../hot';
 import util from '../util';
 
 function updateHotCategory(source) {
-  const $hotConf = util.cloneDeep(hotConf);
+  const $hotConf = cloneDeep(hotConf);
   $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
   if (window.hot) {
     setTimeout(() => {
@@ -111,7 +112,7 @@ class Dashboad extends Component {
   }
 
   removeCategory(index) {
-    const categories = util.cloneDeep(this.state.categories);
+    const categories = cloneDeep(this.state.categories);
     categories.splice(index, 1);
     this.setState(() => ({
       categories,

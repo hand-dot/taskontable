@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
+import cloneDeep from 'lodash.clonedeep';
 
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
@@ -29,6 +30,7 @@ const initialState = {
   userId: '',
   loading: true,
   notifiable: true,
+  saveable: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   allTasks: [],
@@ -46,10 +48,16 @@ const styles = {
   },
 };
 
-const NotificationClone = (() => ('Notification' in window ? util.cloneDeep(Notification) : false))();
+const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
 firebase.initializeApp(firebaseConf);
 
 let hot = null;
+const hotSourceData = () => {
+  if (hot) {
+    const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
+    return cloneDeep(hotData);
+  }
+};
 
 class App extends Component {
   constructor(props) {
@@ -112,7 +120,7 @@ class App extends Component {
         self.setStateFromHot();
       },
       afterUpdateSettings() {
-        self.setStateFromHot();
+        self.setStateFromHot(true);
       },
     }));
     window.hot = hot;
@@ -123,11 +131,16 @@ class App extends Component {
     this.setState(initialState);
   }
 
-  setStateFromHot() {
-    if (hot) {
-      const sourceData = util.cloneDeep(hot.getSourceData());
-      if (JSON.stringify(this.state.allTasks) === JSON.stringify(sourceData)) return;
+  setStateFromHot(isUpdateSettings) {
+    const sourceData = cloneDeep(hotSourceData());
+    if (isUpdateSettings) {
       this.setState({
+        saveable: false,
+        allTasks: sourceData,
+      });
+    } else if (JSON.stringify(this.state.allTasks) !== JSON.stringify(sourceData)) {
+      this.setState({
+        saveable: true,
         allTasks: sourceData,
       });
     }
@@ -176,7 +189,7 @@ class App extends Component {
     // テーブルのクリア
     setTimeout(() => {
       if (hot) {
-        hot.updateSettings({ data: util.cloneDeep(emptyHotData) });
+        hot.updateSettings({ data: cloneDeep(emptyHotData) });
       }
     }, 0);
   }
@@ -191,32 +204,35 @@ class App extends Component {
       event.persist();
       date = event.target.value;
     }
-    this.setState(() => ({
-      date,
-    }));
-    setTimeout(() => {
-      this.fetchTask().then((snapshot) => {
-        const data = snapshot.exists() ? snapshot.val() : util.cloneDeep(emptyHotData);
-        hot.updateSettings({ data });
-      });
-    }, 0);
+    if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
+      this.setState(() => ({
+        date,
+      }));
+      setTimeout(() => {
+        this.fetchTask().then((snapshot) => {
+          const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
+          hot.updateSettings({ data });
+        });
+      }, 0);
+    }  
   }
 
   saveHot() {
     if (hot) {
       // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTask(util.cloneDeep(hot.getSourceData()).map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index))));
+      this.saveTask(hotSourceData());
     }
   }
 
   saveTask(data) {
     this.setState(() => ({
       loading: true,
-      lastSaveTime: util.getCrrentTimeObj(),
     }));
     firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(data).then(() => {
       this.setState(() => ({
         loading: false,
+        lastSaveTime: util.getCrrentTimeObj(),
+        saveable: false,
       }));
     });
   }

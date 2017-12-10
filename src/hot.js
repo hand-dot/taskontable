@@ -1,6 +1,6 @@
 import moment from 'moment';
+import cloneDeep from 'lodash.clonedeep';
 import constants from './constants';
-import util from './util';
 
 const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '' };
 const columns = [
@@ -230,7 +230,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
   }
 };
 
-export const emptyHotData = [util.cloneDeep(dataSchema)];
+export const emptyHotData = [cloneDeep(dataSchema)];
 export const hotConf = {
   stretchH: 'all',
   comments: true,
