@@ -17,8 +17,6 @@ function DescriptionDialog(props) {
       <DialogContent>
         <DialogContentText>
           {/* FIXME issue/56 */}
-          ・はじめに
-          ・つかいかた
         </DialogContentText>
       </DialogContent>
     </Dialog>

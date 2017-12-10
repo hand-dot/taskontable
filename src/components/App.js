@@ -12,12 +12,14 @@ import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import { LinearProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';
+import IconButton from 'material-ui/IconButton';
 
 import '../styles/handsontable-custom.css';
 
 import GlobalHeader from './GlobalHeader';
 import Dashboad from './Dashboad';
 import TaskListCtl from './TaskListCtl';
+import HelpDialog from './HelpDialog';
 
 import firebaseConf from '../confings/firebase';
 import { hotConf, emptyHotData } from '../hot';
@@ -31,6 +33,7 @@ const initialState = {
   loading: true,
   notifiable: true,
   saveable: false,
+  isOpenHelpDialog: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   allTasks: [],
@@ -45,6 +48,11 @@ const styles = {
   navButton: {
     height: '100%',
     width: '100%',
+  },
+  helpButton: {
+    fontSize: 10,
+    width: 20,
+    height: 20,
   },
 };
 
@@ -244,6 +252,14 @@ class App extends Component {
     });
   }
 
+  openHelpDialog() {
+    this.setState({ isOpenHelpDialog: true });
+  }
+
+  closeHelpDialog() {
+    this.setState({ isOpenHelpDialog: false });
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -272,6 +288,9 @@ class App extends Component {
               <div style={{ padding: '0 5px' }}>
                 <Typography gutterBottom type="title">
                   {this.state.date.replace(/-/g, '/')} のタスク一覧
+                  <IconButton className={classes.helpButton} color="default" onClick={this.openHelpDialog.bind(this)}>
+                    <i className="fa fa-question-circle-o" aria-hidden="true" />
+                  </IconButton>
                 </Typography>
                 <TaskListCtl
                   lastSaveTime={this.state.lastSaveTime}
@@ -290,6 +309,10 @@ class App extends Component {
             </Button>
           </Grid>
         </Grid>
+        <HelpDialog
+          open={this.state.isOpenHelpDialog}
+          onRequestClose={this.closeHelpDialog.bind(this)}
+        />
       </div>
     );
   }
