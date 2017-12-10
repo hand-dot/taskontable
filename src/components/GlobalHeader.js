@@ -11,8 +11,6 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import LoginDialog from './LoginDialog';
 import DescriptionDialog from './DescriptionDialog';
 
-import { contact, repository } from '../confings/admin';
-
 import constants from '../constants';
 
 const styles = {
@@ -60,9 +58,9 @@ class GlobalHeader extends Component {
     if (constants.menuItemKey.DESCRIPTION === menuItemKey) {
       this.setState({ isOpenDescriptionDialog: true });
     } else if (constants.menuItemKey.CONTACT === menuItemKey) {
-      window.open(contact);
+      window.open(constants.CONTACTURL);
     } else if (constants.menuItemKey.GIT === menuItemKey) {
-      window.open(repository);
+      window.open(constants.REPOSITORYURL);
     }
   }
 
