@@ -10,6 +10,8 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 
+import constants from '../constants';
+
 function LoginDialog(props) {
   const { userId, changeUserId, login, open } = props;
   return (
@@ -39,7 +41,9 @@ function LoginDialog(props) {
           fullWidth
         />
         <Typography type="caption" gutterBottom>
-         *ベータ版で保存したデータはリリース後に削除されます。あらかじめご了承ください。
+         *ベータ版で保存したデータはリリース後に削除されます。ご了承ください。
+          <i className="fa fa-github" aria-hidden="true" />
+          <a style={{ textDecoration: 'none', color: '#000' }} href={constants.REPOSITORYURL} target="_blank">本サイトについて</a>
         </Typography>
       </DialogContent>
       <DialogActions>
