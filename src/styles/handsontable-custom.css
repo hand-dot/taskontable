@@ -5,3 +5,8 @@
 .handsontable td.htInvalid {
   background-color: #ff9b9b !important;
 }
+
+.handsontable .mark {
+  color: #fff;
+  background-color: #3f51b5;
+}

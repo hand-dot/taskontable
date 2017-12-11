@@ -60,11 +60,13 @@ const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notificat
 firebase.initializeApp(firebaseConf);
 
 let hot = null;
+let prevKey = null;
 const hotSourceData = () => {
   if (hot) {
     const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
     return cloneDeep(hotData);
   }
+  return cloneDeep(emptyHotData);
 };
 
 class App extends Component {
@@ -115,24 +117,46 @@ class App extends Component {
           },
         },
       },
-      afterRowMove() {
-        self.setStateFromHot();
-      },
-      beforeChangeRender() {
-        self.setStateFromHot();
-      },
-      afterCreateRow() {
-        self.setStateFromHot();
-      },
-      afterRemoveRow() {
-        self.setStateFromHot();
-      },
-      afterUpdateSettings() {
-        self.setStateFromHot(true);
-      },
+      // 各種callbackでテーブルの状態をstateに反映
+      afterRowMove() { self.setStateFromHot(); },
+      beforeChangeRender() { self.setStateFromHot(); },
+      afterCreateRow() { self.setStateFromHot(); },
+      afterRemoveRow() { self.setStateFromHot(); },
+      afterUpdateSettings() { self.setStateFromHot(true); },
     }));
+    // ショートカット処理
+    hot.addHook('afterDocumentKeyDown', (e) => {
+      // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
+      if (e.path[0].id !== 'HandsontableCopyPaste') return;
+      e.preventDefault();
+      // FIXME 場合によっては複数選択時にも対応したい
+      const [startRow, startCol, endRow, endCol] = hot.getSelected();
+      if (e.key === 'm' && prevKey === 'Control') {
+        // セルをマーク
+        const classNameList = (hot.getCellMeta(startRow, startCol).className || '').split(' ');
+        if (classNameList.indexOf('mark') >= 0) {
+          // markクラスを持っている
+          classNameList.some((cn, i) => { if (cn === 'mark') classNameList.splice(i, 1); });
+        } else {
+          classNameList.push('mark');
+        }
+        hot.setCellMeta(startRow, startCol, 'className', classNameList.join(' '));
+      } else if (e.key === ';' && prevKey === 'Control') {
+        // 現在時刻を入力
+        const prop = hot.colToProp(startCol);
+        // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
+        if (startRow === endRow && startCol === endCol && (prop === 'endTime' || prop === 'startTime')) {
+          hot.setDataAtCell(startRow, startCol, moment().format('HH:mm'));
+        }
+      }
+      if (e.key === 's' && prevKey === 'Control') {
+        // テーブルを保存
+        this.saveHot();
+      }
+      hot.render();
+      prevKey = e.key;
+    });
     window.hot = hot;
-    this.setStateFromHot();
     window.addEventListener('beforeunload', (e) => {
       if (this.state.saveable) {
         const dialogText = '保存していない内容があります。';
@@ -140,6 +164,7 @@ class App extends Component {
         return dialogText;
       }
     });
+    this.setStateFromHot();
   }
 
   setAInitialState() {
