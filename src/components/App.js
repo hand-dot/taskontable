@@ -21,7 +21,7 @@ import Dashboad from './Dashboad';
 import TaskListCtl from './TaskListCtl';
 import HelpDialog from './HelpDialog';
 
-import firebaseConf from '../confings/firebase';
+import firebaseConf from '../configs/firebase';
 import { hotConf, emptyHotData } from '../hot';
 
 import constants from '../constants';
