@@ -35,7 +35,7 @@ function DescriptionDialog(props) {
       open={open}
       onRequestClose={onRequestClose}
     >
-      <AppBar className={classes.appBar}>
+      <AppBar color="default" className={classes.appBar}>
         <Toolbar>
           <Typography type="title" color="inherit" className={classes.flex}>
             <i className="fa fa-question" aria-hidden="true" />

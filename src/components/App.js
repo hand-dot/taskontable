@@ -13,6 +13,7 @@ import Grid from 'material-ui/Grid';
 import { LinearProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
+import Tooltip from 'material-ui/Tooltip';
 
 import '../styles/handsontable-custom.css';
 
@@ -81,12 +82,23 @@ class App extends Component {
       lastSaveTime: util.getCrrentTimeObj(),
     });
     window.addEventListener('keydown', (e) => {
-      if (e.key === 's' && prevKey === 'Control') {
-        e.preventDefault();              
+      if (prevKey === 'Control' && e.key === 's') {
+        e.preventDefault();                      
         // テーブルを保存
         this.saveHot();
+      } else if (prevKey === 'Control' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+        // 基準日を変更
+        this.setState({ date: moment(this.state.date).add(e.key === 'ArrowRight' ? 1 : -1, 'day').format('YYYY-MM-DD') });
+        setTimeout(() => {
+          this.fetchTask().then((snapshot) => {
+            const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
+            hot.updateSettings({ data });
+          });
+        }, 0);
+      } else if (e.key === '?') {    
+        this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
-      prevKey = e.key;            
+      prevKey = e.key;
       return false;
     });
     window.addEventListener('beforeunload', (e) => {
@@ -112,7 +124,7 @@ class App extends Component {
         bindShortcut(this);
       },
     }));
-    window.hot = hot;    
+    window.hot = hot;
   }
 
   setAInitialState() {
@@ -261,9 +273,11 @@ class App extends Component {
               <div style={{ padding: '0 5px' }}>
                 <Typography gutterBottom type="title">
                   {this.state.date.replace(/-/g, '/')} のタスク一覧
-                  <IconButton className={classes.helpButton} color="default" onClick={this.openHelpDialog.bind(this)}>
-                    <i className="fa fa-question-circle-o" aria-hidden="true" />
-                  </IconButton>
+                  <Tooltip title="? を入力してください" placement="top">
+                    <IconButton className={classes.helpButton} color="default" onClick={this.openHelpDialog.bind(this)}>
+                      <i className="fa fa-question-circle-o" aria-hidden="true" />
+                    </IconButton>
+                  </Tooltip>
                 </Typography>
                 <TaskListCtl
                   lastSaveTime={this.state.lastSaveTime}
