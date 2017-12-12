@@ -4,7 +4,7 @@ import constants from './constants';
 
 let prevPrevKey = null;
 let prevKey = null;
-const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '' };
+const dataSchema = { actually: '', category: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
@@ -246,7 +246,7 @@ export const bindShortcut = (hot) => {
         hot.setDataAtCell(startRow, startCol, moment().format('HH:mm'));
       }
     }
-    prevPrevKey = prevKey;    
+    prevPrevKey = prevKey;
     prevKey = e.key;
     hot.render();
   });
@@ -258,6 +258,7 @@ export const hotConf = {
   rowHeaders: true,
   autoInsertRow: false,
   manualRowMove: true,
+  minRows: 10,
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
   data: emptyHotData,

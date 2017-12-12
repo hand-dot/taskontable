@@ -64,8 +64,9 @@ let hot = null;
 let prevKey = null;
 const hotSourceData = () => {
   if (hot) {
+    const emptyRow = JSON.stringify(cloneDeep(emptyHotData[0]));
     const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
-    return cloneDeep(hotData);
+    return cloneDeep(hotData.filter(data => emptyRow !== JSON.stringify(data)));
   }
   return cloneDeep(emptyHotData);
 };
