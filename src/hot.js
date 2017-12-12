@@ -2,6 +2,7 @@ import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 import constants from './constants';
 
+let prevKey = null;
 const dataSchema = { done: false, category: '', title: '', estimate: '', startTime: '', endTime: '', actually: '', memo: '' };
 const columns = [
   {
@@ -229,7 +230,36 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
     }
   }
 };
-
+export const bindShortcut = (hot) => {
+  // ショートカット処理
+  hot.addHook('afterDocumentKeyDown', (e) => {
+    // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
+    if (e.path[0].id !== 'HandsontableCopyPaste') return;
+    e.preventDefault();
+    // FIXME 場合によっては複数選択時にも対応したい
+    const [startRow, startCol, endRow, endCol] = hot.getSelected();
+    if (e.key === 'm' && prevKey === 'Control') {
+      // セルをマーク
+      const classNameList = (hot.getCellMeta(startRow, startCol).className || '').split(' ');
+      if (classNameList.indexOf('mark') >= 0) {
+        // markクラスを持っている
+        classNameList.some((cn, i) => { if (cn === 'mark') classNameList.splice(i, 1); });
+      } else {
+        classNameList.push('mark');
+      }
+      hot.setCellMeta(startRow, startCol, 'className', classNameList.join(' '));
+    } else if (e.key === ':' && prevKey === 'Control') {
+      // 現在時刻を入力
+      const prop = hot.colToProp(startCol);
+      // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
+      if (startRow === endRow && startCol === endCol && (prop === 'endTime' || prop === 'startTime')) {
+        hot.setDataAtCell(startRow, startCol, moment().format('HH:mm'));
+      }
+    }
+    prevKey = e.key;
+    hot.render();
+  });
+};
 export const emptyHotData = [cloneDeep(dataSchema)];
 export const hotConf = {
   stretchH: 'all',
@@ -241,6 +271,38 @@ export const hotConf = {
   columns,
   data: emptyHotData,
   dataSchema,
+  contextMenu: {
+    callback(key) {
+      if (key === 'set_current_time') {
+        const [row, col] = this.getSelected();
+        this.setDataAtCell(row, col, moment().format('HH:mm'));
+      }
+    },
+    items: {
+      set_current_time: {
+        name: '現在時刻を入力する',
+        disabled() {
+          const [startRow, startCol, endRow, endCol] = this.getSelected();
+          const prop = this.colToProp(startCol);
+          return startRow !== endRow || startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
+        },
+      },
+      hsep1: '---------',
+      row_above: {
+        name: '上に行を追加する',
+      },
+      row_below: {
+        name: '下に行を追加する',
+      },
+      hsep2: '---------',
+      remove_row: {
+        name: '行を削除する',
+        disabled() {
+          return this.getSelected()[0] === 0;
+        },
+      },
+    },
+  },
   afterValidate(isValid, value, row, prop) {
     setValidtionMessage(this, row, prop, isValid);
   },

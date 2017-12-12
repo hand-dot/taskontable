@@ -22,7 +22,7 @@ import TaskListCtl from './TaskListCtl';
 import HelpDialog from './HelpDialog';
 
 import firebaseConf from '../configs/firebase';
-import { hotConf, emptyHotData } from '../hot';
+import { bindShortcut, hotConf, emptyHotData } from '../hot';
 
 import constants from '../constants';
 
@@ -80,83 +80,15 @@ class App extends Component {
     this.setState({
       lastSaveTime: util.getCrrentTimeObj(),
     });
-  }
-
-  componentDidMount() {
-    const self = this;
-    hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
-      contextMenu: {
-        callback(key) {
-          if (key === 'set_current_time') {
-            const [row, col] = this.getSelected();
-            this.setDataAtCell(row, col, moment().format('HH:mm'));
-          }
-        },
-        items: {
-          set_current_time: {
-            name: '現在時刻を入力する',
-            disabled() {
-              const [startRow, startCol, endRow, endCol] = this.getSelected();
-              const prop = this.colToProp(startCol);
-              return startRow !== endRow || startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
-            },
-          },
-          hsep1: '---------',
-          row_above: {
-            name: '上に行を追加する',
-          },
-          row_below: {
-            name: '下に行を追加する',
-          },
-          hsep2: '---------',
-          remove_row: {
-            name: '行を削除する',
-            disabled() {
-              return this.getSelected()[0] === 0;
-            },
-          },
-        },
-      },
-      // 各種callbackでテーブルの状態をstateに反映
-      afterRowMove() { self.setStateFromHot(); },
-      beforeChangeRender() { self.setStateFromHot(); },
-      afterCreateRow() { self.setStateFromHot(); },
-      afterRemoveRow() { self.setStateFromHot(); },
-      afterUpdateSettings() { self.setStateFromHot(true); },
-    }));
-    // ショートカット処理
-    hot.addHook('afterDocumentKeyDown', (e) => {
-      // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
-      if (e.path[0].id !== 'HandsontableCopyPaste') return;
-      e.preventDefault();
-      // FIXME 場合によっては複数選択時にも対応したい
-      const [startRow, startCol, endRow, endCol] = hot.getSelected();
-      if (e.key === 'm' && prevKey === 'Control') {
-        // セルをマーク
-        const classNameList = (hot.getCellMeta(startRow, startCol).className || '').split(' ');
-        if (classNameList.indexOf('mark') >= 0) {
-          // markクラスを持っている
-          classNameList.some((cn, i) => { if (cn === 'mark') classNameList.splice(i, 1); });
-        } else {
-          classNameList.push('mark');
-        }
-        hot.setCellMeta(startRow, startCol, 'className', classNameList.join(' '));
-      } else if (e.key === ';' && prevKey === 'Control') {
-        // 現在時刻を入力
-        const prop = hot.colToProp(startCol);
-        // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
-        if (startRow === endRow && startCol === endCol && (prop === 'endTime' || prop === 'startTime')) {
-          hot.setDataAtCell(startRow, startCol, moment().format('HH:mm'));
-        }
-      }
+    window.addEventListener('keydown', (e) => {
       if (e.key === 's' && prevKey === 'Control') {
+        e.preventDefault();              
         // テーブルを保存
         this.saveHot();
       }
-      hot.render();
-      prevKey = e.key;
+      prevKey = e.key;            
+      return false;
     });
-    window.hot = hot;
     window.addEventListener('beforeunload', (e) => {
       if (this.state.saveable) {
         const dialogText = '保存していない内容があります。';
@@ -164,7 +96,23 @@ class App extends Component {
         return dialogText;
       }
     });
-    this.setStateFromHot();
+  }
+
+  componentDidMount() {
+    const self = this;
+    hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
+      // 各種callbackでテーブルの状態をstateに反映
+      afterRowMove() { self.setStateFromHot(); },
+      beforeChangeRender() { self.setStateFromHot(); },
+      afterCreateRow() { self.setStateFromHot(); },
+      afterRemoveRow() { self.setStateFromHot(); },
+      afterUpdateSettings() { self.setStateFromHot(true); },
+      afterInit() {
+        self.setStateFromHot();
+        bindShortcut(this);
+      },
+    }));
+    window.hot = hot;    
   }
 
   setAInitialState() {
