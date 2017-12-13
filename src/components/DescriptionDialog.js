@@ -41,7 +41,7 @@ function DescriptionDialog(props) {
             <i className="fa fa-question" aria-hidden="true" />
             　サイトについて
           </Typography>
-          <IconButton className={classes.closeBtn} color="contrast" onClick={onRequestClose}>
+          <IconButton className={classes.closeBtn} onClick={onRequestClose}>
             <i className="fa fa-times" aria-hidden="true" />
           </IconButton>
         </Toolbar>
