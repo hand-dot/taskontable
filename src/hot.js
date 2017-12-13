@@ -2,10 +2,6 @@ import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 import constants from './constants';
 
-// FIXME リファクタリング #66
-let prevPrevKey = null;
-let prevKey = null;
-
 const dataSchema = { actually: '', category: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
 const columns = [
   {
@@ -240,7 +236,7 @@ export const bindShortcut = (hot) => {
     if (e.path[0].id !== 'HandsontableCopyPaste') return;
     e.preventDefault();
     const [startRow, startCol, endRow, endCol] = hot.getSelected();
-    if ((prevKey === 'Control' && e.key === ';') || (prevPrevKey === 'Control' && prevKey === 'Shift' && e.key === ':')) {
+    if (e.ctrlKey && e.key === ':') {
       // 現在時刻を入力
       const prop = hot.colToProp(startCol);
       // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
@@ -248,8 +244,6 @@ export const bindShortcut = (hot) => {
         hot.setDataAtCell(startRow, startCol, moment().format('HH:mm'));
       }
     }
-    prevPrevKey = prevKey;
-    prevKey = e.key;
     hot.render();
   });
 };

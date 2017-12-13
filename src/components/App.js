@@ -60,9 +60,6 @@ const styles = {
 const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
 firebase.initializeApp(firebaseConf);
 
-// FIXME リファクタリング #66
-let prevKey = null;
-
 let hot = null;
 
 // 行の並び替えにも対応した空行を除いたハンズオンテーブルのデータ取得メソッド
@@ -87,23 +84,23 @@ class App extends Component {
       lastSaveTime: util.getCrrentTimeObj(),
     });
     window.addEventListener('keydown', (e) => {
-      if (prevKey === 'Control' && e.key === 's') {
+      if (e.ctrlKey && e.key === 's') {
         e.preventDefault();                      
         // テーブルを保存
         this.saveHot();
-      } else if (prevKey === 'Control' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+      } else if (e.ctrlKey && (e.key === 'k' || e.key === 'j')) {
+        e.preventDefault();                              
         // 基準日を変更
-        this.setState({ date: moment(this.state.date).add(e.key === 'ArrowRight' ? 1 : -1, 'day').format('YYYY-MM-DD') });
+        this.setState({ date: moment(this.state.date).add(e.key === 'k' ? 1 : -1, 'day').format('YYYY-MM-DD') });
         setTimeout(() => {
           this.fetchTask().then((snapshot) => {
             const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
             hot.updateSettings({ data });
           });
         }, 0);
-      } else if (e.key === '?') {    
+      } else if (e.key === '?') {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
-      prevKey = e.key;
       return false;
     });
     window.addEventListener('beforeunload', (e) => {

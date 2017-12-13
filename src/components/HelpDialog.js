@@ -52,8 +52,8 @@ function HelpDialog(props) {
           <Grid className={classes.shotcut} item xs={6}>
             <h5>アプリ(テーブルの選択を外す)</h5>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – タスク一覧を保存</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>→</kbd> – タスク一覧を次の日に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>←</kbd> – タスク一覧を前の日に移動</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>K</kbd> – タスク一覧を次の日に移動</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>J</kbd> – タスク一覧を前の日に移動</Typography>
             <h5>ナビゲーション</h5>
             <Typography gutterBottom type="caption"><kbd>↑</kbd>    – セルを上に移動</Typography>
             <Typography gutterBottom type="caption"><kbd>↓</kbd>  – セルを下に移動</Typography>
@@ -94,7 +94,6 @@ function HelpDialog(props) {
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Z</kbd> – 戻る</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Y</kbd> – 進む</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>:</kbd> – 現在時刻を入力</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>;</kbd> – 現在時刻を入力</Typography>
           </Grid>
         </Grid>
       </DialogContent>
