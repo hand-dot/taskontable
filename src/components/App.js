@@ -18,7 +18,7 @@ import Tooltip from 'material-ui/Tooltip';
 import '../styles/handsontable-custom.css';
 
 import GlobalHeader from './GlobalHeader';
-import Dashboad from './Dashboad';
+import Dashboard from './Dashboard';
 import TaskListCtl from './TaskListCtl';
 import HelpDialog from './HelpDialog';
 
@@ -34,7 +34,7 @@ const initialState = {
   loading: true,
   notifiable: true,
   saveable: false,
-  isOpenDashboad: false,
+  isOpenDashboard: false,
   isOpenHelpDialog: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
@@ -102,7 +102,7 @@ class App extends Component {
         }, 0);
       } else if (e.ctrlKey && e.key === 'd') {
         e.preventDefault();
-        this.toggleDashboad();
+        this.toggleDashboard();
       } else if (e.key === '?') {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
@@ -153,8 +153,8 @@ class App extends Component {
     }
   }
 
-  toggleDashboad() {
-    this.setState({ isOpenDashboad: !this.state.isOpenDashboad });
+  toggleDashboard() {
+    this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
   }
 
   toggleNotifiable(event, checked) {
@@ -280,10 +280,10 @@ class App extends Component {
           </Grid>
           <Grid item xs={10}>
             <Grid item xs={12} className={classes.root}>
-              <Dashboad
+              <Dashboard
                 date={this.state.date}
-                isOpenDashboad={this.state.isOpenDashboad}
-                toggleDashboad={this.toggleDashboad.bind(this)}
+                isOpenDashboard={this.state.isOpenDashboard}
+                toggleDashboard={this.toggleDashboard.bind(this)}
                 changeDate={this.changeDate.bind(this)}
                 allTasks={this.state.allTasks}
               />

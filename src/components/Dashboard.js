@@ -31,7 +31,7 @@ function updateHotCategory(source) {
 
 const totalMinute = (datas, prop) => datas.map(data => (typeof data[prop] === 'number' ? data[prop] : 0)).reduce((p, c) => p + c, 0);
 
-class Dashboad extends Component {
+class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -125,9 +125,9 @@ class Dashboad extends Component {
   }
 
   render() {
-    const { date, isOpenDashboad, changeDate, toggleDashboad } = this.props;
+    const { date, isOpenDashboard, changeDate, toggleDashboard } = this.props;
     return (
-      <ExpansionPanel expanded={isOpenDashboad} onChange={toggleDashboad}>
+      <ExpansionPanel expanded={isOpenDashboard} onChange={toggleDashboard}>
         <ExpansionPanelSummary expandIcon={<i className="fa fa-angle-down fa-lg" />}>
           <i className="fa fa-tachometer fa-lg" />
           <Typography>　ダッシュボード</Typography>
@@ -180,12 +180,12 @@ class Dashboad extends Component {
   }
 }
 
-Dashboad.propTypes = {
+Dashboard.propTypes = {
   date: PropTypes.string.isRequired,
-  isOpenDashboad: PropTypes.bool.isRequired,
-  toggleDashboad: PropTypes.func.isRequired,
+  isOpenDashboard: PropTypes.bool.isRequired,
+  toggleDashboard: PropTypes.func.isRequired,
   changeDate: PropTypes.func.isRequired,
   allTasks: PropTypes.array.isRequired,
 };
 
-export default Dashboad;
+export default Dashboard;
