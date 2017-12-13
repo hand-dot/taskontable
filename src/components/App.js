@@ -101,7 +101,7 @@ class App extends Component {
           });
         }, 0);
       } else if (e.ctrlKey && e.key === 'd') {
-        e.preventDefault();        
+        e.preventDefault();
         this.setState({ isOpenDashboad: !this.state.isOpenDashboad });
       } else if (e.key === '?') {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
@@ -159,6 +159,12 @@ class App extends Component {
       this.setState(() => ({
         notifiable: checked,
       }));
+      if (!checked) {
+        hot.getData().forEach((data, index) => {
+          hot.removeCellMeta(index, hot.propToCol('startTime'), 'notification');          
+        });
+        hot.render();
+      }
     }
   }
 
