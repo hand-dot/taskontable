@@ -34,6 +34,7 @@ const initialState = {
   loading: true,
   notifiable: true,
   saveable: false,
+  isOpenDashboad: false,
   isOpenHelpDialog: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
@@ -99,6 +100,9 @@ class App extends Component {
             hot.updateSettings({ data });
           });
         }, 0);
+      } else if (e.ctrlKey && e.key === 'd') {
+        e.preventDefault();        
+        this.setState({ isOpenDashboad: !this.state.isOpenDashboad });
       } else if (e.key === '?') {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
@@ -268,6 +272,7 @@ class App extends Component {
             <Grid item xs={12} className={classes.root}>
               <Dashboad
                 date={this.state.date}
+                expanded={this.state.isOpenDashboad}
                 changeDate={this.changeDate.bind(this)}
                 allTasks={this.state.allTasks}
               />

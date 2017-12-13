@@ -52,11 +52,20 @@ function HelpDialog(props) {
           <Grid className={classes.shotcut} item xs={6}>
             <h5>アプリ</h5>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – 保存</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>D</kbd> – ダッシュボード開閉</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
           </Grid>
           <Grid className={classes.shotcut} item xs={6}>
-            <h5>編集</h5>
+            <h5>テーブル編集</h5>
+            <Typography gutterBottom type="caption"><kbd>Enter</kbd> – 編集開始/終了</Typography>
+            <Typography gutterBottom type="caption"><kbd>Esc</kbd> – 編集をキャンセル</Typography>
+            <Typography gutterBottom type="caption"><kbd>Backspace</kbd> – セルを空にする</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>C</kbd> – コピー</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>X</kbd> – 切り取り</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>V</kbd> – 貼り付け</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Z</kbd> – 戻る</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Y</kbd> – 進む</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>:</kbd> – 現在時刻を入力</Typography>
           </Grid>
         </Grid>

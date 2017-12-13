@@ -125,9 +125,9 @@ class Dashboad extends Component {
   }
 
   render() {
-    const { date, changeDate } = this.props;
+    const { date, expanded, changeDate } = this.props;
     return (
-      <ExpansionPanel>
+      <ExpansionPanel expanded={expanded}>
         <ExpansionPanelSummary expandIcon={<i className="fa fa-angle-down fa-lg" />}>
           <i className="fa fa-tachometer fa-lg" />
           <Typography>　ダッシュボード</Typography>
@@ -182,6 +182,7 @@ class Dashboad extends Component {
 
 Dashboad.propTypes = {
   date: PropTypes.string.isRequired,
+  expanded: PropTypes.bool.isRequired,
   changeDate: PropTypes.func.isRequired,
   allTasks: PropTypes.array.isRequired,
 };
