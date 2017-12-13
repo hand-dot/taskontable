@@ -16,7 +16,7 @@ function TaskListCtl(props) {
   const { lastSaveTime, saveHot, notifiable, toggleNotifiable } = props;
   return (
     <Grid container spacing={5}>
-      <Grid item xs={6}>
+      <Grid item xs={2}>
         <FormGroup>
           <FormControlLabel
             control={
@@ -30,7 +30,7 @@ function TaskListCtl(props) {
           />
         </FormGroup>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={10}>
         <div style={{ textAlign: 'right' }}>
           <Button raised onClick={addTask} color="default">
             <i className="fa fa-plus fa-lg" />
