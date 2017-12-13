@@ -60,9 +60,13 @@ const styles = {
 const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
 firebase.initializeApp(firebaseConf);
 
-let hot = null;
+// FIXME リファクタリング #66
 let prevKey = null;
-const hotSourceData = () => {
+
+let hot = null;
+
+// 行の並び替えにも対応した空行を除いたハンズオンテーブルのデータ取得メソッド
+const getHotTasks = () => {
   if (hot) {
     const emptyRow = JSON.stringify(cloneDeep(emptyHotData[0]));
     const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
@@ -133,16 +137,16 @@ class App extends Component {
   }
 
   setStateFromHot(isUpdateSettings) {
-    const sourceData = cloneDeep(hotSourceData());
+    const hotTasks = getHotTasks();
     if (isUpdateSettings) {
       this.setState({
         saveable: false,
-        allTasks: sourceData,
+        allTasks: hotTasks,
       });
-    } else if (JSON.stringify(this.state.allTasks) !== JSON.stringify(sourceData)) {
+    } else if (JSON.stringify(this.state.allTasks) !== JSON.stringify(hotTasks)) {
       this.setState({
         saveable: true,
-        allTasks: sourceData,
+        allTasks: hotTasks,
       });
     }
   }
@@ -221,7 +225,7 @@ class App extends Component {
   saveHot() {
     if (hot) {
       // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTask(hotSourceData());
+      this.saveTask(getHotTasks());
     }
   }
 

@@ -2,8 +2,10 @@ import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 import constants from './constants';
 
+// FIXME リファクタリング #66
 let prevPrevKey = null;
 let prevKey = null;
+
 const dataSchema = { actually: '', category: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
 const columns = [
   {
