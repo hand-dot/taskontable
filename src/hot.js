@@ -40,6 +40,10 @@ const columns = [
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
       td.innerHTML = value;
+      const valid = cellProperties.valid;
+      if (valid === false) {
+        td.classList.add('htInvalid');
+      }
       const notification = cellProperties.notification;
       if (notification) {
         td.innerHTML = `<div title="${notification.time}通知予約済">${value} <i class="fa fa-bell-o"></i></div>`; // eslint-disable-line no-param-reassign
@@ -64,7 +68,8 @@ const columns = [
     readOnly: true,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value, cellProperties) {
-      td.innerHTML = value;
+      td.classList.add('htDimmed');
+      td.innerHTML = value;      
       if (cellProperties.overdue) {
         td.style.color = '#ff9b9b';
       } else if (cellProperties.overdue === false) {
@@ -234,7 +239,6 @@ export const bindShortcut = (hot) => {
   hot.addHook('afterDocumentKeyDown', (e) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
     if (e.path[0].id !== 'HandsontableCopyPaste') return;
-    e.preventDefault();
     const [startRow, startCol, endRow, endCol] = hot.getSelected();
     if (e.ctrlKey && e.key === ':') {
       // 現在時刻を入力

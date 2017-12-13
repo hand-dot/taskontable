@@ -50,49 +50,13 @@ function HelpDialog(props) {
       <DialogContent className={classes.content}>
         <Grid container spacing={40}>
           <Grid className={classes.shotcut} item xs={6}>
-            <h5>アプリ(テーブルの選択を外す)</h5>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – タスク一覧を保存</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>K</kbd> – タスク一覧を次の日に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>J</kbd> – タスク一覧を前の日に移動</Typography>
-            <h5>ナビゲーション</h5>
-            <Typography gutterBottom type="caption"><kbd>↑</kbd>    – セルを上に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>↓</kbd>  – セルを下に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>→</kbd> – セルを右に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>←</kbd>  – セルを左に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Tab</kbd>         – セルを右に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Tab</kbd> + <kbd>Shift</kbd> – セルを左に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Home</kbd> – 行のはじめにセルを移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>End</kbd> – 行のおわりにセルを移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Home</kbd> – 列のはじめにセルを移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>End</kbd> – 列のおわりを移動</Typography>
-            <h5>コンテキストメニュー</h5>
-            <Typography gutterBottom type="caption"><kbd>↓</kbd> – 選択を下に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>↑</kbd> – 選択を上に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Enter</kbd> – 選択を決定</Typography>
+            <h5>アプリ</h5>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – 保存</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
           </Grid>
           <Grid className={classes.shotcut} item xs={6}>
-            <h5>選択</h5>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>A</kbd> – すべて選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Shift</kbd> + <kbd>↑</kbd> – 上へ選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Shift</kbd> + <kbd>↓</kbd> – 下へ選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Shift</kbd> + <kbd>→</kbd> – 右へ選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Shift</kbd> + <kbd>←</kbd> – 左へ選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Shift</kbd> + <kbd>Home</kbd> – 行のはじめまで選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Shift</kbd> + <kbd>End</kbd> – 行のおわりまで選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Home</kbd> – 列のはじめまで選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>End</kbd> – 列のおわりまで選択</Typography>
             <h5>編集</h5>
-            <Typography gutterBottom type="caption"><kbd>Enter</kbd> – 編集開始/終了</Typography>
-            <Typography gutterBottom type="caption"><kbd>F2</kbd> – 編集開始</Typography>
-            <Typography gutterBottom type="caption"><kbd>Esc</kbd> – 編集をキャンセル</Typography>
-            <Typography gutterBottom type="caption"><kbd>Backspace</kbd> – セルを空にする</Typography>
-            <Typography gutterBottom type="caption"><kbd>Delete</kbd> – セルを空にする</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>C</kbd> – コピー</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>X</kbd> – 切り取り</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>V</kbd> – 貼り付け</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> - 選択範囲を編集中セルの値で埋める</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Z</kbd> – 戻る</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Y</kbd> – 進む</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>:</kbd> – 現在時刻を入力</Typography>
           </Grid>
         </Grid>

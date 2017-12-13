@@ -85,13 +85,14 @@ class App extends Component {
     });
     window.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();                      
+        e.preventDefault();
         // テーブルを保存
         this.saveHot();
-      } else if (e.ctrlKey && (e.key === 'k' || e.key === 'j')) {
-        e.preventDefault();                              
+      } else if (e.ctrlKey && (e.key === '>' || e.key === '<')) {
+        e.preventDefault();
         // 基準日を変更
-        this.setState({ date: moment(this.state.date).add(e.key === 'k' ? 1 : -1, 'day').format('YYYY-MM-DD') });
+        if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
+        this.setState({ date: moment(this.state.date).add(e.key === '>' ? 1 : -1, 'day').format('YYYY-MM-DD') });
         setTimeout(() => {
           this.fetchTask().then((snapshot) => {
             const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
