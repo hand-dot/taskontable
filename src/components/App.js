@@ -102,7 +102,7 @@ class App extends Component {
         }, 0);
       } else if (e.ctrlKey && e.key === 'd') {
         e.preventDefault();
-        this.setState({ isOpenDashboad: !this.state.isOpenDashboad });
+        this.toggleDashboad();
       } else if (e.key === '?') {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
@@ -153,6 +153,10 @@ class App extends Component {
     }
   }
 
+  toggleDashboad() {
+    this.setState({ isOpenDashboad: !this.state.isOpenDashboad });
+  }
+
   toggleNotifiable(event, checked) {
     if ('Notification' in window) {
       Notification = checked ? NotificationClone : false;　// eslint-disable-line
@@ -161,7 +165,7 @@ class App extends Component {
       }));
       if (!checked) {
         hot.getData().forEach((data, index) => {
-          hot.removeCellMeta(index, hot.propToCol('startTime'), 'notification');          
+          hot.removeCellMeta(index, hot.propToCol('startTime'), 'notification');
         });
         hot.render();
       }
@@ -278,7 +282,8 @@ class App extends Component {
             <Grid item xs={12} className={classes.root}>
               <Dashboad
                 date={this.state.date}
-                expanded={this.state.isOpenDashboad}
+                isOpenDashboad={this.state.isOpenDashboad}
+                toggleDashboad={this.toggleDashboad.bind(this)}
                 changeDate={this.changeDate.bind(this)}
                 allTasks={this.state.allTasks}
               />
