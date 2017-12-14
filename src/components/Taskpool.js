@@ -55,13 +55,13 @@ class Taskpool extends Component {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Grid item xs={12}>
-            <Paper elevation={4}>
+            <Paper elevation={1}>
               <AppBar color="inherit" position="static">
                 <Tabs
                   fullWidth
                   value={this.state.value}
                   onChange={this.handleChange.bind(this)}
-                  indicatorColor="#f3f3f3"
+                  indicatorColor="#888"
                   textColor="inherit"
                 >
                   <Tab label="すぐにやる" />

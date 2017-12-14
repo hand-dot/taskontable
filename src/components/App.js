@@ -305,15 +305,16 @@ class App extends Component {
               />
             </Grid>
             <Grid item xs={12}>
-              <div style={{ padding: '0 5px' }}>
-                <Typography gutterBottom type="title">
-                  {this.state.date.replace(/-/g, '/')} のテーブル
-                  <Tooltip title="? を入力してください" placement="top">
-                    <IconButton className={classes.helpButton} color="default" onClick={this.openHelpDialog.bind(this)}>
-                      <i className="fa fa-question-circle-o" aria-hidden="true" />
-                    </IconButton>
-                  </Tooltip>
+              <div style={{ padding: '0 24px' }}>
+                <i className="fa fa-table fa-lg" />
+                <Typography style={{ display: 'inline' }}>
+                　テーブル　({this.state.date.replace(/-/g, '/')})　
                 </Typography>
+                <Tooltip title="? を入力してください" placement="top">
+                  <IconButton className={classes.helpButton} color="default" onClick={this.openHelpDialog.bind(this)}>
+                    <i className="fa fa-question-circle-o" aria-hidden="true" />
+                  </IconButton>
+                </Tooltip>
                 <TaskListCtl
                   lastSaveTime={this.state.lastSaveTime}
                   saveHot={this.saveHot.bind(this)}
