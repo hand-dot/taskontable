@@ -12,6 +12,9 @@ const styles = {
   actionIcon: {
     width: 30,
   },
+  miniCell: {
+    maxWidth: 50,
+  },
 };
 
 function TaskList(props) {
@@ -23,16 +26,16 @@ function TaskList(props) {
           <TableRow>
             <TableCell padding="none">作業内容</TableCell>
             <TableCell padding="none">備考</TableCell>
-            <TableCell padding="none">見積</TableCell>
+            <TableCell className={classes.miniCell} padding="none">見積</TableCell>
             <TableCell padding="none">アクション</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {datas.map((n, index) => (
-            <TableRow key={index.toString()}>
+            <TableRow hover key={index.toString()}>
               <TableCell padding="none">{n.title}</TableCell>
               <TableCell padding="none">{n.memo}</TableCell>
-              <TableCell padding="none">{n.estimate}</TableCell>
+              <TableCell className={classes.miniCell} padding="none">{n.estimate}</TableCell>
               <TableCell padding="none">
                 <IconButton className={classes.actionIcon} color="default">
                   <i className="fa fa-level-down" />
@@ -57,7 +60,7 @@ function TaskList(props) {
                 placeholder="備考"
               />
             </TableCell>
-            <TableCell padding="none">
+            <TableCell className={classes.miniCell} padding="none">
               <Input
                 placeholder="見積"
               />
