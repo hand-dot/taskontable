@@ -161,7 +161,7 @@ class Dashboard extends Component {
             </Grid>
           </Grid>
           <Grid item xs={4}>
-            <Typography title="*追加・削除したカテゴリはタスク一覧カテゴリ列の選択肢に反映されます。" gutterBottom type="title">
+            <Typography title="*追加・削除したカテゴリはテーブルのカテゴリ列の選択肢に反映されます。" gutterBottom type="title">
         カテゴリ*
             </Typography>
             <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />

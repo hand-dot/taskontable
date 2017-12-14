@@ -273,7 +273,7 @@ class App extends Component {
           loginCallback={this.loginCallback.bind(this)}
           logoutCallback={this.logoutCallback.bind(this)}
         />
-        <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.root}>
+        <Grid container alignItems="stretch" justify="center" spacing={40} className={classes.root}>
           <Grid item xs={1}>
             <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
               <i className="fa fa-angle-left fa-lg" />
@@ -293,7 +293,7 @@ class App extends Component {
             <Grid item xs={12}>
               <div style={{ padding: '0 5px' }}>
                 <Typography gutterBottom type="title">
-                  {this.state.date.replace(/-/g, '/')} のタスク一覧
+                  {this.state.date.replace(/-/g, '/')} のテーブル
                   <Tooltip title="? を入力してください" placement="top">
                     <IconButton className={classes.helpButton} color="default" onClick={this.openHelpDialog.bind(this)}>
                       <i className="fa fa-question-circle-o" aria-hidden="true" />

@@ -100,7 +100,7 @@ function HelpDialog(props) {
                 *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。
             </Typography>
             <Typography gutterBottom type="caption">
-                *別の日付のタスク一覧に遷移すると終了通知予約は削除されます。
+                *別の日付のテーブルに遷移すると終了通知予約は削除されます。
             </Typography>
           </Grid>
         </Grid>
