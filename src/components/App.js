@@ -108,6 +108,9 @@ class App extends Component {
       } else if (e.ctrlKey && e.key === 'k') {
         e.preventDefault();
         this.toggleTaskpool();
+      } else if (e.ctrlKey && e.key === 'l') {
+        e.preventDefault();
+        hot.selectCell(0, 0);
       } else if (e.key === '?') {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
