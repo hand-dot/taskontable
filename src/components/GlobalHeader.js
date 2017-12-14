@@ -13,6 +13,8 @@ import DescriptionDialog from './DescriptionDialog';
 
 import constants from '../constants';
 
+import logo from '../images/logo.png';
+
 const styles = {
   root: {
   },
@@ -21,6 +23,7 @@ const styles = {
     margin: '0 auto',
   },
   title: {
+    marginLeft: 10,
     marginRight: 'auto',
   },
   link: {
@@ -106,6 +109,7 @@ class GlobalHeader extends Component {
           <Grid item xs={1} />
           <Grid item xs={10}>
             <Toolbar>
+              <img src={logo} alt="logo" width="25" height="25" />
               <Typography type="title" color="inherit" className={classes.title}>
               Taskontable
               </Typography>

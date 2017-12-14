@@ -1,6 +1,7 @@
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 import constants from './constants';
+import logo from './images/logo.png';
 
 const dataSchema = { actually: '', category: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
 const columns = [
@@ -208,8 +209,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
           hotInstance.removeCellMeta(row, col, 'notification');
           const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
           const notifi = new Notification(taskTitle ? `${taskTitle}の終了時刻です。` : 'タスクの終了時刻です。', {
-            body: 'クリックしてタスクに終了時刻を入力し完了させてください。',
-            icon: `${window.location.href}favicon.ico`,
+            icon: logo,
           });
           notifi.onclick = () => {
             notifi.close();
