@@ -52,7 +52,8 @@ function HelpDialog(props) {
           <Grid className={classes.shotcut} item xs={6}>
             <h5>アプリ</h5>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – 保存</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>D</kbd> – ダッシュボード開閉</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>K</kbd> – タスクプール開閉</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
           </Grid>

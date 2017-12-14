@@ -36,6 +36,7 @@ const initialState = {
   notifiable: true,
   saveable: false,
   isOpenDashboard: false,
+  isOpenTaskpool: false,
   isOpenHelpDialog: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
@@ -101,9 +102,12 @@ class App extends Component {
             hot.updateSettings({ data });
           });
         }, 0);
-      } else if (e.ctrlKey && e.key === 'd') {
+      } else if (e.ctrlKey && e.key === 'j') {
         e.preventDefault();
         this.toggleDashboard();
+      } else if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        this.toggleTaskpool();
       } else if (e.key === '?') {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
@@ -156,6 +160,10 @@ class App extends Component {
 
   toggleDashboard() {
     this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
+  }
+
+  toggleTaskpool() {
+    this.setState({ isOpenTaskpool: !this.state.isOpenTaskpool });
   }
 
   toggleNotifiable(event, checked) {
@@ -288,7 +296,10 @@ class App extends Component {
                 changeDate={this.changeDate.bind(this)}
                 allTasks={this.state.allTasks}
               />
-              <Taskpool />
+              <Taskpool
+                isOpenTaskpool={this.state.isOpenTaskpool}
+                toggleTaskpool={this.toggleTaskpool.bind(this)}
+              />
             </Grid>
             <Grid item xs={12}>
               <div style={{ padding: '0 5px' }}>
