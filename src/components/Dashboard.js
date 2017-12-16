@@ -128,8 +128,8 @@ class Dashboard extends Component {
   render() {
     const { date, isOpenDashboard, changeDate, toggleDashboard } = this.props;
     return (
-      <ExpansionPanel expanded={isOpenDashboard} onChange={toggleDashboard}>
-        <ExpansionPanelSummary expandIcon={<i className="fa fa-angle-down fa-lg" />}>
+      <ExpansionPanel expanded={isOpenDashboard}>
+        <ExpansionPanelSummary onClick={toggleDashboard} expandIcon={<i className="fa fa-angle-down fa-lg" />}>
           <i className="fa fa-tachometer fa-lg" />
           <Typography>　ダッシュボード</Typography>
         </ExpansionPanelSummary>

@@ -41,8 +41,8 @@ class Taskpool extends Component {
       { title: 'ジブリ美術館にいく', memo: '申し込みの日にちがあるらしい', estimate: 0 },
     ];
     return (
-      <ExpansionPanel expanded={isOpenTaskpool} onChange={toggleTaskpool}>
-        <ExpansionPanelSummary expandIcon={<i className="fa fa-angle-down fa-lg" />}>
+      <ExpansionPanel expanded={isOpenTaskpool}>
+        <ExpansionPanelSummary onClick={toggleTaskpool} expandIcon={<i className="fa fa-angle-down fa-lg" />}>
           <i className="fa fa-tasks fa-lg" />
           <Typography>　タスクプール</Typography>
         </ExpansionPanelSummary>
@@ -59,6 +59,8 @@ class Taskpool extends Component {
                 >
                   <Tab label="すぐにやる" />
                   <Tab label="いつかやる" />
+                  <Tab label="定期的にやる" />
+                  <Tab label="毎日やる" />
                 </Tabs>
               </AppBar>
               {(() => {
