@@ -308,7 +308,9 @@ class App extends Component {
                   />
                 </div>
                 <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
-                <div id="hot" />
+                <div style={{ padding: 24 }}>
+                  <div id="hot" />
+                </div>
               </Paper>
             </Grid>
           </Grid>
