@@ -12,6 +12,7 @@ import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import { LinearProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';
+import Paper from 'material-ui/Paper';
 
 import '../styles/handsontable-custom.css';
 
@@ -21,7 +22,7 @@ import TaskListCtl from './TaskListCtl';
 import Taskpool from './Taskpool';
 
 import firebaseConf from '../configs/firebase';
-import { bindShortcut, hotConf, emptyHotData } from '../hot';
+import { bindShortcut, hotConf, getEmptyHotData } from '../hot';
 
 import constants from '../constants';
 
@@ -36,7 +37,7 @@ const initialState = {
   isOpenTaskpool: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
-  allTasks: [],
+  allTasks: Array(10).fill(getEmptyHotData()[0]),
 };
 
 const styles = {
@@ -64,11 +65,11 @@ let hot = null;
 // 行の並び替えにも対応した空行を除いたハンズオンテーブルのデータ取得メソッド
 const getHotTasks = () => {
   if (hot) {
-    const emptyRow = JSON.stringify(cloneDeep(emptyHotData[0]));
+    const emptyRow = JSON.stringify(getEmptyHotData()[0]);
     const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
-    return cloneDeep(hotData.filter(data => emptyRow !== JSON.stringify(data)));
+    return hotData.filter(data => emptyRow !== JSON.stringify(data));
   }
-  return cloneDeep(emptyHotData);
+  return getEmptyHotData();
 };
 
 class App extends Component {
@@ -92,8 +93,7 @@ class App extends Component {
         this.setState({ date: moment(this.state.date).add(e.keyCode === 190 ? 1 : -1, 'day').format('YYYY-MM-DD') });
         setTimeout(() => {
           this.fetchTask().then((snapshot) => {
-            const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
-            hot.updateSettings({ data });
+            hot.updateSettings({ data: snapshot.exists() ? snapshot.val() : getEmptyHotData() });
           });
         }, 0);
       } else if (e.ctrlKey && e.key === 's') {
@@ -216,7 +216,7 @@ class App extends Component {
     // テーブルのクリア
     setTimeout(() => {
       if (hot) {
-        hot.updateSettings({ data: cloneDeep(emptyHotData) });
+        hot.updateSettings({ data: getEmptyHotData() });
       }
     }, 0);
   }
@@ -237,8 +237,7 @@ class App extends Component {
       }));
       setTimeout(() => {
         this.fetchTask().then((snapshot) => {
-          const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
-          hot.updateSettings({ data });
+          hot.updateSettings({ data: snapshot.exists() ? snapshot.val() : getEmptyHotData() });
         });
       }, 0);
     }
@@ -295,20 +294,22 @@ class App extends Component {
               />
             </Grid>
             <Grid item xs={12}>
-              <div style={{ padding: '0 24px' }}>
-                <i className="fa fa-table fa-lg" />
-                <Typography style={{ display: 'inline' }}>
-                　テーブル　({this.state.date.replace(/-/g, '/')})
-                </Typography>
-                <TaskListCtl
-                  lastSaveTime={this.state.lastSaveTime}
-                  saveHot={this.saveHot.bind(this)}
-                  notifiable={this.state.notifiable}
-                  toggleNotifiable={this.toggleNotifiable.bind(this)}
-                />
-              </div>
-              <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
-              <div id="hot" />
+              <Paper elevation={1}>
+                <div style={{ padding: '24px 24px 0' }}>
+                  <i className="fa fa-table fa-lg" />
+                  <Typography style={{ display: 'inline' }}>
+                    　テーブル　({this.state.date.replace(/-/g, '/')})
+                  </Typography>
+                  <TaskListCtl
+                    lastSaveTime={this.state.lastSaveTime}
+                    saveHot={this.saveHot.bind(this)}
+                    notifiable={this.state.notifiable}
+                    toggleNotifiable={this.toggleNotifiable.bind(this)}
+                  />
+                </div>
+                <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
+                <div id="hot" />
+              </Paper>
             </Grid>
           </Grid>
           <Grid item xs={1}>

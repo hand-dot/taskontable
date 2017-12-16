@@ -57,7 +57,8 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    this.initCategories();
+    // カテゴリーはフィルタリングが使えないのでほぼ意味がない。hotのフィルターを入れることができたら復活させたい。
+    // this.initCategories();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -133,7 +134,7 @@ class Dashboard extends Component {
           <Typography>　ダッシュボード</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Typography gutterBottom type="title">
                  本日のサマリ
             </Typography>
@@ -147,7 +148,7 @@ class Dashboard extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Typography gutterBottom type="title">
                  時刻
             </Typography>
@@ -160,9 +161,9 @@ class Dashboard extends Component {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={4}>
+          {/* <Grid item xs={4}>
             <Typography title="*追加・削除したカテゴリはテーブルのカテゴリ列の選択肢に反映されます。" gutterBottom type="title">
-        カテゴリ*
+              カテゴリ*
             </Typography>
             <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
             <form onSubmit={this.addCategory.bind(this)}>
@@ -173,7 +174,7 @@ class Dashboard extends Component {
                 value={this.state.categoryInput}
               />
             </form>
-          </Grid>
+          </Grid> */}
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );

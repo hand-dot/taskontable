@@ -3,7 +3,9 @@ import cloneDeep from 'lodash.clonedeep';
 import constants from './constants';
 import logo from './images/logo.png';
 
-const dataSchema = { actually: '', category: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
+// カテゴリーはフィルタリングが使えないのでほぼ意味がない。hotのフィルターを入れることができたら復活させたい。
+// const dataSchema = { actually: '', category: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
+const dataSchema = { actually: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
@@ -13,14 +15,14 @@ const columns = [
     readOnly: true,
     className: 'htCenter htMiddle',
   },
-  {
-    title: '<span title="タスクの分類項目として使用する。">カテゴリ</span>',
-    data: 'category',
-    type: 'dropdown',
-    source: [],
-    colWidths: 50,
-    validator: false,
-  },
+  // {
+  //   title: '<span title="タスクの分類項目として使用する。">カテゴリ</span>',
+  //   data: 'category',
+  //   type: 'dropdown',
+  //   source: [],
+  //   colWidths: 50,
+  //   validator: false,
+  // },
   {
     title: '<span title="具体的な作業(タスク)の内容を入力してください。">作業内容</span>',
     data: 'title',
@@ -251,7 +253,7 @@ export const bindShortcut = (hot) => {
     hot.render();
   });
 };
-export const emptyHotData = [cloneDeep(dataSchema)];
+export const getEmptyHotData = () => [cloneDeep(dataSchema)];
 export const hotConf = {
   stretchH: 'all',
   comments: true,
@@ -261,7 +263,7 @@ export const hotConf = {
   minRows: 10,
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
-  data: emptyHotData,
+  data: getEmptyHotData(),
   dataSchema,
   contextMenu: {
     callback(key) {
