@@ -3,7 +3,6 @@ import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
-import Input from 'material-ui/Input';
 import Typography from 'material-ui/Typography';
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -13,7 +12,6 @@ import ExpansionPanel, {
 import TodaySummary from './TodaySummary';
 import DatePicker from './DatePicker';
 import Clock from './Clock';
-import CategoryList from './CategoryList';
 
 import { hotConf } from '../hot';
 

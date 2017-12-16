@@ -33,7 +33,7 @@ const initialState = {
   loading: true,
   notifiable: true,
   saveable: false,
-  isOpenDashboard: false,
+  isOpenDashboard: true,
   isOpenTaskpool: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
@@ -308,7 +308,7 @@ class App extends Component {
                   />
                 </div>
                 <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
-                <div style={{ padding: 24 }}>
+                <div style={{ padding: '0 24px 24px 24px' }}>
                   <div id="hot" />
                 </div>
               </Paper>

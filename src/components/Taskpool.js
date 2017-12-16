@@ -57,10 +57,10 @@ class Taskpool extends Component {
                   indicatorColor="#888"
                   textColor="inherit"
                 >
-                  <Tab label="すぐにやる" />
-                  <Tab label="いつかやる" />
-                  <Tab label="定期的にやる" />
-                  <Tab label="毎日やる" />
+                  <Tab fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
+                  <Tab fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
+                  <Tab fullWidth style={{ maxWidth: 'none' }} label="定期的にやる" />
+                  <Tab fullWidth style={{ maxWidth: 'none' }} label="毎日やる" />
                 </Tabs>
               </AppBar>
               {(() => {
