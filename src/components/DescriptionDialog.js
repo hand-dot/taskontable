@@ -39,7 +39,7 @@ function DescriptionDialog(props) {
         <Toolbar>
           <Typography type="title" color="inherit" className={classes.flex}>
             <i className="fa fa-question" aria-hidden="true" />
-            　サイトについて
+            　サービスについて
           </Typography>
           <IconButton className={classes.closeBtn} onClick={onRequestClose}>
             <i className="fa fa-times" aria-hidden="true" />

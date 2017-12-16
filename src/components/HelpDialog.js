@@ -31,7 +31,7 @@ function HelpDialog(props) {
   const { open, onRequestClose, classes } = props;
   return (
     <Dialog
-      maxWidth="md"
+      fullWidth
       open={open}
       onRequestClose={onRequestClose}
     >
@@ -51,6 +51,7 @@ function HelpDialog(props) {
         <Grid container spacing={40}>
           <Grid className={classes.shotcut} item xs={6}>
             <h5>アプリ</h5>
+            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – 保存</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
             <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>K</kbd> – タスクプール開閉</Typography>

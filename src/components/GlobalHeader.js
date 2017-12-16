@@ -10,6 +10,7 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 
 import LoginDialog from './LoginDialog';
 import DescriptionDialog from './DescriptionDialog';
+import HelpDialog from './HelpDialog';
 
 import constants from '../constants';
 
@@ -40,11 +41,18 @@ class GlobalHeader extends Component {
       openMenuKey: '',
       isOpenLoginDialog: false,
       isOpenDescriptionDialog: false,
+      isOpenHelpDialog: false,
     };
   }
 
   componentDidMount() {
     this.login();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      isOpenHelpDialog: nextProps.isOpenHelpDialog,
+    });
   }
 
   closeMenu() {
@@ -99,6 +107,14 @@ class GlobalHeader extends Component {
     this.setState({ isOpenLoginDialog: false });
   }
 
+  openHelpDialog() {
+    this.setState({ isOpenHelpDialog: true });
+  }
+
+  closeHelpDialog() {
+    this.setState({ isOpenHelpDialog: false });
+  }
+
   render() {
     const { userId, changeUserId, classes } = this.props;
     const { anchorEl } = this.state;
@@ -129,6 +145,11 @@ class GlobalHeader extends Component {
                 </Menu>
               </div>
               <div>
+                <IconButton onClick={this.openHelpDialog.bind(this)}>
+                  <i className="fa fa-question-circle" />
+                </IconButton>
+              </div>
+              <div>
                 <IconButton onClick={this.handleMenu.bind(this)} data-menu-key="info">
                   <i className="fa fa-info-circle" />
                 </IconButton>
@@ -138,8 +159,8 @@ class GlobalHeader extends Component {
                   onRequestClose={this.closeMenu.bind(this)}
                 >
                   <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.DESCRIPTION}>
-                    <i className="fa fa-question" aria-hidden="true" />
-                    　サイトについて
+                    <i className="fa fa-info" aria-hidden="true" />
+                    　サービスについて
                   </MenuItem>
                   <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.CONTACT}>
                     <i className="fa fa-envelope-o" aria-hidden="true" />
@@ -165,6 +186,10 @@ class GlobalHeader extends Component {
           open={this.state.isOpenDescriptionDialog}
           onRequestClose={this.closeDescriptionDialog.bind(this)}
         />
+        <HelpDialog
+          open={this.state.isOpenHelpDialog}
+          onRequestClose={this.closeHelpDialog.bind(this)}
+        />
       </AppBar>
     );
   }
@@ -175,6 +200,7 @@ GlobalHeader.propTypes = {
   changeUserId: PropTypes.func.isRequired,
   loginCallback: PropTypes.func.isRequired,
   logoutCallback: PropTypes.func.isRequired,
+  isOpenHelpDialog: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

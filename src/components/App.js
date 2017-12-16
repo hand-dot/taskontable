@@ -20,7 +20,6 @@ import '../styles/handsontable-custom.css';
 import GlobalHeader from './GlobalHeader';
 import Dashboard from './Dashboard';
 import TaskListCtl from './TaskListCtl';
-import HelpDialog from './HelpDialog';
 import Taskpool from './Taskpool';
 
 import firebaseConf from '../configs/firebase';
@@ -87,11 +86,7 @@ class App extends Component {
       lastSaveTime: util.getCrrentTimeObj(),
     });
     window.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        // テーブルを保存
-        this.saveHot();
-      } else if (e.ctrlKey && (e.key === '>' || e.key === '<')) {
+      if (e.ctrlKey && (e.key === '>' || e.key === '<')) {
         e.preventDefault();
         // 基準日を変更
         if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
@@ -102,6 +97,10 @@ class App extends Component {
             hot.updateSettings({ data });
           });
         }, 0);
+      } else if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        // テーブルを保存
+        this.saveHot();
       } else if (e.ctrlKey && e.key === 'j') {
         e.preventDefault();
         this.toggleDashboard();
@@ -111,7 +110,7 @@ class App extends Component {
       } else if (e.ctrlKey && e.key === 'l') {
         e.preventDefault();
         hot.selectCell(0, 0);
-      } else if (e.key === '?') {
+      } else if (e.ctrlKey && e.key === '?') {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
       return false;
@@ -266,14 +265,6 @@ class App extends Component {
     });
   }
 
-  openHelpDialog() {
-    this.setState({ isOpenHelpDialog: true });
-  }
-
-  closeHelpDialog() {
-    this.setState({ isOpenHelpDialog: false });
-  }
-
   render() {
     const { classes } = this.props;
     return (
@@ -283,6 +274,7 @@ class App extends Component {
           changeUserId={this.changeUserId.bind(this)}
           loginCallback={this.loginCallback.bind(this)}
           logoutCallback={this.logoutCallback.bind(this)}
+          isOpenHelpDialog={this.state.isOpenHelpDialog}
         />
         <Grid container alignItems="stretch" justify="center" spacing={40} className={classes.root}>
           <Grid item xs={1}>
@@ -308,13 +300,8 @@ class App extends Component {
               <div style={{ padding: '0 24px' }}>
                 <i className="fa fa-table fa-lg" />
                 <Typography style={{ display: 'inline' }}>
-                　テーブル　({this.state.date.replace(/-/g, '/')})　
+                　テーブル　({this.state.date.replace(/-/g, '/')})
                 </Typography>
-                <Tooltip title="? を入力してください" placement="top">
-                  <IconButton className={classes.helpButton} color="default" onClick={this.openHelpDialog.bind(this)}>
-                    <i className="fa fa-question-circle-o" aria-hidden="true" />
-                  </IconButton>
-                </Tooltip>
                 <TaskListCtl
                   lastSaveTime={this.state.lastSaveTime}
                   saveHot={this.saveHot.bind(this)}
@@ -332,10 +319,6 @@ class App extends Component {
             </Button>
           </Grid>
         </Grid>
-        <HelpDialog
-          open={this.state.isOpenHelpDialog}
-          onRequestClose={this.closeHelpDialog.bind(this)}
-        />
       </div>
     );
   }
