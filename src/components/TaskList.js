@@ -24,23 +24,23 @@ function TaskList(props) {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell padding="none">作業内容</TableCell>
-            <TableCell padding="none">備考</TableCell>
-            <TableCell className={classes.miniCell} padding="none">見積</TableCell>
-            <TableCell padding="none">アクション</TableCell>
+            <TableCell>作業内容</TableCell>
+            <TableCell>備考</TableCell>
+            <TableCell className={classes.miniCell}>見積</TableCell>
+            <TableCell>アクション</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {datas.map((n, index) => (
             <TableRow hover key={index.toString()}>
-              <TableCell padding="none">{n.title}</TableCell>
-              <TableCell padding="none">{n.memo}</TableCell>
-              <TableCell className={classes.miniCell} padding="none">{n.estimate}</TableCell>
-              <TableCell padding="none">
+              <TableCell>{n.title}</TableCell>
+              <TableCell>{n.memo}</TableCell>
+              <TableCell className={classes.miniCell}>{n.estimate}</TableCell>
+              <TableCell>
                 <IconButton className={classes.actionIcon} color="default">
                   <i className="fa fa-level-down" />
                 </IconButton>
-                /
+                <span>　/　</span>
                 <IconButton className={classes.actionIcon} color="default">
                   <i className="fa fa-trash-o" />
                 </IconButton>
@@ -48,24 +48,24 @@ function TaskList(props) {
             </TableRow>
           ))}
           <TableRow>
-            <TableCell padding="none">
+            <TableCell>
               <Input
                 fullWidth
                 placeholder="作業内容"
               />
             </TableCell>
-            <TableCell padding="none">
+            <TableCell>
               <Input
                 fullWidth
                 placeholder="備考"
               />
             </TableCell>
-            <TableCell className={classes.miniCell} padding="none">
+            <TableCell className={classes.miniCell}>
               <Input
                 placeholder="見積"
               />
             </TableCell>
-            <TableCell padding="none">
+            <TableCell>
               <IconButton color="default">
                 <i className="fa fa-plus" />
               </IconButton>

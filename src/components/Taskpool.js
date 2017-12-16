@@ -13,14 +13,7 @@ import Paper from 'material-ui/Paper';
 
 import TaskList from './TaskList';
 
-const styles = {
-  root: {
-    width: '100%',
-    position: 'relative',
-    overflow: 'auto',
-    maxHeight: 170,
-  },
-};
+const styles = {};
 class Taskpool extends Component {
   constructor(props) {
     super(props);
@@ -56,7 +49,7 @@ class Taskpool extends Component {
         <ExpansionPanelDetails>
           <Grid item xs={12}>
             <Paper elevation={1}>
-              <AppBar color="inherit" position="static">
+              <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
                 <Tabs
                   fullWidth
                   value={this.state.value}
