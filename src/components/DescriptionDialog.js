@@ -53,7 +53,7 @@ function DescriptionDialog(props) {
               Taskontableとは？
             </Typography>
             <Typography type="body2" gutterBottom>
-              Taskontableは毎日のワークフローを簡単に作成できるタスク管理アプリです。<br />
+              Taskontableは毎日のワークフローを簡単に作成できるタスクマネージャーです。<br />
               タスクを直列化し、一つ一つこなしていくことで生産性を向上させることができます。<br />
               仕事や家事をやり遂げるのはそれほど簡単ではありません。<br />
               時間を有効に活用し、やるべきことタスクを終わらせ、すてきな人生をお楽しみください。
@@ -73,7 +73,7 @@ function DescriptionDialog(props) {
               焦点を絞る
             </Typography>
             <Typography type="body1" gutterBottom>
-              テーブルにタスクを追加して並び替える。<br />
+              テーブルにタスクを追加して並び替え直列化する。<br />
               これだけで今日やるべきことは驚くようにシンプルになります。
             </Typography>
           </Grid>
