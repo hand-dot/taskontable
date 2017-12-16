@@ -47,11 +47,11 @@ class GlobalHeader extends Component {
 
   componentDidMount() {
     this.login();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      isOpenHelpDialog: nextProps.isOpenHelpDialog,
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === '?') {
+        this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
+      }
+      return false;
     });
   }
 
@@ -200,7 +200,6 @@ GlobalHeader.propTypes = {
   changeUserId: PropTypes.func.isRequired,
   loginCallback: PropTypes.func.isRequired,
   logoutCallback: PropTypes.func.isRequired,
-  isOpenHelpDialog: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

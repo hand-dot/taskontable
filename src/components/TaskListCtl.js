@@ -34,7 +34,7 @@ function TaskListCtl(props) {
         <div style={{ textAlign: 'right' }}>
           <Button raised onClick={addTask} color="default">
             <i className="fa fa-plus fa-lg" />
-            　追加
+            　行追加
           </Button>
           <Tooltip title={`最終保存時刻 : ${(`00${lastSaveTime.hour}`).slice(-2)}:${(`00${lastSaveTime.minute}`).slice(-2)}`} placement="top">
             <Button raised onClick={saveHot} color="default">

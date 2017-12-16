@@ -12,8 +12,6 @@ import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import { LinearProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
-import Tooltip from 'material-ui/Tooltip';
 
 import '../styles/handsontable-custom.css';
 
@@ -36,7 +34,6 @@ const initialState = {
   saveable: false,
   isOpenDashboard: false,
   isOpenTaskpool: false,
-  isOpenHelpDialog: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   allTasks: [],
@@ -99,8 +96,10 @@ class App extends Component {
         }, 0);
       } else if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
-        // テーブルを保存
         this.saveHot();
+      } else if (e.ctrlKey && e.key === 'i') {
+        e.preventDefault();
+        if (hot) hot.alter('insert_row');
       } else if (e.ctrlKey && e.key === 'j') {
         e.preventDefault();
         this.toggleDashboard();
@@ -110,8 +109,6 @@ class App extends Component {
       } else if (e.ctrlKey && e.key === 'l') {
         e.preventDefault();
         hot.selectCell(0, 0);
-      } else if (e.ctrlKey && e.key === '?') {
-        this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
       return false;
     });
@@ -274,7 +271,6 @@ class App extends Component {
           changeUserId={this.changeUserId.bind(this)}
           loginCallback={this.loginCallback.bind(this)}
           logoutCallback={this.logoutCallback.bind(this)}
-          isOpenHelpDialog={this.state.isOpenHelpDialog}
         />
         <Grid container alignItems="stretch" justify="center" spacing={40} className={classes.root}>
           <Grid item xs={1}>
