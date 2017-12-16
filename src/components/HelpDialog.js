@@ -91,7 +91,7 @@ function HelpDialog(props) {
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogTitle>終了時刻通知について</DialogTitle>
+      <DialogTitle>アラームについて</DialogTitle>
       <DialogContent className={classes.content}>
         <Grid container spacing={40}>
           <Grid item xs={12}>

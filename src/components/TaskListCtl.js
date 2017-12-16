@@ -26,7 +26,7 @@ function TaskListCtl(props) {
                 onChange={toggleNotifiable}
               />
             }
-            label={`終了時刻通知${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
+            label={`アラーム${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
           />
         </FormGroup>
       </Grid>

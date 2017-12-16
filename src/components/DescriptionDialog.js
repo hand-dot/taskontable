@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Dialog, {
   DialogContent,
-  DialogTitle,
 } from 'material-ui/Dialog';
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
@@ -23,6 +22,7 @@ const styles = {
     marginRight: 20,
   },
   content: {
+    marginTop: 30,
     flex: 'initial',
   },
 };
@@ -46,12 +46,60 @@ function DescriptionDialog(props) {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <DialogTitle>タイトル</DialogTitle>
       <DialogContent className={classes.content}>
         <Grid container spacing={40}>
           <Grid item xs={12}>
-            <Typography gutterBottom>
-              現在作成中です
+            <Typography type="title" gutterBottom>
+              Taskontableとは？
+            </Typography>
+            <Typography type="body2" gutterBottom>
+              Taskontableは毎日のワークフローを簡単に作成できるタスク管理アプリです。<br />
+              タスクを直列化し、一つ一つこなしていくことで生産性を向上させることができます。<br />
+              仕事や家事をやり遂げるのはそれほど簡単ではありません。<br />
+              時間を有効に活用し、やるべきことタスクを終わらせ、すてきな人生をお楽しみください。
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography type="subheading" gutterBottom>
+              どこでも使える
+            </Typography>
+            <Typography type="body1" gutterBottom>
+                面倒なデータの同期は不要。<br />
+                ログインすればどこでもタスクを一元管理できます。
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography type="subheading" gutterBottom>
+              焦点を絞る
+            </Typography>
+            <Typography type="body1" gutterBottom>
+              テーブルにタスクを追加して並び替える。<br />
+              これだけで今日やるべきことは驚くようにシンプルになります。
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography type="subheading" gutterBottom>
+              把握する
+            </Typography>
+            <Typography type="body1" gutterBottom>
+                テーブルに入力したデータでリアルタイムに終了時刻を計算します。
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography type="subheading" gutterBottom>
+              高速に入力する
+            </Typography>
+            <Typography type="body1" gutterBottom>
+                テーブルはExcelを扱うように操作が可能。<br />
+                コピペはもちろん、現在時刻入力などのショートカットにも対応しています。
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography type="subheading" gutterBottom>
+              アラームを追加する
+            </Typography>
+            <Typography type="body1" gutterBottom>
+                タスクを開始した時刻 + 見積もり時間 になると通知します。
             </Typography>
           </Grid>
         </Grid>
