@@ -82,7 +82,7 @@ function DescriptionDialog(props) {
               把握する
             </Typography>
             <Typography type="body1" gutterBottom>
-                テーブルに入力したデータでリアルタイムに終了時刻を計算します。
+                テーブルに入力したデータでリアルタイムに終了時刻を表示します。
             </Typography>
           </Grid>
           <Grid item xs={12}>
