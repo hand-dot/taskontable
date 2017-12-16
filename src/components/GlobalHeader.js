@@ -48,7 +48,8 @@ class GlobalHeader extends Component {
   componentDidMount() {
     this.login();
     window.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === '?') {
+      // e.key === '?' はEdgeで動かないので e.keyCode === 191にしている
+      if (e.ctrlKey && e.keyCode === 191) {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
       return false;

@@ -238,8 +238,8 @@ export const bindShortcut = (hot) => {
   // ショートカット処理
   hot.addHook('afterDocumentKeyDown', (e) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
-    if (e.path[0].id !== 'HandsontableCopyPaste') return;
-    const [startRow, startCol, endRow, endCol] = hot.getSelected();
+    if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
+    const [startRow, startCol, endRow, endCol] = [hot.getSelected()];
     if (e.ctrlKey && e.key === ':') {
       // 現在時刻を入力
       const prop = hot.colToProp(startCol);

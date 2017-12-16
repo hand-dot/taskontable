@@ -83,11 +83,13 @@ class App extends Component {
       lastSaveTime: util.getCrrentTimeObj(),
     });
     window.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && (e.key === '>' || e.key === '<')) {
+      // e.key === '>' はEdgeで動かないので e.keyCode === 190にしている
+      // keyCode:188 は <
+      if (e.ctrlKey && (e.keyCode === 190 || e.keyCode === 188)) {
         e.preventDefault();
         // 基準日を変更
         if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
-        this.setState({ date: moment(this.state.date).add(e.key === '>' ? 1 : -1, 'day').format('YYYY-MM-DD') });
+        this.setState({ date: moment(this.state.date).add(e.keyCode === 190 ? 1 : -1, 'day').format('YYYY-MM-DD') });
         setTimeout(() => {
           this.fetchTask().then((snapshot) => {
             const data = snapshot.exists() ? snapshot.val() : cloneDeep(emptyHotData);
