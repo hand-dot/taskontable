@@ -19,7 +19,7 @@ import '../styles/handsontable-custom.css';
 import GlobalHeader from './GlobalHeader';
 import Dashboard from './Dashboard';
 import TaskListCtl from './TaskListCtl';
-import Taskpool from './Taskpool';
+import TaskPool from './TaskPool';
 
 import firebaseConf from '../configs/firebase';
 import { bindShortcut, hotConf, getEmptyHotData } from '../hot';
@@ -34,7 +34,7 @@ const initialState = {
   notifiable: true,
   saveable: false,
   isOpenDashboard: true,
-  isOpenTaskpool: false,
+  isOpenTaskPool: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   allTasks: Array(10).fill(getEmptyHotData()[0]),
@@ -107,7 +107,7 @@ class App extends Component {
         this.toggleDashboard();
       } else if (e.ctrlKey && e.key === 'k') {
         e.preventDefault();
-        this.toggleTaskpool();
+        this.toggleTaskPool();
       } else if (e.ctrlKey && e.key === 'l') {
         e.preventDefault();
         hot.selectCell(0, 0);
@@ -163,8 +163,8 @@ class App extends Component {
     this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
   }
 
-  toggleTaskpool() {
-    this.setState({ isOpenTaskpool: !this.state.isOpenTaskpool });
+  toggleTaskPool() {
+    this.setState({ isOpenTaskPool: !this.state.isOpenTaskPool });
   }
 
   toggleNotifiable(event, checked) {
@@ -288,9 +288,9 @@ class App extends Component {
                 changeDate={this.changeDate.bind(this)}
                 allTasks={this.state.allTasks}
               />
-              <Taskpool
-                isOpenTaskpool={this.state.isOpenTaskpool}
-                toggleTaskpool={this.toggleTaskpool.bind(this)}
+              <TaskPool
+                isOpenTaskPool={this.state.isOpenTaskPool}
+                toggleTaskPool={this.toggleTaskPool.bind(this)}
               />
             </Grid>
             <Grid item xs={12}>

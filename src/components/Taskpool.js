@@ -14,7 +14,7 @@ import Paper from 'material-ui/Paper';
 import TaskList from './TaskList';
 
 const styles = {};
-class Taskpool extends Component {
+class TaskPool extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,7 +27,7 @@ class Taskpool extends Component {
   }
 
   render() {
-    const { isOpenTaskpool, toggleTaskpool } = this.props;
+    const { isOpenTaskPool, toggleTaskPool } = this.props;
     const data1 = [
       { title: '燃えるゴミ出し', memo: '３つくらい玄関にある', estimate: 5 },
       { title: '朝食', memo: 'ヨーグルトを食べてはいけない', estimate: 20 },
@@ -41,8 +41,8 @@ class Taskpool extends Component {
       { title: 'ジブリ美術館にいく', memo: '申し込みの日にちがあるらしい', estimate: 0 },
     ];
     return (
-      <ExpansionPanel expanded={isOpenTaskpool}>
-        <ExpansionPanelSummary onClick={toggleTaskpool} expandIcon={<i className="fa fa-angle-down fa-lg" />}>
+      <ExpansionPanel expanded={isOpenTaskPool}>
+        <ExpansionPanelSummary onClick={toggleTaskPool} expandIcon={<i className="fa fa-angle-down fa-lg" />}>
           <i className="fa fa-tasks fa-lg" />
           <Typography>　タスクプール</Typography>
         </ExpansionPanelSummary>
@@ -78,9 +78,9 @@ class Taskpool extends Component {
   }
 }
 
-Taskpool.propTypes = {
-  isOpenTaskpool: PropTypes.bool.isRequired,
-  toggleTaskpool: PropTypes.func.isRequired,
+TaskPool.propTypes = {
+  isOpenTaskPool: PropTypes.bool.isRequired,
+  toggleTaskPool: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(Taskpool);
+export default withStyles(styles)(TaskPool);
