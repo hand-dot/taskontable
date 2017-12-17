@@ -29,7 +29,8 @@ Taskontableは毎日のワークフローを簡単に作成できるタスクマ
 * アラームを追加する  
 タスクを開始した時刻 + 見積もり時間 になると通知します。
 
-![Taskontable](https://user-images.githubusercontent.com/24843808/33806686-1e6c72e0-de0f-11e7-95d3-ffa1e436d93b.png)
+![Taskontable](https://user-images.githubusercontent.com/24843808/34078056-1ade29a6-e356-11e7-95c6-baec49181f12.png)
+
 
 現時点ではデスクトップ版・モバイル版アプリの開発を視野に入れつつ、
 ベータ版としてWeb版を公開しながら要件定義・開発を行っています。
