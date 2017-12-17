@@ -33,24 +33,16 @@ const initialState = {
   loading: true,
   notifiable: true,
   saveable: false,
-  isOpenDashboard: true,
+  isOpenDashboard: false,
   isOpenTaskPool: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   tableTasks: Array(10).fill(getEmptyHotData()[0]),
   poolTasks: {
-    highPriorityTasks: [
-      { actually: '', done: false, endTime: '', estimate: 5, memo: '３つくらい玄関にある', startTime: '', title: '燃えるゴミ出し' },
-      { actually: '', done: false, endTime: '', estimate: 20, memo: 'ヨーグルトを食べてはいけない', startTime: '', title: '朝食' },
-      { actually: '', done: false, endTime: '', estimate: 60, memo: '', startTime: '', title: '出勤' },
-      { actually: '', done: false, endTime: '', estimate: 10, memo: '', startTime: '', title: 'メールチェック' },
-      { actually: '', done: false, endTime: '', estimate: 10, memo: '', startTime: '', title: '日報' },
-    ],
-    lowPriorityTasks: [
-      { actually: '', done: false, endTime: '', estimate: 0, memo: '３つくらい玄関にある', startTime: '', title: 'フライパン捨てる' },
-      { actually: '', done: false, endTime: '', estimate: 0, memo: 'ヨーグルトを食べてはいけない', startTime: '', title: 'スイフトスポーツの試乗申し込み' },
-      { actually: '', done: false, endTime: '', estimate: 0, memo: '申し込みの日にちがあるらしい', startTime: '', title: 'ジブリ美術館にいく' },
-    ],
+    highPriorityTasks: [],
+    lowPriorityTasks: [],
+    regularTasks: [],
+    dailyTasks: [],
   },
 };
 
@@ -106,7 +98,7 @@ class App extends Component {
         if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
         this.setState({ date: moment(this.state.date).add(e.keyCode === 190 ? 1 : -1, 'day').format('YYYY-MM-DD') });
         setTimeout(() => {
-          this.fetchTask().then((snapshot) => {
+          this.fetchTableTask().then((snapshot) => {
             hot.updateSettings({ data: snapshot.exists() ? snapshot.val() : getEmptyHotData() });
           });
         }, 0);
@@ -189,6 +181,11 @@ class App extends Component {
     } else if (type === 'remove') {
       this.removePoolTask(target, value);
     }
+    setTimeout(() => {
+      firebase.database().ref(`/${this.state.userId}/poolTasks`).set(this.state.poolTasks).then(() => {
+        console.log('!!!');
+      });
+    });
   }
 
   addPoolTask(target, value) {
@@ -240,7 +237,7 @@ class App extends Component {
     }
   }
 
-  fetchTask() {
+  fetchTableTask() {
     this.setState(() => ({
       loading: true,
     }));
@@ -252,15 +249,41 @@ class App extends Component {
     });
   }
 
+  attachPoolTasks() {
+    firebase.database().ref(`/${this.state.userId}/poolTasks/`).once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log('onece', snapshot.val());
+        this.setState({
+          poolTasks: snapshot.val(),
+        });
+      } else {
+        console.log('once', 'else');
+      }
+    });
+    firebase.database().ref(`/${this.state.userId}/poolTasks/`).on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        console.log('on', snapshot.val());
+        this.setState({
+          poolTasks: snapshot.val(),
+        });
+      } else {
+        console.log('on', 'else');
+      }
+    });
+  }
+
   changeUserId(e) {
     this.setState({ userId: e.target.value });
   }
 
   loginCallback(userId) {
     this.setState({ userId });
-    // テーブルの初期化
+    // userIdが更新されたあとに処理する
     setTimeout(() => {
-      this.fetchTask().then((snapshot) => {
+      // タスクプールをサーバーと同期開始
+      this.attachPoolTasks();
+      // テーブルの初期化
+      this.fetchTableTask().then((snapshot) => {
         if (hot && snapshot.exists()) {
           hot.updateSettings({ data: snapshot.val() });
         }
@@ -294,7 +317,7 @@ class App extends Component {
         date,
       }));
       setTimeout(() => {
-        this.fetchTask().then((snapshot) => {
+        this.fetchTableTask().then((snapshot) => {
           hot.updateSettings({ data: snapshot.exists() ? snapshot.val() : getEmptyHotData() });
         });
       }, 0);
@@ -304,11 +327,11 @@ class App extends Component {
   saveHot() {
     if (hot) {
       // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTask(getHotTasks());
+      this.saveTableTask(getHotTasks());
     }
   }
 
-  saveTask(data) {
+  saveTableTask(data) {
     this.setState(() => ({
       loading: true,
     }));

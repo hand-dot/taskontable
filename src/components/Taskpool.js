@@ -67,17 +67,15 @@ class TaskPool extends Component {
                   textColor="inherit"
                 >
                   <Tab fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
-                  <Tab fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
-                  <Tab fullWidth style={{ maxWidth: 'none' }} label="定期的にやる" />
-                  <Tab fullWidth style={{ maxWidth: 'none' }} label="毎日やる" />
+                  <Tab fullWidth disabled style={{ maxWidth: 'none' }} label="いつかやる" />
+                  <Tab fullWidth disabled style={{ maxWidth: 'none' }} label="定期的にやる" />
+                  <Tab fullWidth disabled style={{ maxWidth: 'none' }} label="毎日やる" />
                 </Tabs>
               </AppBar>
               {(() => {
                 let tasks = null;
                 if (this.state.tab === constants.taskPool.HIGHPRIORITY) {
                   tasks = poolTasks.highPriorityTasks;
-                } else if (this.state.tab === constants.taskPool.LOWPRIORITY) {
-                  tasks = poolTasks.lowPriorityTasks;
                 }
                 return <TaskList addTask={this.addTask.bind(this)} moveTask={this.moveTask.bind(this)} removeTask={this.removeTask.bind(this)} tasks={tasks} />;
               })()}
@@ -94,7 +92,6 @@ TaskPool.propTypes = {
   toggleTaskPool: PropTypes.func.isRequired,
   poolTasks: PropTypes.shape({
     highPriorityTasks: PropTypes.array.isRequired,
-    lowPriorityTasks: PropTypes.array.isRequired,
   }).isRequired,
   changePoolTasks: PropTypes.func.isRequired,
 };
