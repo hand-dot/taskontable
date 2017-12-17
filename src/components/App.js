@@ -40,16 +40,16 @@ const initialState = {
   tableTasks: Array(10).fill(getEmptyHotData()[0]),
   poolTasks: {
     highPriorityTasks: [
-      { actually: '', done: false, endTime: 5, estimate: '', memo: '３つくらい玄関にある', startTime: '', title: '燃えるゴミ出し' },
-      { actually: '', done: false, endTime: 20, estimate: '', memo: 'ヨーグルトを食べてはいけない', startTime: '', title: '朝食' },
-      { actually: '', done: false, endTime: 60, estimate: '', memo: '', startTime: '', title: '出勤' },
-      { actually: '', done: false, endTime: 10, estimate: '', memo: '', startTime: '', title: 'メールチェック' },
-      { actually: '', done: false, endTime: 10, estimate: '', memo: '', startTime: '', title: '日報' },
+      { actually: '', done: false, endTime: '', estimate: 5, memo: '３つくらい玄関にある', startTime: '', title: '燃えるゴミ出し' },
+      { actually: '', done: false, endTime: '', estimate: 20, memo: 'ヨーグルトを食べてはいけない', startTime: '', title: '朝食' },
+      { actually: '', done: false, endTime: '', estimate: 60, memo: '', startTime: '', title: '出勤' },
+      { actually: '', done: false, endTime: '', estimate: 10, memo: '', startTime: '', title: 'メールチェック' },
+      { actually: '', done: false, endTime: '', estimate: 10, memo: '', startTime: '', title: '日報' },
     ],
     lowPriorityTasks: [
-      { actually: '', done: false, endTime: 0, estimate: 'ベランダにある', memo: '３つくらい玄関にある', startTime: '', title: 'フライパン捨てる' },
-      { actually: '', done: false, endTime: 0, estimate: '', memo: 'ヨーグルトを食べてはいけない', startTime: '', title: 'スイフトスポーツの試乗申し込み' },
-      { actually: '', done: false, endTime: 0, estimate: '', memo: '申し込みの日にちがあるらしい', startTime: '', title: 'ジブリ美術館にいく' },
+      { actually: '', done: false, endTime: '', estimate: 0, memo: '３つくらい玄関にある', startTime: '', title: 'フライパン捨てる' },
+      { actually: '', done: false, endTime: '', estimate: 0, memo: 'ヨーグルトを食べてはいけない', startTime: '', title: 'スイフトスポーツの試乗申し込み' },
+      { actually: '', done: false, endTime: '', estimate: 0, memo: '申し込みの日にちがあるらしい', startTime: '', title: 'ジブリ美術館にいく' },
     ],
   },
 };
@@ -181,6 +181,50 @@ class App extends Component {
     this.setState({ isOpenTaskPool: !this.state.isOpenTaskPool });
   }
 
+  changePoolTasks(type, target, value) {
+    if (type === 'add') {
+      this.addPoolTask(target, value);
+    } else if (type === 'move') {
+      this.movePoolTask(target, value);
+    } else if (type === 'remove') {
+      this.removePoolTask(target, value);
+    }
+  }
+
+  addPoolTask(target, value) {
+    const poolTasks = Object.assign({}, this.state.poolTasks);
+    if (target === constants.taskPool.HIGHPRIORITY) {
+      poolTasks.highPriorityTasks.push(value);
+    }
+    this.setState({ poolTasks });
+  }
+
+  removePoolTask(target, value) {
+    const poolTasks = Object.assign({}, this.state.poolTasks);
+    if (target === constants.taskPool.HIGHPRIORITY) {
+      poolTasks.highPriorityTasks.splice(value, 1);
+    }
+    this.setState({ poolTasks });
+  }
+
+  movePoolTask(target, value) {
+    if (!hot) return;
+    if (target === constants.taskPool.HIGHPRIORITY) {
+      const highPriorityTasks = cloneDeep(this.state.poolTasks.highPriorityTasks[value]);
+      const emptyRow = JSON.stringify(getEmptyHotData()[0]);
+      const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
+      let insertPosition = hotData.findIndex(data => emptyRow === JSON.stringify(data));
+      if (insertPosition === -1) {
+        insertPosition = this.state.tableTasks.length;
+        hot.alter('insert_row');
+      }
+      Object.keys(highPriorityTasks).forEach((key) => {
+        hot.setDataAtRowProp(insertPosition, key, highPriorityTasks[key]);
+      });
+    }
+    this.removePoolTask(target, value);
+  }
+
   toggleNotifiable(event, checked) {
     if ('Notification' in window) {
       Notification = checked ? NotificationClone : false;　// eslint-disable-line
@@ -306,6 +350,7 @@ class App extends Component {
                 isOpenTaskPool={this.state.isOpenTaskPool}
                 toggleTaskPool={this.toggleTaskPool.bind(this)}
                 poolTasks={this.state.poolTasks}
+                changePoolTasks={this.changePoolTasks.bind(this)}
               />
             </Grid>
             <Grid item xs={12}>

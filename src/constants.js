@@ -6,5 +6,11 @@ export default {
     DESCRIPTION: 'description',
     CONTACT: 'contact',
     GIT: 'git',
-  }
+  },
+  taskPool: {
+    HIGHPRIORITY: 0,
+    LOWPRIORITY: 1,
+    REGULAR: 2,
+    DAILY: 3,
+  },
 };

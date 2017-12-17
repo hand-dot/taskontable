@@ -11,16 +11,11 @@ import ExpansionPanel, {
 } from 'material-ui/ExpansionPanel';
 import Paper from 'material-ui/Paper';
 
+import constants from '../constants';
+
 import TaskList from './TaskList';
 
 const styles = {};
-
-const TAB = {
-  highPriorityTasks: 0,
-  lowPriorityTasks: 1,
-  regularTasks: 2,
-  dailyTasks: 3,
-};
 
 class TaskPool extends Component {
   constructor(props) {
@@ -31,20 +26,20 @@ class TaskPool extends Component {
   }
 
   addTask(task) {
-    if (this.state.tab === TAB.highPriorityTasks) {
-      console.log('addTask', task);
+    if (this.state.tab === constants.taskPool.HIGHPRIORITY) {
+      this.props.changePoolTasks('add', constants.taskPool.HIGHPRIORITY, task);
     }
   }
 
   moveTask(index) {
-    if (this.state.tab === TAB.highPriorityTasks) {
-      console.log(index, 'move');
+    if (this.state.tab === constants.taskPool.HIGHPRIORITY) {
+      this.props.changePoolTasks('move', constants.taskPool.HIGHPRIORITY, index);
     }
   }
 
   removeTask(index) {
-    if (this.state.tab === TAB.highPriorityTasks) {
-      console.log(index, 'removeTask');
+    if (this.state.tab === constants.taskPool.HIGHPRIORITY) {
+      this.props.changePoolTasks('remove', constants.taskPool.HIGHPRIORITY, index);
     }
   }
 
@@ -79,9 +74,9 @@ class TaskPool extends Component {
               </AppBar>
               {(() => {
                 let tasks = null;
-                if (this.state.tab === TAB.highPriorityTasks) {
+                if (this.state.tab === constants.taskPool.HIGHPRIORITY) {
                   tasks = poolTasks.highPriorityTasks;
-                } else if (this.state.tab === TAB.lowPriorityTasks) {
+                } else if (this.state.tab === constants.taskPool.LOWPRIORITY) {
                   tasks = poolTasks.lowPriorityTasks;
                 }
                 return <TaskList addTask={this.addTask.bind(this)} moveTask={this.moveTask.bind(this)} removeTask={this.removeTask.bind(this)} tasks={tasks} />;
@@ -101,6 +96,7 @@ TaskPool.propTypes = {
     highPriorityTasks: PropTypes.array.isRequired,
     lowPriorityTasks: PropTypes.array.isRequired,
   }).isRequired,
+  changePoolTasks: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(TaskPool);

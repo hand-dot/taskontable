@@ -50,6 +50,9 @@ class TaskList extends Component {
   }
 
   addTask() {
+    // 作業内容が空の場合は登録させない
+    if (this.state.newTask.title === '') return;
+
     this.props.addTask(cloneDeep(this.state.newTask));
     const newTask = Object.assign({}, this.state.newTask);
     newTask.title = '';
