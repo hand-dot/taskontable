@@ -1,11 +1,10 @@
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
+import task from './task';
 import constants from './constants';
 import logo from './images/logo.png';
 
-// カテゴリーはフィルタリングが使えないのでほぼ意味がない。hotのフィルターを入れることができたら復活させたい。
-// const dataSchema = { actually: '', category: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
-const dataSchema = { actually: '', done: false, endTime: '', estimate: '', memo: '', startTime: '', title: '' };
+
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
@@ -15,6 +14,7 @@ const columns = [
     readOnly: true,
     className: 'htCenter htMiddle',
   },
+  // カテゴリーはフィルタリングが使えないのでほぼ意味がない。hotのフィルターを入れることができたら復活させたい。
   // {
   //   title: '<span title="タスクの分類項目として使用する。">カテゴリ</span>',
   //   data: 'category',
@@ -72,7 +72,7 @@ const columns = [
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value, cellProperties) {
       td.classList.add('htDimmed');
-      td.innerHTML = value;      
+      td.innerHTML = value;
       if (cellProperties.overdue) {
         td.style.color = '#ff9b9b';
       } else if (cellProperties.overdue === false) {
@@ -241,7 +241,8 @@ export const bindShortcut = (hot) => {
   hot.addHook('afterDocumentKeyDown', (e) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
     if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
-    const [startRow, startCol, endRow, endCol] = [hot.getSelected()];
+    const selected = hot.getSelected();
+    const [startRow, startCol, endRow, endCol] = [selected[0], selected[1], selected[2], selected[3]];
     if (e.ctrlKey && e.key === ':') {
       // 現在時刻を入力
       const prop = hot.colToProp(startCol);
@@ -253,7 +254,7 @@ export const bindShortcut = (hot) => {
     hot.render();
   });
 };
-export const getEmptyHotData = () => [cloneDeep(dataSchema)];
+export const getEmptyHotData = () => [cloneDeep(task)];
 export const hotConf = {
   stretchH: 'all',
   comments: true,
@@ -264,7 +265,7 @@ export const hotConf = {
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
   data: getEmptyHotData(),
-  dataSchema,
+  dataSchema: task,
   contextMenu: {
     callback(key) {
       if (key === 'set_current_time') {

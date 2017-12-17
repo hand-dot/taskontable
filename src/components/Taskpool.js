@@ -14,32 +14,46 @@ import Paper from 'material-ui/Paper';
 import TaskList from './TaskList';
 
 const styles = {};
+
+const TAB = {
+  highPriorityTasks: 0,
+  lowPriorityTasks: 1,
+  regularTasks: 2,
+  dailyTasks: 3,
+};
+
 class TaskPool extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
+      tab: 0,
     };
   }
 
-  handleChange(event, value) {
-    this.setState({ value });
+  addTask(task) {
+    if (this.state.tab === TAB.highPriorityTasks) {
+      console.log('addTask', task);
+    }
+  }
+
+  moveTask(index) {
+    if (this.state.tab === TAB.highPriorityTasks) {
+      console.log(index, 'move');
+    }
+  }
+
+  removeTask(index) {
+    if (this.state.tab === TAB.highPriorityTasks) {
+      console.log(index, 'removeTask');
+    }
+  }
+
+  handleTabChange(event, tab) {
+    this.setState({ tab });
   }
 
   render() {
-    const { isOpenTaskPool, toggleTaskPool } = this.props;
-    const data1 = [
-      { title: '燃えるゴミ出し', memo: '３つくらい玄関にある', estimate: 5 },
-      { title: '朝食', memo: 'ヨーグルトを食べてはいけない', estimate: 20 },
-      { title: '出勤', memo: '', estimate: 60 },
-      { title: 'メールチェック', memo: '', estimate: 10 },
-      { title: '日報', memo: '', estimate: 10 },
-    ];
-    const data2 = [
-      { title: 'フライパン捨てる', memo: 'ベランダにある', estimate: 0 },
-      { title: 'スイフトスポーツの試乗申し込み', memo: '', estimate: 0 },
-      { title: 'ジブリ美術館にいく', memo: '申し込みの日にちがあるらしい', estimate: 0 },
-    ];
+    const { isOpenTaskPool, toggleTaskPool, poolTasks } = this.props;
     return (
       <ExpansionPanel expanded={isOpenTaskPool}>
         <ExpansionPanelSummary onClick={toggleTaskPool} expandIcon={<i className="fa fa-angle-down fa-lg" />}>
@@ -52,8 +66,8 @@ class TaskPool extends Component {
               <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
                 <Tabs
                   fullWidth
-                  value={this.state.value}
-                  onChange={this.handleChange.bind(this)}
+                  value={this.state.tab}
+                  onChange={this.handleTabChange.bind(this)}
                   indicatorColor="#888"
                   textColor="inherit"
                 >
@@ -64,11 +78,13 @@ class TaskPool extends Component {
                 </Tabs>
               </AppBar>
               {(() => {
-                if (this.state.value === 0) {
-                  return <TaskList datas={data1} />;
-                } else if (this.state.value === 1) {
-                  return <TaskList datas={data2} />;
+                let tasks = null;
+                if (this.state.tab === TAB.highPriorityTasks) {
+                  tasks = poolTasks.highPriorityTasks;
+                } else if (this.state.tab === TAB.lowPriorityTasks) {
+                  tasks = poolTasks.lowPriorityTasks;
                 }
+                return <TaskList addTask={this.addTask.bind(this)} moveTask={this.moveTask.bind(this)} removeTask={this.removeTask.bind(this)} tasks={tasks} />;
               })()}
             </Paper>
           </Grid>
@@ -81,6 +97,10 @@ class TaskPool extends Component {
 TaskPool.propTypes = {
   isOpenTaskPool: PropTypes.bool.isRequired,
   toggleTaskPool: PropTypes.func.isRequired,
+  poolTasks: PropTypes.shape({
+    highPriorityTasks: PropTypes.array.isRequired,
+    lowPriorityTasks: PropTypes.array.isRequired,
+  }).isRequired,
 };
 
 export default withStyles(styles)(TaskPool);

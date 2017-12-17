@@ -37,7 +37,21 @@ const initialState = {
   isOpenTaskPool: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
-  allTasks: Array(10).fill(getEmptyHotData()[0]),
+  tableTasks: Array(10).fill(getEmptyHotData()[0]),
+  poolTasks: {
+    highPriorityTasks: [
+      { actually: '', done: false, endTime: 5, estimate: '', memo: '３つくらい玄関にある', startTime: '', title: '燃えるゴミ出し' },
+      { actually: '', done: false, endTime: 20, estimate: '', memo: 'ヨーグルトを食べてはいけない', startTime: '', title: '朝食' },
+      { actually: '', done: false, endTime: 60, estimate: '', memo: '', startTime: '', title: '出勤' },
+      { actually: '', done: false, endTime: 10, estimate: '', memo: '', startTime: '', title: 'メールチェック' },
+      { actually: '', done: false, endTime: 10, estimate: '', memo: '', startTime: '', title: '日報' },
+    ],
+    lowPriorityTasks: [
+      { actually: '', done: false, endTime: 0, estimate: 'ベランダにある', memo: '３つくらい玄関にある', startTime: '', title: 'フライパン捨てる' },
+      { actually: '', done: false, endTime: 0, estimate: '', memo: 'ヨーグルトを食べてはいけない', startTime: '', title: 'スイフトスポーツの試乗申し込み' },
+      { actually: '', done: false, endTime: 0, estimate: '', memo: '申し込みの日にちがあるらしい', startTime: '', title: 'ジブリ美術館にいく' },
+    ],
+  },
 };
 
 const styles = {
@@ -149,12 +163,12 @@ class App extends Component {
     if (isUpdateSettings) {
       this.setState({
         saveable: false,
-        allTasks: hotTasks,
+        tableTasks: hotTasks,
       });
-    } else if (JSON.stringify(this.state.allTasks) !== JSON.stringify(hotTasks)) {
+    } else if (JSON.stringify(this.state.tableTasks) !== JSON.stringify(hotTasks)) {
       this.setState({
         saveable: true,
-        allTasks: hotTasks,
+        tableTasks: hotTasks,
       });
     }
   }
@@ -286,11 +300,12 @@ class App extends Component {
                 isOpenDashboard={this.state.isOpenDashboard}
                 toggleDashboard={this.toggleDashboard.bind(this)}
                 changeDate={this.changeDate.bind(this)}
-                allTasks={this.state.allTasks}
+                tableTasks={this.state.tableTasks}
               />
               <TaskPool
                 isOpenTaskPool={this.state.isOpenTaskPool}
                 toggleTaskPool={this.toggleTaskPool.bind(this)}
+                poolTasks={this.state.poolTasks}
               />
             </Grid>
             <Grid item xs={12}>

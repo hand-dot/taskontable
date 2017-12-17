@@ -33,7 +33,7 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allTasks: [],
+      tableTasks: [],
       estimateTasks: { minute: 0, taskNum: 0 },
       doneTasks: { minute: 0, taskNum: 0 },
       actuallyTasks: { minute: 0, taskNum: 0 },
@@ -60,14 +60,14 @@ class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const remainingData = nextProps.allTasks.filter(data => !data.done);
+    const remainingData = nextProps.tableTasks.filter(data => !data.done);
     const remainingMinute = totalMinute(remainingData, 'estimate');
-    const doneData = nextProps.allTasks.filter(data => data.done);
+    const doneData = nextProps.tableTasks.filter(data => data.done);
     const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState({
-      allTasks: nextProps.allTasks,
-      estimateTasks: { minute: totalMinute(nextProps.allTasks, 'estimate'), taskNum: nextProps.allTasks.length },
+      tableTasks: nextProps.tableTasks,
+      estimateTasks: { minute: totalMinute(nextProps.tableTasks, 'estimate'), taskNum: nextProps.tableTasks.length },
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
       doneTasks: { minute: totalMinute(doneData, 'estimate'), taskNum: doneData.length },
       actuallyTasks: { minute: totalMinute(doneData, 'actually'), taskNum: doneData.length },
@@ -184,7 +184,7 @@ Dashboard.propTypes = {
   isOpenDashboard: PropTypes.bool.isRequired,
   toggleDashboard: PropTypes.func.isRequired,
   changeDate: PropTypes.func.isRequired,
-  allTasks: PropTypes.array.isRequired,
+  tableTasks: PropTypes.array.isRequired,
 };
 
 export default Dashboard;
