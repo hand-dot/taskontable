@@ -37,7 +37,7 @@ const initialState = {
   isOpenTaskPool: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
-  tableTasks: Array(10).fill(getEmptyHotData()[0]),
+  tableTasks: getEmptyHotData(),
   poolTasks: {
     highPriorityTasks: [],
     lowPriorityTasks: [],
@@ -78,6 +78,20 @@ const getHotTasks = () => {
   return getEmptyHotData();
 };
 
+const handlePoolTaskProp = (identifier) => {
+  let prop;
+  if (identifier === constants.taskPool.HIGHPRIORITY) {
+    prop = 'highPriorityTasks';
+  } else if (identifier === constants.taskPool.LOWPRIORITY) {
+    prop = 'lowPriorityTasks';
+  } else if (identifier === constants.taskPool.REGULAR) {
+    prop = 'regularTasks';
+  } else if (identifier === constants.taskPool.DAILY) {
+    prop = 'dailyTasks';
+  }
+  return prop;
+};
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -98,9 +112,7 @@ class App extends Component {
         if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
         this.setState({ date: moment(this.state.date).add(e.keyCode === 190 ? 1 : -1, 'day').format('YYYY-MM-DD') });
         setTimeout(() => {
-          this.fetchTableTask().then((snapshot) => {
-            hot.updateSettings({ data: snapshot.exists() ? snapshot.val() : getEmptyHotData() });
-          });
+          this.initTableTask();
         }, 0);
       } else if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
@@ -181,44 +193,39 @@ class App extends Component {
     } else if (type === 'remove') {
       this.removePoolTask(target, value);
     }
-    setTimeout(() => {
-      firebase.database().ref(`/${this.state.userId}/poolTasks`).set(this.state.poolTasks).then(() => {
-      });
-    });
+
+    setTimeout(() => this.savePoolTasks(this.state.poolTasks));
   }
 
-  addPoolTask(target, value) {
+  addPoolTask(identifier, value) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
-    if (target === constants.taskPool.HIGHPRIORITY) {
-      poolTasks.highPriorityTasks.push(value);
-    }
+    poolTasks[handlePoolTaskProp(identifier)].push(value);
     this.setState({ poolTasks });
   }
 
-  removePoolTask(target, value) {
+  removePoolTask(identifier, value) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
-    if (target === constants.taskPool.HIGHPRIORITY) {
-      poolTasks.highPriorityTasks.splice(value, 1);
-    }
+    poolTasks[handlePoolTaskProp(identifier)].splice(value, 1);
     this.setState({ poolTasks });
   }
 
-  movePoolTask(target, value) {
+  movePoolTask(identifier, value) {
     if (!hot) return;
-    if (target === constants.taskPool.HIGHPRIORITY) {
-      const highPriorityTasks = cloneDeep(this.state.poolTasks.highPriorityTasks[value]);
-      const emptyRow = JSON.stringify(getEmptyHotData()[0]);
-      const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
-      let insertPosition = hotData.findIndex(data => emptyRow === JSON.stringify(data));
-      if (insertPosition === -1) {
-        insertPosition = this.state.tableTasks.length;
-        hot.alter('insert_row');
-      }
-      Object.keys(highPriorityTasks).forEach((key) => {
-        hot.setDataAtRowProp(insertPosition, key, highPriorityTasks[key]);
-      });
+    const emptyRow = JSON.stringify(getEmptyHotData()[0]);
+    const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
+    let insertPosition = hotData.findIndex(data => emptyRow === JSON.stringify(data));
+    if (insertPosition === -1) {
+      insertPosition = this.state.tableTasks.length;
+      hot.alter('insert_row');
     }
-    this.removePoolTask(target, value);
+    const target = Object.assign({}, this.state.poolTasks[handlePoolTaskProp(identifier)][value]);
+    Object.keys(target).forEach((key) => {
+      hot.setDataAtRowProp(insertPosition, key, target[key]);
+    });
+    if (identifier === constants.taskPool.HIGHPRIORITY ||
+       identifier === constants.taskPool.HIGHPRIORITY) {
+      this.removePoolTask(identifier, value);
+    }
   }
 
   toggleNotifiable(event, checked) {
@@ -248,21 +255,33 @@ class App extends Component {
     });
   }
 
-  attachPoolTasks() {
-    firebase.database().ref(`/${this.state.userId}/poolTasks`).once('value').then((snapshot) => {
-      if (snapshot.exists()) {
-        this.setState({
-          poolTasks: snapshot.val(),
-        });
+  initTableTask() {
+    this.fetchTableTask().then((snapshot) => {
+      if (hot) {
+        const defaultData = this.state.poolTasks.dailyTasks.length !== 0 ? cloneDeep(this.state.poolTasks.dailyTasks) : getEmptyHotData();
+        hot.updateSettings({ data: snapshot.exists() ? snapshot.val() : defaultData });
       }
     });
+  }
+
+  attachPoolTasks() {
     firebase.database().ref(`/${this.state.userId}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
+        const poolTasks = snapshot.val();
+        const statePoolTasks = Object.assign({}, this.state.poolTasks);
+        if (poolTasks.highPriorityTasks) statePoolTasks.highPriorityTasks = poolTasks.highPriorityTasks;
+        if (poolTasks.lowPriorityTasks) statePoolTasks.lowPriorityTasks = poolTasks.lowPriorityTasks;
+        if (poolTasks.regularTasks) statePoolTasks.regularTasks = poolTasks.regularTasks;
+        if (poolTasks.dailyTasks) statePoolTasks.dailyTasks = poolTasks.dailyTasks;
         this.setState({
-          poolTasks: snapshot.val(),
+          poolTasks: statePoolTasks,
         });
       }
     });
+  }
+
+  savePoolTasks(poolTasks) {
+    firebase.database().ref(`/${this.state.userId}/poolTasks`).set(poolTasks);
   }
 
   changeUserId(e) {
@@ -276,11 +295,7 @@ class App extends Component {
       // タスクプールをサーバーと同期開始
       this.attachPoolTasks();
       // テーブルの初期化
-      this.fetchTableTask().then((snapshot) => {
-        if (hot && snapshot.exists()) {
-          hot.updateSettings({ data: snapshot.val() });
-        }
-      });
+      this.initTableTask();
     }, 0);
   }
 
@@ -310,9 +325,7 @@ class App extends Component {
         date,
       }));
       setTimeout(() => {
-        this.fetchTableTask().then((snapshot) => {
-          hot.updateSettings({ data: snapshot.exists() ? snapshot.val() : getEmptyHotData() });
-        });
+        this.initTableTask();
       }, 0);
     }
   }
