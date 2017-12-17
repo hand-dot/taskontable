@@ -55,8 +55,7 @@ function DescriptionDialog(props) {
             <Typography type="body2" gutterBottom>
               Taskontableは毎日のワークフローを簡単に作成できるタスクマネージャーです。<br />
               タスクを直列化し、一つ一つこなしていくことで生産性を向上させることができます。<br />
-              仕事や家事をやり遂げるのはそれほど簡単ではありません。<br />
-              時間を有効に活用し、やるべきことタスクを終わらせ、すてきな人生をお楽しみください。
+              終了時刻を常に表示し・各タスクの終了予定時刻に通知をするので高い集中力を保つことができます。<br />
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -66,6 +65,15 @@ function DescriptionDialog(props) {
             <Typography type="body1" gutterBottom>
                 面倒なデータの同期は不要。<br />
                 ログインすればどこでもタスクを一元管理できます。
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography type="subheading" gutterBottom>
+              高速に入力する
+            </Typography>
+            <Typography type="body1" gutterBottom>
+                テーブルはExcelを扱うように操作が可能。<br />
+                コピペはもちろん、現在時刻入力などのショートカットにも対応しています。
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -87,19 +95,10 @@ function DescriptionDialog(props) {
           </Grid>
           <Grid item xs={12}>
             <Typography type="subheading" gutterBottom>
-              高速に入力する
-            </Typography>
-            <Typography type="body1" gutterBottom>
-                テーブルはExcelを扱うように操作が可能。<br />
-                コピペはもちろん、現在時刻入力などのショートカットにも対応しています。
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography type="subheading" gutterBottom>
               アラームを追加する
             </Typography>
             <Typography type="body1" gutterBottom>
-                タスクを開始した時刻 + 見積もり時間 になると通知します。
+                タスクの終了予定時刻に通知をします。
             </Typography>
           </Grid>
         </Grid>
