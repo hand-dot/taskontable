@@ -183,7 +183,6 @@ class App extends Component {
     }
     setTimeout(() => {
       firebase.database().ref(`/${this.state.userId}/poolTasks`).set(this.state.poolTasks).then(() => {
-        console.log('!!!');
       });
     });
   }
@@ -250,24 +249,18 @@ class App extends Component {
   }
 
   attachPoolTasks() {
-    firebase.database().ref(`/${this.state.userId}/poolTasks/`).once('value').then((snapshot) => {
+    firebase.database().ref(`/${this.state.userId}/poolTasks`).once('value').then((snapshot) => {
       if (snapshot.exists()) {
-        console.log('onece', snapshot.val());
         this.setState({
           poolTasks: snapshot.val(),
         });
-      } else {
-        console.log('once', 'else');
       }
     });
-    firebase.database().ref(`/${this.state.userId}/poolTasks/`).on('value', (snapshot) => {
+    firebase.database().ref(`/${this.state.userId}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
-        console.log('on', snapshot.val());
         this.setState({
           poolTasks: snapshot.val(),
         });
-      } else {
-        console.log('on', 'else');
       }
     });
   }
