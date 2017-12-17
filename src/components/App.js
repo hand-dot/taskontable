@@ -169,11 +169,13 @@ class App extends Component {
         saveable: false,
         tableTasks: hotTasks,
       });
+      setTimeout(() => this.forceUpdate());
     } else if (JSON.stringify(this.state.tableTasks) !== JSON.stringify(hotTasks)) {
       this.setState({
         saveable: true,
         tableTasks: hotTasks,
       });
+      setTimeout(() => this.forceUpdate());
     }
   }
 
@@ -258,8 +260,19 @@ class App extends Component {
   initTableTask() {
     this.fetchTableTask().then((snapshot) => {
       if (hot) {
-        const defaultData = this.state.poolTasks.dailyTasks.length !== 0 ? cloneDeep(this.state.poolTasks.dailyTasks) : getEmptyHotData();
-        hot.updateSettings({ data: snapshot.exists() ? snapshot.val() : defaultData });
+        hot.updateSettings({ data: getEmptyHotData() });
+        if (this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) {
+          // デイリーのタスクが空 or サーバーにタスクが存在した場合からのデータでテーブルを初期化する
+          hot.updateSettings({ data: snapshot.val() });
+        } else {
+          // デイリーのタスクが設定されており、サーバーにデータが存在しない場合、
+          // デイリーのタスクの計算処理を動かすためにsetDataAtRowPropする
+          cloneDeep(this.state.poolTasks.dailyTasks).forEach((data, rowIndex) => {
+            Object.keys(data).forEach((key) => {
+              hot.setDataAtRowProp(rowIndex, key, data[key]);
+            });
+          });
+        }
       }
     });
   }
