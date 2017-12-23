@@ -159,7 +159,7 @@ class App extends Component {
   }
 
   setAInitialState() {
-    this.setState(initialState);
+    this.setState(cloneDeep(initialState));
   }
 
   setStateFromHot(isUpdateSettings) {
@@ -218,7 +218,6 @@ class App extends Component {
     let insertPosition = hotData.findIndex(data => emptyRow === JSON.stringify(data));
     if (insertPosition === -1) {
       insertPosition = this.state.tableTasks.length;
-      hot.alter('insert_row');
     }
     const target = Object.assign({}, this.state.poolTasks[handlePoolTaskProp(identifier)][value]);
     Object.keys(target).forEach((key) => {
