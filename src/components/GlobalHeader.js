@@ -125,7 +125,7 @@ class GlobalHeader extends Component {
           <Grid item xs={1} />
           <Grid item xs={10}>
             <Toolbar>
-              <img src={title} alt="taskontable" height="30" className={classes.title} />
+              <img src={title} alt="taskontable" height="25" className={classes.title} />
               <div>
                 <IconButton onClick={this.handleMenu.bind(this)} data-menu-key="user">
                   <i className="fa fa-user-circle" />
