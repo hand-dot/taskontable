@@ -18,7 +18,7 @@ import '../styles/handsontable-custom.css';
 
 import GlobalHeader from './GlobalHeader';
 import Dashboard from './Dashboard';
-import TaskListCtl from './TaskListCtl';
+import TableCtl from './TableCtl';
 import TaskPool from './TaskPool';
 
 import firebaseConf from '../configs/firebase';
@@ -401,7 +401,7 @@ class App extends Component {
                   <Typography style={{ display: 'inline' }}>
                     　テーブル　({this.state.date.replace(/-/g, '/')})
                   </Typography>
-                  <TaskListCtl
+                  <TableCtl
                     lastSaveTime={this.state.lastSaveTime}
                     saveHot={this.saveHot.bind(this)}
                     notifiable={this.state.notifiable}

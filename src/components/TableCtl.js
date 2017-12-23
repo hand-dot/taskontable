@@ -12,7 +12,7 @@ function addTask() {
   }
 }
 
-function TaskListCtl(props) {
+function TableCtl(props) {
   const { lastSaveTime, saveHot, notifiable, toggleNotifiable } = props;
   return (
     <Grid container spacing={5}>
@@ -48,7 +48,7 @@ function TaskListCtl(props) {
   );
 }
 
-TaskListCtl.propTypes = {
+TableCtl.propTypes = {
   lastSaveTime: PropTypes.shape({
     hour: PropTypes.number.isRequired,
     minute: PropTypes.number.isRequired,
@@ -60,4 +60,4 @@ TaskListCtl.propTypes = {
 
 };
 
-export default TaskListCtl;
+export default TableCtl;
