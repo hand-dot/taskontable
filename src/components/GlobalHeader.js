@@ -4,7 +4,6 @@ import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
 
@@ -14,7 +13,7 @@ import HelpDialog from './HelpDialog';
 
 import constants from '../constants';
 
-import logo from '../images/logo.png';
+import title from '../images/title.png';
 
 const styles = {
   root: {
@@ -126,10 +125,7 @@ class GlobalHeader extends Component {
           <Grid item xs={1} />
           <Grid item xs={10}>
             <Toolbar>
-              <img src={logo} alt="logo" width="25" height="25" />
-              <Typography type="title" color="inherit" className={classes.title}>
-              Taskontable
-              </Typography>
+              <img src={title} alt="taskontable" height="30" className={classes.title} />
               <div>
                 <IconButton onClick={this.handleMenu.bind(this)} data-menu-key="user">
                   <i className="fa fa-user-circle" />
