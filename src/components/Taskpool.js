@@ -47,7 +47,9 @@ class TaskPool extends Component {
   }
 
   removeTask(index) {
-    this.props.changePoolTasks('remove', this.handleTaskIdentifier(), index);
+    if (window.confirm('本当に削除しますか？')) {
+      this.props.changePoolTasks('remove', this.handleTaskIdentifier(), index);
+    }
   }
 
   handleTabChange(event, tab) {
