@@ -2,17 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TextField from 'material-ui/TextField';
 
-function DatePickers(props) {
-  const { value, changeDate } = props;
+function DatePicker(props) {
+  const { value, changeDate, label } = props;
   return (
     <form
       noValidate
-      style={{ marginBottom: 30, marginTop: 15,
-      }}
+      style={{ marginBottom: 30, marginTop: 15, display: 'inline' }}
     >
       <TextField
         id="date"
-        label="基準"
+        label={label}
         type="date"
         value={value}
         onChange={changeDate}
@@ -24,9 +23,14 @@ function DatePickers(props) {
   );
 }
 
-DatePickers.propTypes = {
+DatePicker.propTypes = {
   value: PropTypes.string.isRequired,
   changeDate: PropTypes.func.isRequired,
+  label: PropTypes.string.isRequired,
 };
 
-export default DatePickers;
+DatePicker.defaultProp = {
+  label: '',
+};
+
+export default DatePicker;

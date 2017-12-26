@@ -136,7 +136,7 @@ class Dashboard extends Component {
             <Typography gutterBottom type="title">
                  本日のサマリ
             </Typography>
-            <DatePicker value={date} changeDate={changeDate} />
+            <DatePicker value={date} changeDate={changeDate} label={'基準'} />
             <TodaySummary
               data={{
                 estimateTasks: this.state.estimateTasks,

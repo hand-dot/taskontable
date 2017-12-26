@@ -13,4 +13,5 @@ export default {
     REGULAR: 2,
     DAILY: 3,
   },
+  INITIALDATE: '1970-01-01',
 };

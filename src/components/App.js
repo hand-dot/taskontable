@@ -20,6 +20,7 @@ import GlobalHeader from './GlobalHeader';
 import Dashboard from './Dashboard';
 import TableCtl from './TableCtl';
 import TaskPool from './TaskPool';
+import DatePicker from './DatePicker';
 
 import firebaseConf from '../configs/firebase';
 import { bindShortcut, hotConf, getEmptyHotData } from '../hot';
@@ -328,9 +329,11 @@ class App extends Component {
     let date;
     if (nav) {
       date = moment(this.state.date).add(nav === 'next' ? 1 : -1, 'day').format('YYYY-MM-DD');
-    } else {
+    } else if (moment(event.target.value).isValid()) {
       event.persist();
       date = event.target.value;
+    } else {
+      date = constants.INITIALDATE;
     }
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
       this.setState(() => ({
@@ -398,9 +401,10 @@ class App extends Component {
               <Paper elevation={1}>
                 <div style={{ padding: '24px 24px 0' }}>
                   <i className="fa fa-table fa-lg" />
-                  <Typography style={{ display: 'inline' }}>
-                    　テーブル　({this.state.date.replace(/-/g, '/')})
+                  <Typography style={{ display: 'inline', marginRight: 20 }}>
+                    　テーブル
                   </Typography>
+                  <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
                   <TableCtl
                     lastSaveTime={this.state.lastSaveTime}
                     saveHot={this.saveHot.bind(this)}
