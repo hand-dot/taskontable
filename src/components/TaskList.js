@@ -11,8 +11,8 @@ import task from '../task';
 const styles = {
   root: {
     padding: '0 24px 24px',
-    minHeight: 350,
-    maxHeight: 350,
+    minHeight: 210,
+    maxHeight: 210,
     overflowY: 'scroll',
   },
   actionIcon: {
