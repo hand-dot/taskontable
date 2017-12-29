@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
+import debounce from 'lodash.debounce';
 
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
@@ -97,6 +98,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
+    this.setStateFromHot = debounce(this.setStateFromHot, 1000);
   }
 
   componentWillMount() {
@@ -145,11 +147,7 @@ class App extends Component {
   componentDidMount() {
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
-      // 各種callbackでテーブルの状態をstateに反映
-      afterRowMove() { self.setStateFromHot(); },
-      beforeChangeRender() { self.setStateFromHot(); },
-      afterCreateRow() { self.setStateFromHot(); },
-      afterRemoveRow() { self.setStateFromHot(); },
+      afterRender() { self.setStateFromHot(); },
       afterUpdateSettings() { self.setStateFromHot(true); },
       afterInit() {
         self.setStateFromHot();
@@ -170,14 +168,13 @@ class App extends Component {
         saveable: false,
         tableTasks: hotTasks,
       });
-      setTimeout(() => this.forceUpdate());
     } else if (JSON.stringify(this.state.tableTasks) !== JSON.stringify(hotTasks)) {
       this.setState({
         saveable: true,
         tableTasks: hotTasks,
       });
-      setTimeout(() => this.forceUpdate());
     }
+    setTimeout(() => this.forceUpdate());
   }
 
   toggleDashboard() {
