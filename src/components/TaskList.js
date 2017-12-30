@@ -59,12 +59,16 @@ class TaskList extends Component {
     newTask.memo = '';
     newTask.estimate = '';
     this.setState({ newTask });
+    const $root = this.root;
+    setTimeout(() => {
+      $root.scrollTop = $root.scrollHeight;
+    }, 0);
   }
 
   render() {
     const { tasks, classes, moveTask, removeTask } = this.props;
     return (
-      <div className={classes.root}>
+      <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
           <TableHead>
             <TableRow>
