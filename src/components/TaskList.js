@@ -60,9 +60,7 @@ class TaskList extends Component {
     newTask.estimate = '';
     this.setState({ newTask });
     const $root = this.root;
-    setTimeout(() => {
-      $root.scrollTop = $root.scrollHeight;
-    }, 0);
+    setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
   }
 
   render() {

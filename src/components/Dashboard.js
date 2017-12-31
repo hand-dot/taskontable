@@ -20,11 +20,7 @@ import util from '../util';
 function updateHotCategory(source) {
   const $hotConf = cloneDeep(hotConf);
   $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
-  if (window.hot) {
-    setTimeout(() => {
-      window.hot.updateSettings({ columns: $hotConf.columns });
-    }, 0);
-  }
+  if (window.hot) setTimeout(() => { window.hot.updateSettings({ columns: $hotConf.columns }); });
 }
 
 const totalMinute = (datas, prop) => datas.map(data => (typeof data[prop] === 'number' ? data[prop] : 0)).reduce((p, c) => p + c, 0);

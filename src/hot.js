@@ -1,5 +1,6 @@
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
+import debounce from 'lodash.debounce';
 import task from './task';
 import constants from './constants';
 import logo from './images/logo.png';
@@ -236,24 +237,28 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
     }
   }
 };
+
 export const bindShortcut = (hot) => {
   // ショートカット処理
-  hot.addHook('afterDocumentKeyDown', (e) => {
+  hot.addHook('afterDocumentKeyDown', debounce((e) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
     if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
     const selected = hot.getSelected();
     const [startRow, startCol, endRow, endCol] = [selected[0], selected[1], selected[2], selected[3]];
-    if (e.ctrlKey && e.key === ':') {
-      // 現在時刻を入力
-      const prop = hot.colToProp(startCol);
-      // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
-      if (startRow === endRow && startCol === endCol && (prop === 'endTime' || prop === 'startTime')) {
-        hot.setDataAtCell(startRow, startCol, moment().format('HH:mm'));
+    if (e.ctrlKey) {
+      if (e.keyCode === constants.shortcuts.HOT_CURRENTTIME) {
+        // 現在時刻を入力
+        const prop = hot.colToProp(startCol);
+        // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
+        if (startRow === endRow && startCol === endCol && (prop === 'endTime' || prop === 'startTime')) {
+          hot.setDataAtCell(startRow, startCol, moment().format('HH:mm'));
+        }
       }
+      hot.render();
     }
-    hot.render();
-  });
+  }, constants.KEYEVENT_DELAY));
 };
+
 export const getEmptyHotData = () => [cloneDeep(task)];
 export const hotConf = {
   stretchH: 'all',

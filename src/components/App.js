@@ -85,6 +85,7 @@ class App extends Component {
     super(props);
     this.state = initialState;
     this.setStateFromHot = debounce(this.setStateFromHot, 1000);
+    this.fireShortcut = debounce(this.fireShortcut, constants.KEYEVENT_DELAY);
   }
 
   componentWillMount() {
@@ -93,33 +94,10 @@ class App extends Component {
       lastSaveTime: util.getCrrentTimeObj(),
     });
     window.addEventListener('keydown', (e) => {
-      // e.key === '>' はEdgeで動かないので e.keyCode === 190にしている
-      // keyCode:188 は <
-      if (e.ctrlKey && (e.keyCode === 190 || e.keyCode === 188)) {
+      if (e.ctrlKey && Object.values(constants.shortcuts).find(shortcut => shortcut === e.keyCode) !== undefined) {
         e.preventDefault();
-        // 基準日を変更
-        if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
-        this.setState({ date: moment(this.state.date).add(e.keyCode === 190 ? 1 : -1, 'day').format('YYYY-MM-DD') });
-        setTimeout(() => {
-          this.initTableTask();
-        }, 0);
-      } else if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        this.saveHot();
-      } else if (e.ctrlKey && e.key === 'i') {
-        e.preventDefault();
-        if (hot) hot.alter('insert_row');
-      } else if (e.ctrlKey && e.key === 'j') {
-        e.preventDefault();
-        this.toggleDashboard();
-      } else if (e.ctrlKey && e.key === 'k') {
-        e.preventDefault();
-        this.toggleTaskPool();
-      } else if (e.ctrlKey && e.key === 'l') {
-        e.preventDefault();
-        hot.selectCell(0, 0);
+        this.fireShortcut(e);
       }
-      return false;
     });
     window.addEventListener('beforeunload', (e) => {
       if (this.state.saveable) {
@@ -127,6 +105,7 @@ class App extends Component {
         e.returnValue = dialogText;
         return dialogText;
       }
+      return false;
     });
   }
 
@@ -162,6 +141,26 @@ class App extends Component {
       tableTasks: getHotTasksIgnoreEmptyTask(),
     });
     setTimeout(() => this.forceUpdate());
+  }
+
+  fireShortcut(e) {
+    if ((e.keyCode === constants.shortcuts.NEXTDATE || e.keyCode === constants.shortcuts.PREVDATE)) {
+      // 基準日を変更
+      if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
+      this.setState({ date: moment(this.state.date).add(e.keyCode === 190 ? 1 : -1, 'day').format('YYYY-MM-DD') });
+      setTimeout(() => { this.initTableTask(); });
+    } else if (e.keyCode === constants.shortcuts.SAVE) {
+      this.saveHot();
+    } else if (e.keyCode === constants.shortcuts.INSERT) {
+      if (hot) hot.alter('insert_row');
+    } else if (e.keyCode === constants.shortcuts.TOGGLE_DASHBOAD) {
+      this.toggleDashboard();
+    } else if (e.keyCode === constants.shortcuts.TOGGLE_TASKPOOL) {
+      this.toggleTaskPool();
+    } else if (e.keyCode === constants.shortcuts.SELECT_TABLE) {
+      hot.selectCell(0, 0);
+    }
+    return false;
   }
 
   toggleDashboard() {
@@ -314,18 +313,14 @@ class App extends Component {
       this.initTableTask();
       // テーブルをサーバーと同期開始
       this.attachTableTasks();
-    }, 0);
+    });
   }
 
   logoutCallback() {
     // stateの初期化
     this.setAInitialState();
     // テーブルのクリア
-    setTimeout(() => {
-      if (hot) {
-        hot.updateSettings({ data: getEmptyHotData() });
-      }
-    }, 0);
+    setTimeout(() => { if (hot) hot.updateSettings({ data: getEmptyHotData() }); });
   }
 
   changeDate(event) {
@@ -344,9 +339,7 @@ class App extends Component {
       this.setState(() => ({
         date,
       }));
-      setTimeout(() => {
-        this.initTableTask();
-      }, 0);
+      setTimeout(() => { this.initTableTask(); });
     }
   }
 
