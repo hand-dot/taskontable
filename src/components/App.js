@@ -80,20 +80,6 @@ const getHotTasksIgnoreEmptyTask = () => {
   return getEmptyHotData();
 };
 
-const handlePoolTaskProp = (identifier) => {
-  let prop;
-  if (identifier === constants.taskPool.HIGHPRIORITY) {
-    prop = 'highPriorityTasks';
-  } else if (identifier === constants.taskPool.LOWPRIORITY) {
-    prop = 'lowPriorityTasks';
-  } else if (identifier === constants.taskPool.REGULAR) {
-    prop = 'regularTasks';
-  } else if (identifier === constants.taskPool.DAILY) {
-    prop = 'dailyTasks';
-  }
-  return prop;
-};
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -199,13 +185,13 @@ class App extends Component {
 
   addPoolTask(identifier, value) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[handlePoolTaskProp(identifier)].push(value);
+    poolTasks[util.handlePoolTaskProp(identifier)].push(value);
     this.setState({ poolTasks });
   }
 
   removePoolTask(identifier, value) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[handlePoolTaskProp(identifier)].splice(value, 1);
+    poolTasks[util.handlePoolTaskProp(identifier)].splice(value, 1);
     this.setState({ poolTasks });
   }
 
@@ -217,7 +203,7 @@ class App extends Component {
     if (insertPosition === -1) {
       insertPosition = this.state.tableTasks.length;
     }
-    const target = Object.assign({}, this.state.poolTasks[handlePoolTaskProp(identifier)][value]);
+    const target = Object.assign({}, this.state.poolTasks[util.handlePoolTaskProp(identifier)][value]);
     Object.keys(target).forEach((key) => {
       hot.setDataAtRowProp(insertPosition, key, target[key]);
     });
@@ -299,10 +285,10 @@ class App extends Component {
       if (snapshot.exists()) {
         const poolTasks = snapshot.val();
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
-        if (poolTasks.highPriorityTasks) statePoolTasks.highPriorityTasks = poolTasks.highPriorityTasks;
-        if (poolTasks.lowPriorityTasks) statePoolTasks.lowPriorityTasks = poolTasks.lowPriorityTasks;
-        if (poolTasks.regularTasks) statePoolTasks.regularTasks = poolTasks.regularTasks;
-        if (poolTasks.dailyTasks) statePoolTasks.dailyTasks = poolTasks.dailyTasks;
+        statePoolTasks.highPriorityTasks = poolTasks.highPriorityTasks ? poolTasks.highPriorityTasks : [];
+        statePoolTasks.lowPriorityTasks = poolTasks.lowPriorityTasks ? poolTasks.lowPriorityTasks : [];
+        statePoolTasks.regularTasks = poolTasks.regularTasks ? poolTasks.regularTasks : [];
+        statePoolTasks.dailyTasks = poolTasks.dailyTasks ? poolTasks.dailyTasks : [];
         this.setState({
           poolTasks: statePoolTasks,
         });
