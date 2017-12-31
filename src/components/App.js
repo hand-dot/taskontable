@@ -84,7 +84,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
-    this.setStateFromHot = debounce(this.setStateFromHot, 1000);
+    this.setStateFromHot = debounce(this.setStateFromHot, constants.KEYEVENT_DELAY);
     this.fireShortcut = debounce(this.fireShortcut, constants.KEYEVENT_DELAY);
   }
 
@@ -112,6 +112,54 @@ class App extends Component {
   componentDidMount() {
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
+      contextMenu: {
+        callback(key) {
+          if (key === 'set_current_time') {
+            const [row, col] = this.getSelected();
+            this.setDataAtCell(row, col, moment().format('HH:mm'));
+          } else if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
+            const [index] = this.getSelected();
+            const taskPoolType = key === 'reverse_taskpool_hight' ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
+            self.moveTableTaskToPoolTask(taskPoolType, index, this);
+          }
+        },
+        items: {
+          set_current_time: {
+            name: '現在時刻を入力する',
+            disabled() {
+              const [startRow, startCol, endRow, endCol] = this.getSelected();
+              const prop = this.colToProp(startCol);
+              return startRow !== endRow || startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
+            },
+          },
+          hsep1: '---------',
+          row_above: {
+            name: '上に行を追加する',
+          },
+          row_below: {
+            name: '下に行を追加する',
+          },
+          hsep2: '---------',
+          remove_row: {
+            name: '行を削除する',
+          },
+          hsep3: '---------',
+          reverse_taskpool_hight: {
+            name: '[すぐにやる]に戻す',
+            disabled() {
+              const [startRow, startCol, endRow, endCol] = this.getSelected();
+              return startRow !== endRow || startCol !== endCol;
+            },
+          },
+          reverse_taskpool_low: {
+            name: '[いつかやる]に戻す',
+            disabled() {
+              const [startRow, startCol, endRow, endCol] = this.getSelected();
+              return startRow !== endRow || startCol !== endCol;
+            },
+          },
+        },
+      },
       afterRender() {
         const hotTasks = getHotTasksIgnoreEmptyTask();
         if (JSON.stringify(self.state.tableTasks) !== JSON.stringify(hotTasks)) {
@@ -238,6 +286,18 @@ class App extends Component {
       this.removePoolTask(taskPoolType, index);
     }
     // タスクプールからテーブルタスクに移動したら保存する
+    setTimeout(() => { this.saveHot(); });
+  }
+
+  moveTableTaskToPoolTask(taskPoolType, index, hotInstance) {
+    const task = hotInstance.getSourceDataAtRow(index);
+    if (!task.title) {
+      alert('作業内容が未記入のタスクはタスクプールに戻せません。');
+      return;
+    }
+    this.addPoolTask(taskPoolType, hotInstance.getSourceDataAtRow(index));
+    hotInstance.alter('remove_row', index);
+    // テーブルタスクからタスクプールに移動したら保存する
     setTimeout(() => { this.saveHot(); });
   }
 
