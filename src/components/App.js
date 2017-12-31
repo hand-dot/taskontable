@@ -20,7 +20,7 @@ import '../styles/handsontable-custom.css';
 import GlobalHeader from './GlobalHeader';
 import Dashboard from './Dashboard';
 import TableCtl from './TableCtl';
-import TaskPool from './Taskpool';
+import TaskPool from './TaskPool';
 import DatePicker from './DatePicker';
 
 import firebaseConf from '../configs/firebase';
@@ -171,44 +171,53 @@ class App extends Component {
     this.setState({ isOpenTaskPool: !this.state.isOpenTaskPool });
   }
 
-  changePoolTasks(type, target, value) {
-    if (type === 'add') {
-      this.addPoolTask(target, value);
-    } else if (type === 'move') {
-      this.movePoolTaskToTableTask(target, value);
-    } else if (type === 'remove') {
-      this.removePoolTask(target, value);
+  changePoolTasks(taskPoolActionType, taskPoolType, value) {
+    if (taskPoolActionType === constants.taskPoolActionType.ADD) {
+      this.addPoolTask(taskPoolType, value);
+    } else if (taskPoolActionType === constants.taskPoolActionType.EDIT) {
+      this.editPoolTask(taskPoolType, value);
+    } else if (taskPoolActionType === constants.taskPoolActionType.MOVE) {
+      this.movePoolTaskToTableTask(taskPoolType, value);
+    } else if (taskPoolActionType === constants.taskPoolActionType.REMOVE) {
+      this.removePoolTask(taskPoolType, value);
     }
     setTimeout(() => this.savePoolTasks(this.state.poolTasks));
   }
 
-  addPoolTask(taskPoolType, value) {
+  addPoolTask(taskPoolType, task) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[taskPoolType].push(value);
+    poolTasks[taskPoolType].push(task);
     this.setState({ poolTasks });
   }
 
-  removePoolTask(taskPoolType, value) {
+  editPoolTask(taskPoolType, { task, index }) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[taskPoolType].splice(value, 1);
+    poolTasks[taskPoolType][index] = task;
     this.setState({ poolTasks });
   }
 
-  movePoolTaskToTableTask(taskPoolType, value) {
+
+  removePoolTask(taskPoolType, index) {
+    const poolTasks = Object.assign({}, this.state.poolTasks);
+    poolTasks[taskPoolType].splice(index, 1);
+    this.setState({ poolTasks });
+  }
+
+  movePoolTaskToTableTask(taskPoolType, index) {
     if (!hot) return;
     const emptyRow = JSON.stringify(getEmptyHotData()[0]);
-    const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
+    const hotData = hot.getSourceData().map((data, i) => hot.getSourceDataAtRow(hot.toPhysicalRow(i)));
     let insertPosition = hotData.lastIndexOf(data => emptyRow === JSON.stringify(data));
     if (insertPosition === -1) {
       insertPosition = this.state.tableTasks.length;
     }
-    const target = Object.assign({}, this.state.poolTasks[taskPoolType][value]);
+    const target = Object.assign({}, this.state.poolTasks[taskPoolType][index]);
     Object.keys(target).forEach((key) => {
       hot.setDataAtRowProp(insertPosition, key, target[key]);
     });
     if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
        taskPoolType === constants.taskPoolType.LOWPRIORITY) {
-      this.removePoolTask(taskPoolType, value);
+      this.removePoolTask(taskPoolType, index);
     }
     // タスクプールからテーブルタスクに移動したら保存する
     setTimeout(() => { this.saveHot(); });

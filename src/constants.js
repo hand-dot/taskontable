@@ -24,5 +24,11 @@ export default {
     REGULAR: 'regularTasks',
     DAILY: 'dailyTasks',
   },
+  taskPoolActionType: {
+    ADD: 'add',
+    EDIT: 'edit',
+    MOVE: 'move',
+    REMOVE: 'remove',
+  },
   INITIALDATE: '1970-01-01',
 };

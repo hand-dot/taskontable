@@ -26,16 +26,20 @@ class TaskPool extends Component {
   }
 
   addTask(task) {
-    this.props.changePoolTasks('add', this.state.tab, task);
+    this.props.changePoolTasks(constants.taskPoolActionType.ADD, this.state.tab, task);
+  }
+
+  editTask(task, index) {
+    this.props.changePoolTasks(constants.taskPoolActionType.EDIT, this.state.tab, { task, index });
   }
 
   moveTask(index) {
-    this.props.changePoolTasks('move', this.state.tab, index);
+    this.props.changePoolTasks(constants.taskPoolActionType.MOVE, this.state.tab, index);
   }
 
   removeTask(index) {
     if (window.confirm('本当に削除しますか？')) {
-      this.props.changePoolTasks('remove', this.state.tab, index);
+      this.props.changePoolTasks(constants.taskPoolActionType.REMOVE, this.state.tab, index);
     }
   }
 
@@ -79,7 +83,7 @@ class TaskPool extends Component {
                 } else if (this.state.tab === constants.taskPoolType.DAILY) {
                   tasks = poolTasks.dailyTasks;
                 }
-                return <TaskList addTask={this.addTask.bind(this)} moveTask={this.moveTask.bind(this)} removeTask={this.removeTask.bind(this)} tasks={tasks} />;
+                return <TaskList addTask={this.addTask.bind(this)} editTask={this.editTask.bind(this)} moveTask={this.moveTask.bind(this)} removeTask={this.removeTask.bind(this)} tasks={tasks} />;
               })()}
             </Paper>
           </Grid>

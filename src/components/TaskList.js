@@ -6,7 +6,7 @@ import IconButton from 'material-ui/IconButton';
 import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
-import task from '../task';
+import taskSchema from '../task';
 
 const styles = {
   root: {
@@ -27,47 +27,49 @@ class TaskList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      newTask: task,
+      addTask: cloneDeep(taskSchema),
+      editTask: cloneDeep(taskSchema),
       editingTaskIndex: -1,
     };
   }
 
-  changeNewTaskTitle(e) {
-    const newTask = Object.assign({}, this.state.newTask);
-    newTask.title = e.target.value;
-    this.setState({ newTask });
+  changeTaskTitle(type, e) {
+    const task = Object.assign({}, this.state[type]);
+    task.title = e.target.value;
+    this.setState({ [type]: task });
   }
 
-  changeNewTaskMemo(e) {
-    const newTask = Object.assign({}, this.state.newTask);
-    newTask.memo = e.target.value;
-    this.setState({ newTask });
+  changeTaskMemo(type, e) {
+    const task = Object.assign({}, this.state[type]);
+    task.memo = e.target.value;
+    this.setState({ [type]: task });
   }
 
-  changeNewTaskEstimate(e) {
-    const newTask = Object.assign({}, this.state.newTask);
-    newTask.estimate = e.target.value;
-    this.setState({ newTask });
+  changeTaskEstimate(type, e) {
+    const task = Object.assign({}, this.state[type]);
+    task.estimate = e.target.value;
+    this.setState({ [type]: task });
   }
 
   editTask(index) {
     if (this.state.editingTaskIndex === index) {
-      this.setState({ editingTaskIndex: -1 });
+      // 編集を保存する場合
+      this.props.editTask(cloneDeep(this.state.editTask), index);
+      this.setState({ editingTaskIndex: -1, editTask: cloneDeep(taskSchema) });
     } else {
-      this.setState({ editingTaskIndex: index });
+      // 編集スタート
+      this.setState({ editTask: cloneDeep(this.props.tasks[index]) });
+      setTimeout(() => {
+        this.setState({ editingTaskIndex: index });
+      });
     }
   }
 
   addTask() {
     // 作業内容が空の場合は登録させない
-    if (this.state.newTask.title === '') return;
-
-    this.props.addTask(cloneDeep(this.state.newTask));
-    const newTask = Object.assign({}, this.state.newTask);
-    newTask.title = '';
-    newTask.memo = '';
-    newTask.estimate = '';
-    this.setState({ newTask });
+    if (this.state.addTask.title === '') return;
+    this.props.addTask(cloneDeep(this.state.addTask));
+    this.setState({ addTask: cloneDeep(taskSchema) });
     const $root = this.root;
     setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
   }
@@ -91,7 +93,8 @@ class TaskList extends Component {
                 <TableCell>
                   <Input
                     fullWidth
-                    value={n.title}
+                    onChange={this.changeTaskTitle.bind(this, 'editTask')}
+                    value={this.state.editingTaskIndex !== index ? n.title : this.state.editTask.title}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -99,7 +102,8 @@ class TaskList extends Component {
                 <TableCell>
                   <Input
                     fullWidth
-                    value={n.memo}
+                    onChange={this.changeTaskMemo.bind(this, 'editTask')}
+                    value={this.state.editingTaskIndex !== index ? n.memo : this.state.editTask.memo}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -107,7 +111,8 @@ class TaskList extends Component {
                 <TableCell className={classes.miniCell}>
                   <Input
                     fullWidth
-                    value={n.estimate}
+                    onChange={this.changeTaskEstimate.bind(this, 'editTask')}
+                    value={this.state.editingTaskIndex !== index ? n.estimate : this.state.editTask.estimate}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -131,24 +136,24 @@ class TaskList extends Component {
               <TableCell>
                 <Input
                   fullWidth
-                  onChange={this.changeNewTaskTitle.bind(this)}
-                  value={this.state.newTask.title}
+                  onChange={this.changeTaskTitle.bind(this, 'addTask')}
+                  value={this.state.addTask.title}
                   placeholder="作業内容"
                 />
               </TableCell>
               <TableCell>
                 <Input
                   fullWidth
-                  onChange={this.changeNewTaskMemo.bind(this)}
-                  value={this.state.newTask.memo}
+                  onChange={this.changeTaskMemo.bind(this, 'addTask')}
+                  value={this.state.addTask.memo}
                   placeholder="備考"
                 />
               </TableCell>
               <TableCell className={classes.miniCell}>
                 <Input
                   type="number"
-                  onChange={this.changeNewTaskEstimate.bind(this)}
-                  value={this.state.newTask.estimate}
+                  onChange={this.changeTaskEstimate.bind(this, 'addTask')}
+                  value={this.state.addTask.estimate}
                   placeholder="見積"
                 />
               </TableCell>
@@ -168,9 +173,9 @@ class TaskList extends Component {
 TaskList.propTypes = {
   tasks: PropTypes.array.isRequired,
   addTask: PropTypes.func.isRequired,
+  editTask: PropTypes.func.isRequired,
   moveTask: PropTypes.func.isRequired,
   removeTask: PropTypes.func.isRequired,
-  // editTask: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
