@@ -180,6 +180,10 @@ class App extends Component {
       this.movePoolTaskToTableTask(taskPoolType, value);
     } else if (taskPoolActionType === constants.taskPoolActionType.REMOVE) {
       this.removePoolTask(taskPoolType, value);
+    } else if (taskPoolActionType === constants.taskPoolActionType.DOWN) {
+      this.downPoolTask(taskPoolType, value);
+    } else if (taskPoolActionType === constants.taskPoolActionType.UP) {
+      this.upPoolTask(taskPoolType, value);
     }
     setTimeout(() => this.savePoolTasks(this.state.poolTasks));
   }
@@ -200,6 +204,20 @@ class App extends Component {
   removePoolTask(taskPoolType, index) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
     poolTasks[taskPoolType].splice(index, 1);
+    this.setState({ poolTasks });
+  }
+
+  downPoolTask(taskPoolType, index) {
+    if (this.state.poolTasks[taskPoolType].length === index + 1) return;
+    const poolTasks = cloneDeep(this.state.poolTasks);
+    poolTasks[taskPoolType].splice(index, 2, poolTasks[taskPoolType][index + 1], poolTasks[taskPoolType][index]);
+    this.setState({ poolTasks });
+  }
+
+  upPoolTask(taskPoolType, index) {
+    if (index === 0) return;
+    const poolTasks = cloneDeep(this.state.poolTasks);
+    poolTasks[taskPoolType].splice(index - 1, 2, poolTasks[taskPoolType][index], poolTasks[taskPoolType][index - 1]);
     this.setState({ poolTasks });
   }
 

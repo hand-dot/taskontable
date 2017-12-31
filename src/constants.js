@@ -29,6 +29,8 @@ export default {
     EDIT: 'edit',
     MOVE: 'move',
     REMOVE: 'remove',
+    DOWN: 'down',
+    UP: 'up',
   },
   INITIALDATE: '1970-01-01',
 };

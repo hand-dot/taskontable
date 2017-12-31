@@ -42,6 +42,13 @@ class TaskPool extends Component {
       this.props.changePoolTasks(constants.taskPoolActionType.REMOVE, this.state.tab, index);
     }
   }
+  downTask(index) {
+    this.props.changePoolTasks(constants.taskPoolActionType.DOWN, this.state.tab, index);
+  }
+
+  upTask(index) {
+    this.props.changePoolTasks(constants.taskPoolActionType.UP, this.state.tab, index);
+  }
 
   handleTabChange(event, tab) {
     this.setState({ tab });
@@ -83,7 +90,15 @@ class TaskPool extends Component {
                 } else if (this.state.tab === constants.taskPoolType.DAILY) {
                   tasks = poolTasks.dailyTasks;
                 }
-                return <TaskList addTask={this.addTask.bind(this)} editTask={this.editTask.bind(this)} moveTask={this.moveTask.bind(this)} removeTask={this.removeTask.bind(this)} tasks={tasks} />;
+                return (<TaskList
+                  addTask={this.addTask.bind(this)}
+                  editTask={this.editTask.bind(this)}
+                  moveTask={this.moveTask.bind(this)}
+                  removeTask={this.removeTask.bind(this)}
+                  downTask={this.downTask.bind(this)}
+                  upTask={this.upTask.bind(this)}
+                  tasks={tasks}
+                />);
               })()}
             </Paper>
           </Grid>

@@ -16,7 +16,7 @@ const styles = {
     overflowY: 'scroll',
   },
   actionIcon: {
-    width: 30,
+    width: 15,
   },
   miniCell: {
     maxWidth: 50,
@@ -75,7 +75,7 @@ class TaskList extends Component {
   }
 
   render() {
-    const { tasks, classes, moveTask, removeTask } = this.props;
+    const { tasks, classes, moveTask, removeTask, downTask, upTask } = this.props;
     return (
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
@@ -119,15 +119,23 @@ class TaskList extends Component {
                 </TableCell>
                 <TableCell>
                   <IconButton className={classes.actionIcon} color="default" onClick={() => moveTask(index)}>
-                    <i className="fa fa-level-down" />
-                  </IconButton>
-                  <span>　/　</span>
-                  <IconButton className={classes.actionIcon} color="default" onClick={() => removeTask(index)}>
-                    <i className="fa fa-trash-o" />
+                    <i className="fa fa-download" title="テーブルに移動" />
                   </IconButton>
                   <span>　/　</span>
                   <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
-                    <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
+                    <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} title={this.state.editingTaskIndex !== index ? '編集' : '編集を保存'} />
+                  </IconButton>
+                  <span>　/　</span>
+                  <IconButton className={classes.actionIcon} color="default" onClick={() => downTask(index)}>
+                    <i className="fa fa-arrow-down" title="1つ下に移動" />
+                  </IconButton>
+                  <span>　/　</span>
+                  <IconButton className={classes.actionIcon} color="default" onClick={() => upTask(index)}>
+                    <i className="fa fa-arrow-up" title="1つ上に移動" />
+                  </IconButton>
+                  <span>　/　</span>
+                  <IconButton className={classes.actionIcon} color="default" onClick={() => removeTask(index)}>
+                    <i className="fa fa-trash-o" title="削除" />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -176,6 +184,8 @@ TaskList.propTypes = {
   editTask: PropTypes.func.isRequired,
   moveTask: PropTypes.func.isRequired,
   removeTask: PropTypes.func.isRequired,
+  downTask: PropTypes.func.isRequired,
+  upTask: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
