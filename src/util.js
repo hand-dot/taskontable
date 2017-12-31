@@ -9,4 +9,7 @@ export default {
       second: currentMoment.second(),
     };
   },
+  isSameObj(a, b) {
+    return JSON.stringify(a) === JSON.stringify(b);
+  },
 };

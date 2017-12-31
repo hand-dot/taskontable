@@ -71,7 +71,7 @@ firebase.initializeApp(firebaseConf);
 let hot = null;
 
 // 行の並び替えにも対応した空行を除いたハンズオンテーブルのデータ取得メソッド
-const getHotTasks = () => {
+const getHotTasksIgnoreEmptyTask = () => {
   if (hot) {
     const emptyRow = JSON.stringify(getEmptyHotData()[0]);
     const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
@@ -148,7 +148,7 @@ class App extends Component {
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       afterRender() {
-        const hotTasks = getHotTasks();
+        const hotTasks = getHotTasksIgnoreEmptyTask();
         if (JSON.stringify(self.state.tableTasks) !== JSON.stringify(hotTasks)) {
           self.setState({
             saveable: true,
@@ -173,7 +173,7 @@ class App extends Component {
   setStateFromHot() {
     this.setState({
       saveable: false,
-      tableTasks: getHotTasks(),
+      tableTasks: getHotTasksIgnoreEmptyTask(),
     });
     setTimeout(() => this.forceUpdate());
   }
@@ -225,6 +225,7 @@ class App extends Component {
        identifier === constants.taskPool.LOWPRIORITY) {
       this.removePoolTask(identifier, value);
     }
+    // タスクプールからテーブルタスクに移動したら保存する
     setTimeout(() => { this.saveHot(); });
   }
 
@@ -249,9 +250,9 @@ class App extends Component {
         loading: true,
       }));
       if (snapshot.exists() && hot) {
-        hot.updateSettings({ data: getEmptyHotData() });
-        if (this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) {
-          // デイリーのタスクが空 or サーバーにタスクが存在した場合からのデータでテーブルを初期化する
+        if ((this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) && !util.isSameObj(getHotTasksIgnoreEmptyTask(), snapshot.val()[this.state.date])) {
+          // デイリーのタスクが空 or サーバーにタスクが存在した場合 かつ、
+          // サーバーから配信されたデータが自分のデータと違う場合サーバーのデータでテーブルを初期化する
           hot.updateSettings({ data: snapshot.val()[this.state.date] });
         }
       }
@@ -278,11 +279,11 @@ class App extends Component {
       if (hot) {
         hot.updateSettings({ data: getEmptyHotData() });
         if (this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) {
-          // デイリーのタスクが空 or サーバーにタスクが存在した場合からのデータでテーブルを初期化する
+          // デイリーのタスクが空 or サーバーにタスクが存在した場合サーバーのデータでテーブルを初期化する
           hot.updateSettings({ data: snapshot.val() });
         } else {
           // デイリーのタスクが設定されており、サーバーにデータが存在しない場合、
-          // デイリーのタスクの計算処理を動かすためにsetDataAtRowPropする
+          // デイリーのタスクの計算処理を動かすためにsetDataAtRowPropし、テーブルを構築する
           cloneDeep(this.state.poolTasks.dailyTasks).forEach((data, rowIndex) => {
             Object.keys(data).forEach((key) => {
               hot.setDataAtRowProp(rowIndex, key, data[key]);
@@ -366,7 +367,7 @@ class App extends Component {
   saveHot() {
     if (hot) {
       // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTableTask(getHotTasks());
+      this.saveTableTask(getHotTasksIgnoreEmptyTask());
     }
   }
 
