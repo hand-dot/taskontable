@@ -147,8 +147,17 @@ class App extends Component {
   componentDidMount() {
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
-      afterRender() { self.setStateFromHot(); },
-      afterUpdateSettings() { self.setStateFromHot(true); },
+      afterRender() {
+        const hotTasks = getHotTasks();
+        if (JSON.stringify(self.state.tableTasks) !== JSON.stringify(hotTasks)) {
+          self.setState({
+            saveable: true,
+            tableTasks: hotTasks,
+          });
+        }
+        setTimeout(() => self.forceUpdate());
+      },
+      afterUpdateSettings() { self.setStateFromHot(); },
       afterInit() {
         self.setStateFromHot();
         bindShortcut(this);
@@ -161,19 +170,11 @@ class App extends Component {
     this.setState(cloneDeep(initialState));
   }
 
-  setStateFromHot(isUpdateSettings) {
-    const hotTasks = getHotTasks();
-    if (isUpdateSettings) {
-      this.setState({
-        saveable: false,
-        tableTasks: hotTasks,
-      });
-    } else if (JSON.stringify(this.state.tableTasks) !== JSON.stringify(hotTasks)) {
-      this.setState({
-        saveable: true,
-        tableTasks: hotTasks,
-      });
-    }
+  setStateFromHot() {
+    this.setState({
+      saveable: false,
+      tableTasks: getHotTasks(),
+    });
     setTimeout(() => this.forceUpdate());
   }
 
@@ -189,11 +190,10 @@ class App extends Component {
     if (type === 'add') {
       this.addPoolTask(target, value);
     } else if (type === 'move') {
-      this.movePoolTask(target, value);
+      this.movePoolTaskToTableTask(target, value);
     } else if (type === 'remove') {
       this.removePoolTask(target, value);
     }
-
     setTimeout(() => this.savePoolTasks(this.state.poolTasks));
   }
 
@@ -209,11 +209,11 @@ class App extends Component {
     this.setState({ poolTasks });
   }
 
-  movePoolTask(identifier, value) {
+  movePoolTaskToTableTask(identifier, value) {
     if (!hot) return;
     const emptyRow = JSON.stringify(getEmptyHotData()[0]);
     const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
-    let insertPosition = hotData.findIndex(data => emptyRow === JSON.stringify(data));
+    let insertPosition = hotData.lastIndexOf(data => emptyRow === JSON.stringify(data));
     if (insertPosition === -1) {
       insertPosition = this.state.tableTasks.length;
     }
@@ -222,9 +222,10 @@ class App extends Component {
       hot.setDataAtRowProp(insertPosition, key, target[key]);
     });
     if (identifier === constants.taskPool.HIGHPRIORITY ||
-       identifier === constants.taskPool.HIGHPRIORITY) {
+       identifier === constants.taskPool.LOWPRIORITY) {
       this.removePoolTask(identifier, value);
     }
+    setTimeout(() => { this.saveHot(); });
   }
 
   toggleNotifiable(event, checked) {
@@ -242,11 +243,29 @@ class App extends Component {
     }
   }
 
+  attachTableTasks() {
+    firebase.database().ref(`/${this.state.userId}/tableTasks`).on('value', (snapshot) => {
+      this.setState(() => ({
+        loading: true,
+      }));
+      if (snapshot.exists() && hot) {
+        hot.updateSettings({ data: getEmptyHotData() });
+        if (this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) {
+          // デイリーのタスクが空 or サーバーにタスクが存在した場合からのデータでテーブルを初期化する
+          hot.updateSettings({ data: snapshot.val()[this.state.date] });
+        }
+      }
+      this.setState(() => ({
+        loading: false,
+      }));
+    });
+  }
+
   fetchTableTask() {
     this.setState(() => ({
       loading: true,
     }));
-    return firebase.database().ref(`/${this.state.userId}/${this.state.date}`).once('value').then((snapshot) => {
+    return firebase.database().ref(`/${this.state.userId}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
       this.setState(() => ({
         loading: false,
       }));
@@ -306,6 +325,8 @@ class App extends Component {
       this.attachPoolTasks();
       // テーブルの初期化
       this.initTableTask();
+      // テーブルをサーバーと同期開始
+      this.attachTableTasks();
     }, 0);
   }
 
@@ -353,7 +374,7 @@ class App extends Component {
     this.setState(() => ({
       loading: true,
     }));
-    firebase.database().ref(`/${this.state.userId}/${this.state.date}`).set(data).then(() => {
+    firebase.database().ref(`/${this.state.userId}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
       this.setState(() => ({
         loading: false,
         lastSaveTime: util.getCrrentTimeObj(),
