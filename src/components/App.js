@@ -20,7 +20,7 @@ import '../styles/handsontable-custom.css';
 import GlobalHeader from './GlobalHeader';
 import Dashboard from './Dashboard';
 import TableCtl from './TableCtl';
-import TaskPool from './TaskPool';
+import TaskPool from './Taskpool';
 import DatePicker from './DatePicker';
 
 import firebaseConf from '../configs/firebase';
@@ -36,7 +36,7 @@ const initialState = {
   notifiable: true,
   saveable: false,
   isOpenDashboard: false,
-  isOpenTaskPool: false,
+  isOpenTaskPool: true,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   tableTasks: getEmptyHotData(),
@@ -182,19 +182,19 @@ class App extends Component {
     setTimeout(() => this.savePoolTasks(this.state.poolTasks));
   }
 
-  addPoolTask(identifier, value) {
+  addPoolTask(taskPoolType, value) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[util.handlePoolTaskProp(identifier)].push(value);
+    poolTasks[taskPoolType].push(value);
     this.setState({ poolTasks });
   }
 
-  removePoolTask(identifier, value) {
+  removePoolTask(taskPoolType, value) {
     const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[util.handlePoolTaskProp(identifier)].splice(value, 1);
+    poolTasks[taskPoolType].splice(value, 1);
     this.setState({ poolTasks });
   }
 
-  movePoolTaskToTableTask(identifier, value) {
+  movePoolTaskToTableTask(taskPoolType, value) {
     if (!hot) return;
     const emptyRow = JSON.stringify(getEmptyHotData()[0]);
     const hotData = hot.getSourceData().map((data, index) => hot.getSourceDataAtRow(hot.toPhysicalRow(index)));
@@ -202,13 +202,13 @@ class App extends Component {
     if (insertPosition === -1) {
       insertPosition = this.state.tableTasks.length;
     }
-    const target = Object.assign({}, this.state.poolTasks[util.handlePoolTaskProp(identifier)][value]);
+    const target = Object.assign({}, this.state.poolTasks[taskPoolType][value]);
     Object.keys(target).forEach((key) => {
       hot.setDataAtRowProp(insertPosition, key, target[key]);
     });
-    if (identifier === constants.taskPool.HIGHPRIORITY ||
-       identifier === constants.taskPool.LOWPRIORITY) {
-      this.removePoolTask(identifier, value);
+    if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
+       taskPoolType === constants.taskPoolType.LOWPRIORITY) {
+      this.removePoolTask(taskPoolType, value);
     }
     // タスクプールからテーブルタスクに移動したら保存する
     setTimeout(() => { this.saveHot(); });

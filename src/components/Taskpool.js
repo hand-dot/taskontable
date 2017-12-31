@@ -21,34 +21,21 @@ class TaskPool extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tab: 0,
+      tab: constants.taskPoolType.HIGHPRIORITY,
     };
   }
 
-  handleTaskIdentifier() {
-    let identifier;
-    if (this.state.tab === constants.taskPool.HIGHPRIORITY) {
-      identifier = constants.taskPool.HIGHPRIORITY;
-    } else if (this.state.tab === constants.taskPool.LOWPRIORITY) {
-      identifier = constants.taskPool.LOWPRIORITY;
-    } else if (this.state.tab === constants.taskPool.REGULAR) {
-      identifier = constants.taskPool.REGULAR;
-    } else if (this.state.tab === constants.taskPool.DAILY) {
-      identifier = constants.taskPool.DAILY;
-    }
-    return identifier;
+  addTask(task) {
+    this.props.changePoolTasks('add', this.state.tab, task);
   }
 
-  addTask(task) {
-    this.props.changePoolTasks('add', this.handleTaskIdentifier(), task);
-  }
   moveTask(index) {
-    this.props.changePoolTasks('move', this.handleTaskIdentifier(), index);
+    this.props.changePoolTasks('move', this.state.tab, index);
   }
 
   removeTask(index) {
     if (window.confirm('本当に削除しますか？')) {
-      this.props.changePoolTasks('remove', this.handleTaskIdentifier(), index);
+      this.props.changePoolTasks('remove', this.state.tab, index);
     }
   }
 
@@ -75,21 +62,21 @@ class TaskPool extends Component {
                   indicatorColor="#888"
                   textColor="inherit"
                 >
-                  <Tab fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
-                  <Tab fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
-                  <Tab fullWidth style={{ maxWidth: 'none' }} label="定期的にやる" />
-                  <Tab fullWidth style={{ maxWidth: 'none' }} label="毎日やる" />
+                  <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
+                  <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
+                  <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="定期的にやる" />
+                  <Tab value={constants.taskPoolType.DAILY} fullWidth style={{ maxWidth: 'none' }} label="毎日やる" />
                 </Tabs>
               </AppBar>
               {(() => {
                 let tasks = null;
-                if (this.state.tab === constants.taskPool.HIGHPRIORITY) {
+                if (this.state.tab === constants.taskPoolType.HIGHPRIORITY) {
                   tasks = poolTasks.highPriorityTasks;
-                } else if (this.state.tab === constants.taskPool.LOWPRIORITY) {
+                } else if (this.state.tab === constants.taskPoolType.LOWPRIORITY) {
                   tasks = poolTasks.lowPriorityTasks;
-                } else if (this.state.tab === constants.taskPool.REGULAR) {
+                } else if (this.state.tab === constants.taskPoolType.REGULAR) {
                   tasks = poolTasks.regularTasks;
-                } else if (this.state.tab === constants.taskPool.DAILY) {
+                } else if (this.state.tab === constants.taskPoolType.DAILY) {
                   tasks = poolTasks.dailyTasks;
                 }
                 return <TaskList addTask={this.addTask.bind(this)} moveTask={this.moveTask.bind(this)} removeTask={this.removeTask.bind(this)} tasks={tasks} />;

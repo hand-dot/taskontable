@@ -28,6 +28,7 @@ class TaskList extends Component {
     super(props);
     this.state = {
       newTask: task,
+      editingTaskIndex: -1,
     };
   }
 
@@ -47,6 +48,14 @@ class TaskList extends Component {
     const newTask = Object.assign({}, this.state.newTask);
     newTask.estimate = e.target.value;
     this.setState({ newTask });
+  }
+
+  editTask(index) {
+    if (this.state.editingTaskIndex === index) {
+      this.setState({ editingTaskIndex: -1 });
+    } else {
+      this.setState({ editingTaskIndex: index });
+    }
   }
 
   addTask() {
@@ -79,9 +88,30 @@ class TaskList extends Component {
           <TableBody>
             {tasks.map((n, index) => (
               <TableRow hover key={index.toString()}>
-                <TableCell>{n.title}</TableCell>
-                <TableCell>{n.memo}</TableCell>
-                <TableCell className={classes.miniCell}>{n.estimate}</TableCell>
+                <TableCell>
+                  <Input
+                    fullWidth
+                    value={n.title}
+                    disabled={this.state.editingTaskIndex !== index}
+                    disableUnderline={this.state.editingTaskIndex !== index}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    fullWidth
+                    value={n.memo}
+                    disabled={this.state.editingTaskIndex !== index}
+                    disableUnderline={this.state.editingTaskIndex !== index}
+                  />
+                </TableCell>
+                <TableCell className={classes.miniCell}>
+                  <Input
+                    fullWidth
+                    value={n.estimate}
+                    disabled={this.state.editingTaskIndex !== index}
+                    disableUnderline={this.state.editingTaskIndex !== index}
+                  />
+                </TableCell>
                 <TableCell>
                   <IconButton className={classes.actionIcon} color="default" onClick={() => moveTask(index)}>
                     <i className="fa fa-level-down" />
@@ -89,6 +119,10 @@ class TaskList extends Component {
                   <span>　/　</span>
                   <IconButton className={classes.actionIcon} color="default" onClick={() => removeTask(index)}>
                     <i className="fa fa-trash-o" />
+                  </IconButton>
+                  <span>　/　</span>
+                  <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
+                    <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -136,6 +170,7 @@ TaskList.propTypes = {
   addTask: PropTypes.func.isRequired,
   moveTask: PropTypes.func.isRequired,
   removeTask: PropTypes.func.isRequired,
+  // editTask: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

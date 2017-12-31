@@ -18,11 +18,11 @@ export default {
     CONTACT: 'contact',
     GIT: 'git',
   },
-  taskPool: {
-    HIGHPRIORITY: 0,
-    LOWPRIORITY: 1,
-    REGULAR: 2,
-    DAILY: 3,
+  taskPoolType: {
+    HIGHPRIORITY: 'highPriorityTasks',
+    LOWPRIORITY: 'lowPriorityTasks',
+    REGULAR: 'regularTasks',
+    DAILY: 'dailyTasks',
   },
   INITIALDATE: '1970-01-01',
 };
