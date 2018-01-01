@@ -14,6 +14,7 @@ import Grid from 'material-ui/Grid';
 import { LinearProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
+import Hidden from 'material-ui/Hidden';
 
 import '../styles/handsontable-custom.css';
 
@@ -460,13 +461,15 @@ class App extends Component {
           loginCallback={this.loginCallback.bind(this)}
           logoutCallback={this.logoutCallback.bind(this)}
         />
-        <Grid container alignItems="stretch" justify="center" spacing={40} className={classes.root}>
-          <Grid item xs={1}>
-            <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
-              <i className="fa fa-angle-left fa-lg" />
-            </Button>
-          </Grid>
-          <Grid item xs={10}>
+        <Grid container alignItems="stretch" justify="center" className={classes.root}>
+          <Hidden xsDown>
+            <Grid item xs={0} sm={1}>
+              <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
+                <i className="fa fa-angle-left fa-lg" />
+              </Button>
+            </Grid>
+          </Hidden>
+          <Grid item xs={12} sm={10}>
             <Grid item xs={12} className={classes.root}>
               <Dashboard
                 date={this.state.date}
@@ -504,11 +507,13 @@ class App extends Component {
               </Paper>
             </Grid>
           </Grid>
-          <Grid item xs={1}>
-            <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="next" >
-              <i className="fa fa-angle-right fa-lg" />
-            </Button>
-          </Grid>
+          <Hidden xsDown>
+            <Grid item xs={0} sm={1}>
+              <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="next" >
+                <i className="fa fa-angle-right fa-lg" />
+              </Button>
+            </Grid>
+          </Hidden>
         </Grid>
       </div>
     );

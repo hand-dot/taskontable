@@ -8,6 +8,7 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
+import Hidden from 'material-ui/Hidden';
 
 import TodaySummary from './TodaySummary';
 import DatePicker from './DatePicker';
@@ -128,7 +129,7 @@ class Dashboard extends Component {
           <Typography>　ダッシュボード</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Typography gutterBottom type="title">
                  本日のサマリ
             </Typography>
@@ -142,19 +143,21 @@ class Dashboard extends Component {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
-            <Typography gutterBottom type="title">
+          <Hidden xsDown>
+            <Grid item xs={0} sm={6}>
+              <Typography gutterBottom type="title">
                  時刻
-            </Typography>
-            <Grid container spacing={5}>
-              <Grid item xs={6}>
-                <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
-              </Grid>
-              <Grid item xs={6}>
-                <Clock title={'終了時刻*'} caption="*現在時刻と残タスクの合計時間" time={this.state.endTime} />
+              </Typography>
+              <Grid container spacing={5}>
+                <Grid item xs={6}>
+                  <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
+                </Grid>
+                <Grid item xs={6}>
+                  <Clock title={'終了時刻*'} caption="*現在時刻と残タスクの合計時間" time={this.state.endTime} />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          </Hidden>
           {/* <Grid item xs={4}>
             <Typography title="*追加・削除したカテゴリはテーブルのカテゴリ列の選択肢に反映されます。" gutterBottom type="title">
               カテゴリ*

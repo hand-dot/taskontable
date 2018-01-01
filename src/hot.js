@@ -264,6 +264,7 @@ export const hotConf = {
   stretchH: 'all',
   comments: true,
   rowHeaders: true,
+  rowHeaderWidth: 25,
   autoInsertRow: false,
   manualRowMove: true,
   minRows: 10,

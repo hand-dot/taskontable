@@ -62,11 +62,13 @@ class TaskPool extends Component {
           <i className="fa fa-tasks fa-lg" />
           <Typography>　タスクプール</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
+        <ExpansionPanelDetails style={{ padding: 0 }}>
           <Grid item xs={12}>
             <Paper elevation={1}>
               <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
                 <Tabs
+                  scrollable
+                  scrollButtons="on"
                   fullWidth
                   value={this.state.tab}
                   onChange={this.handleTabChange.bind(this)}
@@ -75,7 +77,7 @@ class TaskPool extends Component {
                 >
                   <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
                   <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
-                  <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="定期的にやる" />
+                  <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="たまにやる" />
                   <Tab value={constants.taskPoolType.DAILY} fullWidth style={{ maxWidth: 'none' }} label="毎日やる" />
                 </Tabs>
               </AppBar>
