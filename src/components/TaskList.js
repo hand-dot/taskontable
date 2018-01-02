@@ -19,6 +19,10 @@ const styles = {
   actionIcon: {
     fontSize: 15,
   },
+  actionIcons: {
+    width: 110,
+    margin: '0 auto',
+  },
   cell: {
     border: '1px solid rgba(235, 235, 235, 1)',
     padding: '0 5px',
@@ -40,9 +44,10 @@ class TaskList extends Component {
   }
 
   openTaskAction(index, e) {
-    this.state.anchorEl[index] = e.currentTarget;
+    const anchorEl = Object.assign([], this.state.anchorEl);
+    anchorEl[index] = e.currentTarget;
     this.setState({
-      anchorEl: this.state.anchorEl,
+      anchorEl,
       editingTaskIndex: -1,
     });
   }
@@ -121,10 +126,10 @@ class TaskList extends Component {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell head padding="none" className={classes.cell}>作業内容</TableCell>
-              <TableCell head padding="none" className={classes.cell}>備考</TableCell>
-              <TableCell head padding="none" className={classes.cell}>見積</TableCell>
-              <TableCell head padding="none" className={classes.cell}>アクション</TableCell>
+              <TableCell padding="none" className={classes.cell}>作業内容</TableCell>
+              <TableCell padding="none" className={classes.cell}>備考</TableCell>
+              <TableCell padding="none" className={classes.cell}>見積</TableCell>
+              <TableCell padding="none" className={classes.cell}>アクション</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -162,7 +167,7 @@ class TaskList extends Component {
                   />
                 </TableCell>
                 <TableCell padding="none" className={classes.cell}>
-                  <div style={{ width: 110 }}>
+                  <div className={classes.actionIcons}>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
                       <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
                     </IconButton>
