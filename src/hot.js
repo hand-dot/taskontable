@@ -42,13 +42,13 @@ const columns = [
     title: '<span title="見積時間 数値で入力してください。">見積(分)</span>',
     data: 'estimate',
     type: 'numeric',
-    colWidths: 45,
+    colWidths: 35,
   },
   {
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">開始時刻</span>',
     data: 'startTime',
     type: 'time',
-    colWidths: 45,
+    colWidths: 35,
     timeFormat: 'HH:mm',
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
@@ -69,7 +69,7 @@ const columns = [
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">終了時刻</span>',
     data: 'endTime',
     type: 'time',
-    colWidths: 45,
+    colWidths: 35,
     timeFormat: 'HH:mm',
     correctFormat: true,
   },
@@ -78,7 +78,7 @@ const columns = [
     data: 'actually',
     type: 'numeric',
     validator: false,
-    colWidths: 45,
+    colWidths: 35,
     readOnly: true,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value, cellProperties) {

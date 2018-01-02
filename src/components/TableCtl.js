@@ -22,7 +22,7 @@ function addTask() {
 function TableCtl(props) {
   const { lastSaveTime, saveHot, notifiable, toggleNotifiable, classes } = props;
   return (
-    <Grid container spacing={5}>
+    <Grid style={{ height: 35 }}container spacing={5}>
       <Grid item xs={2}>
         <FormGroup>
           <FormControlLabel
