@@ -153,7 +153,7 @@ class App extends Component {
         },
       },
       afterRender() {
-        const hotTasks = getHotTasksIgnoreEmptyTask();
+        const hotTasks = getHotTasksIgnoreEmptyTask(hot);
         if (JSON.stringify(self.state.tableTasks) !== JSON.stringify(hotTasks)) {
           self.setState({
             saveable: true,
@@ -175,7 +175,7 @@ class App extends Component {
   setStateFromHot() {
     this.setState({
       saveable: false,
-      tableTasks: getHotTasksIgnoreEmptyTask(),
+      tableTasks: getHotTasksIgnoreEmptyTask(hot),
     });
     setTimeout(() => this.forceUpdate());
   }
@@ -310,7 +310,7 @@ class App extends Component {
         loading: true,
       }));
       if (snapshot.exists() && hot) {
-        if ((this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) && !util.isSameObj(getHotTasksIgnoreEmptyTask(), snapshot.val()[this.state.date])) {
+        if ((this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) && !util.isSameObj(getHotTasksIgnoreEmptyTask(hot), snapshot.val()[this.state.date])) {
           // デイリーのタスクが空 or サーバーにタスクが存在した場合 かつ、
           // サーバーから配信されたデータが自分のデータと違う場合サーバーのデータでテーブルを初期化する
           setDataForHot(hot, snapshot.val()[this.state.date]);
@@ -413,7 +413,7 @@ class App extends Component {
   saveHot() {
     if (hot) {
       // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTableTask(getHotTasksIgnoreEmptyTask());
+      this.saveTableTask(getHotTasksIgnoreEmptyTask(hot));
     }
   }
 
