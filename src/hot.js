@@ -18,6 +18,7 @@ const columns = [
       td.classList.add('htMiddle');
       td.classList.add('htDimmed');
       td.innerHTML = `<input class="htCheckboxRendererInput" type="checkbox" ${value ? 'checked' : ''}>`;
+      if (value) td.parentNode.classList.add('done');
       td.parentNode.style.color = value ? '#cfcfcf' : '';
       return td;
     },
@@ -58,6 +59,7 @@ const columns = [
       const notification = cellProperties.notification;
       if (notification) {
         td.innerHTML = `<div title="${notification.time}通知予約済">${value} <i class="fa fa-bell-o"></i></div>`; // eslint-disable-line no-param-reassign
+        td.parentNode.classList.add('progress');
       }
       return td;
     },
@@ -79,7 +81,6 @@ const columns = [
     readOnly: true,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value, cellProperties) {
-      td.classList.add('htDimmed');
       td.innerHTML = value;
       if (cellProperties.overdue) {
         td.style.color = '#ff9b9b';
