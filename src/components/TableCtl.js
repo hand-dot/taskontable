@@ -10,6 +10,7 @@ import { FormControlLabel, FormGroup } from 'material-ui/Form';
 const styles = {
   button: {
     fontSize: '9pt',
+    minWidth: 60,
   },
 };
 
@@ -41,12 +42,12 @@ function TableCtl(props) {
         <div style={{ textAlign: 'right' }}>
           <Button className={classes.button} raised onClick={addTask} color="default">
             <i className="fa fa-plus fa-lg" />
-            　行追加
+            行追加
           </Button>
           <Tooltip title={`最終保存時刻 : ${(`00${lastSaveTime.hour}`).slice(-2)}:${(`00${lastSaveTime.minute}`).slice(-2)}`} placement="top">
             <Button className={classes.button} raised onClick={saveHot} color="default">
               <i className="fa fa-floppy-o fa-lg" />
-              　保存
+              保存
             </Button>
           </Tooltip>
         </div>

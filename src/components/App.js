@@ -56,6 +56,7 @@ const styles = {
     maxWidth: constants.APPWIDTH,
   },
   navButton: {
+    color: '#fff',
     height: '100%',
     width: '100%',
   },

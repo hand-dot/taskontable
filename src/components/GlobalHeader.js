@@ -13,10 +13,14 @@ import HelpDialog from './HelpDialog';
 
 import constants from '../constants';
 
-import title from '../images/title.png';
+import title from '../images/title_wh.png';
 
 const styles = {
   root: {
+    backgroundColor: 'transparent',
+  },
+  iconButton: {
+    color: '#fff',
   },
   toolbar: {
     maxWidth: constants.APPWIDTH,
@@ -120,14 +124,14 @@ class GlobalHeader extends Component {
     const { anchorEl } = this.state;
 
     return (
-      <AppBar position="static" color="default" className={classes.root}>
+      <AppBar position="static" className={classes.root}>
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
           <Grid item xs={1} />
           <Grid item xs={10}>
             <Toolbar>
               <img src={title} alt="taskontable" height="25" className={classes.title} />
               <div>
-                <IconButton onClick={this.handleMenu.bind(this)} data-menu-key="user">
+                <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
                   <i className="fa fa-user-circle" />
                 </IconButton>
                 <Menu
@@ -142,12 +146,12 @@ class GlobalHeader extends Component {
                 </Menu>
               </div>
               <div>
-                <IconButton onClick={this.openHelpDialog.bind(this)}>
+                <IconButton className={classes.iconButton} onClick={this.openHelpDialog.bind(this)}>
                   <i className="fa fa-question-circle" />
                 </IconButton>
               </div>
               <div>
-                <IconButton onClick={this.handleMenu.bind(this)} data-menu-key="info">
+                <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
                   <i className="fa fa-info-circle" />
                 </IconButton>
                 <Menu
