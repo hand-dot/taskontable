@@ -113,29 +113,24 @@ class App extends Component {
             const [index] = this.getSelected();
             const taskPoolType = key === 'reverse_taskpool_hight' ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
             self.moveTableTaskToPoolTask(taskPoolType, index, this);
+          } else if (key === 'done_task') {
+            const [row] = this.getSelected();
+            this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
+            this.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
           }
         },
         items: {
-          set_current_time: {
-            name: '現在時刻を入力する',
-            disabled() {
-              const [startRow, startCol, endRow, endCol] = this.getSelected();
-              const prop = this.colToProp(startCol);
-              return startRow !== endRow || startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
-            },
-          },
-          hsep1: '---------',
           row_above: {
             name: '上に行を追加する',
           },
           row_below: {
             name: '下に行を追加する',
           },
-          hsep2: '---------',
+          hsep1: '---------',
           remove_row: {
             name: '行を削除する',
           },
-          hsep3: '---------',
+          hsep2: '---------',
           reverse_taskpool_hight: {
             name: '[すぐにやる]に戻す',
             disabled() {
@@ -148,6 +143,22 @@ class App extends Component {
             disabled() {
               const [startRow, startCol, endRow, endCol] = this.getSelected();
               return startRow !== endRow || startCol !== endCol;
+            },
+          },
+          hsep3: '---------',
+          set_current_time: {
+            name: '現在時刻を入力する',
+            disabled() {
+              const [startRow, startCol, endRow, endCol] = this.getSelected();
+              const prop = this.colToProp(startCol);
+              return startRow !== endRow || startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
+            },
+          },
+          done_task: {
+            name: 'タスクを完了にする',
+            disabled() {
+              const [startRow, startCol, endRow, endCol] = this.getSelected();
+              return (startRow !== endRow || startCol !== endCol) || !this.getDataAtRowProp(startRow, 'title');
             },
           },
         },
