@@ -337,6 +337,7 @@ class App extends Component {
   initTableTask() {
     this.fetchTableTask().then((snapshot) => {
       if (hot) {
+        hot.updateSettings({ data: getEmptyHotData() });
         if (this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) {
           // デイリーのタスクが空 or サーバーにタスクが存在した場合サーバーのデータでテーブルを初期化する
           setDataForHot(hot, snapshot.val());
