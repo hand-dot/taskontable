@@ -3,6 +3,7 @@ export default {
   REPOSITORYURL: 'https://github.com/hand-dot/taskchute-web',
   APPWIDTH: window.innerWidth,
   KEYEVENT_DELAY: 100,
+  RENDER_DELAY: 1000,
   shortcuts: {
     NEXTDATE: 190,
     PREVDATE: 188,

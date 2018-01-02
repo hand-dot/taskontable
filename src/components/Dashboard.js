@@ -11,7 +11,6 @@ import ExpansionPanel, {
 import Hidden from 'material-ui/Hidden';
 
 import TodaySummary from './TodaySummary';
-import DatePicker from './DatePicker';
 import Clock from './Clock';
 
 import { hotConf } from '../hot';
@@ -121,7 +120,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { date, isOpenDashboard, changeDate, toggleDashboard } = this.props;
+    const { isOpenDashboard, toggleDashboard } = this.props;
     return (
       <ExpansionPanel expanded={isOpenDashboard}>
         <ExpansionPanelSummary onClick={toggleDashboard} expandIcon={<i className="fa fa-angle-down fa-lg" />}>
@@ -133,7 +132,6 @@ class Dashboard extends Component {
             <Typography gutterBottom type="subheading">
                  本日のサマリ
             </Typography>
-            <DatePicker value={date} changeDate={changeDate} label={'基準'} />
             <TodaySummary
               data={{
                 estimateTasks: this.state.estimateTasks,
@@ -179,10 +177,8 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-  date: PropTypes.string.isRequired,
   isOpenDashboard: PropTypes.bool.isRequired,
   toggleDashboard: PropTypes.func.isRequired,
-  changeDate: PropTypes.func.isRequired,
   tableTasks: PropTypes.array.isRequired,
 };
 

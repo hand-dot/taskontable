@@ -77,8 +77,9 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
-    this.setStateFromHot = debounce(this.setStateFromHot, constants.KEYEVENT_DELAY);
     this.fireShortcut = debounce(this.fireShortcut, constants.KEYEVENT_DELAY);
+    this.setStateFromUpdateHot = debounce(this.setStateFromUpdateHot, constants.RENDER_DELAY);
+    this.setStateFromRenderHot = debounce(this.setStateFromRenderHot, constants.RENDER_DELAY);
   }
 
   componentWillMount() {
@@ -164,18 +165,8 @@ class App extends Component {
           },
         },
       },
-      afterRender() {
-        const hotTasks = getHotTasksIgnoreEmptyTask(hot);
-        const tableTasksStr = JSON.stringify(self.state.tableTasks);
-        if (JSON.stringify(hotTasks) !== '[]' && tableTasksStr !== '[]' && tableTasksStr !== JSON.stringify(hotTasks)) {
-          self.setState({
-            saveable: true,
-            tableTasks: hotTasks,
-          });
-        }
-        setTimeout(() => self.forceUpdate());
-      },
-      afterUpdateSettings() { self.setStateFromHot(); },
+      afterRender() { self.setStateFromRenderHot(); },
+      afterUpdateSettings() { self.setStateFromUpdateHot(); },
       afterInit() { bindShortcut(this); },
     }));
     window.hot = hot;
@@ -185,7 +176,19 @@ class App extends Component {
     this.setState(cloneDeep(initialState));
   }
 
-  setStateFromHot() {
+  setStateFromRenderHot() {
+    const hotTasks = getHotTasksIgnoreEmptyTask(hot);
+    const tableTasksStr = JSON.stringify(this.state.tableTasks);
+    if (JSON.stringify(hotTasks) !== '[]' && tableTasksStr !== '[]' && tableTasksStr !== JSON.stringify(hotTasks)) {
+      this.setState({
+        saveable: true,
+        tableTasks: hotTasks,
+      });
+    }
+    setTimeout(() => this.forceUpdate());
+  }
+
+  setStateFromUpdateHot() {
     this.setState({
       saveable: false,
       tableTasks: getHotTasksIgnoreEmptyTask(hot),
@@ -468,10 +471,8 @@ class App extends Component {
           <Grid item xs={12} sm={10}>
             <Grid item xs={12} className={classes.root}>
               <Dashboard
-                date={this.state.date}
                 isOpenDashboard={this.state.isOpenDashboard}
                 toggleDashboard={this.toggleDashboard.bind(this)}
-                changeDate={this.changeDate.bind(this)}
                 tableTasks={this.state.tableTasks}
               />
               <TaskPool
