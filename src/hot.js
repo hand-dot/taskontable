@@ -18,9 +18,7 @@ const columns = [
       td.classList.add('htMiddle');
       td.classList.add('htDimmed');
       td.innerHTML = `<input class="htCheckboxRendererInput" type="checkbox" ${value ? 'checked' : ''}>`;
-      if (value) {
-        td.parentNode.style.color = '#cfcfcf';
-      }
+      td.parentNode.style.color = value ? '#cfcfcf' : '';
       return td;
     },
   },
@@ -199,12 +197,18 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
 
     const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
     const notifiMoment = moment(newVal, 'HH:mm').add(estimateVal, 'minutes');
-    // 終了予定時刻が不正
-    // もしくは見積もり時刻が空か0
-    // もしくは開始時刻がヴァリデーションエラーもしくは見積もり時間が不正な場合は処理を抜ける
+    const timeOut = notifiMoment.toDate().getTime() - Date.now();
+    // 下記の場合、処理を抜ける
+    // ・終了予定時刻が不正
+    // ・過去のアラーム
+    // ・見積もり時刻が空か0
+    // ・開始時刻がヴァリデーションエラー
+    // ・見積もり時間が不正
     if (!notifiMoment.isValid() ||
+      timeOut < 0 ||
       estimateVal === '' || estimateVal === 0 ||
-    !hotInstance.getCellMeta(row, col).valid || !Number.isInteger(+estimateVal)) {
+      !hotInstance.getCellMeta(row, col).valid ||
+      !Number.isInteger(+estimateVal)) {
       return;
     }
 
@@ -231,7 +235,7 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
           // クリックされなければ5分後に消す
           setTimeout(notifi.close.bind(notifi), 300000);
           hotInstance.render();
-        }, notifiMoment.toDate().getTime() - Date.now());
+        }, timeOut);
         hotInstance.setCellMeta(row, col, 'notification', { id: notifiId, time: notifiMoment.format('HH:mm') });
         hotInstance.render();
       });
@@ -269,6 +273,28 @@ export const bindShortcut = (hot) => {
 };
 
 export const getEmptyHotData = () => [cloneDeep(task)];
+
+export const emptyRow = getEmptyHotData()[0];
+
+export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
+  if (hotInstance) {
+    const hotData = hotInstance.getSourceData().map((data, index) => hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
+    return hotData.filter(data => JSON.stringify(emptyRow) !== JSON.stringify(data));
+  }
+  return getEmptyHotData();
+};
+
+export const setDataForHot = (hotInstance, datas) => {
+  if (!Array.isArray(datas)) return;
+  cloneDeep(datas).forEach((data, rowIndex) => {
+    if (JSON.stringify(emptyRow) !== JSON.stringify(data)) {
+      Object.keys(data).forEach((key) => {
+        hotInstance.setDataAtRowProp(rowIndex, key, data[key]);
+      });
+    }
+  });
+};
+
 export const hotConf = {
   stretchH: 'all',
   comments: true,
