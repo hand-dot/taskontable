@@ -13,7 +13,16 @@ const columns = [
     type: 'checkbox',
     colWidths: 20,
     readOnly: true,
-    className: 'htCenter htMiddle',
+    renderer(instance, td, row, col, prop, value) {
+      td.classList.add('htCenter');
+      td.classList.add('htMiddle');
+      td.classList.add('htDimmed');
+      td.innerHTML = `<input class="htCheckboxRendererInput" type="checkbox" ${value ? 'checked' : ''}>`;
+      if (value) {
+        td.parentNode.style.color = '#cfcfcf';
+      }
+      return td;
+    },
   },
   // カテゴリーはフィルタリングが使えないのでほぼ意味がない。hotのフィルターを入れることができたら復活させたい。
   // {
