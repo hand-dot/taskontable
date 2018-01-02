@@ -130,7 +130,7 @@ class Dashboard extends Component {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <Grid item xs={12} sm={6}>
-            <Typography gutterBottom type="title">
+            <Typography gutterBottom type="subheading">
                  本日のサマリ
             </Typography>
             <DatePicker value={date} changeDate={changeDate} label={'基準'} />
@@ -145,7 +145,7 @@ class Dashboard extends Component {
           </Grid>
           <Hidden xsDown>
             <Grid item xs={0} sm={6}>
-              <Typography gutterBottom type="title">
+              <Typography gutterBottom type="subheading">
                  時刻
               </Typography>
               <Grid container spacing={5}>
@@ -159,7 +159,7 @@ class Dashboard extends Component {
             </Grid>
           </Hidden>
           {/* <Grid item xs={4}>
-            <Typography title="*追加・削除したカテゴリはテーブルのカテゴリ列の選択肢に反映されます。" gutterBottom type="title">
+            <Typography title="*追加・削除したカテゴリはテーブルのカテゴリ列の選択肢に反映されます。" gutterBottom type="subheading">
               カテゴリ*
             </Typography>
             <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />

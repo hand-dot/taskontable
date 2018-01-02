@@ -37,7 +37,7 @@ const initialState = {
   notifiable: true,
   saveable: false,
   isOpenDashboard: false,
-  isOpenTaskPool: true,
+  isOpenTaskPool: false,
   date: moment().format('YYYY-MM-DD'),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   tableTasks: getEmptyHotData(),
@@ -165,7 +165,8 @@ class App extends Component {
       },
       afterRender() {
         const hotTasks = getHotTasksIgnoreEmptyTask(hot);
-        if (JSON.stringify(self.state.tableTasks) !== JSON.stringify(hotTasks)) {
+        const tableTasksStr = JSON.stringify(self.state.tableTasks);
+        if (JSON.stringify(hotTasks) !== '[]' && tableTasksStr !== '[]' && tableTasksStr !== JSON.stringify(hotTasks)) {
           self.setState({
             saveable: true,
             tableTasks: hotTasks,
@@ -316,21 +317,24 @@ class App extends Component {
   }
 
   attachTableTasks() {
-    firebase.database().ref(`/${this.state.userId}/tableTasks`).on('value', (snapshot) => {
-      this.setState(() => ({
-        loading: true,
-      }));
-      if (snapshot.exists() && hot) {
-        if ((this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) && !util.isSameObj(getHotTasksIgnoreEmptyTask(hot), snapshot.val()[this.state.date])) {
-          // デイリーのタスクが空 or サーバーにタスクが存在した場合 かつ、
-          // サーバーから配信されたデータが自分のデータと違う場合サーバーのデータでテーブルを初期化する
-          setDataForHot(hot, snapshot.val()[this.state.date]);
+    if (hot) {
+      hot.updateSettings({ data: getEmptyHotData() });
+      firebase.database().ref(`/${this.state.userId}/tableTasks`).on('value', (snapshot) => {
+        this.setState(() => ({
+          loading: true,
+        }));
+        if (snapshot.exists()) {
+          if ((this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) && !util.isSameObj(getHotTasksIgnoreEmptyTask(hot), snapshot.val()[this.state.date])) {
+            // デイリーのタスクが空 or サーバーにタスクが存在した場合 かつ、
+            // サーバーから配信されたデータが自分のデータと違う場合サーバーのデータでテーブルを初期化する
+            setDataForHot(hot, snapshot.val()[this.state.date]);
+          }
         }
-      }
-      this.setState(() => ({
-        loading: false,
-      }));
-    });
+        this.setState(() => ({
+          loading: false,
+        }));
+      });
+    }
   }
 
   fetchTableTask() {
@@ -484,15 +488,17 @@ class App extends Component {
                     　テーブル
                   </Typography>
                   <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
-                  <TableCtl
-                    lastSaveTime={this.state.lastSaveTime}
-                    saveHot={this.saveHot.bind(this)}
-                    notifiable={this.state.notifiable}
-                    toggleNotifiable={this.toggleNotifiable.bind(this)}
-                  />
+                  <Hidden xsDown>
+                    <TableCtl
+                      lastSaveTime={this.state.lastSaveTime}
+                      saveHot={this.saveHot.bind(this)}
+                      notifiable={this.state.notifiable}
+                      toggleNotifiable={this.toggleNotifiable.bind(this)}
+                    />
+                  </Hidden>
                 </div>
-                <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
-                <div style={{ padding: '0 24px 24px 24px' }}>
+                <div style={{ paddingTop: 10 }}>
+                  <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
                   <div id="hot" />
                 </div>
               </Paper>

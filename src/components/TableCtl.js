@@ -1,10 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import Switch from 'material-ui/Switch';
 import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
 import { FormControlLabel, FormGroup } from 'material-ui/Form';
+
+const styles = {
+  button: {
+    fontSize: '9pt',
+  },
+};
 
 function addTask() {
   if (window.hot) {
@@ -13,7 +20,7 @@ function addTask() {
 }
 
 function TableCtl(props) {
-  const { lastSaveTime, saveHot, notifiable, toggleNotifiable } = props;
+  const { lastSaveTime, saveHot, notifiable, toggleNotifiable, classes } = props;
   return (
     <Grid container spacing={5}>
       <Grid item xs={2}>
@@ -32,12 +39,12 @@ function TableCtl(props) {
       </Grid>
       <Grid item xs={10}>
         <div style={{ textAlign: 'right' }}>
-          <Button raised onClick={addTask} color="default">
+          <Button className={classes.button} raised onClick={addTask} color="default">
             <i className="fa fa-plus fa-lg" />
             　行追加
           </Button>
           <Tooltip title={`最終保存時刻 : ${(`00${lastSaveTime.hour}`).slice(-2)}:${(`00${lastSaveTime.minute}`).slice(-2)}`} placement="top">
-            <Button raised onClick={saveHot} color="default">
+            <Button className={classes.button} raised onClick={saveHot} color="default">
               <i className="fa fa-floppy-o fa-lg" />
               　保存
             </Button>
@@ -57,7 +64,7 @@ TableCtl.propTypes = {
   saveHot: PropTypes.func.isRequired,
   notifiable: PropTypes.bool.isRequired,
   toggleNotifiable: PropTypes.func.isRequired,
-
+  classes: PropTypes.object.isRequired,
 };
 
-export default TableCtl;
+export default withStyles(styles)(TableCtl);

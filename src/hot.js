@@ -11,8 +11,9 @@ const columns = [
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
     data: 'done',
     type: 'checkbox',
-    colWidths: 20,
+    colWidths: 28,
     readOnly: true,
+    /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htCenter');
       td.classList.add('htMiddle');

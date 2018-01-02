@@ -117,7 +117,7 @@ class Clock extends Component {
     const { classes } = this.props;
     return (
       <div>
-        <Typography gutterBottom type="subheading" align="center" title={this.props.caption}>
+        <Typography gutterBottom type="caption" align="center" title={this.props.caption}>
           {this.props.title}
         </Typography>
         <div className={classes.circle}>
