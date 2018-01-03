@@ -28,6 +28,7 @@ const styles = {
     padding: '0 5px',
   },
   cellInput: {
+    color: '#000',
     fontSize: 12,
   },
 };
