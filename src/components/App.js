@@ -38,7 +38,7 @@ const initialState = {
   saveable: false,
   isOpenDashboard: false,
   isOpenTaskPool: false,
-  date: moment().format('YYYY-MM-DD'),
+  date: moment().format(constants.DATEFMT),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   tableTasks: getEmptyHotData(),
   poolTasks: {
@@ -200,7 +200,7 @@ class App extends Component {
     if ((e.keyCode === constants.shortcuts.NEXTDATE || e.keyCode === constants.shortcuts.PREVDATE)) {
       // 基準日を変更
       if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
-      this.setState({ date: moment(this.state.date).add(e.keyCode === 190 ? 1 : -1, 'day').format('YYYY-MM-DD') });
+      this.setState({ date: moment(this.state.date).add(e.keyCode === constants.shortcuts.NEXTDATE ? 1 : -1, 'day').format(constants.DATEFMT) });
       setTimeout(() => { this.initTableTask(); });
     } else if (e.keyCode === constants.shortcuts.SAVE) {
       this.saveHot();
@@ -440,7 +440,7 @@ class App extends Component {
     const nav = event.currentTarget.getAttribute('data-date-nav');
     let date;
     if (nav) {
-      date = moment(this.state.date).add(nav === 'next' ? 1 : -1, 'day').format('YYYY-MM-DD');
+      date = moment(this.state.date).add(nav === 'next' ? 1 : -1, 'day').format(constants.DATEFMT);
     } else if (moment(event.target.value).isValid()) {
       event.persist();
       date = event.target.value;

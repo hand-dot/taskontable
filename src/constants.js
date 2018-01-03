@@ -33,5 +33,6 @@ export default {
     DOWN: 'down',
     UP: 'up',
   },
+  DATEFMT: 'YYYY-MM-DD',
   INITIALDATE: '1970-01-01',
 };
