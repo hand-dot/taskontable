@@ -6,6 +6,7 @@ import Toolbar from 'material-ui/Toolbar';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
+import Hidden from 'material-ui/Hidden';
 
 import LoginDialog from './LoginDialog';
 import DescriptionDialog from './DescriptionDialog';
@@ -126,8 +127,10 @@ class GlobalHeader extends Component {
     return (
       <AppBar position="static" className={classes.root}>
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
-          <Grid item xs={1} />
-          <Grid item xs={10}>
+          <Hidden xsDown>
+            <Grid item xs={1} />
+          </Hidden>
+          <Grid item xs={12} sm={10}>
             <Toolbar>
               <img src={title} alt="taskontable" height="25" className={classes.title} />
               <div>
@@ -175,7 +178,9 @@ class GlobalHeader extends Component {
               </div>
             </Toolbar>
           </Grid>
-          <Grid item xs={1} />
+          <Hidden xsDown>
+            <Grid item xs={1} />
+          </Hidden>
         </Grid>
         <LoginDialog
           userId={userId}
