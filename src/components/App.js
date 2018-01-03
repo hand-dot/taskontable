@@ -302,7 +302,10 @@ class App extends Component {
     this.addPoolTask(taskPoolType, hotInstance.getSourceDataAtRow(index));
     hotInstance.alter('remove_row', index);
     // テーブルタスクからタスクプールに移動したら保存する
-    setTimeout(() => { this.saveHot(); });
+    setTimeout(() => {
+      this.saveHot();
+      this.savePoolTasks(this.state.poolTasks);
+    });
   }
 
   toggleNotifiable(event, checked) {
@@ -318,6 +321,47 @@ class App extends Component {
         hot.render();
       }
     }
+  }
+
+  savePoolTasks(poolTasks) {
+    firebase.database().ref(`/${this.state.userId}/poolTasks`).set(poolTasks);
+  }
+
+  saveHot() {
+    if (hot) {
+      // 並び変えられたデータを取得するために処理が入っている。
+      this.saveTableTask(getHotTasksIgnoreEmptyTask(hot));
+    }
+  }
+
+  saveTableTask(data) {
+    this.setState(() => ({
+      loading: true,
+    }));
+    firebase.database().ref(`/${this.state.userId}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
+      this.setState(() => ({
+        loading: false,
+        lastSaveTime: util.getCrrentTimeObj(),
+        saveable: false,
+      }));
+    });
+  }
+
+  attachPoolTasks() {
+    firebase.database().ref(`/${this.state.userId}/poolTasks`).on('value', (snapshot) => {
+      if (snapshot.exists()) {
+        const poolTasks = snapshot.val();
+        console.log(poolTasks);
+        const statePoolTasks = Object.assign({}, this.state.poolTasks);
+        statePoolTasks.highPriorityTasks = poolTasks.highPriorityTasks ? poolTasks.highPriorityTasks : [];
+        statePoolTasks.lowPriorityTasks = poolTasks.lowPriorityTasks ? poolTasks.lowPriorityTasks : [];
+        statePoolTasks.regularTasks = poolTasks.regularTasks ? poolTasks.regularTasks : [];
+        statePoolTasks.dailyTasks = poolTasks.dailyTasks ? poolTasks.dailyTasks : [];
+        this.setState({
+          poolTasks: statePoolTasks,
+        });
+      }
+    });
   }
 
   attachTableTasks() {
@@ -368,25 +412,6 @@ class App extends Component {
     });
   }
 
-  attachPoolTasks() {
-    firebase.database().ref(`/${this.state.userId}/poolTasks`).on('value', (snapshot) => {
-      if (snapshot.exists()) {
-        const poolTasks = snapshot.val();
-        const statePoolTasks = Object.assign({}, this.state.poolTasks);
-        statePoolTasks.highPriorityTasks = poolTasks.highPriorityTasks ? poolTasks.highPriorityTasks : [];
-        statePoolTasks.lowPriorityTasks = poolTasks.lowPriorityTasks ? poolTasks.lowPriorityTasks : [];
-        statePoolTasks.regularTasks = poolTasks.regularTasks ? poolTasks.regularTasks : [];
-        statePoolTasks.dailyTasks = poolTasks.dailyTasks ? poolTasks.dailyTasks : [];
-        this.setState({
-          poolTasks: statePoolTasks,
-        });
-      }
-    });
-  }
-
-  savePoolTasks(poolTasks) {
-    firebase.database().ref(`/${this.state.userId}/poolTasks`).set(poolTasks);
-  }
 
   changeUserId(e) {
     this.setState({ userId: e.target.value });
@@ -428,26 +453,6 @@ class App extends Component {
       }));
       setTimeout(() => { this.initTableTask(); });
     }
-  }
-
-  saveHot() {
-    if (hot) {
-      // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTableTask(getHotTasksIgnoreEmptyTask(hot));
-    }
-  }
-
-  saveTableTask(data) {
-    this.setState(() => ({
-      loading: true,
-    }));
-    firebase.database().ref(`/${this.state.userId}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
-      this.setState(() => ({
-        loading: false,
-        lastSaveTime: util.getCrrentTimeObj(),
-        saveable: false,
-      }));
-    });
   }
 
   render() {
