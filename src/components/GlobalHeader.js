@@ -1,3 +1,4 @@
+import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
@@ -7,8 +8,8 @@ import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Hidden from 'material-ui/Hidden';
+import Avatar from 'material-ui/Avatar';
 
-import LoginDialog from './LoginDialog';
 import DescriptionDialog from './DescriptionDialog';
 import HelpDialog from './HelpDialog';
 
@@ -19,6 +20,10 @@ import title from '../images/title_wh.png';
 const styles = {
   root: {
     backgroundColor: 'transparent',
+  },
+  userPhoto: {
+    width: 25,
+    height: 25,
   },
   iconButton: {
     color: '#fff',
@@ -49,11 +54,13 @@ class GlobalHeader extends Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.login();
+  }
+
+  componentDidMount() {
     window.addEventListener('keydown', (e) => {
-      // e.key === '?' はEdgeで動かないので e.keyCode === 191にしている
-      if (e.ctrlKey && e.keyCode === 191) {
+      if (e.ctrlKey && e.keyCode === constants.shortcuts.HELP) {
         this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
       }
       return false;
@@ -85,23 +92,28 @@ class GlobalHeader extends Component {
   }
 
   login() {
-    // FIXME localstrage実装は暫時対応
-    const userId = localStorage.getItem('userId') || this.props.userId;
-    if (userId) {
-      localStorage.setItem('userId', userId);
-      this.props.loginCallback(userId);
-      this.closeLoginDialog();
-    } else {
-      this.openLoginDialog();
-    }
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.props.loginCallback(firebase.auth().currentUser);
+        this.closeLoginDialog();
+      } else {
+        firebase.auth().signInWithRedirect(provider);
+      }
+    });
   }
 
   logout() {
-    // FIXME localstrage実装は暫時対応
-    localStorage.removeItem('userId');
-    this.closeMenu();
-    this.props.logoutCallback();
-    this.openLoginDialog();
+    firebase.auth().signOut().then(() => {
+      this.closeMenu();
+      this.props.logoutCallback();
+      this.openLoginDialog();
+    }).catch((error) => {
+      // FIXME エラーをどこかのサービスに送信したい
+      // https://sentry.io/
+      console.error(error);
+      window.location.reload();
+    });
   }
 
   openLoginDialog() {
@@ -121,7 +133,7 @@ class GlobalHeader extends Component {
   }
 
   render() {
-    const { userId, changeUserId, classes } = this.props;
+    const { user, classes } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -135,14 +147,19 @@ class GlobalHeader extends Component {
               <img src={title} alt="taskontable" height="25" className={classes.title} />
               <div>
                 <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
-                  <i className="fa fa-user-circle" />
+                  {(() => {
+                    if (user.photoURL) {
+                      return <Avatar className={classes.userPhoto} src={user.photoURL} />;
+                    }
+                    return <i className="fa fa-user-circle" />;
+                  })()}
                 </IconButton>
                 <Menu
                   anchorEl={anchorEl}
                   open={this.state.openMenuKey === 'user'}
                   onRequestClose={this.closeMenu.bind(this)}
                 >
-                  <MenuItem>ユーザーID: {userId}</MenuItem>
+                  <MenuItem>アカウント名: {user.displayName}</MenuItem>
                   <MenuItem onClick={this.logout.bind(this)}>
                     <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
                   </MenuItem>
@@ -182,12 +199,6 @@ class GlobalHeader extends Component {
             <Grid item xs={1} />
           </Hidden>
         </Grid>
-        <LoginDialog
-          userId={userId}
-          open={this.state.isOpenLoginDialog}
-          changeUserId={changeUserId}
-          login={this.login.bind(this)}
-        />
         <DescriptionDialog
           open={this.state.isOpenDescriptionDialog}
           onRequestClose={this.closeDescriptionDialog.bind(this)}
@@ -202,8 +213,11 @@ class GlobalHeader extends Component {
 }
 
 GlobalHeader.propTypes = {
-  userId: PropTypes.string.isRequired,
-  changeUserId: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    displayName: PropTypes.string.isRequired,
+    photoURL: PropTypes.string.isRequired,
+    uid: PropTypes.string.isRequired,
+  }).isRequired,
   loginCallback: PropTypes.func.isRequired,
   logoutCallback: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,

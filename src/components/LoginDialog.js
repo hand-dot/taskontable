@@ -13,7 +13,7 @@ import Dialog, {
 import constants from '../constants';
 
 function LoginDialog(props) {
-  const { userId, changeUserId, login, open } = props;
+  const { userId, login, open } = props;
   return (
     <Dialog open={open}>
       <DialogTitle>ユーザーIDを入力して下さい</DialogTitle>
@@ -32,7 +32,7 @@ function LoginDialog(props) {
         </DialogContentText>
         <TextField
           value={userId}
-          onChange={changeUserId}
+          // onChange={changeUserId}
           required
           autoFocus
           margin="dense"
@@ -58,7 +58,6 @@ function LoginDialog(props) {
 LoginDialog.propTypes = {
   userId: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
-  changeUserId: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
 };
 

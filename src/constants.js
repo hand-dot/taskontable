@@ -5,6 +5,7 @@ export default {
   KEYEVENT_DELAY: 100,
   RENDER_DELAY: 1000,
   shortcuts: {
+    HELP: 191,
     NEXTDATE: 190,
     PREVDATE: 188,
     SAVE: 83,

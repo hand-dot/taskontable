@@ -32,7 +32,7 @@ import constants from '../constants';
 import util from '../util';
 
 const initialState = {
-  userId: '',
+  user: { displayName: '', photoURL: '', uid: '' },
   loading: true,
   notifiable: true,
   saveable: false,
@@ -71,8 +71,6 @@ const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notificat
 firebase.initializeApp(firebaseConf);
 
 let hot = null;
-
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -324,7 +322,7 @@ class App extends Component {
   }
 
   savePoolTasks(poolTasks) {
-    firebase.database().ref(`/${this.state.userId}/poolTasks`).set(poolTasks);
+    firebase.database().ref(`/${this.state.user.uid}/poolTasks`).set(poolTasks);
   }
 
   saveHot() {
@@ -338,7 +336,7 @@ class App extends Component {
     this.setState(() => ({
       loading: true,
     }));
-    firebase.database().ref(`/${this.state.userId}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
+    firebase.database().ref(`/${this.state.user.uid}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
       this.setState(() => ({
         loading: false,
         lastSaveTime: util.getCrrentTimeObj(),
@@ -348,10 +346,9 @@ class App extends Component {
   }
 
   attachPoolTasks() {
-    firebase.database().ref(`/${this.state.userId}/poolTasks`).on('value', (snapshot) => {
+    firebase.database().ref(`/${this.state.user.uid}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
         const poolTasks = snapshot.val();
-        console.log(poolTasks);
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
         statePoolTasks.highPriorityTasks = poolTasks.highPriorityTasks ? poolTasks.highPriorityTasks : [];
         statePoolTasks.lowPriorityTasks = poolTasks.lowPriorityTasks ? poolTasks.lowPriorityTasks : [];
@@ -367,7 +364,7 @@ class App extends Component {
   attachTableTasks() {
     if (hot) {
       hot.updateSettings({ data: getEmptyHotData() });
-      firebase.database().ref(`/${this.state.userId}/tableTasks`).on('value', (snapshot) => {
+      firebase.database().ref(`/${this.state.user.uid}/tableTasks`).on('value', (snapshot) => {
         this.setState(() => ({
           loading: true,
         }));
@@ -389,7 +386,7 @@ class App extends Component {
     this.setState(() => ({
       loading: true,
     }));
-    return firebase.database().ref(`/${this.state.userId}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
+    return firebase.database().ref(`/${this.state.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
       this.setState(() => ({
         loading: false,
       }));
@@ -412,14 +409,9 @@ class App extends Component {
     });
   }
 
-
-  changeUserId(e) {
-    this.setState({ userId: e.target.value });
-  }
-
-  loginCallback(userId) {
-    this.setState({ userId });
-    // userIdが更新されたあとに処理する
+  loginCallback(user) {
+    this.setState({ user: { displayName: user.displayName, photoURL: user.photoURL, uid: user.uid } });
+    // userが更新されたあとに処理する
     setTimeout(() => {
       // タスクプールをサーバーと同期開始
       this.attachPoolTasks();
@@ -460,8 +452,7 @@ class App extends Component {
     return (
       <div>
         <GlobalHeader
-          userId={this.state.userId}
-          changeUserId={this.changeUserId.bind(this)}
+          user={this.state.user}
           loginCallback={this.loginCallback.bind(this)}
           logoutCallback={this.logoutCallback.bind(this)}
         />
