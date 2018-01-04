@@ -60,7 +60,9 @@ const columns = [
       const notification = cellProperties.notification;
       if (notification) {
         td.innerHTML = `<div title="${notification.time}通知予約済">${value} <i class="fa fa-bell-o"></i></div>`; // eslint-disable-line no-param-reassign
-        td.parentNode.classList.add('progress');
+        if (!td.parentNode.classList.contains('done')) {
+          td.parentNode.classList.add('progress');
+        }
       }
       return td;
     },
