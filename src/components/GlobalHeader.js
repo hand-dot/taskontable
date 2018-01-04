@@ -48,9 +48,7 @@ class GlobalHeader extends Component {
     this.state = {
       anchorEl: null,
       openMenuKey: '',
-      isOpenLoginDialog: false,
       isOpenDescriptionDialog: false,
-      isOpenHelpDialog: false,
     };
   }
 
@@ -59,12 +57,6 @@ class GlobalHeader extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.keyCode === constants.shortcuts.HELP) {
-        this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
-      }
-      return false;
-    });
   }
 
   closeMenu() {
@@ -96,7 +88,6 @@ class GlobalHeader extends Component {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.props.loginCallback(firebase.auth().currentUser);
-        this.closeLoginDialog();
       } else {
         firebase.auth().signInWithRedirect(provider);
       }
@@ -107,7 +98,6 @@ class GlobalHeader extends Component {
     firebase.auth().signOut().then(() => {
       this.closeMenu();
       this.props.logoutCallback();
-      this.openLoginDialog();
     }).catch((error) => {
       // FIXME エラーをどこかのサービスに送信したい
       // https://sentry.io/
@@ -116,24 +106,8 @@ class GlobalHeader extends Component {
     });
   }
 
-  openLoginDialog() {
-    this.setState({ isOpenLoginDialog: true });
-  }
-
-  closeLoginDialog() {
-    this.setState({ isOpenLoginDialog: false });
-  }
-
-  openHelpDialog() {
-    this.setState({ isOpenHelpDialog: true });
-  }
-
-  closeHelpDialog() {
-    this.setState({ isOpenHelpDialog: false });
-  }
-
   render() {
-    const { user, classes } = this.props;
+    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -166,7 +140,7 @@ class GlobalHeader extends Component {
                 </Menu>
               </div>
               <div>
-                <IconButton className={classes.iconButton} onClick={this.openHelpDialog.bind(this)}>
+                <IconButton className={classes.iconButton} onClick={openHelpDialog}>
                   <i className="fa fa-question-circle" />
                 </IconButton>
               </div>
@@ -204,8 +178,8 @@ class GlobalHeader extends Component {
           onRequestClose={this.closeDescriptionDialog.bind(this)}
         />
         <HelpDialog
-          open={this.state.isOpenHelpDialog}
-          onRequestClose={this.closeHelpDialog.bind(this)}
+          open={isOpenHelpDialog}
+          onRequestClose={closeHelpDialog}
         />
       </AppBar>
     );
@@ -218,6 +192,9 @@ GlobalHeader.propTypes = {
     photoURL: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
   }).isRequired,
+  isOpenHelpDialog: PropTypes.bool.isRequired,
+  openHelpDialog: PropTypes.func.isRequired,
+  closeHelpDialog: PropTypes.func.isRequired,
   loginCallback: PropTypes.func.isRequired,
   logoutCallback: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,

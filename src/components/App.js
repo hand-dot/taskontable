@@ -38,6 +38,7 @@ const initialState = {
   saveable: false,
   isOpenDashboard: false,
   isOpenTaskPool: false,
+  isOpenHelpDialog: false,
   date: moment().format(constants.DATEFMT),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   tableTasks: getEmptyHotData(),
@@ -75,7 +76,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = initialState;
-    this.fireShortcut = debounce(this.fireShortcut, constants.KEYEVENT_DELAY);
     this.setStateFromUpdateHot = debounce(this.setStateFromUpdateHot, constants.RENDER_DELAY);
     this.setStateFromRenderHot = debounce(this.setStateFromRenderHot, constants.RENDER_DELAY);
   }
@@ -86,10 +86,7 @@ class App extends Component {
       lastSaveTime: util.getCrrentTimeObj(),
     });
     window.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && Object.values(constants.shortcuts).find(shortcut => shortcut === e.keyCode) !== undefined) {
-        e.preventDefault();
-        this.fireShortcut(e);
-      }
+      this.fireShortcut(e);
     });
     window.addEventListener('beforeunload', (e) => {
       if (this.state.saveable) {
@@ -195,23 +192,41 @@ class App extends Component {
   }
 
   fireShortcut(e) {
-    if ((e.keyCode === constants.shortcuts.NEXTDATE || e.keyCode === constants.shortcuts.PREVDATE)) {
+    if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
       // 基準日を変更
       if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
-      this.setState({ date: moment(this.state.date).add(e.keyCode === constants.shortcuts.NEXTDATE ? 1 : -1, 'day').format(constants.DATEFMT) });
+      this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
       setTimeout(() => { this.initTableTask(); });
-    } else if (e.keyCode === constants.shortcuts.SAVE) {
+    } else if (constants.shortcuts.SAVE(e)) {
+      e.preventDefault();
       this.saveHot();
-    } else if (e.keyCode === constants.shortcuts.INSERT) {
+    } else if (constants.shortcuts.INSERT(e)) {
       if (hot) hot.alter('insert_row');
-    } else if (e.keyCode === constants.shortcuts.TOGGLE_DASHBOAD) {
+    } else if (constants.shortcuts.TOGGLE_HELP(e)) {
+      this.toggleHelpDialog();
+    } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
+      e.preventDefault();
       this.toggleDashboard();
-    } else if (e.keyCode === constants.shortcuts.TOGGLE_TASKPOOL) {
+    } else if (constants.shortcuts.TOGGLE_TASKPOOL(e)) {
+      e.preventDefault();
       this.toggleTaskPool();
-    } else if (e.keyCode === constants.shortcuts.SELECT_TABLE) {
+    } else if (constants.shortcuts.SELECT_TABLE(e)) {
+      e.preventDefault();
       hot.selectCell(0, 0);
     }
     return false;
+  }
+
+  toggleHelpDialog() {
+    this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
+  }
+
+  openHelpDialog() {
+    this.setState({ isOpenHelpDialog: true });
+  }
+
+  closeHelpDialog() {
+    this.setState({ isOpenHelpDialog: false });
   }
 
   toggleDashboard() {
@@ -453,6 +468,9 @@ class App extends Component {
       <div>
         <GlobalHeader
           user={this.state.user}
+          isOpenHelpDialog={this.state.isOpenHelpDialog}
+          openHelpDialog={this.openHelpDialog.bind(this)}
+          closeHelpDialog={this.closeHelpDialog.bind(this)}
           loginCallback={this.loginCallback.bind(this)}
           logoutCallback={this.logoutCallback.bind(this)}
         />

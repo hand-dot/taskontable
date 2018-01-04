@@ -263,7 +263,7 @@ export const bindShortcut = (hot) => {
     const selected = hot.getSelected();
     const [startRow, startCol, endRow, endCol] = [selected[0], selected[1], selected[2], selected[3]];
     if (e.ctrlKey) {
-      if (e.keyCode === constants.shortcuts.HOT_CURRENTTIME) {
+      if (constants.shortcuts.HOT_CURRENTTIME(e)) {
         // 現在時刻を入力
         const prop = hot.colToProp(startCol);
         // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
