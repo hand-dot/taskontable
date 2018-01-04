@@ -204,11 +204,13 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
     const timeOut = notifiMoment.toDate().getTime() - Date.now();
     // 下記の場合、処理を抜ける
     // ・終了予定時刻が不正
+    // ・すでに済がチェックされているタスク
     // ・過去のアラーム
     // ・見積もり時刻が空か0
     // ・開始時刻がヴァリデーションエラー
     // ・見積もり時間が不正
     if (!notifiMoment.isValid() ||
+      hotInstance.getDataAtRowProp(row, 'done') ||
       timeOut < 0 ||
       estimateVal === '' || estimateVal === 0 ||
       !hotInstance.getCellMeta(row, col).valid ||
