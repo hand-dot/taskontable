@@ -306,10 +306,10 @@ class App extends Component {
 
   movePoolTaskToTableTask(taskPoolType, index) {
     if (!hot) return;
-    const hotData = hot.getSourceData().map((data, i) => hot.getSourceDataAtRow(hot.toPhysicalRow(i)));
+    const hotData = hot.getSourceData();
     let insertPosition = hotData.lastIndexOf(data => JSON.stringify(emptyRow) === JSON.stringify(data));
     if (insertPosition === -1) {
-      insertPosition = this.state.tableTasks.length;
+      insertPosition = getHotTasksIgnoreEmptyTask(hot).length;
     }
     const target = Object.assign({}, this.state.poolTasks[taskPoolType][index]);
     Object.keys(target).forEach((key) => {

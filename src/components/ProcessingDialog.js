@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import { CircularProgress } from 'material-ui/Progress';
-import Dialog, { DialogContent } from 'material-ui/Dialog';
+import Dialog from 'material-ui/Dialog';
 
 import constants from '../constants';
 
