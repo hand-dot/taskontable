@@ -107,18 +107,22 @@ class App extends Component {
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       contextMenu: {
-        callback(key) {
+        callback(key, selection) {
           if (key === 'set_current_time') {
-            const [row, col] = this.getSelected();
-            this.setDataAtCell(row, col, moment().format('HH:mm'));
+            for (let row = selection.start.row; row <= selection.end.row; row++) {
+              this.setDataAtCell(row, selection.start.col, moment().format('HH:mm'));
+            }
           } else if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
-            const [index] = this.getSelected();
             const taskPoolType = key === 'reverse_taskpool_hight' ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
-            self.moveTableTaskToPoolTask(taskPoolType, index, this);
+            for (let row = selection.start.row; row <= selection.end.row; row++) {
+              // テーブルタスクからタスクプールに移すタイミングでテーブルが1行減るので常に選択開始行を処理する
+              self.moveTableTaskToPoolTask(taskPoolType, selection.start.row, hot);
+            }
           } else if (key === 'done_task') {
-            const [row] = this.getSelected();
-            this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
-            this.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
+            for (let row = selection.start.row; row <= selection.end.row; row++) {
+              this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
+              this.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
+            }
           }
         },
         items: {
@@ -135,33 +139,22 @@ class App extends Component {
           hsep2: '---------',
           reverse_taskpool_hight: {
             name: '[すぐにやる]に戻す',
-            disabled() {
-              const [startRow, startCol, endRow, endCol] = this.getSelected();
-              return startRow !== endRow || startCol !== endCol;
-            },
           },
           reverse_taskpool_low: {
             name: '[いつかやる]に戻す',
-            disabled() {
-              const [startRow, startCol, endRow, endCol] = this.getSelected();
-              return startRow !== endRow || startCol !== endCol;
-            },
           },
           hsep3: '---------',
           set_current_time: {
             name: '現在時刻を入力する',
             disabled() {
-              const [startRow, startCol, endRow, endCol] = this.getSelected();
+              const startCol = this.getSelected()[1];
+              const endCol = this.getSelected()[3];
               const prop = this.colToProp(startCol);
-              return startRow !== endRow || startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
+              return startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
             },
           },
           done_task: {
             name: 'タスクを完了にする',
-            disabled() {
-              const [startRow, startCol, endRow, endCol] = this.getSelected();
-              return (startRow !== endRow || startCol !== endCol) || !this.getDataAtRowProp(startRow, 'title');
-            },
           },
         },
       },
