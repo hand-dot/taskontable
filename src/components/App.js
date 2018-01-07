@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 import debounce from 'lodash.debounce';
+import throttle from 'lodash.throttle';
 
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
@@ -23,6 +24,7 @@ import Dashboard from './Dashboard';
 import TableCtl from './TableCtl';
 import TaskPool from './TaskPool';
 import DatePicker from './DatePicker';
+import ProcessingDialog from './ProcessingDialog';
 
 import firebaseConf from '../configs/firebase';
 import { bindShortcut, hotConf, getEmptyHotData, emptyRow, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
@@ -39,6 +41,7 @@ const initialState = {
   isOpenDashboard: false,
   isOpenTaskPool: false,
   isOpenHelpDialog: false,
+  isOpenProcessingDialog: false,
   date: moment().format(constants.DATEFMT),
   lastSaveTime: { hour: 0, minute: 0, second: 0 },
   tableTasks: getEmptyHotData(),
@@ -78,6 +81,8 @@ class App extends Component {
     this.state = initialState;
     this.setStateFromUpdateHot = debounce(this.setStateFromUpdateHot, constants.RENDER_DELAY);
     this.setStateFromRenderHot = debounce(this.setStateFromRenderHot, constants.RENDER_DELAY);
+    this.openProcessingDialog = throttle(this.openProcessingDialog, constants.PROCESSING_DELAY);
+    this.closeProcessingDialog = debounce(this.closeProcessingDialog, constants.RENDER_DELAY);
   }
 
   componentWillMount() {
@@ -160,7 +165,11 @@ class App extends Component {
           },
         },
       },
-      afterRender() { self.setStateFromRenderHot(); },
+      afterRender() {
+        self.openProcessingDialog();
+        self.setStateFromRenderHot();
+        self.closeProcessingDialog();
+      },
       afterUpdateSettings() { self.setStateFromUpdateHot(); },
       afterInit() { bindShortcut(this); },
     }));
@@ -189,6 +198,14 @@ class App extends Component {
       tableTasks: getHotTasksIgnoreEmptyTask(hot),
     });
     setTimeout(() => this.forceUpdate());
+  }
+
+  openProcessingDialog() {
+    this.setState({ isOpenProcessingDialog: true });
+  }
+
+  closeProcessingDialog() {
+    this.setState({ isOpenProcessingDialog: false });
   }
 
   fireShortcut(e) {
@@ -528,6 +545,9 @@ class App extends Component {
             </Grid>
           </Hidden>
         </Grid>
+        <ProcessingDialog
+          open={this.state.isOpenProcessingDialog}
+        />
       </div>
     );
   }

@@ -4,6 +4,8 @@ export default {
   APPWIDTH: window.innerWidth,
   KEYEVENT_DELAY: 100,
   RENDER_DELAY: 1000,
+  PROCESSING_DELAY: 250,
+  PROCESSING_DIALOG_THRESHOLD: 2,
   shortcuts: {
     NEXTDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 190,
     PREVDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 188,
