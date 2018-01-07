@@ -283,12 +283,12 @@ export const bindShortcut = (hot) => {
 
 export const getEmptyHotData = () => [cloneDeep(task)];
 
-export const emptyRow = getEmptyHotData()[0];
+export const getEmptyRow = () => getEmptyHotData()[0];
 
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   if (hotInstance) {
-    const hotData = hotInstance.getSourceData().map((data, index) => hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
-    return hotData.filter(data => JSON.stringify(emptyRow) !== JSON.stringify(data));
+    const hotData = hotInstance.getSourceData();
+    return cloneDeep(hotData.filter(data => JSON.stringify(getEmptyRow()) !== JSON.stringify(data)));
   }
   return getEmptyHotData();
 };
@@ -296,7 +296,7 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
   cloneDeep(datas).forEach((data, rowIndex) => {
-    if (JSON.stringify(emptyRow) !== JSON.stringify(data)) {
+    if (JSON.stringify(getEmptyRow()) !== JSON.stringify(data)) {
       Object.keys(data).forEach((key) => {
         hotInstance.setDataAtRowProp(rowIndex, key, data[key]);
       });

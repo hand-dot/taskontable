@@ -27,7 +27,7 @@ import DatePicker from './DatePicker';
 import ProcessingDialog from './ProcessingDialog';
 
 import firebaseConf from '../configs/firebase';
-import { bindShortcut, hotConf, getEmptyHotData, emptyRow, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { bindShortcut, hotConf, getEmptyHotData, getEmptyRow, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 
 import constants from '../constants';
 
@@ -300,7 +300,7 @@ class App extends Component {
   movePoolTaskToTableTask(taskPoolType, index) {
     if (!hot) return;
     const hotData = hot.getSourceData();
-    let insertPosition = hotData.lastIndexOf(data => JSON.stringify(emptyRow) === JSON.stringify(data));
+    let insertPosition = hotData.lastIndexOf(data => JSON.stringify(getEmptyRow()) === JSON.stringify(data));
     if (insertPosition === -1) {
       insertPosition = getHotTasksIgnoreEmptyTask(hot).length;
     }
@@ -516,6 +516,7 @@ class App extends Component {
                   <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
                   <Hidden xsDown>
                     <TableCtl
+                      saveable={this.state.saveable}
                       lastSaveTime={this.state.lastSaveTime}
                       saveHot={this.saveHot.bind(this)}
                       notifiable={this.state.notifiable}
