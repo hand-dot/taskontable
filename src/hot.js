@@ -11,6 +11,7 @@ const columns = [
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
     data: 'done',
     type: 'checkbox',
+    validator: false,
     colWidths: 28,
     readOnly: true,
     /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -263,6 +264,7 @@ export const bindShortcut = (hot) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
     if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
     const selected = hot.getSelected();
+    if (!selected) return;
     const [startRow, startCol, endRow, endCol] = [selected[0], selected[1], selected[2], selected[3]];
     if (e.ctrlKey) {
       if (constants.shortcuts.HOT_CURRENTTIME(e)) {
