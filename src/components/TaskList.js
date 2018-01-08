@@ -7,7 +7,10 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
+import MultipleSelect from './MultipleSelect';
+
 import taskSchema from '../task';
+import constants from '../constants';
 
 const styles = {
   root: {
@@ -77,9 +80,36 @@ class TaskList extends Component {
     this.setState({ [type]: task });
   }
 
+  changeDayOfWeek(type, e) {
+    // console.log(e.target.value, 'changeDayOfWeek');
+    const task = Object.assign({}, this.state[type]);
+    task.dayOfWeek = e.target.value;
+    this.setState({ [type]: task });
+  }
+
+  changeWeek(type, e) {
+    // console.log(e.target.value, 'changeWeek');
+    const task = Object.assign({}, this.state[type]);
+    task.week = e.target.value;
+    this.setState({ [type]: task });
+  }
+
   editTask(index) {
     if (this.state.editingTaskIndex === index) {
       // 編集を保存する場合
+      if (this.state.editTask.title === '') {
+        alert('作業内容が空の状態では保存できません。');
+        return;
+      }
+      if (this.props.isRegularTask) {
+        if (this.state.editTask.week.length === 0) {
+          alert('第何週が空の状態では保存できません。');
+          return;
+        } else if (this.state.editTask.dayOfWeek.length === 0) {
+          alert('何曜日が空の状態では保存できません。');
+          return;
+        }
+      }
       this.props.editTask(cloneDeep(this.state.editTask), index);
       this.setState({ editingTaskIndex: -1, editTask: cloneDeep(taskSchema) });
     } else {
@@ -112,8 +142,19 @@ class TaskList extends Component {
   }
 
   addTask() {
-    // 作業内容が空の場合は登録させない
-    if (this.state.addTask.title === '') return;
+    if (this.state.addTask.title === '') {
+      alert('作業内容が空の状態では保存できません。');
+      return;
+    }
+    if (this.props.isRegularTask) {
+      if (this.state.addTask.week.length === 0) {
+        alert('第何週が空の状態では保存できません。');
+        return;
+      } else if (this.state.addTask.dayOfWeek.length === 0) {
+        alert('何曜日が空の状態では保存できません。');
+        return;
+      }
+    }
     this.props.addTask(cloneDeep(this.state.addTask));
     this.setState({ addTask: cloneDeep(taskSchema) });
     const $root = this.root;
@@ -121,7 +162,7 @@ class TaskList extends Component {
   }
 
   render() {
-    const { tasks, classes } = this.props;
+    const { tasks, isRegularTask, classes } = this.props;
     return (
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
@@ -130,6 +171,8 @@ class TaskList extends Component {
               <TableCell padding="none" className={classes.cell}>作業内容</TableCell>
               <TableCell padding="none" className={classes.cell}>備考</TableCell>
               <TableCell padding="none" className={classes.cell}>見積</TableCell>
+              {(() => (isRegularTask ? <TableCell padding="none" className={classes.cell}>第何週</TableCell> : null))()}
+              {(() => (isRegularTask ? <TableCell padding="none" className={classes.cell}>何曜日</TableCell> : null))()}
               <TableCell padding="none" className={classes.cell}>アクション</TableCell>
             </TableRow>
           </TableHead>
@@ -167,6 +210,38 @@ class TaskList extends Component {
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
                 </TableCell>
+                {(() => {
+                  if (isRegularTask) {
+                    return (
+                      <TableCell padding="none" className={classes.cell}>
+                        <MultipleSelect
+                          label={'第何週'}
+                          value={this.state.editingTaskIndex !== index ? n.week : this.state.editTask.week}
+                          options={[1, 2, 3, 4, 5]}
+                          onChange={this.changeWeek.bind(this, 'editTask')}
+                          disabled={this.state.editingTaskIndex !== index}
+                        />
+                      </TableCell>
+                    );
+                  }
+                  return null;
+                })()}
+                {(() => {
+                  if (isRegularTask) {
+                    return (
+                      <TableCell padding="none" className={classes.cell}>
+                        <MultipleSelect
+                          label={'何曜日'}
+                          value={this.state.editingTaskIndex !== index ? n.dayOfWeek : this.state.editTask.dayOfWeek}
+                          options={constants.DAY_OF_WEEK_STR}
+                          onChange={this.changeDayOfWeek.bind(this, 'editTask')}
+                          disabled={this.state.editingTaskIndex !== index}
+                        />
+                      </TableCell>
+                    );
+                  }
+                  return null;
+                })()}
                 <TableCell padding="none" className={classes.cell}>
                   <div className={classes.actionIcons}>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
@@ -231,6 +306,38 @@ class TaskList extends Component {
                   placeholder="見積"
                 />
               </TableCell>
+              {(() => {
+                if (isRegularTask) {
+                  return (
+                    <TableCell padding="none" className={classes.cell}>
+                      <MultipleSelect
+                        label={'第何週'}
+                        value={this.state.addTask.week}
+                        options={[1, 2, 3, 4, 5]}
+                        onChange={this.changeWeek.bind(this, 'addTask')}
+                        disabled={false}
+                      />
+                    </TableCell>
+                  );
+                }
+                return null;
+              })()}
+              {(() => {
+                if (isRegularTask) {
+                  return (
+                    <TableCell padding="none" className={classes.cell}>
+                      <MultipleSelect
+                        label={'何曜日'}
+                        value={this.state.addTask.dayOfWeek}
+                        options={constants.DAY_OF_WEEK_STR}
+                        onChange={this.changeDayOfWeek.bind(this, 'addTask')}
+                        disabled={false}
+                      />
+                    </TableCell>
+                  );
+                }
+                return null;
+              })()}
               <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.cell}>
                 <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)}>
                   <i className="fa fa-plus" />
@@ -252,6 +359,7 @@ TaskList.propTypes = {
   removeTask: PropTypes.func.isRequired,
   downTask: PropTypes.func.isRequired,
   upTask: PropTypes.func.isRequired,
+  isRegularTask: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

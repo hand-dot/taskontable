@@ -49,7 +49,6 @@ const initialState = {
     highPriorityTasks: [],
     lowPriorityTasks: [],
     regularTasks: [],
-    dailyTasks: [],
   },
 };
 
@@ -175,10 +174,14 @@ class App extends Component {
 
   setStateFromRenderHot() {
     const hotTasks = getHotTasksIgnoreEmptyTask(hot);
-    if (util.isSameObj(hotTasks, []) && util.isSameObj(this.state.tableTasks, []) && util.isSameObj(hotTasks, this.state.tableTasks)) {
+    if (!util.isSameObj(hotTasks, []) && !util.isSameObj(this.state.tableTasks, []) && !util.isSameObj(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: true,
         tableTasks: hotTasks,
+      });
+    } else if (util.isSameObj(hotTasks, this.state.tableTasks)) {
+      this.setState({
+        saveable: false,
       });
     }
     setTimeout(() => this.forceUpdate());
@@ -376,8 +379,17 @@ class App extends Component {
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
         statePoolTasks.highPriorityTasks = poolTasks.highPriorityTasks ? poolTasks.highPriorityTasks : [];
         statePoolTasks.lowPriorityTasks = poolTasks.lowPriorityTasks ? poolTasks.lowPriorityTasks : [];
-        statePoolTasks.regularTasks = poolTasks.regularTasks ? poolTasks.regularTasks : [];
-        statePoolTasks.dailyTasks = poolTasks.dailyTasks ? poolTasks.dailyTasks : [];
+        if (poolTasks.regularTasks) {
+          statePoolTasks.regularTasks = poolTasks.regularTasks;
+          statePoolTasks.regularTasks = statePoolTasks.regularTasks.map((task, index) => {
+            const copyTask = Object.assign({}, task);
+            copyTask.dayOfWeek = poolTasks.regularTasks[index].dayOfWeek ? poolTasks.regularTasks[index].dayOfWeek : [];
+            copyTask.week = poolTasks.regularTasks[index].week ? poolTasks.regularTasks[index].week : [];
+            return copyTask;
+          });
+        } else {
+          statePoolTasks.regularTasks = [];
+        }
         this.setState({
           poolTasks: statePoolTasks,
         });
@@ -393,9 +405,9 @@ class App extends Component {
           loading: true,
         }));
         if (snapshot.exists()) {
-          if ((this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) && !util.isSameObj(getHotTasksIgnoreEmptyTask(hot), snapshot.val()[this.state.date])) {
-            // デイリーのタスクが空 or サーバーにタスクが存在した場合 かつ、
-            // サーバーから配信されたデータが自分のデータと違う場合サーバーのデータでテーブルを初期化する
+          if (snapshot.exists() && !util.isSameObj(getHotTasksIgnoreEmptyTask(hot), snapshot.val()[this.state.date])) {
+            // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、
+            // サーバーのデータでテーブルを初期化する
             setDataForHot(hot, snapshot.val()[this.state.date]);
           }
         }
@@ -407,13 +419,9 @@ class App extends Component {
   }
 
   fetchTableTask() {
-    this.setState(() => ({
-      loading: true,
-    }));
+    this.setState(() => ({ loading: true }));
     return firebase.database().ref(`/${this.state.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
-      this.setState(() => ({
-        loading: false,
-      }));
+      this.setState(() => ({ loading: false }));
       return snapshot;
     });
   }
@@ -422,12 +430,18 @@ class App extends Component {
     this.fetchTableTask().then((snapshot) => {
       if (hot) {
         hot.updateSettings({ data: getEmptyHotData() });
-        if (this.state.poolTasks.dailyTasks.length === 0 || snapshot.exists()) {
-          // デイリーのタスクが空 or サーバーにタスクが存在した場合サーバーのデータでテーブルを初期化する
+        if (snapshot.exists()) {
+          // サーバーにタスクが存在した場合サーバーのデータでテーブルを初期化する
           setDataForHot(hot, snapshot.val());
-        } else {
-          // デイリーのタスクが設定されており、サーバーにデータが存在しない場合
-          setDataForHot(hot, this.state.poolTasks.dailyTasks);
+        } else if (this.state.poolTasks.regularTasks.length !== 0 && !snapshot.exists()) {
+          // 定期タスクをテーブルに設定する処理。
+          const dayAndCount = util.getDayAndCount(new Date(this.state.date));
+          // 定期のタスクが設定されており、サーバーにデータが存在しない場合(日付をハードコードしているため、util.getDayOfWeekStr(dayAndCount.day)) で変換の処理を行っている)
+          // TODO 日付のハードコードについて考えるべき。日曜日を0,月曜日を1...で保存するべきなのか？constantsで曜日は定義してあるので実際は英語にも対応することはできる？
+          // DBに['日','月']などという値で保存されてしまうのが気持ち悪い。 これを対応する場合、MultipleSelectコンポーネントでの修正がメインになるはず。
+          // MultipleSelectではセレクト要素の選択肢を表示ラベルと値を持つようにする。
+          const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
+          setDataForHot(hot, regularTasks);
         }
       }
     });
@@ -441,6 +455,8 @@ class App extends Component {
       this.attachPoolTasks();
       // テーブルをサーバーと同期開始
       this.attachTableTasks();
+      // テーブルを初期化
+      this.initTableTask();
     });
   }
 

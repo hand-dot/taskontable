@@ -1,4 +1,5 @@
 import moment from 'moment';
+import constants from './constants';
 
 export default {
   getCrrentTimeObj() {
@@ -11,5 +12,14 @@ export default {
   },
   isSameObj(a, b) {
     return JSON.stringify(a) === JSON.stringify(b);
+  },
+  getDayOfWeekStr(dayOfWeek) {
+    return constants.DAY_OF_WEEK_STR[dayOfWeek];
+  },
+  getDayOfWeek(dayOfWeekStr) {
+    return constants.DAY_OF_WEEK_STR.findIndex(str => str === dayOfWeekStr);
+  },
+  getDayAndCount(date) {
+    return { day: date.getDay(), count: Math.floor((date.getDate() - 1) / 7) + 1 };
   },
 };

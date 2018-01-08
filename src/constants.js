@@ -26,7 +26,6 @@ export default {
     HIGHPRIORITY: 'highPriorityTasks',
     LOWPRIORITY: 'lowPriorityTasks',
     REGULAR: 'regularTasks',
-    DAILY: 'dailyTasks',
   },
   taskPoolActionType: {
     ADD: 'add',
@@ -38,4 +37,5 @@ export default {
   },
   DATEFMT: 'YYYY-MM-DD',
   INITIALDATE: '1970-01-01',
+  DAY_OF_WEEK_STR: ['日', '月', '火', '水', '木', '金', '土'],
 };

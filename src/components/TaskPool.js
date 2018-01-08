@@ -77,8 +77,7 @@ class TaskPool extends Component {
                 >
                   <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
                   <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
-                  <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="たまにやる" />
-                  <Tab value={constants.taskPoolType.DAILY} fullWidth style={{ maxWidth: 'none' }} label="毎日やる" />
+                  <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="定期的" />
                 </Tabs>
               </AppBar>
               {(() => {
@@ -89,8 +88,6 @@ class TaskPool extends Component {
                   tasks = poolTasks.lowPriorityTasks;
                 } else if (this.state.tab === constants.taskPoolType.REGULAR) {
                   tasks = poolTasks.regularTasks;
-                } else if (this.state.tab === constants.taskPoolType.DAILY) {
-                  tasks = poolTasks.dailyTasks;
                 }
                 return (<TaskList
                   addTask={this.addTask.bind(this)}
@@ -100,6 +97,7 @@ class TaskPool extends Component {
                   downTask={this.downTask.bind(this)}
                   upTask={this.upTask.bind(this)}
                   tasks={tasks}
+                  isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
                 />);
               })()}
             </Paper>
@@ -117,7 +115,6 @@ TaskPool.propTypes = {
     highPriorityTasks: PropTypes.array.isRequired,
     lowPriorityTasks: PropTypes.array.isRequired,
     regularTasks: PropTypes.array.isRequired,
-    dailyTasks: PropTypes.array.isRequired,
   }).isRequired,
   changePoolTasks: PropTypes.func.isRequired,
 };
