@@ -349,7 +349,19 @@ class App extends Component {
   }
 
   savePoolTasks(poolTasks) {
-    firebase.database().ref(`/${this.state.user.uid}/poolTasks`).set(poolTasks);
+    const tasks = Object.assign({}, poolTasks);
+    if (tasks.regularTasks) {
+      // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
+      // https://github.com/hand-dot/taskontable/issues/118
+      tasks.regularTasks = tasks.regularTasks.map((task) => {
+        const copyTask = Object.assign({}, task);
+        if (copyTask.dayOfWeek) {
+          copyTask.dayOfWeek = copyTask.dayOfWeek.map(day => util.getDayOfWeek(day));
+        }
+        return copyTask;
+      });
+    }
+    firebase.database().ref(`/${this.state.user.uid}/poolTasks`).set(tasks);
   }
 
   saveHot() {
@@ -383,7 +395,14 @@ class App extends Component {
           statePoolTasks.regularTasks = poolTasks.regularTasks;
           statePoolTasks.regularTasks = statePoolTasks.regularTasks.map((task, index) => {
             const copyTask = Object.assign({}, task);
-            copyTask.dayOfWeek = poolTasks.regularTasks[index].dayOfWeek ? poolTasks.regularTasks[index].dayOfWeek : [];
+            // regularTasksで保存する値のdayOfWeekが[0, 1...]になっているので、
+            // MultipleSelectコンポーネントで扱えるように,['日','月'...]へ変換
+            // https://github.com/hand-dot/taskontable/issues/118
+            if (poolTasks.regularTasks[index].dayOfWeek) {
+              copyTask.dayOfWeek = poolTasks.regularTasks[index].dayOfWeek.map(d => util.getDayOfWeekStr(d));
+            } else {
+              copyTask.dayOfWeek = [];
+            }
             copyTask.week = poolTasks.regularTasks[index].week ? poolTasks.regularTasks[index].week : [];
             return copyTask;
           });
@@ -436,10 +455,10 @@ class App extends Component {
         } else if (this.state.poolTasks.regularTasks.length !== 0 && !snapshot.exists()) {
           // 定期タスクをテーブルに設定する処理。
           const dayAndCount = util.getDayAndCount(new Date(this.state.date));
-          // 定期のタスクが設定されており、サーバーにデータが存在しない場合(日付をハードコードしているため、util.getDayOfWeekStr(dayAndCount.day)) で変換の処理を行っている)
-          // TODO 日付のハードコードについて考えるべき。日曜日を0,月曜日を1...で保存するべきなのか？constantsで曜日は定義してあるので実際は英語にも対応することはできる？
-          // DBに['日','月']などという値で保存されてしまうのが気持ち悪い。 これを対応する場合、MultipleSelectコンポーネントでの修正がメインになるはず。
-          // MultipleSelectではセレクト要素の選択肢を表示ラベルと値を持つようにする。
+          // 定期のタスクが設定されており、サーバーにデータが存在しない場合
+          // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
+          // util.getDayOfWeekStr(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
+          // https://github.com/hand-dot/taskontable/issues/118
           const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
           setDataForHot(hot, regularTasks);
         }
