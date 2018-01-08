@@ -109,17 +109,17 @@ class App extends Component {
       contextMenu: {
         callback(key, selection) {
           if (key === 'set_current_time') {
-            for (let row = selection.start.row; row <= selection.end.row; row++) {
+            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
               this.setDataAtCell(row, selection.start.col, moment().format('HH:mm'));
             }
           } else if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
             const taskPoolType = key === 'reverse_taskpool_hight' ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
-            for (let row = selection.start.row; row <= selection.end.row; row++) {
+            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
               // テーブルタスクからタスクプールに移すタイミングでテーブルが1行減るので常に選択開始行を処理する
               self.moveTableTaskToPoolTask(taskPoolType, selection.start.row, hot);
             }
           } else if (key === 'done_task') {
-            for (let row = selection.start.row; row <= selection.end.row; row++) {
+            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
               this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
               this.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
             }
