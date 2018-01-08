@@ -1,7 +1,7 @@
 import moment from 'moment';
 import cloneDeep from 'lodash.clonedeep';
 import debounce from 'lodash.debounce';
-import task from './task';
+import taskSchema from './taskSchema';
 import constants from './constants';
 import util from './util';
 import logo from './images/logo.png';
@@ -282,7 +282,7 @@ export const bindShortcut = (hot) => {
   }, constants.KEYEVENT_DELAY));
 };
 
-export const getEmptyHotData = () => [cloneDeep(task)];
+export const getEmptyHotData = () => [cloneDeep(taskSchema)];
 
 export const getEmptyRow = () => getEmptyHotData()[0];
 
@@ -316,7 +316,7 @@ export const hotConf = {
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
   data: getEmptyHotData(),
-  dataSchema: task,
+  dataSchema: taskSchema,
   afterValidate(isValid, value, row, prop) {
     setValidtionMessage(this, row, prop, isValid);
   },

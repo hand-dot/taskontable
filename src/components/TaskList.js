@@ -9,7 +9,7 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 
 import MultipleSelect from './MultipleSelect';
 
-import taskSchema from '../task';
+import taskSchema from '../taskSchema';
 import constants from '../constants';
 
 const styles = {
@@ -36,13 +36,19 @@ const styles = {
   },
 };
 
+
+function getTaskSchema() {
+  // regularTasksで使用する曜日と、周期をtaskSchemaに追加する
+  return Object.assign({ dayOfWeek: [], week: [] }, taskSchema);
+}
+
 class TaskList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       anchorEl: [],
-      addTask: cloneDeep(taskSchema),
-      editTask: cloneDeep(taskSchema),
+      addTask: getTaskSchema(),
+      editTask: getTaskSchema(),
       editingTaskIndex: -1,
     };
   }
@@ -111,7 +117,7 @@ class TaskList extends Component {
         }
       }
       this.props.editTask(cloneDeep(this.state.editTask), index);
-      this.setState({ editingTaskIndex: -1, editTask: cloneDeep(taskSchema) });
+      this.setState({ editingTaskIndex: -1, editTask: getTaskSchema() });
     } else {
       // 編集スタート
       this.setState({ editTask: cloneDeep(this.props.tasks[index]) });
@@ -156,7 +162,7 @@ class TaskList extends Component {
       }
     }
     this.props.addTask(cloneDeep(this.state.addTask));
-    this.setState({ addTask: cloneDeep(taskSchema) });
+    this.setState({ addTask: getTaskSchema() });
     const $root = this.root;
     setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
   }

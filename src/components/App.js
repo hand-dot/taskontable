@@ -174,7 +174,7 @@ class App extends Component {
 
   setStateFromRenderHot() {
     const hotTasks = getHotTasksIgnoreEmptyTask(hot);
-    if (!util.isSameObj(hotTasks, []) && !util.isSameObj(this.state.tableTasks, []) && !util.isSameObj(hotTasks, this.state.tableTasks)) {
+    if (!util.isSameObj(this.state.tableTasks, []) && !util.isSameObj(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: true,
         tableTasks: hotTasks,
@@ -449,10 +449,10 @@ class App extends Component {
     this.fetchTableTask().then((snapshot) => {
       if (hot) {
         hot.updateSettings({ data: getEmptyHotData() });
-        if (snapshot.exists()) {
-          // サーバーにタスクが存在した場合サーバーのデータでテーブルを初期化する
+        if (snapshot.exists() && !util.isSameObj(snapshot.val(), getEmptyHotData())) {
+          // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
           setDataForHot(hot, snapshot.val());
-        } else if (this.state.poolTasks.regularTasks.length !== 0 && !snapshot.exists()) {
+        } else if (this.state.poolTasks.regularTasks.length !== 0) {
           // 定期タスクをテーブルに設定する処理。
           const dayAndCount = util.getDayAndCount(new Date(this.state.date));
           // 定期のタスクが設定されており、サーバーにデータが存在しない場合
