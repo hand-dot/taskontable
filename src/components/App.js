@@ -175,8 +175,7 @@ class App extends Component {
 
   setStateFromRenderHot() {
     const hotTasks = getHotTasksIgnoreEmptyTask(hot);
-    const tableTasksStr = JSON.stringify(this.state.tableTasks);
-    if (JSON.stringify(hotTasks) !== '[]' && tableTasksStr !== '[]' && tableTasksStr !== JSON.stringify(hotTasks)) {
+    if (util.isSameObj(hotTasks, []) && util.isSameObj(this.state.tableTasks, []) && util.isSameObj(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: true,
         tableTasks: hotTasks,
@@ -300,7 +299,7 @@ class App extends Component {
   movePoolTaskToTableTask(taskPoolType, index) {
     if (!hot) return;
     const hotData = hot.getSourceData();
-    let insertPosition = hotData.lastIndexOf(data => JSON.stringify(getEmptyRow()) === JSON.stringify(data));
+    let insertPosition = hotData.lastIndexOf(data => util.isSameObj(getEmptyRow(), data));
     if (insertPosition === -1) {
       insertPosition = getHotTasksIgnoreEmptyTask(hot).length;
     }

@@ -3,6 +3,7 @@ import cloneDeep from 'lodash.clonedeep';
 import debounce from 'lodash.debounce';
 import task from './task';
 import constants from './constants';
+import util from './util';
 import logo from './images/logo.png';
 
 
@@ -288,7 +289,7 @@ export const getEmptyRow = () => getEmptyHotData()[0];
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   if (hotInstance) {
     const hotData = hotInstance.getSourceData();
-    return cloneDeep(hotData.filter(data => JSON.stringify(getEmptyRow()) !== JSON.stringify(data)));
+    return cloneDeep(hotData.filter(data => !util.isSameObj(getEmptyRow(), data)));
   }
   return getEmptyHotData();
 };
@@ -296,7 +297,7 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
   cloneDeep(datas).forEach((data, rowIndex) => {
-    if (JSON.stringify(getEmptyRow()) !== JSON.stringify(data)) {
+    if (!util.isSameObj(getEmptyRow(), data)) {
       Object.keys(data).forEach((key) => {
         hotInstance.setDataAtRowProp(rowIndex, key, data[key]);
       });
