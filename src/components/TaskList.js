@@ -16,7 +16,7 @@ const styles = {
   root: {
     padding: 0,
     minHeight: 210,
-    maxHeight: 210,
+    maxHeight: 420,
     overflowY: 'scroll',
   },
   actionIcon: {
