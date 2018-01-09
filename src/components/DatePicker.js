@@ -7,7 +7,7 @@ function DatePicker(props) {
   return (
     <form
       noValidate
-      style={{ marginBottom: 30, marginTop: 15, display: 'inline' }}
+      style={{ display: 'inline' }}
     >
       <TextField
         id="date"

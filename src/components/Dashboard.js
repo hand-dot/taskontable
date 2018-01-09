@@ -130,7 +130,7 @@ class Dashboard extends Component {
         <ExpansionPanelDetails>
           <Grid item xs={12} sm={6}>
             <Typography gutterBottom type="subheading">
-                 本日のサマリ
+                 サマリ
             </Typography>
             <TodaySummary
               data={{
