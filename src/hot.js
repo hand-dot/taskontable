@@ -288,8 +288,8 @@ export const getEmptyRow = () => getEmptyHotData()[0];
 
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   if (hotInstance) {
-    const hotData = hotInstance.getSourceData();
-    return cloneDeep(hotData.filter(data => !util.isSameObj(getEmptyRow(), data)));
+    const hotData = hotInstance.getSourceData().map((data, index) => hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
+    return hotData.filter(data => !util.isSameObj(getEmptyRow(), data));
   }
   return getEmptyHotData();
 };

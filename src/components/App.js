@@ -174,7 +174,7 @@ class App extends Component {
 
   setStateFromRenderHot() {
     const hotTasks = getHotTasksIgnoreEmptyTask(hot);
-    if (!util.isSameObj(this.state.tableTasks, []) && !util.isSameObj(hotTasks, this.state.tableTasks)) {
+    if (!util.isSameObj(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: true,
         tableTasks: hotTasks,
