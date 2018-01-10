@@ -1,4 +1,5 @@
 import moment from 'moment';
+import isEqual from 'lodash.isequal';
 import constants from './constants';
 
 export default {
@@ -11,7 +12,7 @@ export default {
     };
   },
   isSameObj(a, b) {
-    return JSON.stringify(a) === JSON.stringify(b);
+    return isEqual(a, b);
   },
   getDayOfWeekStr(dayOfWeek) {
     return constants.DAY_OF_WEEK_STR[dayOfWeek];
