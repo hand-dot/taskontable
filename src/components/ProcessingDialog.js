@@ -20,12 +20,17 @@ class ProcessingDialog extends Component {
       thresholdCount: 0,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.open) {
       this.setState({ thresholdCount: this.state.thresholdCount + 1 });
     } else {
       this.setState({ thresholdCount: 0 });
     }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.state.open !== nextProps.open;
   }
 
   render() {
