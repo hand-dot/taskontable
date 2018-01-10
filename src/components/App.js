@@ -542,8 +542,6 @@ class App extends Component {
                 poolTasks={this.state.poolTasks}
                 changePoolTasks={this.changePoolTasks.bind(this)}
               />
-            </Grid>
-            <Grid item xs={12}>
               <Paper elevation={1}>
                 <div style={{ padding: '24px 24px 0' }}>
                   <i className="fa fa-table fa-lg" />
@@ -576,9 +574,7 @@ class App extends Component {
             </Grid>
           </Hidden>
         </Grid>
-        <ProcessingDialog
-          open={this.state.isOpenProcessingDialog}
-        />
+        <ProcessingDialog open={this.state.isOpenProcessingDialog} />
       </div>
     );
   }
