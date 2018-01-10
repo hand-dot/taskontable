@@ -119,7 +119,10 @@ class App extends Component {
             }
           } else if (key === 'done_task') {
             for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
+              if (this.getDataAtRowProp(row, 'startTime') === '') {
+                // 開始時刻が空だった場合は現在時刻を設定する
+                this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
+              }
               this.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
             }
           }
