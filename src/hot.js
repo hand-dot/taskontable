@@ -306,6 +306,8 @@ export const setDataForHot = (hotInstance, datas) => {
 };
 
 export const hotConf = {
+  autoRowSize: false,
+  autoColumnSize: false,
   stretchH: 'all',
   comments: true,
   rowHeaders: true,
