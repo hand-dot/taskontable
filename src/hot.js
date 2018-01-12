@@ -62,10 +62,13 @@ const columns = [
       }
       if (value !== '' && !td.parentNode.classList.contains('done')) {
         td.parentNode.classList.add('progress');
+      } else if (value === '' && instance.getCellMeta(row, instance.propToCol('endTime'))) {
+        instance.removeCellMeta(row, instance.propToCol('endTime'), 'temporaryTime');
       }
       const notification = cellProperties.notification;
       if (notification) {
         td.innerHTML = `<div title="${notification.time}通知予約済">${value} <i class="fa fa-bell-o"></i></div>`; // eslint-disable-line no-param-reassign
+        instance.setCellMeta(row, instance.propToCol('endTime'), 'temporaryTime', notification.time);
       }
       return td;
     },
@@ -77,6 +80,19 @@ const columns = [
     colWidths: 35,
     timeFormat: 'HH:mm',
     correctFormat: true,
+    renderer(instance, td, row, col, prop, value, cellProperties) {
+      td.innerHTML = value;
+      const valid = cellProperties.valid;
+      if (valid === false) {
+        td.classList.add('htInvalid');
+        return td;
+      }
+      const temporaryTime = cellProperties.temporaryTime;
+      if (temporaryTime && value === '') {
+        td.innerHTML = `<div style="color:#555">${temporaryTime}(予定)</div>`; // eslint-disable-line no-param-reassign
+      }
+      return td;
+    },
   },
   {
     title: '<span title="終了時刻を記入後、自動入力されます。 (編集不可)">実績(分)</span>',
