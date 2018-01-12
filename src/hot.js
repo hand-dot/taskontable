@@ -296,13 +296,15 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
+  const dataForHot = [];
   cloneDeep(datas).forEach((data, rowIndex) => {
     if (!util.isSameObj(getEmptyRow(), data)) {
       Object.keys(data).forEach((key) => {
-        hotInstance.setDataAtRowProp(rowIndex, key, data[key]);
+        dataForHot.push([rowIndex, key, data[key]]);
       });
     }
   });
+  hotInstance.setDataAtRowProp(dataForHot);
 };
 
 export const hotConf = {

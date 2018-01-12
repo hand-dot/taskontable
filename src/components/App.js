@@ -310,9 +310,12 @@ class App extends Component {
       insertPosition = getHotTasksIgnoreEmptyTask(hot).length;
     }
     const target = Object.assign({}, this.state.poolTasks[taskPoolType][index]);
+    const dataForHot = [];
     Object.keys(target).forEach((key) => {
-      hot.setDataAtRowProp(insertPosition, key, target[key]);
+      dataForHot.push([insertPosition, key, target[key]]);
     });
+    hot.setDataAtRowProp(dataForHot);
+
     if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
        taskPoolType === constants.taskPoolType.LOWPRIORITY) {
       this.removePoolTask(taskPoolType, index);
