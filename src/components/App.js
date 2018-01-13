@@ -85,6 +85,7 @@ class App extends Component {
   }
 
   componentWillMount() {
+    this.login();
     // 初期値の最終保存時刻
     this.setState({
       lastSaveTime: util.getCrrentTimeObj(),
@@ -472,24 +473,40 @@ class App extends Component {
     });
   }
 
-  loginCallback(user) {
-    this.setState({ user: { displayName: user.displayName, photoURL: user.photoURL, uid: user.uid } });
-    // userが更新されたあとに処理する
-    setTimeout(() => {
-      // タスクプールをサーバーと同期開始
-      this.attachPoolTasks();
-      // テーブルをサーバーと同期開始
-      this.attachTableTasks();
-      // テーブルを初期化
-      this.initTableTask();
+  login() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const currentUser = firebase.auth().currentUser;
+        this.setState({ user: { displayName: currentUser.displayName, photoURL: currentUser.photoURL, uid: currentUser.uid } });
+        // userが更新されたあとに処理する
+        setTimeout(() => {
+          // タスクプールをサーバーと同期開始
+          this.attachPoolTasks();
+          // テーブルをサーバーと同期開始
+          this.attachTableTasks();
+          // テーブルを初期化
+          this.initTableTask();
+        });
+      } else {
+        firebase.auth().signInWithRedirect(provider);
+      }
     });
   }
 
-  logoutCallback() {
-    // stateの初期化
-    this.setAInitialState();
-    // テーブルのクリア
-    setTimeout(() => { if (hot) hot.updateSettings({ data: getEmptyHotData() }); });
+  logout() {
+    firebase.auth().signOut().then(() => {
+      this.closeMenu();
+      // stateの初期化
+      this.setAInitialState();
+      // テーブルのクリア
+      setTimeout(() => { if (hot) hot.updateSettings({ data: getEmptyHotData() }); });
+    }).catch((error) => {
+      // FIXME エラーをどこかのサービスに送信したい
+      // https://sentry.io/
+      console.error(error);
+      window.location.reload();
+    });
   }
 
   changeDate(event) {
@@ -521,8 +538,7 @@ class App extends Component {
           isOpenHelpDialog={this.state.isOpenHelpDialog}
           openHelpDialog={this.openHelpDialog.bind(this)}
           closeHelpDialog={this.closeHelpDialog.bind(this)}
-          loginCallback={this.loginCallback.bind(this)}
-          logoutCallback={this.logoutCallback.bind(this)}
+          logout={this.logout.bind(this)}
         />
         <Grid container alignItems="stretch" justify="center" className={classes.root}>
           <Hidden xsDown>

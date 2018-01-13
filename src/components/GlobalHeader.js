@@ -1,4 +1,3 @@
-import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
@@ -53,7 +52,6 @@ class GlobalHeader extends Component {
   }
 
   componentWillMount() {
-    this.login();
   }
 
   componentDidMount() {
@@ -83,31 +81,8 @@ class GlobalHeader extends Component {
     this.setState({ isOpenDescriptionDialog: false });
   }
 
-  login() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.props.loginCallback(firebase.auth().currentUser);
-      } else {
-        firebase.auth().signInWithRedirect(provider);
-      }
-    });
-  }
-
-  logout() {
-    firebase.auth().signOut().then(() => {
-      this.closeMenu();
-      this.props.logoutCallback();
-    }).catch((error) => {
-      // FIXME エラーをどこかのサービスに送信したい
-      // https://sentry.io/
-      console.error(error);
-      window.location.reload();
-    });
-  }
-
   render() {
-    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes } = this.props;
+    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, logout, classes } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -134,7 +109,7 @@ class GlobalHeader extends Component {
                   onRequestClose={this.closeMenu.bind(this)}
                 >
                   <MenuItem>アカウント名: {user.displayName}</MenuItem>
-                  <MenuItem onClick={this.logout.bind(this)}>
+                  <MenuItem onClick={logout}>
                     <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
                   </MenuItem>
                 </Menu>
@@ -195,8 +170,7 @@ GlobalHeader.propTypes = {
   isOpenHelpDialog: PropTypes.bool.isRequired,
   openHelpDialog: PropTypes.func.isRequired,
   closeHelpDialog: PropTypes.func.isRequired,
-  loginCallback: PropTypes.func.isRequired,
-  logoutCallback: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
