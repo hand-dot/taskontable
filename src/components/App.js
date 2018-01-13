@@ -546,7 +546,7 @@ class App extends Component {
                 changePoolTasks={this.changePoolTasks.bind(this)}
               />
               <Paper elevation={1}>
-                <div style={{ padding: '24px 24px 0' }}>
+                <div style={{ padding: 24 }}>
                   <i className="fa fa-table fa-lg" />
                   <Typography style={{ display: 'inline', marginRight: 20 }}>
                     　テーブル
@@ -562,7 +562,7 @@ class App extends Component {
                     />
                   </Hidden>
                 </div>
-                <div style={{ paddingTop: 10 }}>
+                <div>
                   <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
                   <div id="hot" />
                 </div>
