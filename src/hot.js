@@ -89,7 +89,7 @@ const columns = [
       }
       const temporaryTime = cellProperties.temporaryTime;
       if (temporaryTime && value === '') {
-        td.innerHTML = `<div style="color:#555">${temporaryTime}(予定)</div>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<div style="color:#cfcfcf">${temporaryTime}(予定)</div>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
