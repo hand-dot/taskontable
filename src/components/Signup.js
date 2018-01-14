@@ -29,7 +29,7 @@ function Signup(props) {
   return (
     <Grid container spacing={0} alignItems="stretch" justify="center">
       <Grid item xs={12}>
-        <Paper style={{ paddingTop: 50 }} square elevation={0}>
+        <Paper style={{ padding: '50px 20px 0px' }} square elevation={0}>
           <div className={classes.content}>
             <Typography type="title">
               アカウントを新規作成
