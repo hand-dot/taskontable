@@ -34,6 +34,7 @@ import initialState from '../initialState';
 
 const styles = {
   root: {
+    paddingTop: '2.25em',
     margin: '0 auto',
     paddingBottom: 20,
     maxWidth: constants.APPWIDTH,
