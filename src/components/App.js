@@ -20,7 +20,7 @@ firebase.initializeApp(firebaseConf);
 
 const styles = {
   root: {
-    marginTop: 64,
+    height: '100%',
   },
   content: {
     overflow: 'hidden',
@@ -88,7 +88,7 @@ class App extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
+      <div className={classes.root}>
         <GlobalHeader
           user={this.state.user}
           isOpenHelpDialog={this.state.isOpenHelpDialog}
@@ -96,34 +96,32 @@ class App extends Component {
           closeHelpDialog={this.closeHelpDialog.bind(this)}
           logout={this.logout.bind(this)}
         />
-        <div className={classes.root}>
-          <Switch>
-            <Route
-              path="/signup"
-              render={props => <Signup login={this.login.bind(this)} {...props} />}
-            />
-            <Route
-              path="/login"
-              render={props => <Login login={this.login.bind(this)} {...props} />}
-            />
-            <Route
-              exact
-              path="/"
-              render={(props) => {
-                if (!util.isSameObj(this.state.user, initialState.getState().user)) {
-                // 認証が初期値から変更されたらアプリをスタート
-                  return (
-                    <Taskontable
-                      user={this.state.user}
-                      toggleHelpDialog={this.toggleHelpDialog.bind(this)}
-                      {...props}
-                    />);
-                }
-                return (<Top />);
-              }}
-            />
-          </Switch>
-        </div>
+        <Switch>
+          <Route
+            path="/signup"
+            render={props => <Signup login={this.login.bind(this)} {...props} />}
+          />
+          <Route
+            path="/login"
+            render={props => <Login login={this.login.bind(this)} {...props} />}
+          />
+          <Route
+            exact
+            path="/"
+            render={(props) => {
+              if (!util.isSameObj(this.state.user, initialState.getState().user)) {
+              // 認証が初期値から変更されたらアプリをスタート
+                return (
+                  <Taskontable
+                    user={this.state.user}
+                    toggleHelpDialog={this.toggleHelpDialog.bind(this)}
+                    {...props}
+                  />);
+              }
+              return (<Top />);
+            }}
+          />
+        </Switch>
         <Dialog open={this.state.loginProggres}>
           <CircularProgress className={classes.content} size={60} />
         </Dialog>

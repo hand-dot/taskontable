@@ -7,13 +7,16 @@ import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
-import constants from '../constants';
 import google from '../images/google.svg';
 
 const styles = {
+  root: {
+    paddingTop: '3em',
+    height: '100%',
+  },
   content: {
+    padding: '3em 2em',
     maxWidth: 600,
-    height: constants.APPHEIGHT - 128,
     margin: '0 auto',
     textAlign: 'center',
   },
@@ -27,9 +30,9 @@ const styles = {
 function Signup(props) {
   const { classes, login } = props;
   return (
-    <Grid container spacing={0} alignItems="stretch" justify="center">
+    <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
       <Grid item xs={12}>
-        <Paper style={{ padding: '50px 20px 0px' }} square elevation={0}>
+        <Paper style={{ minHeight: '100%' }} square elevation={0}>
           <div className={classes.content}>
             <Typography type="title">
               アカウントを新規作成

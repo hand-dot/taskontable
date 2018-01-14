@@ -15,6 +15,8 @@ const styles = theme => ({
   content: {
     paddingTop: '3em',
     paddingBottom: '3em',
+    paddingLeft: 10,
+    paddingRight: 10,
     maxWidth: 960,
     margin: '0 auto',
   },
@@ -48,7 +50,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <img style={{ marginBottom: '2em' }} src={title} alt="taskontable" height="40" />
+            <img style={{ margin: '3em' }} src={title} alt="taskontable" height="40" />
             <Typography color="secondary" type="headline" align="center" style={{ marginBottom: '2em' }}>
               毎日のワークフローを簡単に作成できるタスクマネージャー
             </Typography>
@@ -70,7 +72,7 @@ function Top(props) {
             <div style={{ marginBottom: '2em' }} className={classes.textBox}>
               TaskontableはExcelを扱うようにタスクを管理できるツールです。高速に入力でき、タスクの整理に使う時間をできる限り減らし、実行する時間を増やすことができます。
             </div>
-            <img className={classes.center} style={{ marginBottom: '2em' }} src={screencapture} alt="taskontable" height="700" />
+            <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src={screencapture} alt="taskontable" />
             <div style={{ marginBottom: '2em' }} className={classes.textBox}>
               どのデバイスでも最新状況をいつでも把握できるよう、保存したテーブルの内容はリアルタイムでアップデートします。複雑な設定は一切必要なく、すぐに使い始められます。
             </div>
@@ -80,12 +82,12 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper square elevation={0}>
           <div className={classes.content}>
-            <div className={classes.center}>
+            <div style={{ marginBottom: '1em' }} className={classes.center}>
               <a style={{ margin: '0 .4em' }} href={constants.CONTACTURL} target="_blank">お問い合わせ</a>
               <a style={{ margin: '0 .4em' }} href={constants.REPOSITORYURL} target="_blank">ソースコード</a>
             </div>
             <div className={classes.center}>
-             hand-dot © Copyright 2018. All rights reserved.
+              hand-dot © Copyright 2018. All rights reserved.
             </div>
           </div>
         </Paper>

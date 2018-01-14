@@ -28,7 +28,7 @@ const styles = theme => ({
   },
   button: {
     padding: 3,
-    fontSize: 12,
+    fontSize: 11,
     margin: theme.spacing.unit,
   },
   userPhoto: {
@@ -42,7 +42,6 @@ const styles = theme => ({
     margin: '0 auto',
   },
   title: {
-    marginLeft: 10,
     marginRight: 'auto',
   },
   link: {
