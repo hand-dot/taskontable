@@ -26,6 +26,8 @@ const styles = theme => ({
     backgroundColor: 'transparent',
   },
   button: {
+    padding: 3,
+    fontSize: 12,
     margin: theme.spacing.unit,
   },
   userPhoto: {

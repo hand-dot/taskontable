@@ -479,62 +479,60 @@ class Taskontable extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
-        <Grid container alignItems="stretch" justify="center" className={classes.root}>
-          <Hidden xsDown>
-            <Grid item sm={1}>
-              <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
-                <i className="fa fa-angle-left fa-lg" />
-              </Button>
-            </Grid>
-          </Hidden>
-          <Grid item xs={12} sm={10}>
-            <Grid item xs={12} className={classes.root}>
-              <Dashboard
-                isOpenDashboard={this.state.isOpenDashboard}
-                toggleDashboard={this.toggleDashboard.bind(this)}
-                tableTasks={this.state.tableTasks}
-              />
-              <TaskPool
-                isOpenTaskPool={this.state.isOpenTaskPool}
-                toggleTaskPool={this.toggleTaskPool.bind(this)}
-                poolTasks={this.state.poolTasks}
-                changePoolTasks={this.changePoolTasks.bind(this)}
-              />
-              <Paper elevation={1}>
-                <div style={{ padding: 24 }}>
-                  <i className="fa fa-table fa-lg" />
-                  <Typography style={{ display: 'inline', marginRight: 20 }}>
-                    　テーブル
-                  </Typography>
-                  <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
-                  <Hidden xsDown>
-                    <TableCtl
-                      saveable={this.state.saveable}
-                      lastSaveTime={this.state.lastSaveTime}
-                      saveHot={this.saveHot.bind(this)}
-                      notifiable={this.state.notifiable}
-                      toggleNotifiable={this.toggleNotifiable.bind(this)}
-                    />
-                  </Hidden>
-                </div>
-                <div>
-                  <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
-                  <div id="hot" />
-                </div>
-              </Paper>
-            </Grid>
+      <Grid container alignItems="stretch" justify="center" className={classes.root}>
+        <Hidden xsDown>
+          <Grid item sm={1}>
+            <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
+              <i className="fa fa-angle-left fa-lg" />
+            </Button>
           </Grid>
-          <Hidden xsDown>
-            <Grid item sm={1}>
-              <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="next" >
-                <i className="fa fa-angle-right fa-lg" />
-              </Button>
-            </Grid>
-          </Hidden>
+        </Hidden>
+        <Grid item xs={12} sm={10}>
+          <Grid item xs={12} className={classes.root}>
+            <Dashboard
+              isOpenDashboard={this.state.isOpenDashboard}
+              toggleDashboard={this.toggleDashboard.bind(this)}
+              tableTasks={this.state.tableTasks}
+            />
+            <TaskPool
+              isOpenTaskPool={this.state.isOpenTaskPool}
+              toggleTaskPool={this.toggleTaskPool.bind(this)}
+              poolTasks={this.state.poolTasks}
+              changePoolTasks={this.changePoolTasks.bind(this)}
+            />
+            <Paper elevation={1}>
+              <div style={{ padding: 24 }}>
+                <i className="fa fa-table fa-lg" />
+                <Typography style={{ display: 'inline', marginRight: 20 }}>
+                    　テーブル
+                </Typography>
+                <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
+                <Hidden xsDown>
+                  <TableCtl
+                    saveable={this.state.saveable}
+                    lastSaveTime={this.state.lastSaveTime}
+                    saveHot={this.saveHot.bind(this)}
+                    notifiable={this.state.notifiable}
+                    toggleNotifiable={this.toggleNotifiable.bind(this)}
+                  />
+                </Hidden>
+              </div>
+              <div>
+                <LinearProgress style={{ visibility: this.state.loading ? 'visible' : 'hidden' }} />
+                <div id="hot" />
+              </div>
+            </Paper>
+          </Grid>
         </Grid>
+        <Hidden xsDown>
+          <Grid item sm={1}>
+            <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="next" >
+              <i className="fa fa-angle-right fa-lg" />
+            </Button>
+          </Grid>
+        </Hidden>
         <ProcessingDialog open={this.state.isOpenProcessingDialog} />
-      </div>
+      </Grid>
     );
   }
 }

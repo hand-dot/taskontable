@@ -1,7 +1,10 @@
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import { Switch, Route, withRouter } from 'react-router-dom';
+import { CircularProgress } from 'material-ui/Progress';
+import Dialog from 'material-ui/Dialog';
 
 import GlobalHeader from './GlobalHeader';
 import Top from './Top';
@@ -15,15 +18,18 @@ import initialState from '../initialState';
 
 firebase.initializeApp(firebaseConf);
 
-function login() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithRedirect(provider);
-}
+const styles = {
+  content: {
+    overflow: 'hidden',
+    padding: 0,
+  },
+};
+
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = initialState.getState();
+    this.state = Object.assign(initialState.getState(), { loginProggres: true });
   }
 
   componentWillMount() {
@@ -33,7 +39,10 @@ class App extends Component {
         this.setState({ user: { displayName: currentUser.displayName, photoURL: currentUser.photoURL, uid: currentUser.uid } });
         setTimeout(() => {
           this.props.history.push('/');
+          this.setState({ loginProggres: false });
         });
+      } else {
+        this.setState({ loginProggres: false });
       }
     });
   }
@@ -54,6 +63,12 @@ class App extends Component {
     this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
   }
 
+  login() {
+    this.setState({ loginProggres: true });
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithRedirect(provider);
+  }
+
   logout() {
     this.props.history.push('/');
     firebase.auth().signOut().then(() => {
@@ -68,6 +83,7 @@ class App extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     return (
       <div>
         <GlobalHeader
@@ -78,10 +94,13 @@ class App extends Component {
           logout={this.logout.bind(this)}
         />
         <Switch>
-          <Route path="/signup" component={Signup} />
+          <Route
+            path="/signup"
+            render={props => <Signup login={this.login.bind(this)} {...props} />}
+          />
           <Route
             path="/login"
-            render={props => <Login login={login} {...props} />}
+            render={props => <Login login={this.login.bind(this)} {...props} />}
           />
           <Route
             exact
@@ -100,15 +119,19 @@ class App extends Component {
             }}
           />
         </Switch>
+        <Dialog open={this.state.loginProggres}>
+          <CircularProgress className={classes.content} size={60} />
+        </Dialog>
       </div>
     );
   }
 }
 
 App.propTypes = {
+  classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
 
 
-export default withRouter(App);
+export default withRouter(withStyles(styles)(App));
 

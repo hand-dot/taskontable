@@ -36,9 +36,7 @@ class ProcessingDialog extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Dialog
-        open={constants.PROCESSING_DIALOG_THRESHOLD < this.state.thresholdCount}
-      >
+      <Dialog open={constants.PROCESSING_DIALOG_THRESHOLD < this.state.thresholdCount}>
         <CircularProgress className={classes.content} size={60} />
       </Dialog>
     );
