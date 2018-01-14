@@ -43,7 +43,7 @@ class MultipleSelect extends Component {
             multiple
             value={value}
             onChange={onChange}
-            input={<Input id={this.state.id} />}
+            input={<Input id={this.state.id.toString()} />}
             MenuProps={{
               PaperProps: {
                 style: {

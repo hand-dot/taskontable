@@ -19,11 +19,12 @@ import constants from '../constants';
 import util from '../util';
 import initialState from '../initialState';
 
-import title from '../images/title_wh.png';
+import title from '../images/title_gr.png';
 
 const styles = theme => ({
   root: {
-    backgroundColor: 'transparent',
+    position: 'fixed',
+    top: 0,
   },
   button: {
     padding: 3,
@@ -35,7 +36,6 @@ const styles = theme => ({
     height: 25,
   },
   iconButton: {
-    color: '#fff',
   },
   toolbar: {
     maxWidth: constants.APPWIDTH,
@@ -110,7 +110,7 @@ class GlobalHeader extends Component {
     const { anchorEl } = this.state;
 
     return (
-      <AppBar position="static" className={classes.root}>
+      <AppBar color="default" position="static" className={classes.root}>
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
           <Hidden xsDown>
             <Grid item xs={1} />

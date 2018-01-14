@@ -13,7 +13,7 @@ import google from '../images/google.svg';
 const styles = {
   content: {
     maxWidth: 600,
-    height: constants.APPHEIGHT - 64,
+    height: constants.APPHEIGHT - 128,
     margin: '0 auto',
     textAlign: 'center',
   },
@@ -40,7 +40,10 @@ function Signup(props) {
             <Typography type="caption" gutterBottom>
               *現在グーグルログインしかご利用いただけません。
             </Typography>
-            <form style={{ marginTop: 30 }}>
+            <Typography type="caption" gutterBottom>
+              *現在Beta版のためデータがクリアさせる可能性があります。
+            </Typography>
+            <form style={{ marginTop: '2em' }}>
               <TextField
                 id="username"
                 label="ユーザー名"

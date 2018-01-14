@@ -55,16 +55,16 @@ function DescriptionDialog(props) {
             <Typography type="body2" gutterBottom>
               Taskontableは毎日のワークフローを簡単に作成できるタスクマネージャーです。<br />
               タスクを直列化し、一つ一つこなしていくことで生産性を向上させることができます。<br />
-              終了時刻を常に表示し・各タスクの終了予定時刻に通知をするので高い集中力を保つことができます。<br />
+              終了時刻を常に表示し、各タスクの終了予定時刻に通知をするので高い集中力を保つことができます。<br />
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography type="subheading" gutterBottom>
-              どこでも使える
+              今日の一日を計画する
             </Typography>
             <Typography type="body1" gutterBottom>
-                面倒なデータの同期は不要。<br />
-                ログインすればどこでもタスクを一元管理できます。
+              定期的に行うタスクを登録することで自動的にワークフローを作成することができます。<br />
+              今日の計画を白紙から始める必要はありません。
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -90,15 +90,34 @@ function DescriptionDialog(props) {
               把握する
             </Typography>
             <Typography type="body1" gutterBottom>
-                テーブルに入力したデータでリアルタイムに終了時刻を表示します。
+                テーブルに入力したデータでリアルタイムに本日の終了時刻を表示します。
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography type="subheading" gutterBottom>
-              アラームを追加する
+              予定を確実にこなす
             </Typography>
             <Typography type="body1" gutterBottom>
-                タスクの終了予定時刻に通知をします。
+                タスクの終了予定時刻に通知をします。<br />
+                期限を常に把握し作業することができます。
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography type="subheading" gutterBottom>
+              どこでも使える
+            </Typography>
+            <Typography type="body1" gutterBottom>
+                面倒なデータの同期は不要。<br />
+                ログインすればどこでもタスクを一元管理できます。
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography type="subheading" gutterBottom>
+              １日の活力を高めましょう
+            </Typography>
+            <Typography type="body1" gutterBottom>
+              あなたがもしタスクの整理に使う時間をできる限り減らし、<br />
+              実行する時間を増やしたいと考えているのであればTaskontableは毎日手放すことのできないタスクマネージャーです。
             </Typography>
           </Grid>
         </Grid>
