@@ -30,12 +30,12 @@ const styles = {
 };
 
 function HelpDialog(props) {
-  const { open, onRequestClose, classes } = props;
+  const { open, onClose, classes } = props;
   return (
     <Dialog
       fullWidth
       open={open}
-      onRequestClose={onRequestClose}
+      onClose={onClose}
     >
       <AppBar color="default" className={classes.appBar}>
         <Toolbar>
@@ -43,7 +43,7 @@ function HelpDialog(props) {
             <i className="fa fa-question-circle-o" aria-hidden="true" />
             　ヘルプ
           </Typography>
-          <IconButton className={classes.closeBtn} onClick={onRequestClose}>
+          <IconButton className={classes.closeBtn} onClick={onClose}>
             <i className="fa fa-times" aria-hidden="true" />
           </IconButton>
         </Toolbar>
@@ -118,7 +118,7 @@ function HelpDialog(props) {
 
 HelpDialog.propTypes = {
   open: PropTypes.bool.isRequired,
-  onRequestClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

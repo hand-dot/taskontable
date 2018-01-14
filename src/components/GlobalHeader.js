@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
+import Button from 'material-ui/Button';
 import Toolbar from 'material-ui/Toolbar';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
@@ -14,11 +16,17 @@ import HelpDialog from './HelpDialog';
 
 import constants from '../constants';
 
+import util from '../util';
+import initialState from '../initialState';
+
 import title from '../images/title_wh.png';
 
-const styles = {
+const styles = theme => ({
   root: {
     backgroundColor: 'transparent',
+  },
+  button: {
+    margin: theme.spacing.unit,
   },
   userPhoto: {
     width: 25,
@@ -39,12 +47,13 @@ const styles = {
     textDecoration: 'none',
     color: 'rgba(0, 0, 0, 0.87)',
   },
-};
+});
 
 class GlobalHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      login: false,
       anchorEl: null,
       openMenuKey: '',
       isOpenDescriptionDialog: false,
@@ -55,6 +64,14 @@ class GlobalHeader extends Component {
   }
 
   componentDidMount() {
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!util.isSameObj(nextProps.user, initialState.getState().user)) {
+      this.setState({ login: true });
+    } else {
+      this.setState({ login: false });
+    }
   }
 
   closeMenu() {
@@ -81,8 +98,13 @@ class GlobalHeader extends Component {
     this.setState({ isOpenDescriptionDialog: false });
   }
 
+  logout() {
+    this.closeMenu();
+    setTimeout(() => this.props.logout());
+  }
+
   render() {
-    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, logout, classes } = this.props;
+    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -93,55 +115,65 @@ class GlobalHeader extends Component {
           </Hidden>
           <Grid item xs={12} sm={10}>
             <Toolbar>
-              <img src={title} alt="taskontable" height="25" className={classes.title} />
-              <div>
-                <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
-                  {(() => {
-                    if (user.photoURL) {
-                      return <Avatar className={classes.userPhoto} src={user.photoURL} />;
-                    }
-                    return <i className="fa fa-user-circle" />;
-                  })()}
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={this.state.openMenuKey === 'user'}
-                  onRequestClose={this.closeMenu.bind(this)}
-                >
-                  <MenuItem>アカウント名: {user.displayName}</MenuItem>
-                  <MenuItem onClick={logout}>
-                    <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
-                  </MenuItem>
-                </Menu>
-              </div>
-              <div>
-                <IconButton className={classes.iconButton} onClick={openHelpDialog}>
-                  <i className="fa fa-question-circle" />
-                </IconButton>
-              </div>
-              <div>
-                <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
-                  <i className="fa fa-info-circle" />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={this.state.openMenuKey === 'info'}
-                  onRequestClose={this.closeMenu.bind(this)}
-                >
-                  <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.DESCRIPTION}>
-                    <i className="fa fa-info" aria-hidden="true" />
+              <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="25" /></Link>
+              {(() => {
+                if (!this.state.login) {
+                  return (<div style={{ display: 'inline-flex' }}>
+                    <Link className={classes.link} to="/login"><Button raised className={classes.button}>ログイン</Button></Link>
+                    <Link className={classes.link} to="/signup"><Button raised className={classes.button} color="primary" >アカウント作成</Button></Link>
+                  </div>);
+                }
+                return (<div style={{ display: 'inline-flex' }}>
+                  <div>
+                    <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
+                      {(() => {
+                        if (user.photoURL) {
+                          return <Avatar className={classes.userPhoto} src={user.photoURL} />;
+                        }
+                        return <i className="fa fa-user-circle" />;
+                      })()}
+                    </IconButton>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={this.state.openMenuKey === 'user'}
+                      onClose={this.closeMenu.bind(this)}
+                    >
+                      <MenuItem>アカウント名: {user.displayName}</MenuItem>
+                      <MenuItem onClick={this.logout.bind(this)}>
+                        <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
+                      </MenuItem>
+                    </Menu>
+                  </div>
+                  <div>
+                    <IconButton className={classes.iconButton} onClick={openHelpDialog}>
+                      <i className="fa fa-question-circle" />
+                    </IconButton>
+                  </div>
+                  <div>
+                    <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
+                      <i className="fa fa-info-circle" />
+                    </IconButton>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={this.state.openMenuKey === 'info'}
+                      onClose={this.closeMenu.bind(this)}
+                    >
+                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.DESCRIPTION}>
+                        <i className="fa fa-info" aria-hidden="true" />
                     　サービスについて
-                  </MenuItem>
-                  <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.CONTACT}>
-                    <i className="fa fa-envelope-o" aria-hidden="true" />
+                      </MenuItem>
+                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.CONTACT}>
+                        <i className="fa fa-envelope-o" aria-hidden="true" />
                     　お問い合わせ
-                  </MenuItem>
-                  <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.GIT}>
-                    <i className="fa fa-github" aria-hidden="true" />
+                      </MenuItem>
+                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.GIT}>
+                        <i className="fa fa-github" aria-hidden="true" />
                     　ソースコード
-                  </MenuItem>
-                </Menu>
-              </div>
+                      </MenuItem>
+                    </Menu>
+                  </div>
+                </div>);
+              })()}
             </Toolbar>
           </Grid>
           <Hidden xsDown>
@@ -150,11 +182,11 @@ class GlobalHeader extends Component {
         </Grid>
         <DescriptionDialog
           open={this.state.isOpenDescriptionDialog}
-          onRequestClose={this.closeDescriptionDialog.bind(this)}
+          onClose={this.closeDescriptionDialog.bind(this)}
         />
         <HelpDialog
           open={isOpenHelpDialog}
-          onRequestClose={closeHelpDialog}
+          onClose={closeHelpDialog}
         />
       </AppBar>
     );

@@ -260,7 +260,7 @@ class TaskList extends Component {
                     <Menu
                       anchorEl={this.state.anchorEl[index]}
                       open={Boolean(this.state.anchorEl[index] || false)}
-                      onRequestClose={this.closeTaskAction.bind(this, index)}
+                      onClose={this.closeTaskAction.bind(this, index)}
                     >
                       <MenuItem key={'moveTask'} onClick={this.moveTask.bind(this, index)}>
                         <i className="fa fa-download" />

@@ -142,11 +142,11 @@ class Dashboard extends Component {
             />
           </Grid>
           <Hidden xsDown>
-            <Grid item xs={0} sm={6}>
+            <Grid item sm={6}>
               <Typography gutterBottom type="subheading">
                  時刻
               </Typography>
-              <Grid container spacing={5}>
+              <Grid container spacing={8}>
                 <Grid item xs={6}>
                   <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
                 </Grid>

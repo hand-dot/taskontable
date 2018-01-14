@@ -28,12 +28,12 @@ const styles = {
 };
 
 function DescriptionDialog(props) {
-  const { open, onRequestClose, classes } = props;
+  const { open, onClose, classes } = props;
   return (
     <Dialog
       fullScreen
       open={open}
-      onRequestClose={onRequestClose}
+      onClose={onClose}
     >
       <AppBar color="default" className={classes.appBar}>
         <Toolbar>
@@ -41,7 +41,7 @@ function DescriptionDialog(props) {
             <i className="fa fa-question" aria-hidden="true" />
             　サービスについて
           </Typography>
-          <IconButton className={classes.closeBtn} onClick={onRequestClose}>
+          <IconButton className={classes.closeBtn} onClick={onClose}>
             <i className="fa fa-times" aria-hidden="true" />
           </IconButton>
         </Toolbar>
@@ -109,7 +109,7 @@ function DescriptionDialog(props) {
 
 DescriptionDialog.propTypes = {
   open: PropTypes.bool.isRequired,
-  onRequestClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
