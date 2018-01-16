@@ -26,15 +26,6 @@ const columns = [
       return td;
     },
   },
-  // カテゴリーはフィルタリングが使えないのでほぼ意味がない。hotのフィルターを入れることができたら復活させたい。
-  // {
-  //   title: '<span title="タスクの分類項目として使用する。">カテゴリ</span>',
-  //   data: 'category',
-  //   type: 'dropdown',
-  //   source: [],
-  //   colWidths: 50,
-  //   validator: false,
-  // },
   {
     title: '<span title="具体的な作業(タスク)の内容を入力してください。">作業内容</span>',
     data: 'title',

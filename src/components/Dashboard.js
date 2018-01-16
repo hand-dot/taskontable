@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import cloneDeep from 'lodash.clonedeep';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
@@ -13,15 +12,7 @@ import Hidden from 'material-ui/Hidden';
 import TodaySummary from './TodaySummary';
 import Clock from './Clock';
 
-import { hotConf } from '../hot';
-
 import util from '../util';
-
-function updateHotCategory(source) {
-  const $hotConf = cloneDeep(hotConf);
-  $hotConf.columns[$hotConf.columns.findIndex(col => col.data === 'category')].source = source;
-  if (window.hot) setTimeout(() => { window.hot.updateSettings({ columns: $hotConf.columns }); });
-}
 
 const totalMinute = (datas, prop) => datas.map(data => (typeof data[prop] === 'number' ? data[prop] : 0)).reduce((p, c) => p + c, 0);
 
@@ -36,8 +27,6 @@ class Dashboard extends Component {
       remainingTasks: { minute: 0, taskNum: 0 },
       currentTime: { hour: 0, minute: 0, second: 0 },
       endTime: { hour: 0, minute: 0, second: 0 },
-      categories: [],
-      categoryInput: '',
     };
   }
 
@@ -51,8 +40,6 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    // カテゴリーはフィルタリングが使えないのでほぼ意味がない。hotのフィルターを入れることができたら復活させたい。
-    // this.initCategories();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -77,46 +64,6 @@ class Dashboard extends Component {
         second: endMoment.second(),
       },
     });
-  }
-
-  initCategories() {
-    const labels = ['生活', '業務', '雑務', '休憩'];
-    const timestamp = Date.now();
-    const initCategories = labels.map((label, index) => ({ id: timestamp + index, text: label }));
-    this.setState(() => ({
-      categories: initCategories,
-      categoryInput: '',
-    }));
-    updateHotCategory(initCategories.map(cat => cat.text));
-  }
-
-  addCategory(e) {
-    e.preventDefault();
-    if (!this.state.categoryInput.length) {
-      return;
-    }
-    const newItem = {
-      text: this.state.categoryInput,
-      id: Date.now(),
-    };
-    this.setState(prevState => ({
-      categories: prevState.categories.concat(newItem),
-      categoryInput: '',
-    }));
-    updateHotCategory(this.state.categories.concat(newItem).map(cat => cat.text));
-  }
-
-  removeCategory(index) {
-    const categories = cloneDeep(this.state.categories);
-    categories.splice(index, 1);
-    this.setState(() => ({
-      categories,
-    }));
-    updateHotCategory(categories.map(cat => cat.text));
-  }
-
-  changeCategoryInput(e) {
-    this.setState({ categoryInput: e.target.value });
   }
 
   render() {
@@ -156,20 +103,6 @@ class Dashboard extends Component {
               </Grid>
             </Grid>
           </Hidden>
-          {/* <Grid item xs={4}>
-            <Typography title="*追加・削除したカテゴリはテーブルのカテゴリ列の選択肢に反映されます。" gutterBottom type="subheading">
-              カテゴリ*
-            </Typography>
-            <CategoryList categories={this.state.categories} removeCategory={this.removeCategory.bind(this)} />
-            <form onSubmit={this.addCategory.bind(this)}>
-              <Input
-                fullWidth
-                placeholder="カテゴリを追加"
-                onChange={this.changeCategoryInput.bind(this)}
-                value={this.state.categoryInput}
-              />
-            </form>
-          </Grid> */}
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
