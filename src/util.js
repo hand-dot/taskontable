@@ -2,9 +2,9 @@ import moment from 'moment';
 import fastclone from 'fast-clone';
 import { deepEqual } from 'fast-equals';
 import constants from './constants';
-
-let c = 0;
-let s = 0;
+// パフォーマンスチューニング用
+// let c = 0;
+// let s = 0;
 export default {
   getCrrentTimeObj() {
     const currentMoment = moment();
@@ -15,13 +15,13 @@ export default {
     };
   },
   cloneDeep(a) {
-    c += 1;
-    console.log('cloneDeep', c, Date.now());
+    // c += 1;
+    // console.log('cloneDeep', c, Date.now());
     return fastclone(a);
   },
   equal(a, b) {
-    s += 1;
-    console.log('equal', s, Date.now());
+    // s += 1;
+    // console.log('equal', s, Date.now());
     return deepEqual(a, b);
   },
   getDayOfWeekStr(dayOfWeek) {

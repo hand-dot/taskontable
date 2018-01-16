@@ -294,8 +294,14 @@ export const getEmptyRow = () => getEmptyHotData()[0];
 
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   if (hotInstance) {
-    const hotData = hotInstance.getSourceData().map((data, index) => hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
-    return util.cloneDeep(hotData.filter(data => !util.equal(getEmptyRow(), data)));
+    const dataFromHot = [];
+    const sourceData = hotInstance.getSourceData();
+    for (let row = 0; row < hotInstance.countRows(); row += 1) {
+      if (!hotInstance.isEmptyRow(row)) {
+        dataFromHot.push(sourceData[row]);
+      }
+    }
+    return util.cloneDeep(dataFromHot);
   }
   return getEmptyHotData();
 };
@@ -305,8 +311,8 @@ export const setDataForHot = (hotInstance, datas) => {
   const dataForHot = [];
   util.cloneDeep(datas).forEach((data, rowIndex) => {
     if (!util.equal(getEmptyRow(), data)) {
-      Object.keys(data).forEach((key) => {
-        dataForHot.push([rowIndex, key, data[key]]);
+      Object.entries(data).forEach(([key, value]) => {
+        dataForHot.push([rowIndex, key, value]);
       });
     }
   });
@@ -335,6 +341,7 @@ export const hotConf = {
     changes.forEach((change) => {
       const [row, prop, oldVal, newVal] = change;
       if (oldVal !== newVal) {
+        // FIXME パフォーマンスが悪いのでレンダラーですべてを行いたい
         calculateTask(this, row, prop);
         manageNotification(this, row, prop, newVal);
       }
