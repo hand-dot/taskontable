@@ -6,8 +6,6 @@ import polyfill from './polyfill';
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
 
-// パフォーマンスチューニング用
-// console.log(Date.now());
 polyfill();
 
 ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, document.getElementById('root'));

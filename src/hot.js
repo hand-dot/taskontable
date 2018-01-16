@@ -8,12 +8,11 @@ import logo from './images/logo.png';
 
 const columns = [
   {
-    title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">済</span>',
+    title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">*済</span>',
     data: 'done',
     type: 'checkbox',
     validator: false,
     colWidths: 28,
-    readOnly: true,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htCenter');
@@ -26,7 +25,7 @@ const columns = [
     },
   },
   {
-    title: '<span title="具体的な作業(タスク)の内容を入力してください。">作業内容</span>',
+    title: '作業内容',
     data: 'title',
     type: 'text',
   },
@@ -85,14 +84,14 @@ const columns = [
     },
   },
   {
-    title: '<span title="終了時刻を記入後、自動入力されます。 (編集不可)">実績(分)</span>',
+    title: '<span title="終了時刻を記入後、自動入力されます。 (編集不可)">*実績(分)</span>',
     data: 'actually',
     type: 'numeric',
     validator: false,
     colWidths: 35,
-    readOnly: true,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value, cellProperties) {
+      td.classList.add('htDimmed');
       td.innerHTML = value;
       if (cellProperties.overdue) {
         td.style.color = '#ff9b9b';
@@ -103,7 +102,7 @@ const columns = [
     },
   },
   {
-    title: '<span title="タスクの実行に役立つ参照情報(メモ)を入力します。">備考</span>',
+    title: '備考',
     data: 'memo',
     type: 'text',
   },

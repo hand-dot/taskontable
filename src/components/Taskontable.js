@@ -82,6 +82,8 @@ class Taskontable extends Component {
   }
 
   componentDidMount() {
+    // パフォーマンスチューニング用
+    // console.log(Date.now());
     // タスクプールをサーバーと同期開始
     this.attachPoolTasks();
     // テーブルをサーバーと同期開始
