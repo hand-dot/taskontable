@@ -1,7 +1,7 @@
 import moment from 'moment';
-import cloneDeep from 'lodash.clonedeep';
 import constants from './constants';
 import { getEmptyHotData } from './hot';
+import util from './util';
 
 const initialState = {
   user: { displayName: '', photoURL: '', uid: '' },
@@ -23,6 +23,6 @@ const initialState = {
 };
 
 export default {
-  getState: () => cloneDeep(initialState),
+  getState: () => util.cloneDeep(initialState),
 };
 

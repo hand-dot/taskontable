@@ -109,7 +109,7 @@ class App extends Component {
             exact
             path="/"
             render={(props) => {
-              if (!util.isSameObj(this.state.user, initialState.getState().user)) {
+              if (!util.equal(this.state.user, initialState.getState().user)) {
               // 認証が初期値から変更されたらアプリをスタート
                 return (
                   <Taskontable

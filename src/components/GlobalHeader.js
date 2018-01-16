@@ -68,7 +68,7 @@ class GlobalHeader extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!util.isSameObj(nextProps.user, initialState.getState().user)) {
+    if (!util.equal(nextProps.user, initialState.getState().user)) {
       this.setState({ login: true });
     } else {
       this.setState({ login: false });

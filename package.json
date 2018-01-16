@@ -10,12 +10,12 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "fast-clone": "^1.4.2",
+    "fast-equals": "^1.0.6",
     "firebase": "^4.8.2",
     "font-awesome": "^4.7.0",
     "handsontable": "^0.35.0",
-    "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",
-    "lodash.isequal": "^4.5.0",
     "lodash.throttle": "^4.1.1",
     "material-ui": "^1.0.0-beta.27",
     "moment": "^2.20.1",

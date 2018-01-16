@@ -1,5 +1,4 @@
 import moment from 'moment';
-import cloneDeep from 'lodash.clonedeep';
 import debounce from 'lodash.debounce';
 import taskSchema from './taskSchema';
 import constants from './constants';
@@ -289,14 +288,14 @@ export const bindShortcut = (hot) => {
   }, constants.KEYEVENT_DELAY));
 };
 
-export const getEmptyHotData = () => [cloneDeep(taskSchema)];
+export const getEmptyHotData = () => [util.cloneDeep(taskSchema)];
 
 export const getEmptyRow = () => getEmptyHotData()[0];
 
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   if (hotInstance) {
     const hotData = hotInstance.getSourceData().map((data, index) => hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
-    return cloneDeep(hotData.filter(data => !util.isSameObj(getEmptyRow(), data)));
+    return util.cloneDeep(hotData.filter(data => !util.equal(getEmptyRow(), data)));
   }
   return getEmptyHotData();
 };
@@ -304,8 +303,8 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
   const dataForHot = [];
-  cloneDeep(datas).forEach((data, rowIndex) => {
-    if (!util.isSameObj(getEmptyRow(), data)) {
+  util.cloneDeep(datas).forEach((data, rowIndex) => {
+    if (!util.equal(getEmptyRow(), data)) {
       Object.keys(data).forEach((key) => {
         dataForHot.push([rowIndex, key, data[key]]);
       });

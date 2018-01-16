@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
-import cloneDeep from 'lodash.clonedeep';
 import debounce from 'lodash.debounce';
 import throttle from 'lodash.throttle';
 
@@ -51,7 +50,7 @@ const styles = {
   },
 };
 
-const NotificationClone = (() => ('Notification' in window ? cloneDeep(Notification) : false))();
+const NotificationClone = (() => ('Notification' in window ? util.cloneDeep(Notification) : false))();
 
 let hot = null;
 class Taskontable extends Component {
@@ -170,12 +169,12 @@ class Taskontable extends Component {
 
   setStateFromRenderHot() {
     const hotTasks = getHotTasksIgnoreEmptyTask(hot);
-    if (!util.isSameObj(hotTasks, this.state.tableTasks)) {
+    if (!util.equal(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: true,
         tableTasks: hotTasks,
       });
-    } else if (util.isSameObj(hotTasks, this.state.tableTasks)) {
+    } else if (util.equal(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: false,
       });
@@ -271,14 +270,14 @@ class Taskontable extends Component {
 
   downPoolTask(taskPoolType, index) {
     if (this.state.poolTasks[taskPoolType].length === index + 1) return;
-    const poolTasks = cloneDeep(this.state.poolTasks);
+    const poolTasks = util.cloneDeep(this.state.poolTasks);
     poolTasks[taskPoolType].splice(index, 2, poolTasks[taskPoolType][index + 1], poolTasks[taskPoolType][index]);
     this.setState({ poolTasks });
   }
 
   upPoolTask(taskPoolType, index) {
     if (index === 0) return;
-    const poolTasks = cloneDeep(this.state.poolTasks);
+    const poolTasks = util.cloneDeep(this.state.poolTasks);
     poolTasks[taskPoolType].splice(index - 1, 2, poolTasks[taskPoolType][index], poolTasks[taskPoolType][index - 1]);
     this.setState({ poolTasks });
   }
@@ -286,7 +285,7 @@ class Taskontable extends Component {
   movePoolTaskToTableTask(taskPoolType, index) {
     if (!hot) return;
     const hotData = hot.getSourceData();
-    let insertPosition = hotData.lastIndexOf(data => util.isSameObj(getEmptyRow(), data));
+    let insertPosition = hotData.lastIndexOf(data => util.equal(getEmptyRow(), data));
     if (insertPosition === -1) {
       insertPosition = getHotTasksIgnoreEmptyTask(hot).length;
     }
@@ -415,7 +414,7 @@ class Taskontable extends Component {
           loading: true,
         }));
         if (snapshot.exists()) {
-          if (snapshot.exists() && !util.isSameObj(getHotTasksIgnoreEmptyTask(hot), snapshot.val()[this.state.date])) {
+          if (snapshot.exists() && !util.equal(getHotTasksIgnoreEmptyTask(hot), snapshot.val()[this.state.date])) {
             // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、
             // サーバーのデータでテーブルを初期化する
             setDataForHot(hot, snapshot.val()[this.state.date]);
@@ -440,7 +439,7 @@ class Taskontable extends Component {
     this.fetchTableTask().then((snapshot) => {
       if (hot) {
         hot.updateSettings({ data: getEmptyHotData() });
-        if (snapshot.exists() && !util.isSameObj(snapshot.val(), getEmptyHotData())) {
+        if (snapshot.exists() && !util.equal(snapshot.val(), getEmptyHotData())) {
           // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
           setDataForHot(hot, snapshot.val());
         } else if (this.state.poolTasks.regularTasks.length !== 0) {

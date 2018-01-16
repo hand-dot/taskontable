@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import cloneDeep from 'lodash.clonedeep';
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
@@ -11,6 +10,7 @@ import MultipleSelect from './MultipleSelect';
 
 import taskSchema from '../taskSchema';
 import constants from '../constants';
+import util from '../util';
 
 const styles = {
   root: {
@@ -116,11 +116,11 @@ class TaskList extends Component {
           return;
         }
       }
-      this.props.editTask(cloneDeep(this.state.editTask), index);
+      this.props.editTask(util.cloneDeep(this.state.editTask), index);
       this.setState({ editingTaskIndex: -1, editTask: getTaskSchema() });
     } else {
       // 編集スタート
-      this.setState({ editTask: cloneDeep(this.props.tasks[index]) });
+      this.setState({ editTask: util.cloneDeep(this.props.tasks[index]) });
       setTimeout(() => {
         this.setState({ editingTaskIndex: index });
       });
@@ -161,7 +161,7 @@ class TaskList extends Component {
         return;
       }
     }
-    this.props.addTask(cloneDeep(this.state.addTask));
+    this.props.addTask(util.cloneDeep(this.state.addTask));
     this.setState({ addTask: getTaskSchema() });
     const $root = this.root;
     setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
