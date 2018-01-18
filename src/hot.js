@@ -12,7 +12,7 @@ const columns = [
     data: 'done',
     type: 'checkbox',
     validator: false,
-    colWidths: 28,
+    colWidths: 18,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htCenter');
@@ -33,13 +33,13 @@ const columns = [
     title: '<span title="見積時間 数値で入力してください。">見積(分)</span>',
     data: 'estimate',
     type: 'numeric',
-    colWidths: 35,
+    colWidths: 28,
   },
   {
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">開始時刻</span>',
     data: 'startTime',
     type: 'time',
-    colWidths: 35,
+    colWidths: 32,
     timeFormat: 'HH:mm',
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
@@ -66,7 +66,7 @@ const columns = [
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">終了時刻</span>',
     data: 'endTime',
     type: 'time',
-    colWidths: 35,
+    colWidths: 32,
     timeFormat: 'HH:mm',
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
@@ -78,7 +78,7 @@ const columns = [
       }
       const temporaryTime = cellProperties.temporaryTime;
       if (temporaryTime && value === '') {
-        td.innerHTML = `<div style="color:#cfcfcf">${temporaryTime}(予定)</div>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<div style="color:#cfcfcf">${temporaryTime}(仮)</div>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
@@ -88,7 +88,7 @@ const columns = [
     data: 'actually',
     type: 'numeric',
     validator: false,
-    colWidths: 35,
+    colWidths: 28,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value, cellProperties) {
       td.classList.add('htDimmed');
