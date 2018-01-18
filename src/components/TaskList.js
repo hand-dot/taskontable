@@ -8,7 +8,8 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 
 import MultipleSelect from './MultipleSelect';
 
-import poolTasksSchema from '../poolTasksSchema';
+import poolTaskSchema from '../schemas/poolTaskSchema';
+
 import constants from '../constants';
 import util from '../util';
 
@@ -37,8 +38,8 @@ const styles = {
 };
 
 
-function getPoolTasksSchema() {
-  return util.cloneDeep(poolTasksSchema);
+function getPoolTaskSchema() {
+  return util.cloneDeep(poolTaskSchema);
 }
 
 class TaskList extends Component {
@@ -46,8 +47,8 @@ class TaskList extends Component {
     super(props);
     this.state = {
       anchorEl: [],
-      addTask: getPoolTasksSchema(),
-      editTask: getPoolTasksSchema(),
+      addTask: getPoolTaskSchema(),
+      editTask: getPoolTaskSchema(),
       editingTaskIndex: -1,
     };
   }
@@ -114,7 +115,7 @@ class TaskList extends Component {
         }
       }
       this.props.editTask(util.cloneDeep(this.state.editTask), index);
-      this.setState({ editingTaskIndex: -1, editTask: getPoolTasksSchema() });
+      this.setState({ editingTaskIndex: -1, editTask: getPoolTaskSchema() });
     } else {
       // 編集スタート
       this.setState({ editTask: util.cloneDeep(this.props.tasks[index]) });
@@ -159,7 +160,7 @@ class TaskList extends Component {
       }
     }
     this.props.addTask(util.cloneDeep(this.state.addTask));
-    this.setState({ addTask: getPoolTasksSchema() });
+    this.setState({ addTask: getPoolTaskSchema() });
     const $root = this.root;
     setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
   }

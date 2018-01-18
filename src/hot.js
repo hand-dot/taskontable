@@ -1,6 +1,6 @@
 import moment from 'moment';
 import debounce from 'lodash.debounce';
-import taskSchema from './taskSchema';
+import taskSchema from './schemas/tableTaskSchema';
 import constants from './constants';
 import util from './util';
 import logo from './images/logo.png';
