@@ -102,22 +102,32 @@ class Taskontable extends Component {
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       contextMenu: {
         callback(key, selection) {
-          if (key === 'set_current_time') {
-            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              this.setDataAtCell(row, selection.start.col, moment().format('HH:mm'));
-            }
-          } else if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
+          if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
             const taskPoolType = key === 'reverse_taskpool_hight' ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
             for (let row = selection.start.row; row <= selection.end.row; row += 1) {
               // テーブルタスクからタスクプールに移すタイミングでテーブルが1行減るので常に選択開始行を処理する
               self.moveTableTaskToPoolTask(taskPoolType, selection.start.row, hot);
             }
-          } else if (key === 'done_task') {
+          } else if (key === 'start_task') {
+            let confirm = false;
             for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              if (this.getDataAtRowProp(row, 'startTime') === '') {
-                // 開始時刻が空だった場合は現在時刻を設定する
-                this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
-              }
+              if (this.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
+              if (this.getDataAtRowProp(row, 'startTime') !== '') confirm = true;
+            }
+            if (confirm && !window.confirm('終了時刻もしくは開始時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
+            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+              this.setDataAtRowProp(row, 'endTime', '');
+              this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
+            }
+          } else if (key === 'done_task') {
+            let confirm = false;
+            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+              if (this.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
+            }
+            if (confirm && !window.confirm('終了時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
+            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+              // 開始時刻が空だった場合は現在時刻を設定する
+              if (this.getDataAtRowProp(row, 'startTime') === '') this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
               this.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
             }
           }
@@ -141,14 +151,8 @@ class Taskontable extends Component {
             name: '[いつかやる]に戻す',
           },
           hsep3: '---------',
-          set_current_time: {
-            name: '現在時刻を入力する',
-            disabled() {
-              const startCol = this.getSelected()[1];
-              const endCol = this.getSelected()[3];
-              const prop = this.colToProp(startCol);
-              return startCol !== endCol || !(prop === 'endTime' || prop === 'startTime');
-            },
+          start_task: {
+            name: 'タスクを開始する',
           },
           done_task: {
             name: 'タスクを完了にする',
