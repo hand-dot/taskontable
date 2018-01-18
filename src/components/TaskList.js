@@ -8,7 +8,7 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 
 import MultipleSelect from './MultipleSelect';
 
-import taskSchema from '../taskSchema';
+import poolTasksSchema from '../poolTasksSchema';
 import constants from '../constants';
 import util from '../util';
 
@@ -37,9 +37,8 @@ const styles = {
 };
 
 
-function getTaskSchema() {
-  // regularTasksで使用する曜日と、周期をtaskSchemaに追加する
-  return Object.assign({ dayOfWeek: [], week: [] }, taskSchema);
+function getPoolTasksSchema() {
+  return util.cloneDeep(poolTasksSchema);
 }
 
 class TaskList extends Component {
@@ -47,8 +46,8 @@ class TaskList extends Component {
     super(props);
     this.state = {
       anchorEl: [],
-      addTask: getTaskSchema(),
-      editTask: getTaskSchema(),
+      addTask: getPoolTasksSchema(),
+      editTask: getPoolTasksSchema(),
       editingTaskIndex: -1,
     };
   }
@@ -87,14 +86,12 @@ class TaskList extends Component {
   }
 
   changeDayOfWeek(type, e) {
-    // console.log(e.target.value, 'changeDayOfWeek');
     const task = Object.assign({}, this.state[type]);
     task.dayOfWeek = e.target.value;
     this.setState({ [type]: task });
   }
 
   changeWeek(type, e) {
-    // console.log(e.target.value, 'changeWeek');
     const task = Object.assign({}, this.state[type]);
     task.week = e.target.value;
     this.setState({ [type]: task });
@@ -117,7 +114,7 @@ class TaskList extends Component {
         }
       }
       this.props.editTask(util.cloneDeep(this.state.editTask), index);
-      this.setState({ editingTaskIndex: -1, editTask: getTaskSchema() });
+      this.setState({ editingTaskIndex: -1, editTask: getPoolTasksSchema() });
     } else {
       // 編集スタート
       this.setState({ editTask: util.cloneDeep(this.props.tasks[index]) });
@@ -162,7 +159,7 @@ class TaskList extends Component {
       }
     }
     this.props.addTask(util.cloneDeep(this.state.addTask));
-    this.setState({ addTask: getTaskSchema() });
+    this.setState({ addTask: getPoolTasksSchema() });
     const $root = this.root;
     setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
   }
