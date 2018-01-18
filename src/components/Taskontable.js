@@ -98,13 +98,6 @@ class Taskontable extends Component {
   componentDidMount() {
     // パフォーマンスチューニング用
     // console.log(Date.now());
-    // タスクプールをサーバーと同期開始
-    this.attachPoolTasks();
-    // テーブルをサーバーと同期開始
-    this.attachTableTasks();
-    // テーブルを初期化
-    this.initTableTask();
-
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       contextMenu: {
@@ -171,6 +164,12 @@ class Taskontable extends Component {
       afterInit() { bindShortcut(this); },
     }));
     window.hot = hot;
+    // タスクプールをサーバーと同期開始
+    this.attachPoolTasks();
+    // テーブルをサーバーと同期開始
+    this.attachTableTasks();
+    // テーブルを初期化
+    this.initTableTask();
   }
 
   componentWillUnmount() {
@@ -387,9 +386,7 @@ class Taskontable extends Component {
   }
 
   attachPoolTasks() {
-    const ref = firebase.database().ref(`/${this.props.user.uid}/poolTasks`);
-    ref.off();
-    ref.on('value', (snapshot) => {
+    firebase.database().ref(`/${this.props.user.uid}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
         const poolTasks = snapshot.val();
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
@@ -423,9 +420,7 @@ class Taskontable extends Component {
   attachTableTasks() {
     if (hot) {
       hot.updateSettings({ data: getEmptyHotData() });
-      const ref = firebase.database().ref(`/${this.props.user.uid}/tableTasks`);
-      ref.off();
-      ref.on('value', (snapshot) => {
+      firebase.database().ref(`/${this.props.user.uid}/tableTasks`).on('value', (snapshot) => {
         this.setState(() => ({
           loading: true,
         }));
