@@ -16,9 +16,6 @@ import HelpDialog from './HelpDialog';
 
 import constants from '../constants';
 
-import util from '../util';
-import initialState from '../initialState';
-
 import title from '../images/title_gr.png';
 
 const styles = theme => ({
@@ -68,7 +65,7 @@ class GlobalHeader extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!util.equal(nextProps.user, initialState.getState().user)) {
+    if (nextProps.user.uid !== '') {
       this.setState({ login: true });
     } else {
       this.setState({ login: false });

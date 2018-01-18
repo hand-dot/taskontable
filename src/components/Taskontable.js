@@ -29,7 +29,6 @@ import { bindShortcut, hotConf, getEmptyHotData, getEmptyRow, getHotTasksIgnoreE
 import constants from '../constants';
 
 import util from '../util';
-import initialState from '../initialState';
 
 const styles = {
   root: {
@@ -56,7 +55,22 @@ let hot = null;
 class Taskontable extends Component {
   constructor(props) {
     super(props);
-    this.state = initialState.getState();
+    this.state = {
+      loading: true,
+      notifiable: true,
+      saveable: false,
+      isOpenDashboard: false,
+      isOpenTaskPool: false,
+      isOpenProcessingDialog: false,
+      date: moment().format(constants.DATEFMT),
+      lastSaveTime: { hour: 0, minute: 0, second: 0 },
+      tableTasks: getEmptyHotData(),
+      poolTasks: {
+        highPriorityTasks: [],
+        lowPriorityTasks: [],
+        regularTasks: [],
+      },
+    };
     this.setStateFromUpdateHot = debounce(this.setStateFromUpdateHot, constants.RENDER_DELAY);
     this.setStateFromRenderHot = debounce(this.setStateFromRenderHot, constants.RENDER_DELAY);
     this.openProcessingDialog = throttle(this.openProcessingDialog, constants.PROCESSING_DELAY);
@@ -545,6 +559,7 @@ Taskontable.propTypes = {
     photoURL: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
   }).isRequired,
+  toggleHelpDialog: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

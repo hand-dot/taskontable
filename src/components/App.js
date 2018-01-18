@@ -12,9 +12,7 @@ import Login from './Login';
 import Signup from './Signup';
 import Taskontable from './Taskontable';
 
-import util from '../util';
 import firebaseConf from '../configs/firebase';
-import initialState from '../initialState';
 
 firebase.initializeApp(firebaseConf);
 
@@ -32,7 +30,11 @@ const styles = {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = Object.assign(initialState.getState(), { loginProggres: true });
+    this.state = {
+      user: { displayName: '', photoURL: '', uid: '' },
+      isOpenHelpDialog: false,
+      loginProggres: true,
+    };
   }
 
   componentWillMount() {
@@ -75,8 +77,8 @@ class App extends Component {
   logout() {
     this.props.history.push('/');
     firebase.auth().signOut().then(() => {
-      // stateの初期化
-      this.setState(initialState.getState());
+      // userの初期化
+      this.setState({ user: { displayName: '', photoURL: '', uid: '' } });
     }).catch((error) => {
       // FIXME エラーをどこかのサービスに送信したい
       // https://sentry.io/
@@ -109,7 +111,7 @@ class App extends Component {
             exact
             path="/"
             render={(props) => {
-              if (!util.equal(this.state.user, initialState.getState().user)) {
+              if (this.state.user.uid !== '') {
               // 認証が初期値から変更されたらアプリをスタート
                 return (
                   <Taskontable
