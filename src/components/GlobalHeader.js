@@ -113,7 +113,7 @@ class GlobalHeader extends Component {
           </Hidden>
           <Grid item xs={12} sm={10}>
             <Toolbar>
-              <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="25" /></Link>
+              <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="22" /></Link>
               {(() => {
                 if (!this.state.login) {
                   return (<div style={{ display: 'inline-flex' }}>
