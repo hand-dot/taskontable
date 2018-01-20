@@ -6,13 +6,15 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { CircularProgress } from 'material-ui/Progress';
 import Dialog from 'material-ui/Dialog';
 
-import GlobalHeader from './GlobalHeader';
-import Top from './Top';
-import Login from './Login';
-import Signup from './Signup';
-import Taskontable from './Taskontable';
+import AsyncContainer from './AsyncContainer';
 
 import firebaseConf from '../configs/firebase';
+
+const GlobalHeader = AsyncContainer(() => import('./GlobalHeader').then(module => module.default), {});
+const Top = AsyncContainer(() => import('./Top').then(module => module.default), {});
+const Login = AsyncContainer(() => import('./Login').then(module => module.default), {});
+const Signup = AsyncContainer(() => import('./Signup').then(module => module.default), {});
+const Taskontable = AsyncContainer(() => import('./Taskontable').then(module => module.default), {});
 
 firebase.initializeApp(firebaseConf);
 

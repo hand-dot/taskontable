@@ -10,6 +10,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "fast-clone": "^1.4.2",
     "fast-equals": "^1.0.6",
     "firebase": "^4.8.2",
