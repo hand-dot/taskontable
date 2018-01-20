@@ -5,12 +5,14 @@ import constants from './constants';
 import util from './util';
 import logo from './images/logo.png';
 
+const isNotificationSupport = 'Notification' in window && Notification;
 
 const columns = [
   {
     title: '<span title="タスクが完了すると自動でチェックされます。(編集不可) ">*済</span>',
     data: 'done',
     type: 'checkbox',
+    readOnly: true,
     validator: false,
     colWidths: 18,
     /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -33,6 +35,7 @@ const columns = [
     title: '<span title="見積時間 数値で入力してください。">見積(分)</span>',
     data: 'estimate',
     type: 'numeric',
+    allowInvalid: false,
     colWidths: 28,
   },
   {
@@ -41,6 +44,7 @@ const columns = [
     type: 'time',
     colWidths: 32,
     timeFormat: 'HH:mm',
+    allowInvalid: false,
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
       td.innerHTML = value;
@@ -68,6 +72,7 @@ const columns = [
     type: 'time',
     colWidths: 32,
     timeFormat: 'HH:mm',
+    allowInvalid: false,
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
       td.innerHTML = value;
@@ -87,6 +92,7 @@ const columns = [
     title: '<span title="終了時刻を記入後、自動入力されます。 (編集不可)">*実績(分)</span>',
     data: 'actually',
     type: 'numeric',
+    readOnly: true,
     validator: false,
     colWidths: 28,
     /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -107,23 +113,6 @@ const columns = [
     type: 'text',
   },
 ];
-
-const setValidtionMessage = (hotInstance, row, prop, isValid) => {
-  const commentsPlugin = hotInstance.getPlugin('comments');
-  const col = hotInstance.propToCol(prop);
-  if (isValid) {
-    commentsPlugin.removeCommentAtCell(row, col);
-  } else {
-    let comment = '';
-    if (prop === 'estimate') {
-      comment = '半角数値を入力してください';
-    } else if (prop === 'startTime' || prop === 'endTime') {
-      comment = '半角数値,カンマ区切りで有効な時刻を入力してください';
-    }
-    commentsPlugin.setCommentAtCell(row, col, comment);
-    commentsPlugin.showAtCell(row, col);
-  }
-};
 
 const calculateTask = (hotInstance, row, prop) => {
   const col = hotInstance.propToCol(prop);
@@ -193,7 +182,7 @@ const calculateTask = (hotInstance, row, prop) => {
 
 const manageNotification = (hotInstance, row, prop, newVal) => {
   // ブラウザ通知をサポートしていなければ処理を抜ける
-  if (!('Notification' in window && Notification)) return;
+  if (!isNotificationSupport) return;
   const col = hotInstance.propToCol(prop);
   if (prop === 'startTime') {
     // 新しい値が空の場合は既に登録されている通知を削除
@@ -326,14 +315,11 @@ export const hotConf = {
   columns,
   data: getEmptyHotData(),
   dataSchema: taskSchema,
-  afterValidate(isValid, value, row, prop) {
-    setValidtionMessage(this, row, prop, isValid);
-  },
   afterChange(changes) {
     if (!changes) return;
     changes.forEach((change) => {
       const [row, prop, oldVal, newVal] = change;
-      if (oldVal !== newVal) {
+      if ((prop === 'startTime' || prop === 'endTime' || prop === 'estimate' || prop === 'actually') && oldVal !== newVal) {
         // FIXME パフォーマンスが悪いのでレンダラーですべてを行いたい
         calculateTask(this, row, prop);
         manageNotification(this, row, prop, newVal);
