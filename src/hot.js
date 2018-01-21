@@ -161,6 +161,7 @@ const calculateTask = (hotInstance, row, prop) => {
       }
     }
   } else if (prop === 'estimate' || prop === 'actually') {
+    // FIXME ここはレンダラーで行ったほうが良い
     // 変更したセルが見積 or 実績の場合、実績のメタ情報を変更する処理
     // 見積もりに対して実績がオーバーしていれば編集したセルにoverdueという属性をtrueにする
     // 見積もりに対して実績がむしろマイナスだった場合はoverdueをfalseにする
