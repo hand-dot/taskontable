@@ -5,6 +5,10 @@ import constants from './constants';
 import util from './util';
 import logo from './images/logo.png';
 
+const BLUE = '#ff9b9b';
+const RED = '#4f93fc';
+const GRAY = '#cfcfcf';
+
 const isNotificationSupport = 'Notification' in window && Notification;
 
 const columns = [
@@ -22,7 +26,7 @@ const columns = [
       td.classList.add('htDimmed');
       td.innerHTML = `<input class="htCheckboxRendererInput" type="checkbox" ${value ? 'checked' : ''}>`;
       if (value) td.parentNode.classList.add('done');
-      td.parentNode.style.color = value ? '#cfcfcf' : '';
+      td.parentNode.style.color = value ? GRAY : '';
       return td;
     },
   },
@@ -83,7 +87,7 @@ const columns = [
       }
       const temporaryTime = cellProperties.temporaryTime;
       if (temporaryTime && value === '') {
-        td.innerHTML = `<div style="color:#cfcfcf">${temporaryTime}(仮)</div>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<div style="color:${GRAY}">${temporaryTime}(仮)</div>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
@@ -96,13 +100,19 @@ const columns = [
     validator: false,
     colWidths: 28,
     /* eslint no-param-reassign: ["error", { "props": false }] */
-    renderer(instance, td, row, col, prop, value, cellProperties) {
+    renderer(instance, td, row, col, prop, value) {
       td.classList.add('htDimmed');
       td.innerHTML = value;
-      if (cellProperties.overdue) {
-        td.style.color = '#ff9b9b';
-      } else if (cellProperties.overdue === false) {
-        td.style.color = '#4f93fc';
+      // 見積もりに対して実績がオーバーしていれば編集したセルにoverdueという属性をtrueにする
+      // 見積もりに対して実績がむしろマイナスだった場合はoverdueをfalseにする
+      const estimateVal = instance.getDataAtRowProp(row, 'estimate');
+      const actuallyVal = instance.getDataAtRowProp(row, 'actually');
+      if (!Number.isInteger(+estimateVal) && !Number.isInteger(+actuallyVal)) return td;
+      const overdueSign = Math.sign(actuallyVal - estimateVal);
+      if (overdueSign === 1) {
+        td.style.color = BLUE;
+      } else if (overdueSign === -1) {
+        td.style.color = RED;
       }
       return td;
     },
@@ -160,24 +170,6 @@ const calculateTask = (hotInstance, row, prop) => {
         }
       }
     }
-  } else if (prop === 'estimate' || prop === 'actually') {
-    // FIXME ここはレンダラーで行ったほうが良い
-    // 変更したセルが見積 or 実績の場合、実績のメタ情報を変更する処理
-    // 見積もりに対して実績がオーバーしていれば編集したセルにoverdueという属性をtrueにする
-    // 見積もりに対して実績がむしろマイナスだった場合はoverdueをfalseにする
-    const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
-    const actuallyVal = hotInstance.getDataAtRowProp(row, 'actually');
-    if (estimateVal === '' || actuallyVal === '') return;
-    if (!Number.isInteger(+estimateVal) && !Number.isInteger(+actuallyVal)) return;
-    const overdueSign = Math.sign(actuallyVal - estimateVal);
-    let overdue;
-    if (overdueSign === 1) {
-      overdue = true;
-    } else if (overdueSign === -1) {
-      overdue = false;
-    }
-    hotInstance.setCellMeta(row, hotInstance.propToCol('actually'), 'overdue', overdue);
-    hotInstance.render();
   }
 };
 
@@ -320,7 +312,7 @@ export const hotConf = {
     if (!changes) return;
     changes.forEach((change) => {
       const [row, prop, oldVal, newVal] = change;
-      if ((prop === 'startTime' || prop === 'endTime' || prop === 'estimate' || prop === 'actually') && oldVal !== newVal) {
+      if ((prop === 'startTime' || prop === 'endTime') && oldVal !== newVal) {
         // FIXME パフォーマンスが悪いのでレンダラーですべてを行いたい
         calculateTask(this, row, prop);
         manageNotification(this, row, prop, newVal);
