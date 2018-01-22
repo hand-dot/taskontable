@@ -19,7 +19,7 @@ const columns = [
     type: 'checkbox',
     readOnly: true,
     validator: false,
-    colWidths: 18,
+    colWidths: 20,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row) {
       td.classList.add('htCenter');
@@ -48,7 +48,7 @@ const columns = [
     data: 'estimate',
     type: 'numeric',
     allowInvalid: false,
-    colWidths: 28,
+    colWidths: 32,
   },
   {
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">開始時刻</span>',
@@ -106,7 +106,7 @@ const columns = [
     type: 'numeric',
     readOnly: true,
     validator: false,
-    colWidths: 28,
+    colWidths: 32,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htDimmed');
