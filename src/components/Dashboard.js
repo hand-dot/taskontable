@@ -14,7 +14,9 @@ import Clock from './Clock';
 
 import util from '../util';
 
-const totalMinute = (datas, prop) => datas.map(data => (typeof data[prop] === 'number' ? data[prop] : 0)).reduce((p, c) => p + c, 0);
+const totalEstimateMinute = datas => datas.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
+
+const totalActuallyMinute = datas => datas.map(data => util.getTimeDiff(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
 
 class Dashboard extends Component {
   constructor(props) {
@@ -32,10 +34,9 @@ class Dashboard extends Component {
 
   componentWillMount() {
     // 初期値の現在時刻と終了時刻
-    const timeObj = util.getCrrentTimeObj();
     this.setState({
-      currentTime: timeObj,
-      endTime: timeObj,
+      currentTime: util.getCrrentTimeObj(),
+      endTime: util.getCrrentTimeObj(),
     });
   }
 
@@ -43,17 +44,17 @@ class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const remainingData = nextProps.tableTasks.filter(data => !data.done);
-    const remainingMinute = totalMinute(remainingData, 'estimate');
-    const doneData = nextProps.tableTasks.filter(data => data.done);
+    const remainingData = nextProps.tableTasks.filter(data => !data.startTime || !data.endTime);
+    const remainingMinute = totalEstimateMinute(remainingData);
+    const doneData = nextProps.tableTasks.filter(data => data.startTime && data.endTime);
     const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState({
       tableTasks: nextProps.tableTasks,
-      estimateTasks: { minute: totalMinute(nextProps.tableTasks, 'estimate'), taskNum: nextProps.tableTasks.length },
+      estimateTasks: { minute: totalEstimateMinute(nextProps.tableTasks), taskNum: nextProps.tableTasks.length },
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
-      doneTasks: { minute: totalMinute(doneData, 'estimate'), taskNum: doneData.length },
-      actuallyTasks: { minute: totalMinute(doneData, 'actually'), taskNum: doneData.length },
+      doneTasks: { minute: totalEstimateMinute(doneData), taskNum: doneData.length },
+      actuallyTasks: { minute: totalActuallyMinute(doneData), taskNum: doneData.length },
       currentTime: {
         hour: currentMoment.hour(),
         minute: currentMoment.minute(),

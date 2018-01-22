@@ -51,6 +51,14 @@ const styles = {
 
 const NotificationClone = (() => ('Notification' in window ? util.cloneDeep(Notification) : false))();
 
+// ハンズオンテーブルからから行を除き、永続化する必要のない情報を削除し、タスクを返す
+const getHotTasksIgnoreEmptyTaskAndProp = (hot => getHotTasksIgnoreEmptyTask(hot).map((data) => {
+  util.getExTableTaskProp().forEach((prop) => {
+    delete data[prop]; // eslint-disable-line no-param-reassign
+  });
+  return data;
+}));
+
 let hot = null;
 class Taskontable extends Component {
   constructor(props) {
@@ -187,7 +195,7 @@ class Taskontable extends Component {
   }
 
   setStateFromRenderHot() {
-    const hotTasks = getHotTasksIgnoreEmptyTask(hot);
+    const hotTasks = getHotTasksIgnoreEmptyTaskAndProp(hot);
     if (!util.equal(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: true,
@@ -204,7 +212,7 @@ class Taskontable extends Component {
   setStateFromUpdateHot() {
     this.setState({
       saveable: false,
-      tableTasks: getHotTasksIgnoreEmptyTask(hot),
+      tableTasks: getHotTasksIgnoreEmptyTaskAndProp(hot),
     });
     setTimeout(() => this.forceUpdate());
   }
@@ -306,7 +314,7 @@ class Taskontable extends Component {
     const hotData = hot.getSourceData();
     let insertPosition = hotData.lastIndexOf(data => util.equal(getEmptyRow(), data));
     if (insertPosition === -1) {
-      insertPosition = getHotTasksIgnoreEmptyTask(hot).length;
+      insertPosition = getHotTasksIgnoreEmptyTaskAndProp(hot).length;
     }
     const target = Object.assign({}, this.state.poolTasks[taskPoolType][index]);
     const dataForHot = [];
@@ -372,7 +380,7 @@ class Taskontable extends Component {
   saveHot() {
     if (hot) {
       // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTableTask(getHotTasksIgnoreEmptyTask(hot));
+      this.saveTableTask(getHotTasksIgnoreEmptyTaskAndProp(hot));
     }
   }
 
@@ -429,7 +437,7 @@ class Taskontable extends Component {
           loading: true,
         }));
         if (snapshot.exists()) {
-          if (snapshot.exists() && !util.equal(getHotTasksIgnoreEmptyTask(hot), snapshot.val()[this.state.date])) {
+          if (snapshot.exists() && !util.equal(getHotTasksIgnoreEmptyTaskAndProp(hot), snapshot.val()[this.state.date])) {
             // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、
             // サーバーのデータでテーブルを初期化する
             setDataForHot(hot, snapshot.val()[this.state.date]);

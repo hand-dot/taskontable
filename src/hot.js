@@ -1,6 +1,6 @@
 import moment from 'moment';
 import debounce from 'lodash.debounce';
-import taskSchema from './schemas/tableTaskSchema';
+import hotSchema from './schemas/hotSchema';
 import constants from './constants';
 import util from './util';
 import logo from './images/logo.png';
@@ -8,6 +8,7 @@ import logo from './images/logo.png';
 const BLUE = '#ff9b9b';
 const RED = '#4f93fc';
 const GRAY = '#cfcfcf';
+const BLACK = '#000';
 
 const isNotificationSupport = 'Notification' in window && Notification;
 
@@ -20,13 +21,20 @@ const columns = [
     validator: false,
     colWidths: 18,
     /* eslint no-param-reassign: ["error", { "props": false }] */
-    renderer(instance, td, row, col, prop, value) {
+    renderer(instance, td, row) {
       td.classList.add('htCenter');
       td.classList.add('htMiddle');
       td.classList.add('htDimmed');
-      td.innerHTML = `<input class="htCheckboxRendererInput" type="checkbox" ${value ? 'checked' : ''}>`;
-      if (value) td.parentNode.classList.add('done');
-      td.parentNode.style.color = value ? GRAY : '';
+      const checked = instance.getDataAtRowProp(row, 'startTime') !== '' && instance.getDataAtRowProp(row, 'endTime') !== '' ? 'checked' : '';
+      td.innerHTML = `<input class="htCheckboxRendererInput" type="checkbox" ${checked}>`;
+      if (checked) {
+        if (td.parentNode.classList.contains('progress')) td.parentNode.classList.remove('progress');
+        td.parentNode.classList.add('done');
+        td.parentNode.style.color = GRAY;
+      } else {
+        td.parentNode.classList.remove('done');
+        td.parentNode.style.color = BLACK;
+      }
       return td;
     },
   },
@@ -102,18 +110,27 @@ const columns = [
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htDimmed');
-      td.innerHTML = value;
-      // 見積もりに対して実績がオーバーしていれば編集したセルにoverdueという属性をtrueにする
-      // 見積もりに対して実績がむしろマイナスだった場合はoverdueをfalseにする
-      const estimateVal = instance.getDataAtRowProp(row, 'estimate');
-      const actuallyVal = instance.getDataAtRowProp(row, 'actually');
-      if (!Number.isInteger(+estimateVal) && !Number.isInteger(+actuallyVal)) return td;
-      const overdueSign = Math.sign(actuallyVal - estimateVal);
-      if (overdueSign === 1) {
-        td.style.color = BLUE;
-      } else if (overdueSign === -1) {
-        td.style.color = RED;
+      const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
+      const endTimeVal = instance.getDataAtRowProp(row, 'endTime');
+      if (startTimeVal && endTimeVal) {
+        const diff = util.getTimeDiff(startTimeVal, endTimeVal);
+        const overdueSign = Math.sign(diff - instance.getDataAtRowProp(row, 'estimate') || 0);
+        if (overdueSign === 1) {
+          // 差分が見積もりよりも少ない
+          td.style.color = BLUE;
+          value = diff; // eslint-disable-line no-param-reassign
+        } else if (overdueSign === 0) {
+          // 差分が見積もりと同じ
+          value = diff; // eslint-disable-line no-param-reassign
+        } else if (overdueSign === -1) {
+          // 差分が見積もりよりも多い
+          td.style.color = RED;
+          value = diff; // eslint-disable-line no-param-reassign
+        }
+      } else {
+        value = ''; // eslint-disable-line no-param-reassign
       }
+      td.innerHTML = value;
       return td;
     },
   },
@@ -123,55 +140,6 @@ const columns = [
     type: 'text',
   },
 ];
-
-const calculateTask = (hotInstance, row, prop) => {
-  const col = hotInstance.propToCol(prop);
-  if (prop === 'startTime' || prop === 'endTime') {
-    // 変更したセルが開始時刻 or 終了時刻の場合、実績を自動入力し、済をチェックする処理
-    const startTimeVal = hotInstance.getDataAtRowProp(row, 'startTime');
-    const endTimeVal = hotInstance.getDataAtRowProp(row, 'endTime');
-    if (startTimeVal === null || endTimeVal === null) return;
-    if (startTimeVal === '' || endTimeVal === '') {
-      // 入力値が空の場合、実績を空にし、済のチェックをはずす
-      hotInstance.setDataAtRowProp(row, 'done', false);
-      hotInstance.setDataAtRowProp(row, 'actually', '');
-    } else if (startTimeVal.indexOf(':') !== -1 && endTimeVal.indexOf(':') !== -1) {
-      // 実績を入力し、済をチェックする処理の開始
-      const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
-      const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
-      // 入力値のチェック
-      if (!Number.isInteger(+startTimeHour) && !Number.isInteger(+startTimeMinute) &&
-      !Number.isInteger(+endTimeHour) && !Number.isInteger(+endTimeMinute)) return;
-      // 開始時刻、終了時刻が有効な値の場合
-      const diff = moment().hour(endTimeHour).minute(endTimeMinute).diff(moment().hour(startTimeHour).minute(startTimeMinute), 'minutes');
-      const commentsPlugin = hotInstance.getPlugin('comments');
-      if (!isNaN(diff) && Math.sign(diff) !== -1) {
-        // 実績を入力し、済をチェックする
-        hotInstance.setDataAtRowProp(row, 'actually', diff);
-        hotInstance.setDataAtRowProp(row, 'done', true);
-        // ヴァリデーションエラーを消す処理
-        const targetCol = hotInstance.propToCol(prop === 'startTime' ? 'endTime' : 'startTime');
-        const targetCellMeta = hotInstance.getCellMeta(row, targetCol);
-        if (!targetCellMeta.valid) {
-          hotInstance.setCellMeta(row, targetCol, 'valid', true);
-          commentsPlugin.removeCommentAtCell(targetCellMeta.row, targetCellMeta.col);
-        }
-      } else {
-        // 開始時刻と終了時刻の関係がおかしい
-        // 実績、済をクリアする
-        hotInstance.setDataAtRowProp(row, 'actually', '');
-        hotInstance.setDataAtRowProp(row, 'done', false);
-        // ヴァリデーションエラーを追加する処理
-        const cellMeta = hotInstance.getCellMeta(row, col);
-        if (cellMeta.valid) {
-          hotInstance.setCellMeta(row, col, 'valid', false);
-          commentsPlugin.setCommentAtCell(row, col, '開始時刻に対して終了時刻が不正です。');
-          commentsPlugin.showAtCell(row, col);
-        }
-      }
-    }
-  }
-};
 
 const manageNotification = (hotInstance, row, prop, newVal) => {
   // ブラウザ通知をサポートしていなければ処理を抜ける
@@ -269,7 +237,7 @@ export const bindShortcut = (hot) => {
   }, constants.KEYEVENT_DELAY));
 };
 
-export const getEmptyHotData = () => [util.cloneDeep(taskSchema)];
+export const getEmptyHotData = () => [util.cloneDeep(hotSchema)];
 
 export const getEmptyRow = () => getEmptyHotData()[0];
 
@@ -307,14 +275,12 @@ export const hotConf = {
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
   data: getEmptyHotData(),
-  dataSchema: taskSchema,
+  dataSchema: hotSchema,
   afterChange(changes) {
     if (!changes) return;
     changes.forEach((change) => {
       const [row, prop, oldVal, newVal] = change;
       if ((prop === 'startTime' || prop === 'endTime') && oldVal !== newVal) {
-        // FIXME パフォーマンスが悪いのでレンダラーですべてを行いたい
-        calculateTask(this, row, prop);
         manageNotification(this, row, prop, newVal);
       }
     });
