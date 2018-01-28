@@ -222,7 +222,7 @@ export const bindShortcut = (hot) => {
     if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
     const selected = hot.getSelected();
     if (!selected) return;
-    const [startRow, startCol, endRow, endCol] = [selected];
+    const [startRow, startCol, endRow, endCol] = selected;
     if (e.ctrlKey) {
       if (constants.shortcuts.HOT_CURRENTTIME(e)) {
         // 現在時刻を入力
@@ -282,11 +282,12 @@ export const hotConf = {
   dataSchema: hotSchema,
   afterChange(changes) {
     if (!changes) return;
-    changes.forEach((change) => {
-      const [row, prop, oldVal, newVal] = change;
+    const changesLength = changes.length;
+    for (let i = 0; i < changesLength; i += 1) {
+      const [row, prop, oldVal, newVal] = changes[i];
       if ((prop === 'startTime' || prop === 'endTime') && oldVal !== newVal) {
         manageNotification(this, row, prop, newVal);
       }
-    });
+    }
   },
 };
