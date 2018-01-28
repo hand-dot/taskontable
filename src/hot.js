@@ -222,7 +222,7 @@ export const bindShortcut = (hot) => {
     if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
     const selected = hot.getSelected();
     if (!selected) return;
-    const [startRow, startCol, endRow, endCol] = [selected[0], selected[1], selected[2], selected[3]];
+    const [startRow, startCol, endRow, endCol] = [selected];
     if (e.ctrlKey) {
       if (constants.shortcuts.HOT_CURRENTTIME(e)) {
         // 現在時刻を入力
