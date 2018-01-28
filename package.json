@@ -11,14 +11,15 @@
   },
   "dependencies": {
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-polyfill": "^6.26.0",
     "fast-clone": "^1.4.2",
     "fast-equals": "^1.0.6",
-    "firebase": "^4.8.2",
+    "firebase": "^4.9.0",
     "font-awesome": "^4.7.0",
-    "handsontable": "^0.35.0",
+    "handsontable": "^0.35.1",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "material-ui": "^1.0.0-beta.29",
+    "material-ui": "^1.0.0-beta.30",
     "moment": "^2.20.1",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
@@ -27,10 +28,10 @@
     "react-scripts": "1.0.17"
   },
   "devDependencies": {
-    "eslint": "^4.15.0",
+    "eslint": "^4.16.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.5.1"
+    "eslint-plugin-react": "^7.6.0"
   }
 }
