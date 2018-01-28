@@ -243,7 +243,11 @@ export const getEmptyRow = () => getEmptyHotData()[0];
 
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   if (hotInstance) {
-    const hotData = hotInstance.getSourceData().map((data, index) => hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
+    const hotData = [];
+    const rowCount = hotInstance.countSourceRows();
+    for (let index = 0; index < rowCount; index += 1) {
+      hotData[index] = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
+    }
     return util.cloneDeep(hotData.filter(data => !util.equal(getEmptyRow(), data)));
   }
   return getEmptyHotData();
