@@ -163,7 +163,7 @@ class Taskontable extends Component {
             name: 'タスクを開始する',
           },
           done_task: {
-            name: 'タスクを完了にする',
+            name: 'タスクを終了にする',
           },
         },
       },
