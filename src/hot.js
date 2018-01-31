@@ -90,7 +90,7 @@ const columns = [
         td.classList.add('htInvalid');
         return td;
       }
-      if (value !== '') {
+      if (value === '') {
         const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
         const estimateVal = instance.getDataAtRowProp(row, 'estimate');
         if (startTimeVal !== '' && estimateVal !== '') {
