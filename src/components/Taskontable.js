@@ -547,11 +547,11 @@ class Taskontable extends Component {
                   const dontTasksLength = this.state.tableTasks.filter(data => data.startTime && data.endTime).length;
                   if (tableTasksLength === 0) {
                     return (
-                      <Typography type="body1"><i className="fa fa-exclamation-circle" />タスクがありません</Typography>
+                      <Typography type="body1"><i className="fa fa-asterisk" />タスクがありません</Typography>
                     );
                   } else if (tableTasksLength === dontTasksLength) {
                     return (
-                      <Typography type="body1"><i className="fa fa-exclamation-circle" />タスクをすべて完了しました!</Typography>
+                      <Typography type="body1"><i className="fa fa-thumbs-up" />タスクをすべて完了しました!</Typography>
                     );
                   }
                   return (
