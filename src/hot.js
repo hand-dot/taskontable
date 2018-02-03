@@ -30,7 +30,6 @@ const columns = [
       if (checked) {
         if (td.parentNode.classList.contains('progress')) td.parentNode.classList.remove('progress');
         td.parentNode.classList.add('done');
-        td.parentNode.style.color = GRAY;
       } else {
         td.parentNode.classList.remove('done');
         td.parentNode.style.color = BLACK;
