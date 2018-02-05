@@ -6,9 +6,6 @@ import hotSchema from './schemas/hotSchema';
 import poolTaskSchema from './schemas/poolTaskSchema';
 import tableTaskSchema from './schemas/tableTaskSchema';
 
-// パフォーマンスチューニング用
-// let c = 0;
-// let s = 0;
 export default {
   getExTableTaskProp() {
     const tableTaskSchemaKey = Object.keys(tableTaskSchema);
@@ -38,13 +35,9 @@ export default {
     return 0;
   },
   cloneDeep(a) {
-    // c += 1;
-    // console.log('cloneDeep', c, Date.now());
     return fastclone(a);
   },
   equal(a, b) {
-    // s += 1;
-    // console.log('equal', s, Date.now());
     return deepEqual(a, b);
   },
   getDayOfWeekStr(dayOfWeek) {

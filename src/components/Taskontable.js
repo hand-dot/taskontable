@@ -49,8 +49,6 @@ const styles = {
   },
 };
 
-const NotificationClone = (() => ('Notification' in window ? util.cloneDeep(Notification) : false))();
-
 // ハンズオンテーブルからから行を除き、永続化する必要のない情報を削除し、タスクを返す
 const getHotTasksIgnoreEmptyTaskAndProp = (hot => getHotTasksIgnoreEmptyTask(hot).map((data) => {
   util.getExTableTaskProp().forEach((prop) => {
@@ -65,7 +63,6 @@ class Taskontable extends Component {
     super(props);
     this.state = {
       loading: true,
-      notifiable: true,
       saveable: false,
       isOpenDashboard: false,
       isOpenTaskPool: false,
@@ -104,8 +101,6 @@ class Taskontable extends Component {
   }
 
   componentDidMount() {
-    // パフォーマンスチューニング用
-    // console.log(Date.now());
     const self = this;
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       contextMenu: {
@@ -346,21 +341,6 @@ class Taskontable extends Component {
     });
   }
 
-  toggleNotifiable(event, checked) {
-    if ('Notification' in window) {
-      Notification = checked ? NotificationClone : false;　// eslint-disable-line
-      this.setState(() => ({
-        notifiable: checked,
-      }));
-      if (!checked) {
-        hot.getData().forEach((data, index) => {
-          hot.removeCellMeta(index, hot.propToCol('startTime'), 'notification');
-        });
-        hot.render();
-      }
-    }
-  }
-
   savePoolTasks(poolTasks) {
     const tasks = Object.assign({}, poolTasks);
     if (tasks.regularTasks) {
@@ -535,8 +515,6 @@ class Taskontable extends Component {
                     saveable={this.state.saveable}
                     lastSaveTime={this.state.lastSaveTime}
                     saveHot={this.saveHot.bind(this)}
-                    notifiable={this.state.notifiable}
-                    toggleNotifiable={this.toggleNotifiable.bind(this)}
                   />
                 </Hidden>
               </div>

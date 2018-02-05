@@ -2,10 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
-import Switch from 'material-ui/Switch';
 import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
-import { FormControlLabel, FormGroup } from 'material-ui/Form';
 
 const styles = {
   button: {
@@ -21,23 +19,9 @@ function addTask() {
 }
 
 function TableCtl(props) {
-  const { saveable, lastSaveTime, saveHot, notifiable, toggleNotifiable, classes } = props;
+  const { saveable, lastSaveTime, saveHot, classes } = props;
   return (
     <Grid style={{ height: 35 }}container spacing={8}>
-      <Grid item xs={2}>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                disabled={!('Notification' in window)}
-                checked={notifiable}
-                onChange={toggleNotifiable}
-              />
-            }
-            label={`アラーム${!('Notification' in window) ? '(ブラウザが未対応です。)' : ''}`}
-          />
-        </FormGroup>
-      </Grid>
       <Grid item xs={10}>
         <div style={{ textAlign: 'right' }}>
           <Button className={classes.button} raised onClick={addTask} color="default">
@@ -66,8 +50,6 @@ TableCtl.propTypes = {
     second: PropTypes.number.isRequired,
   }).isRequired,
   saveHot: PropTypes.func.isRequired,
-  notifiable: PropTypes.bool.isRequired,
-  toggleNotifiable: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
