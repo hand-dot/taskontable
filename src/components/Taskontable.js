@@ -20,6 +20,7 @@ import '../styles/handsontable-custom.css';
 
 import Dashboard from './Dashboard';
 import TableCtl from './TableCtl';
+import TableStatus from './TableStatus';
 import TaskPool from './TaskPool';
 import DatePicker from './DatePicker';
 import ProcessingDialog from './ProcessingDialog';
@@ -518,35 +519,8 @@ class Taskontable extends Component {
                   />
                 </Hidden>
               </div>
-              {/* FIXME コンポーネント化 */}
-              <div style={{ paddingLeft: 24 }}>
-                {(() => {
-                  const tableTasksLength = this.state.tableTasks.length;
-                  const dontTasksLength = this.state.tableTasks.filter(data => data.startTime && data.endTime).length;
-                  if (tableTasksLength === 0) {
-                    return (
-                      <Typography type="body1"><i className="fa fa-asterisk" />タスクがありません</Typography>
-                    );
-                  } else if (tableTasksLength === dontTasksLength) {
-                    return (
-                      <Typography type="body1"><i className="fa fa-thumbs-up" />タスクをすべて完了しました!</Typography>
-                    );
-                  }
-                  return (
-                    <Typography type="body1">
-                      <i className="fa fa-exclamation-circle" />
-                      {this.state.tableTasks.length}Open
-                      <span>&nbsp;</span>
-                      <i className="fa fa-check" />
-                      {this.state.tableTasks.filter(data => data.startTime && data.endTime).length}Closed
-                    </Typography>
-                  );
-                })()}
-              </div>
-              <div>
-                <LinearProgress mode={this.state.loading ? 'indeterminate' : 'determinate'} value={(this.state.tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / this.state.tableTasks.length)} />
-                <div id="hot" />
-              </div>
+              <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
+              <div id="hot" />
             </Paper>
           </Grid>
         </Grid>
