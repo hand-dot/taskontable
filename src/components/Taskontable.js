@@ -11,7 +11,6 @@ import 'handsontable/dist/handsontable.full.css';
 
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
-import { LinearProgress } from 'material-ui/Progress';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import Hidden from 'material-ui/Hidden';

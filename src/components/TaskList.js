@@ -181,14 +181,14 @@ class TaskList extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tasks.map((n, index) => (
-              <TableRow key={index.toString()}>
+            {tasks.map((task, index) => (
+              <TableRow key={task.title + task.memo + task.estimate}>
                 <TableCell padding="none" className={classes.cell}>
                   <Input
                     className={classes.cellInput}
                     fullWidth
                     onChange={this.changeTaskTitle.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? n.title : this.state.editTask.title}
+                    value={this.state.editingTaskIndex !== index ? task.title : this.state.editTask.title}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -198,7 +198,7 @@ class TaskList extends Component {
                     className={classes.cellInput}
                     fullWidth
                     onChange={this.changeTaskMemo.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? n.memo : this.state.editTask.memo}
+                    value={this.state.editingTaskIndex !== index ? task.memo : this.state.editTask.memo}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -209,7 +209,7 @@ class TaskList extends Component {
                     type="number"
                     fullWidth
                     onChange={this.changeTaskEstimate.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? n.estimate : this.state.editTask.estimate}
+                    value={this.state.editingTaskIndex !== index ? task.estimate : this.state.editTask.estimate}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -220,7 +220,7 @@ class TaskList extends Component {
                       <TableCell padding="none" className={classes.cell}>
                         <MultipleSelect
                           label={'第何週'}
-                          value={this.state.editingTaskIndex !== index ? n.week : this.state.editTask.week}
+                          value={this.state.editingTaskIndex !== index ? task.week : this.state.editTask.week}
                           options={[1, 2, 3, 4, 5]}
                           onChange={this.changeWeek.bind(this, 'editTask')}
                           disabled={this.state.editingTaskIndex !== index}
@@ -236,7 +236,7 @@ class TaskList extends Component {
                       <TableCell padding="none" className={classes.cell}>
                         <MultipleSelect
                           label={'何曜日'}
-                          value={this.state.editingTaskIndex !== index ? n.dayOfWeek : this.state.editTask.dayOfWeek}
+                          value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state.editTask.dayOfWeek}
                           options={constants.DAY_OF_WEEK_STR}
                           onChange={this.changeDayOfWeek.bind(this, 'editTask')}
                           disabled={this.state.editingTaskIndex !== index}
