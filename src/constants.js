@@ -35,6 +35,8 @@ export default {
     REMOVE: 'remove',
     DOWN: 'down',
     UP: 'up',
+    BOTTOM: 'bottom',
+    TOP: 'top',
   },
   DATEFMT: 'YYYY-MM-DD',
   INITIALDATE: '1970-01-01',

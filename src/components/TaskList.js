@@ -24,12 +24,16 @@ const styles = {
     fontSize: 15,
   },
   actionIcons: {
-    width: 110,
     margin: '0 auto',
   },
   cell: {
     border: '1px solid rgba(235, 235, 235, 1)',
     padding: '0 5px',
+  },
+  miniCell: {
+    border: '1px solid rgba(235, 235, 235, 1)',
+    padding: '0 5px',
+    maxWidth: '3rem',
   },
   cellInput: {
     color: '#000',
@@ -145,6 +149,16 @@ class TaskList extends Component {
     this.props.upTask(index);
   }
 
+  bottomToTask(index) {
+    this.closeTaskAction(index);
+    this.props.bottomToTask(index);
+  }
+
+  topToTask(index) {
+    this.closeTaskAction(index);
+    this.props.topToTask(index);
+  }
+
   addTask() {
     if (this.state.addTask.title === '') {
       alert('作業内容が空の状態では保存できません。');
@@ -174,10 +188,10 @@ class TaskList extends Component {
             <TableRow>
               <TableCell padding="none" className={classes.cell}>作業内容</TableCell>
               <TableCell padding="none" className={classes.cell}>備考</TableCell>
-              <TableCell padding="none" className={classes.cell}>見積</TableCell>
-              {(() => (isRegularTask ? <TableCell padding="none" className={classes.cell}>第何週</TableCell> : null))()}
-              {(() => (isRegularTask ? <TableCell padding="none" className={classes.cell}>何曜日</TableCell> : null))()}
-              <TableCell padding="none" className={classes.cell}>アクション</TableCell>
+              <TableCell padding="none" className={classes.miniCell}>見積</TableCell>
+              {(() => (isRegularTask ? <TableCell padding="none" className={classes.miniCell}>第何週</TableCell> : null))()}
+              {(() => (isRegularTask ? <TableCell padding="none" className={classes.miniCell}>何曜日</TableCell> : null))()}
+              <TableCell padding="none" className={classes.miniCell}>アクション</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -203,7 +217,7 @@ class TaskList extends Component {
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
                 </TableCell>
-                <TableCell padding="none" className={classes.cell}>
+                <TableCell padding="none" className={classes.miniCell}>
                   <Input
                     className={classes.cellInput}
                     type="number"
@@ -217,7 +231,7 @@ class TaskList extends Component {
                 {(() => {
                   if (isRegularTask) {
                     return (
-                      <TableCell padding="none" className={classes.cell}>
+                      <TableCell padding="none" className={classes.miniCell}>
                         <MultipleSelect
                           label={'第何週'}
                           value={this.state.editingTaskIndex !== index ? task.week : this.state.editTask.week}
@@ -233,7 +247,7 @@ class TaskList extends Component {
                 {(() => {
                   if (isRegularTask) {
                     return (
-                      <TableCell padding="none" className={classes.cell}>
+                      <TableCell padding="none" className={classes.miniCell}>
                         <MultipleSelect
                           label={'何曜日'}
                           value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state.editTask.dayOfWeek}
@@ -246,7 +260,7 @@ class TaskList extends Component {
                   }
                   return null;
                 })()}
-                <TableCell padding="none" className={classes.cell}>
+                <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
                   <div className={classes.actionIcons}>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
                       <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
@@ -264,13 +278,21 @@ class TaskList extends Component {
                         <i className="fa fa-download" />
                       テーブルに移動
                       </MenuItem>
-                      <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
-                        <i className="fa fa-arrow-down" />
-                      1つ下に移動
+                      <MenuItem key={'topToTask'} onClick={this.topToTask.bind(this, index)}>
+                        <i className="fa fa-angle-double-up" />
+                      先頭に移動
                       </MenuItem>
                       <MenuItem key={'upTask'} onClick={this.upTask.bind(this, index)}>
-                        <i className="fa fa-arrow-up" />
+                        <i className="fa fa-angle-up" />
                       1つ上に移動
+                      </MenuItem>
+                      <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
+                        <i className="fa fa-angle-double-down" />
+                      末尾に移動
+                      </MenuItem>
+                      <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
+                        <i className="fa fa-angle-down" />
+                      1つ下に移動
                       </MenuItem>
                       <MenuItem key={'removeTask'} onClick={this.removeTask.bind(this, index)}>
                         <i className="fa fa-trash-o" />
@@ -300,7 +322,7 @@ class TaskList extends Component {
                   placeholder="備考"
                 />
               </TableCell>
-              <TableCell padding="none" className={classes.cell}>
+              <TableCell padding="none" className={classes.miniCell}>
                 <Input
                   className={classes.cellInput}
                   type="number"
@@ -313,7 +335,7 @@ class TaskList extends Component {
               {(() => {
                 if (isRegularTask) {
                   return (
-                    <TableCell padding="none" className={classes.cell}>
+                    <TableCell padding="none" className={classes.miniCell}>
                       <MultipleSelect
                         label={'第何週'}
                         value={this.state.addTask.week}
@@ -329,7 +351,7 @@ class TaskList extends Component {
               {(() => {
                 if (isRegularTask) {
                   return (
-                    <TableCell padding="none" className={classes.cell}>
+                    <TableCell padding="none" className={classes.miniCell}>
                       <MultipleSelect
                         label={'何曜日'}
                         value={this.state.addTask.dayOfWeek}
@@ -342,7 +364,7 @@ class TaskList extends Component {
                 }
                 return null;
               })()}
-              <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.cell}>
+              <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
                 <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)}>
                   <i className="fa fa-plus" />
                 </IconButton>
@@ -363,6 +385,8 @@ TaskList.propTypes = {
   removeTask: PropTypes.func.isRequired,
   downTask: PropTypes.func.isRequired,
   upTask: PropTypes.func.isRequired,
+  bottomToTask: PropTypes.func.isRequired,
+  topToTask: PropTypes.func.isRequired,
   isRegularTask: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
 };

@@ -11,11 +11,6 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'wrap',
   },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 120,
-    maxWidth: 300,
-  },
 });
 
 const ITEM_HEIGHT = 48;
@@ -34,7 +29,7 @@ class MultipleSelect extends Component {
     const { label, value, options, onChange, disabled, classes, theme } = this.props;
     return (
       <div className={classes.container}>
-        <FormControl className={classes.formControl}>
+        <FormControl>
           <InputLabel style={{ fontSize: 12 }} htmlFor={this.state.id}>{label}</InputLabel>
           <Select
             disabled={disabled}

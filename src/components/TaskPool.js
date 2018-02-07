@@ -49,7 +49,13 @@ class TaskPool extends Component {
   upTask(index) {
     this.props.changePoolTasks(constants.taskPoolActionType.UP, this.state.tab, index);
   }
+  bottomToTask(index) {
+    this.props.changePoolTasks(constants.taskPoolActionType.BOTTOM, this.state.tab, index);
+  }
 
+  topToTask(index) {
+    this.props.changePoolTasks(constants.taskPoolActionType.TOP, this.state.tab, index);
+  }
   handleTabChange(event, tab) {
     this.setState({ tab });
   }
@@ -96,6 +102,8 @@ class TaskPool extends Component {
                   removeTask={this.removeTask.bind(this)}
                   downTask={this.downTask.bind(this)}
                   upTask={this.upTask.bind(this)}
+                  bottomToTask={this.bottomToTask.bind(this)}
+                  topToTask={this.topToTask.bind(this)}
                   tasks={tasks}
                   isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
                 />);
