@@ -86,9 +86,9 @@ class GlobalHeader extends Component {
     if (constants.menuItemKey.DESCRIPTION === menuItemKey) {
       this.setState({ isOpenDescriptionDialog: true });
     } else if (constants.menuItemKey.CONTACT === menuItemKey) {
-      window.open(constants.CONTACTURL);
+      window.open(constants.CONTACT_URL);
     } else if (constants.menuItemKey.GIT === menuItemKey) {
-      window.open(constants.REPOSITORYURL);
+      window.open(constants.REPOSITORY_URL);
     }
   }
 

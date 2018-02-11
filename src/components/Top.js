@@ -83,8 +83,8 @@ function Top(props) {
         <Paper square elevation={0}>
           <div className={classes.content}>
             <div style={{ marginBottom: '1em' }} className={classes.center}>
-              <a style={{ margin: '0 .4em' }} href={constants.CONTACTURL} target="_blank">お問い合わせ</a>
-              <a style={{ margin: '0 .4em' }} href={constants.REPOSITORYURL} target="_blank">ソースコード</a>
+              <a style={{ margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">お問い合わせ</a>
+              <a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">ソースコード</a>
             </div>
             <div className={classes.center}>
               hand-dot © Copyright 2018. All rights reserved.

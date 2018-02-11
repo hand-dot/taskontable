@@ -1,6 +1,7 @@
 export default {
-  CONTACTURL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
-  REPOSITORYURL: 'https://github.com/hand-dot/taskchute-web',
+  CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
+  REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
+  CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   APPWIDTH: window.innerWidth,
   APPHEIGHT: window.innerHeight,
   KEYEVENT_DELAY: 100,

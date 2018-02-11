@@ -12,6 +12,7 @@ import Toolbar from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
 
 import '../styles/helpdialog.css';
+import constants from '../constants';
 
 const styles = {
   appBar: {
@@ -107,7 +108,7 @@ function HelpDialog(props) {
                 *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。
             </Typography>
             <Typography gutterBottom type="caption">
-                *別の日付のテーブルに遷移すると終了通知予約は削除されます。
+                *通知が表示されない場合はこちらをご参照ください。<a href={constants.CHROME_HELP_PERMISSION_URL} target="_blank">サイトの許可を変更する Google Chrome</a>
             </Typography>
           </Grid>
         </Grid>
