@@ -2,19 +2,6 @@
   font-size: 9pt;
 }
 
-.handsontable .htDimmed {
-  background-color: #f3f3f3;
-}
-
-.handsontable td.htInvalid {
-  background-color: #ff9b9b !important;
-}
-
-.handsontable .mark {
-  color: #fff;
-  background-color: #3f51b5;
-}
-
 .handsontable .done td{
   background-color: #f3f3f3;
 }
