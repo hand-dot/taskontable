@@ -38,7 +38,7 @@ class TaskPool extends Component {
   }
 
   removeTask(index) {
-    if (window.confirm('本当に削除しますか？')) {
+    if (window.confirm(`${this.props.poolTasks[this.state.tab][index].title} を本当に削除しますか？`)) {
       this.props.changePoolTasks(constants.taskPoolActionType.REMOVE, this.state.tab, index);
     }
   }
