@@ -51,7 +51,7 @@ class Pie extends Component {
       this.setState({ isNodata });
     }
     charts[this.state.ctxId].data.labels = nextProps.labels.map(label => (label.length < 9 ? label || '' : `${label.substring(0, 7)}..`));
-    // FIXME 色を決める
+    // FIXME グラフの色を決める https://github.com/hand-dot/taskontable/issues/166
     charts[this.state.ctxId].data.datasets = [{ data: nextProps.data, backgroundColor: nextProps.data.map(() => `rgba(0, 0, 0, ${0.1})`) }];
     charts[this.state.ctxId].update();
   }
