@@ -7,10 +7,10 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
-import Hidden from 'material-ui/Hidden';
 
 import TodaySummary from './TodaySummary';
 import Clock from './Clock';
+import Pie from './Pie';
 
 import util from '../util';
 
@@ -67,6 +67,22 @@ class Dashboard extends Component {
     });
   }
 
+  getEstimateTaskData() {
+    return this.props.tableTasks.filter(tableTask => tableTask.estimate && tableTask.estimate !== 0).map(tableTask => tableTask.estimate || 0);
+  }
+
+  getEstimateTaskLabel() {
+    return this.props.tableTasks.filter(tableTask => tableTask.estimate && tableTask.estimate !== 0).map(tableTask => tableTask.title || '');
+  }
+
+  getActuallyTaskData() {
+    return this.props.tableTasks.filter(tableTask => util.getTimeDiff(tableTask.startTime, tableTask.endTime) !== 0).map(tableTask => util.getTimeDiff(tableTask.startTime, tableTask.endTime) || 0);
+  }
+
+  getActuallyTaskLabel() {
+    return this.props.tableTasks.filter(tableTask => util.getTimeDiff(tableTask.startTime, tableTask.endTime) !== 0).map(tableTask => tableTask.title || '');
+  }
+
   render() {
     const { isOpenDashboard, toggleDashboard } = this.props;
     return (
@@ -76,25 +92,25 @@ class Dashboard extends Component {
           <Typography>　ダッシュボード</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <Grid item xs={12} sm={6}>
-            <Typography gutterBottom type="subheading">
+          <Grid container>
+            <Grid item xs={12} sm={6}>
+              <Typography gutterBottom type="subheading">
                  サマリ
-            </Typography>
-            <TodaySummary
-              data={{
-                estimateTasks: this.state.estimateTasks,
-                doneTasks: this.state.doneTasks,
-                actuallyTasks: this.state.actuallyTasks,
-                remainingTasks: this.state.remainingTasks,
-              }}
-            />
-          </Grid>
-          <Hidden xsDown>
-            <Grid item sm={6}>
+              </Typography>
+              <TodaySummary
+                data={{
+                  estimateTasks: this.state.estimateTasks,
+                  doneTasks: this.state.doneTasks,
+                  actuallyTasks: this.state.actuallyTasks,
+                  remainingTasks: this.state.remainingTasks,
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Typography gutterBottom type="subheading">
                  時刻
               </Typography>
-              <Grid container spacing={8}>
+              <Grid container>
                 <Grid item xs={6}>
                   <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
                 </Grid>
@@ -103,7 +119,20 @@ class Dashboard extends Component {
                 </Grid>
               </Grid>
             </Grid>
-          </Hidden>
+            <Grid item xs={12}>
+              <Typography gutterBottom type="subheading">
+                 グラフ
+              </Typography>
+              <Grid container>
+                <Grid item xs={12} sm={6}>
+                  <Pie title={'見積'} data={this.getEstimateTaskData()} labels={this.getEstimateTaskLabel()} />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Pie title={'実績'} data={this.getActuallyTaskData()} labels={this.getActuallyTaskLabel()} />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
