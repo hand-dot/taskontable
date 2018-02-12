@@ -9,7 +9,6 @@ const BLUE = '#ff9b9b';
 const RED = '#4f93fc';
 const GRAY = '#cfcfcf';
 
-const isNotificationSupport = 'Notification' in window && Notification;
 
 const columns = [
   {
@@ -117,21 +116,28 @@ const setNotifiCell = (hotInstance, row, col, timeout, type = 'startTime') => {
   // 権限を取得し通知を登録
   Notification
     .requestPermission()
-    .then(() => {
+    .then((result) => {
       // タイマーを登録(セルにタイマーIDを設定)
       const notifiId = setTimeout(() => {
         // タイマーが削除されていた場合には何もしない
         if (!hotInstance.getCellMeta(row, col)[`${target}NotifiId`]) return;
         hotInstance.removeCellMeta(row, col, `${target}NotifiId`);
-        const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-        const notifi = new Notification(taskTitle ? `${taskTitle}の${target === 'startTime' ? '開始' : '終了'}時刻です。` : `タスクの${target === 'startTime' ? '開始' : '終了'}時刻です。`, {
-          icon: logo,
-        });
-        notifi.onclick = () => {
-          notifi.close();
+        let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
+        taskTitle = taskTitle ? `${taskTitle}の${target === 'startTime' ? '開始' : '終了'}時刻です。` : `タスクの${target === 'startTime' ? '開始' : '終了'}時刻です。`;
+        if (result === 'denied' || result === 'default') {
+          alert(taskTitle);
           window.focus();
           hotInstance.selectCell(row, hotInstance.propToCol(target));
-        };
+        } else {
+          const notifi = new Notification(taskTitle, {
+            icon: logo,
+          });
+          notifi.onclick = () => {
+            notifi.close();
+            window.focus();
+            hotInstance.selectCell(row, hotInstance.propToCol(target));
+          };
+        }
         hotInstance.render();
       }, timeout);
       // 既に設定されているタイマーを削除
@@ -156,8 +162,6 @@ const removeNotifiCell = (hotInstance, row, col) => {
 };
 
 const manageNotification = (hotInstance, row, prop, newVal) => {
-  // ブラウザ通知をサポートしていなければ処理を抜ける
-  if (!isNotificationSupport) return;
   const col = hotInstance.propToCol(prop);
   // 値が不正な場合は処理を抜ける
   if (!hotInstance.getCellMeta(row, col).valid) return;
