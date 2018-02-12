@@ -112,6 +112,49 @@ const columns = [
   },
 ];
 
+const setNotifiCell = (hotInstance, row, col, timeout, type = 'startTime') => {
+  const target = type === 'startTime' ? 'startTime' : 'endTime';
+  // 権限を取得し通知を登録
+  Notification
+    .requestPermission()
+    .then(() => {
+      // タイマーを登録(セルにタイマーIDを設定)
+      const notifiId = setTimeout(() => {
+        // タイマーが削除されていた場合には何もしない
+        if (!hotInstance.getCellMeta(row, col)[`${target}NotifiId`]) return;
+        hotInstance.removeCellMeta(row, col, `${target}NotifiId`);
+        const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
+        const notifi = new Notification(taskTitle ? `${taskTitle}の${target === 'startTime' ? '開始' : '終了'}時刻です。` : `タスクの${target === 'startTime' ? '開始' : '終了'}時刻です。`, {
+          icon: logo,
+        });
+        notifi.onclick = () => {
+          notifi.close();
+          window.focus();
+          hotInstance.selectCell(row, hotInstance.propToCol(target));
+        };
+        hotInstance.render();
+      }, timeout);
+      // 既に設定されているタイマーを削除
+      hotInstance.removeCellMeta(row, col, `${target}NotifiId`);
+      hotInstance.setCellMeta(row, col, `${target}NotifiId`, notifiId);
+      hotInstance.render();
+    });
+};
+
+const removeNotifiCell = (hotInstance, row, col) => {
+  const startNotifiId = hotInstance.getCellMeta(row, col).startNotifiId;
+  const endNotifiId = hotInstance.getCellMeta(row, col).endNotifiId;
+  if (startNotifiId) {
+    clearTimeout(startNotifiId);
+    hotInstance.removeCellMeta(row, col, 'startNotifiId');
+  }
+  if (endNotifiId) {
+    clearTimeout(endNotifiId);
+    hotInstance.removeCellMeta(row, col, 'endNotifiId');
+  }
+  hotInstance.render();
+};
+
 const manageNotification = (hotInstance, row, prop, newVal) => {
   // ブラウザ通知をサポートしていなければ処理を抜ける
   if (!isNotificationSupport) return;
@@ -121,93 +164,27 @@ const manageNotification = (hotInstance, row, prop, newVal) => {
   if (prop === 'startTime') {
     // 新しい値が空の場合は既に登録されている通知を削除
     if (newVal === '') {
-      const startNotifiId = hotInstance.getCellMeta(row, col).startNotifiId;
-      const endNotifiId = hotInstance.getCellMeta(row, col).endNotifiId;
-      if (startNotifiId || endNotifiId) {
-        clearTimeout(startNotifiId);
-        clearTimeout(endNotifiId);
-        hotInstance.removeCellMeta(row, col, 'startNotifiId');
-        hotInstance.removeCellMeta(row, col, 'endNotifiId');
-        hotInstance.render();
-        return;
-      }
+      removeNotifiCell(hotInstance, row, col);
+      return;
     }
-    // FIXME 関数化
+    const newValMoment = moment(newVal, 'HH:mm');
     // --------------------------開始時刻に表示する通知の設定--------------------------
-    const startNotifiMoment = moment(newVal, 'HH:mm');
-    const startTimeOut = startNotifiMoment.diff(moment());
-    if (startNotifiMoment.isValid() && startTimeOut > 0) {
-    // 権限を取得し通知を登録
-      Notification
-        .requestPermission()
-        .then(() => {
-        // タイマーを登録(セルにタイマーIDを設定)
-          const notifiId = setTimeout(() => {
-            // タイマーが削除されていた場合には何もしない
-            if (!hotInstance.getCellMeta(row, col).startNotifiId) return;
-            hotInstance.removeCellMeta(row, col, 'startNotifiId');
-            const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-            const notifi = new Notification(taskTitle ? `${taskTitle}の開始時刻です。` : 'タスクの開始時刻です。', {
-              icon: logo,
-            });
-            notifi.onclick = () => {
-              notifi.close();
-              window.focus();
-              hotInstance.selectCell(row, hotInstance.propToCol('startTime'));
-            };
-            hotInstance.render();
-          }, startTimeOut);
-          // 既に設定されているタイマーを削除
-          hotInstance.removeCellMeta(row, col, 'startNotifiId');
-          hotInstance.setCellMeta(row, col, 'startNotifiId', notifiId);
-          hotInstance.render();
-        });
+    const startTimeOut = newValMoment.diff(moment());
+    if (startTimeOut > 0) {
+      setNotifiCell(hotInstance, row, col, startTimeOut, 'startTime');
     }
     // --------------------------終了時刻に表示する通知の設定--------------------------
     const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
     // 見積もり時刻が空か0 もしくは 見積もり時間が不正な場合、処理を抜ける
     if (estimateVal === '' || estimateVal === 0 || !Number.isInteger(+estimateVal)) return;
-    const endNotifiMoment = moment(newVal, 'HH:mm').add(estimateVal, 'minutes');
-    const endTimeOut = endNotifiMoment.diff(moment());
-    if (endNotifiMoment.isValid() && endTimeOut > 0) {
-    // 権限を取得し通知を登録
-      Notification
-        .requestPermission()
-        .then(() => {
-        // タイマーを登録(セルにタイマーIDを設定)
-          const notifiId = setTimeout(() => {
-          // タイマーが削除されていた場合には何もしない
-            if (!hotInstance.getCellMeta(row, col).endNotifiId) return;
-            hotInstance.removeCellMeta(row, col, 'endNotifiId');
-            const taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-            const notifi = new Notification(taskTitle ? `${taskTitle}の終了時刻です。` : 'タスクの終了時刻です。', {
-              icon: logo,
-            });
-            notifi.onclick = () => {
-              notifi.close();
-              window.focus();
-              hotInstance.selectCell(row, hotInstance.propToCol('endTime'));
-            };
-            hotInstance.render();
-          }, endTimeOut);
-          // 既に設定されているタイマーを削除
-          hotInstance.removeCellMeta(row, col, 'endNotifiId');
-          hotInstance.setCellMeta(row, col, 'endNotifiId', notifiId);
-          hotInstance.render();
-        });
+    const endTimeOut = newValMoment.add(estimateVal, 'minutes').diff(moment());
+    if (endTimeOut > 0) {
+      setNotifiCell(hotInstance, row, col, endTimeOut, 'endTime');
     }
   } else if (prop === 'endTime') {
-    // startTimeのセルにタイマーIDがあれば確認をして削除
+    // startTimeのセルにタイマーIDがあれば削除
     const startTimeCol = hotInstance.propToCol('startTime');
-    const endNotifiId = hotInstance.getCellMeta(row, startTimeCol).endNotifiId;
-    const startNotifiId = hotInstance.getCellMeta(row, startTimeCol).startNotifiId;
-    if (startNotifiId || endNotifiId) {
-      clearTimeout(startNotifiId);
-      clearTimeout(endNotifiId);
-      hotInstance.removeCellMeta(row, startTimeCol, 'startNotifiId');
-      hotInstance.removeCellMeta(row, startTimeCol, 'endNotifiId');
-      hotInstance.render();
-    }
+    removeNotifiCell(hotInstance, row, startTimeCol);
   }
 };
 
