@@ -123,7 +123,8 @@ const setNotifiCell = (hotInstance, row, col, timeout, type = 'startTime') => {
         if (!hotInstance.getCellMeta(row, col)[`${target}NotifiId`]) return;
         hotInstance.removeCellMeta(row, col, `${target}NotifiId`);
         let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-        taskTitle = taskTitle ? `${taskTitle}の${target === 'startTime' ? '開始' : '終了'}時刻です。` : `タスクの${target === 'startTime' ? '開始' : '終了'}時刻です。`;
+        const taskTitleLabel = `[${target === 'startTime' ? '開始' : '終了'}] - `;
+        taskTitle = taskTitle ? `${taskTitleLabel}${taskTitle}` : `${taskTitleLabel}無名タスク`;
         if (result === 'denied' || result === 'default') {
           alert(taskTitle);
           window.focus();

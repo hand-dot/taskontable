@@ -65,10 +65,12 @@ const setPageTitle = (tasks) => {
   if (openTask) {
     intervalID = setInterval(() => {
       const timeDiff = util.getTimeDiff(openTask.startTime, moment().format('HH:mm'));
-      if (timeDiff === 0) {
-        document.title = `${moment().format('ss')}sec - ${openTask.title}`;
+      if (timeDiff === -1) {
+        document.title = `${moment().format('ss') - 60}秒 - ${openTask.title}`;
+      } else if (timeDiff === 0) {
+        document.title = `${moment().format('ss')}秒 - ${openTask.title}`;
       } else {
-        document.title = `${timeDiff}min - ${openTask.title}`;
+        document.title = `${timeDiff}分 - ${openTask.title}`;
       }
     }, 1000);
   }
