@@ -70,12 +70,12 @@ function Login(props) {
                 fullWidth
                 margin="normal"
               />
-              <Button raised disabled className={classes.button}>ログイン</Button>
+              <Button variant="raised" disabled className={classes.button}>ログイン</Button>
             </form>
             <Typography gutterBottom>
               OR
             </Typography>
-            <Button onClick={login} raised color="primary" className={classes.button}><img src={google} alt="google" height="20" />　グーグルアカウントでログインする</Button>
+            <Button onClick={login} variant="raised" color="primary" className={classes.button}><img src={google} alt="google" height="20" />　グーグルアカウントでログインする</Button>
           </div>
         </Paper>
       </Grid>

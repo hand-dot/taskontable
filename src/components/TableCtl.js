@@ -25,13 +25,13 @@ function TableCtl(props) {
   const { saveable, lastSaveTime, saveHot, classes } = props;
   return (
     <div className={classes.root}>
-      <Button className={classes.button} raised onClick={addTask} color="default">
+      <Button className={classes.button} variant="raised" onClick={addTask} color="default">
         <i className="fa fa-plus fa-lg" />
             行追加
       </Button>
       <Tooltip title={`最終保存時刻 : ${(`00${lastSaveTime.hour}`).slice(-2)}:${(`00${lastSaveTime.minute}`).slice(-2)}`} placement="top">
         <div style={{ display: 'inline-block' }}>
-          <Button disabled={!saveable} className={classes.button} raised onClick={saveHot} color="default">
+          <Button disabled={!saveable} className={classes.button} variant="raised" onClick={saveHot} color="default">
             <i className="fa fa-floppy-o fa-lg" />
               保存
           </Button>

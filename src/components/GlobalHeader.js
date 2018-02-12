@@ -117,8 +117,8 @@ class GlobalHeader extends Component {
               {(() => {
                 if (!this.state.login) {
                   return (<div style={{ display: 'inline-flex' }}>
-                    <Link className={classes.link} to="/login"><Button raised className={classes.button}>ログイン</Button></Link>
-                    <Link className={classes.link} to="/signup"><Button raised className={classes.button} color="primary" >アカウント作成</Button></Link>
+                    <Link className={classes.link} to="/login"><Button variant="raised" className={classes.button}>ログイン</Button></Link>
+                    <Link className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >アカウント作成</Button></Link>
                   </div>);
                 }
                 return (<div style={{ display: 'inline-flex' }}>

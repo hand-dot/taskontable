@@ -38,7 +38,7 @@ function TableStatus(props) {
           );
         })()}
       </div>
-      <LinearProgress mode={isLoading ? 'indeterminate' : 'determinate'} value={(tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length)} />
+      <LinearProgress variant={isLoading ? 'indeterminate' : 'determinate'} value={(tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length)} />
     </div>
   );
 }
