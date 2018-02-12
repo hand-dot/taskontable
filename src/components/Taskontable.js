@@ -56,7 +56,23 @@ const getHotTasksIgnoreEmptyTaskAndProp = (hot => getHotTasksIgnoreEmptyTask(hot
   });
   return data;
 }));
-
+// 開始しているタスクを見つけ、経過時間をタイトルに反映する
+let intervalID = '';
+const setPageTitle = (tasks) => {
+  const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
+  document.title = 'Taskontable';
+  if (intervalID) clearInterval(intervalID);
+  if (openTask) {
+    intervalID = setInterval(() => {
+      const timeDiff = util.getTimeDiff(openTask.startTime, moment().format('HH:mm'));
+      if (timeDiff === 0) {
+        document.title = `${moment().format('ss')}sec - ${openTask.title}`;
+      } else {
+        document.title = `${timeDiff}min - ${openTask.title}`;
+      }
+    }, 1000);
+  }
+};
 let hot = null;
 class Taskontable extends Component {
   constructor(props) {
@@ -191,6 +207,7 @@ class Taskontable extends Component {
 
   setStateFromRenderHot() {
     const hotTasks = getHotTasksIgnoreEmptyTaskAndProp(hot);
+    setPageTitle(hotTasks);
     if (!util.equal(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: true,
@@ -312,7 +329,6 @@ class Taskontable extends Component {
     if (this.state.poolTasks[taskPoolType].length === index + 1) return;
     const poolTasks = util.cloneDeep(this.state.poolTasks);
     const target = poolTasks[taskPoolType].splice(index, 1)[0];
-    console.log(target);
     poolTasks[taskPoolType].push(target);
     this.setState({ poolTasks });
   }
@@ -321,7 +337,6 @@ class Taskontable extends Component {
     if (index === 0) return;
     const poolTasks = util.cloneDeep(this.state.poolTasks);
     const target = poolTasks[taskPoolType].splice(index, 1)[0];
-    console.log(target);
     poolTasks[taskPoolType].unshift(target);
     this.setState({ poolTasks });
   }
