@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
+import Typography from 'material-ui/Typography';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
@@ -276,27 +277,27 @@ class TaskList extends Component {
                     >
                       <MenuItem key={'moveTask'} onClick={this.moveTask.bind(this, index)}>
                         <i className="fa fa-download" />
-                      テーブルに移動
+                        <Typography>テーブルに移動</Typography>
                       </MenuItem>
                       <MenuItem key={'topToTask'} onClick={this.topToTask.bind(this, index)}>
                         <i className="fa fa-angle-double-up" />
-                      先頭に移動
+                        <Typography>先頭に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'upTask'} onClick={this.upTask.bind(this, index)}>
                         <i className="fa fa-angle-up" />
-                      1つ上に移動
+                        <Typography>1つ上に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
                         <i className="fa fa-angle-double-down" />
-                      末尾に移動
+                        <Typography>末尾に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
                         <i className="fa fa-angle-down" />
-                      1つ下に移動
+                        <Typography>1つ下に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'removeTask'} onClick={this.removeTask.bind(this, index)}>
                         <i className="fa fa-trash-o" />
-                      削除
+                        <Typography>削除</Typography>
                       </MenuItem>
                     </Menu>
                   </div>
