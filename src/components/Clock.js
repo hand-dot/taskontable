@@ -114,11 +114,11 @@ class Clock extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, caption, title } = this.props;
     return (
       <div>
-        <Typography gutterBottom type="caption" align="center" title={this.props.caption}>
-          {this.props.title}
+        <Typography gutterBottom type="caption" align="center" title={caption}>
+          {title}
         </Typography>
         <div className={classes.circle}>
           <div className={classes.face}>
