@@ -3,9 +3,12 @@ import Chart from 'chart.js';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
+import constants from '../constants';
 
 const styles = {
 };
+const backgroundColors = Object.values(constants.chartColors.background);
+const borderColors = Object.values(constants.chartColors.border);
 const charts = {};
 
 class Pie extends Component {
@@ -30,6 +33,10 @@ class Pie extends Component {
         labels: [''],
       },
       options: {
+        title: {
+          display: true,
+          text: this.props.title || '',
+        },
         responsive: true,
         animation: false,
         legend: {
@@ -51,18 +58,19 @@ class Pie extends Component {
       this.setState({ isNodata });
     }
     charts[this.state.ctxId].data.labels = nextProps.labels.map(label => (label.length < 9 ? label || '' : `${label.substring(0, 7)}..`));
-    // FIXME グラフの色を決める https://github.com/hand-dot/taskontable/issues/166
-    charts[this.state.ctxId].data.datasets = [{ data: nextProps.data, backgroundColor: nextProps.data.map(() => `rgba(0, 0, 0, ${0.1})`) }];
+    const dummyArray = Array(nextProps.data.length).fill(1);
+    charts[this.state.ctxId].data.datasets = [{
+      data: nextProps.data,
+      backgroundColor: dummyArray.map((data, index) => backgroundColors[index % backgroundColors.length]),
+      borderColor: dummyArray.map((data, index) => borderColors[index % backgroundColors.length]),
+      borderWidth: dummyArray,
+    }];
     charts[this.state.ctxId].update();
   }
 
   render() {
-    const { classes } = this.props;
     return (
       <div>
-        <Typography gutterBottom type="caption" align="center">
-          {this.props.title}
-        </Typography>
         <canvas id={this.state.ctxId} />
         {(() => {
           if (this.state.isNodata) {
@@ -82,9 +90,8 @@ class Pie extends Component {
 
 Pie.propTypes = {
   title: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired,
-  labels: PropTypes.array.isRequired,
-  classes: PropTypes.object.isRequired,
+  data: PropTypes.arrayOf(PropTypes.number).isRequired,
+  labels: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default withStyles(styles)(Pie);
