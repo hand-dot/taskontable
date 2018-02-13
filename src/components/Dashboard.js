@@ -3,7 +3,6 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-import Hidden from 'material-ui/Hidden';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
@@ -122,16 +121,14 @@ class Dashboard extends Component {
               </Typography>
               <Typography gutterBottom variant="caption">
                 *見積に対して実績が　{(() => {
-                  const diff = (this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60);
-                  return diff < 0 ? diff.toFixed(1) : `+${diff.toFixed(1)}`;
-                })()}h
+                  const diff = ((this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60)).toFixed(1);
+                  return diff > 0 ? `${diff}h　マイナスです` : `${diff * -1}h　オーバーしています`;
+                })()}
               </Typography>
               <Grid container>
-                {/* <Hidden xsDown> */}
-                  <Grid item xs={12}>
-                    <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} />
-                  </Grid>
-                {/* </Hidden> */}
+                <Grid item xs={12}>
+                  <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
