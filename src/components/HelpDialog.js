@@ -40,7 +40,7 @@ function HelpDialog(props) {
     >
       <AppBar color="default" className={classes.appBar}>
         <Toolbar>
-          <Typography type="title" color="inherit" className={classes.flex}>
+          <Typography variant="title" color="inherit" className={classes.flex}>
             <i className="fa fa-question-circle-o" aria-hidden="true" />
             　ヘルプ
           </Typography>
@@ -54,27 +54,27 @@ function HelpDialog(props) {
         <Grid container spacing={40}>
           <Grid className={classes.shotcut} item xs={6}>
             <h5>アプリ</h5>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – 保存</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>I</kbd> – 行追加</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>K</kbd> – タスクプール開閉</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>L</kbd> – テーブルを選択</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – 保存</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>I</kbd> – 行追加</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>K</kbd> – タスクプール開閉</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>L</kbd> – テーブルを選択</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
           </Grid>
           <Grid className={classes.shotcut} item xs={6}>
             <h5>テーブル編集</h5>
-            <Typography gutterBottom type="caption"><kbd>右クリック</kbd> – コンテキストメニュー表示</Typography>
-            <Typography gutterBottom type="caption"><kbd>Enter</kbd> – 編集開始/終了</Typography>
-            <Typography gutterBottom type="caption"><kbd>Esc</kbd> – 編集をキャンセル</Typography>
-            <Typography gutterBottom type="caption"><kbd>Backspace</kbd> – セルを空にする</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>C</kbd> – コピー</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>X</kbd> – 切り取り</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>V</kbd> – 貼り付け</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Z</kbd> – 戻る</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>Y</kbd> – 進む</Typography>
-            <Typography gutterBottom type="caption"><kbd>Ctrl</kbd> + <kbd>:</kbd> – 現在時刻を入力</Typography>
+            <Typography gutterBottom variant="caption"><kbd>右クリック</kbd> – コンテキストメニュー表示</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Enter</kbd> – 編集開始/終了</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Esc</kbd> – 編集をキャンセル</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Backspace</kbd> – セルを空にする</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>C</kbd> – コピー</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>X</kbd> – 切り取り</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>V</kbd> – 貼り付け</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>Z</kbd> – 戻る</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>Y</kbd> – 進む</Typography>
+            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>:</kbd> – 現在時刻を入力</Typography>
           </Grid>
         </Grid>
       </DialogContent>
@@ -82,13 +82,13 @@ function HelpDialog(props) {
       <DialogContent className={classes.content}>
         <Grid container spacing={40}>
           <Grid item xs={12}>
-            <Typography gutterBottom type="caption">
+            <Typography gutterBottom variant="caption">
                 *セル上で右クリックすると現在時刻の入力・行の追加・削除を行えます。
             </Typography>
-            <Typography gutterBottom type="caption">
+            <Typography gutterBottom variant="caption">
                 *行を選択しドラッグアンドドロップでタスクを入れ替えることができます。
             </Typography>
-            <Typography gutterBottom type="caption">
+            <Typography gutterBottom variant="caption">
                 *列ヘッダーにマウスホバーすると各列の説明を見ることができます。
             </Typography>
           </Grid>
@@ -98,13 +98,13 @@ function HelpDialog(props) {
       <DialogContent className={classes.content}>
         <Grid container spacing={40}>
           <Grid item xs={12}>
-            <Typography gutterBottom type="caption">
+            <Typography gutterBottom variant="caption">
                 *終了通知の予約を行うには見積を入力したタスクの開始時刻を入力してください。
             </Typography>
-            <Typography gutterBottom type="caption">
+            <Typography gutterBottom variant="caption">
                 *開始時刻を削除、もしくは終了を入力すると終了通知の予約は削除されます。
             </Typography>
-            <Typography gutterBottom type="caption">
+            <Typography gutterBottom variant="caption">
                 *通知が表示されない場合はこちらをご参照ください。<a href={constants.CHROME_HELP_PERMISSION_URL} target="_blank">サイトの許可を変更する Google Chrome</a>
             </Typography>
           </Grid>

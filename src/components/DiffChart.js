@@ -10,7 +10,7 @@ const backgroundColors = Object.values(constants.chartColors.background);
 const borderColors = Object.values(constants.chartColors.border);
 const charts = {};
 
-class Pie extends Component {
+class DiffChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,10 +25,10 @@ class Pie extends Component {
     charts[this.state.ctxId] = new Chart(document.getElementById(this.state.ctxId).getContext('2d'), {
       type: 'horizontalBar',
       data: {
+        labels: this.props.chartLabels,
         datasets: [{
           data: [''],
         }],
-        labels: [''],
       },
       options: {
         title: {
@@ -45,6 +45,9 @@ class Pie extends Component {
             ticks: {
               beginAtZero: true,
               max: 24,
+              callback(value) {
+                return `${value}h`;
+              },
             },
           }],
           yAxes: [{
@@ -53,8 +56,10 @@ class Pie extends Component {
         },
         animation: false,
         legend: {
-          display: true,
+          display: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
+          position: 'right',
           labels: {
+            boxWidth: 10,
             fontSize: 10,
             padding: 5,
           },
@@ -65,9 +70,9 @@ class Pie extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!charts[this.state.ctxId] || !Array.isArray(nextProps.data)) return;
-    charts[this.state.ctxId].data.datasets = nextProps.data.map((data, index) => ({
-      label: (nextProps.labels[index].length < 15 ? nextProps.labels[index] || '' : `${nextProps.labels[index].substring(0, 13)}..`),
-      data: [(data / 60).toFixed(1)],
+    charts[this.state.ctxId].data.datasets = nextProps.dataLabels.map((label, index) => ({
+      label: (label.length < 13 ? label || '' : `${label.substring(0, 10)}..`),
+      data: [(nextProps.data[index].estimate / 60).toFixed(1), (nextProps.data[index].actually / 60).toFixed(1)],
       backgroundColor: backgroundColors[index % backgroundColors.length],
       borderColor: borderColors[index % backgroundColors.length],
       borderWidth: 1,
@@ -83,10 +88,15 @@ class Pie extends Component {
   }
 }
 
-Pie.propTypes = {
+DiffChart.propTypes = {
   title: PropTypes.string.isRequired,
-  data: PropTypes.arrayOf(PropTypes.number).isRequired,
-  labels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  chartLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape({
+    estimate: PropTypes.number.isRequired,
+    actually: PropTypes.number.isRequired,
+  })).isRequired,
+  dataLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Pie);
+export default withStyles(styles, { withTheme: true })(DiffChart);

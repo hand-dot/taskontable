@@ -3,6 +3,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
+import Hidden from 'material-ui/Hidden';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
@@ -10,7 +11,7 @@ import ExpansionPanel, {
 
 import TodaySummary from './TodaySummary';
 import Clock from './Clock';
-import Pie from './Pie';
+import DiffChart from './DiffChart';
 
 import util from '../util';
 
@@ -67,20 +68,16 @@ class Dashboard extends Component {
     });
   }
 
-  getEstimateTaskData() {
-    return this.props.tableTasks.filter(tableTask => tableTask.estimate && tableTask.estimate !== 0).map(tableTask => tableTask.estimate || 0);
+  getDiffChartData() {
+    return this.filterForDiffChart().map(tableTask => ({ estimate: tableTask.estimate || 0, actually: util.getTimeDiff(tableTask.startTime, tableTask.endTime) || 0 }));
   }
 
-  getEstimateTaskLabel() {
-    return this.props.tableTasks.filter(tableTask => tableTask.estimate && tableTask.estimate !== 0).map(tableTask => tableTask.title || '');
+  getDiffChartLabel() {
+    return this.filterForDiffChart().map(tableTask => tableTask.title || '');
   }
 
-  getActuallyTaskData() {
-    return this.props.tableTasks.filter(tableTask => util.getTimeDiff(tableTask.startTime, tableTask.endTime) !== 0).map(tableTask => util.getTimeDiff(tableTask.startTime, tableTask.endTime) || 0);
-  }
-
-  getActuallyTaskLabel() {
-    return this.props.tableTasks.filter(tableTask => util.getTimeDiff(tableTask.startTime, tableTask.endTime) !== 0).map(tableTask => tableTask.title || '');
+  filterForDiffChart() {
+    return this.props.tableTasks.filter(tableTask => tableTask.estimate !== 0 || util.getTimeDiff(tableTask.startTime, tableTask.endTime) !== 0);
   }
 
   render() {
@@ -94,7 +91,7 @@ class Dashboard extends Component {
         <ExpansionPanelDetails>
           <Grid container>
             <Grid item xs={12} sm={6}>
-              <Typography gutterBottom type="subheading">
+              <Typography gutterBottom variant="subheading">
                  サマリ
               </Typography>
               <TodaySummary
@@ -107,7 +104,7 @@ class Dashboard extends Component {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography gutterBottom type="subheading">
+              <Typography gutterBottom variant="subheading">
                  時刻
               </Typography>
               <Grid container>
@@ -120,16 +117,21 @@ class Dashboard extends Component {
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Typography gutterBottom type="subheading">
-                 グラフ
+              <Typography gutterBottom variant="subheading">
+                 見積と実績の乖離
+              </Typography>
+              <Typography gutterBottom variant="caption">
+                *見積に対して実績が　{(() => {
+                  const diff = (this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60);
+                  return diff < 0 ? diff.toFixed(1) : `+${diff.toFixed(1)}`;
+                })()}h
               </Typography>
               <Grid container>
-                <Grid item xs={12}>
-                  <Pie title={'見積'} data={this.getEstimateTaskData()} labels={this.getEstimateTaskLabel()} />
-                </Grid>
-                <Grid item xs={12}>
-                  <Pie title={'実績'} data={this.getActuallyTaskData()} labels={this.getActuallyTaskLabel()} />
-                </Grid>
+                {/* <Hidden xsDown> */}
+                  <Grid item xs={12}>
+                    <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} />
+                  </Grid>
+                {/* </Hidden> */}
               </Grid>
             </Grid>
           </Grid>

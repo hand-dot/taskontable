@@ -51,16 +51,16 @@ function Top(props) {
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
             <img style={{ margin: '3em' }} src={title} alt="taskontable" height="40" />
-            <Typography color="textSecondary" type="headline" align="center" style={{ marginBottom: '2em' }}>
+            <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
               毎日のワークフローを簡単に作成できるタスクマネージャー
             </Typography>
-            <Typography color="textSecondary" type="subheading" align="center" style={{ marginBottom: '2em' }}>
+            <Typography color="textSecondary" variant="subheading" align="center" style={{ marginBottom: '2em' }}>
               毎日のワークフローを自動的に作成し、タスクを直列化することで生産性を向上させることができます。<br />
               終了時刻を常に表示し、各タスクの終了予定時刻に通知をするので高い集中力を保つことができます。<br />
             </Typography>
             <Link style={{ marginBottom: '1em', display: 'inline-block' }} className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >無料登録して始める</Button></Link>
             <div><Link to="/login">アカウントへのログインはこちら</Link></div>
-            <Typography type="caption" gutterBottom>
+            <Typography variant="caption" gutterBottom>
               *現在Beta版のためデータがクリアさせる可能性があります。
             </Typography>
           </div>

@@ -117,7 +117,7 @@ class Clock extends Component {
     const { classes, caption, title } = this.props;
     return (
       <div>
-        <Typography gutterBottom type="caption" align="center" title={caption}>
+        <Typography gutterBottom variant="caption" align="center" title={caption}>
           {title}
         </Typography>
         <div className={classes.circle}>
@@ -127,7 +127,7 @@ class Clock extends Component {
             <div ref={(node) => { this.second = node; }} className={classes.second} />
           </div>
         </div>
-        <Typography gutterBottom type="title" align="center">{`${(`00${this.state.moment.hour()}`).slice(-2)}:${(`00${this.state.moment.minute()}`).slice(-2)}`}</Typography>
+        <Typography gutterBottom variant="title" align="center">{`${(`00${this.state.moment.hour()}`).slice(-2)}:${(`00${this.state.moment.minute()}`).slice(-2)}`}</Typography>
       </div>
     );
   }
