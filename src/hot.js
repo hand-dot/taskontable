@@ -5,8 +5,8 @@ import constants from './constants';
 import util from './util';
 import logo from './images/logo.png';
 
-const BLUE = '#ff9b9b';
-const RED = '#4f93fc';
+const RED = '#ff9b9b';
+const BLUE = '#4f93fc';
 const GRAY = '#cfcfcf';
 
 
@@ -76,7 +76,7 @@ const columns = [
     type: 'numeric',
     readOnly: true,
     validator: false,
-    colWidths: 32,
+    colWidths: 40,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htDimmed');
@@ -84,18 +84,16 @@ const columns = [
       const endTimeVal = instance.getDataAtRowProp(row, 'endTime');
       if (startTimeVal && endTimeVal) {
         const diff = util.getTimeDiff(startTimeVal, endTimeVal);
-        const overdueSign = Math.sign(diff - instance.getDataAtRowProp(row, 'estimate') || 0);
-        if (overdueSign === 1) {
-          // 差分が見積もりよりも少ない
-          td.style.color = BLUE;
+        const overdue = diff - instance.getDataAtRowProp(row, 'estimate') || 0;
+        if (overdue >= 1) {
+          // 見積をオーバー
+          value = `${diff}<span style="color:${RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
+        } else if (overdue === 0) {
+          // 見積と同じ
           value = diff; // eslint-disable-line no-param-reassign
-        } else if (overdueSign === 0) {
-          // 差分が見積もりと同じ
-          value = diff; // eslint-disable-line no-param-reassign
-        } else if (overdueSign === -1) {
-          // 差分が見積もりよりも多い
-          td.style.color = RED;
-          value = diff; // eslint-disable-line no-param-reassign
+        } else if (overdue <= -1) {
+          // 見積より少ない
+          value = `${diff}<span style="color:${BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
         }
       } else {
         value = ''; // eslint-disable-line no-param-reassign
