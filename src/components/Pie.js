@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Chart from 'chart.js';
 import PropTypes from 'prop-types';
-import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import constants from '../constants';
 
@@ -42,15 +41,12 @@ class Pie extends Component {
             stacked: true,
           }],
           yAxes: [{
-            barThickness: 100,
-            maxBarThickness: 100,
             stacked: true,
           }],
         },
         animation: false,
         legend: {
           display: true,
-          position: 'left',
           labels: {
             fontSize: 10,
             padding: 5,
@@ -75,7 +71,7 @@ class Pie extends Component {
 
   render() {
     return (
-      <canvas height="200px" id={this.state.ctxId} />
+      <canvas id={this.state.ctxId} />
     );
   }
 }
