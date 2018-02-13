@@ -76,6 +76,11 @@ const setPageTitle = (tasks) => {
   }
 };
 let hot = null;
+function addTask() {
+  if (hot) {
+    hot.alter('insert_row');
+  }
+}
 class Taskontable extends Component {
   constructor(props) {
     super(props);
@@ -188,7 +193,6 @@ class Taskontable extends Component {
       afterUpdateSettings() { self.setStateFromUpdateHot(); },
       afterInit() { bindShortcut(this); },
     }));
-    window.hot = hot;
     // タスクプールをサーバーと同期開始
     this.attachPoolTasks();
     // テーブルをサーバーと同期開始
@@ -202,7 +206,6 @@ class Taskontable extends Component {
     window.onbeforeunload = '';
     hot.destroy();
     hot = null;
-    window.hot = null;
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/${this.props.user.uid}/tableTasks`).off();
   }
@@ -545,17 +548,18 @@ class Taskontable extends Component {
             <Paper elevation={1}>
               <div style={{ padding: 24 }}>
                 <i className="fa fa-table fa-lg" />
-                <Typography style={{ display: 'inline', marginRight: 20 }}>
+                <Typography style={{ display: 'inline' }}>
                     　テーブル
                 </Typography>
-                <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
-                <Hidden xsDown>
+                <div>
+                  <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
                   <TableCtl
                     saveable={this.state.saveable}
                     lastSaveTime={this.state.lastSaveTime}
+                    addTask={addTask}
                     saveHot={this.saveHot.bind(this)}
                   />
-                </Hidden>
+                </div>
               </div>
               <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
               <div id="hot" />

@@ -15,14 +15,8 @@ const styles = {
   },
 };
 
-function addTask() {
-  if (window.hot) {
-    window.hot.alter('insert_row');
-  }
-}
-
 function TableCtl(props) {
-  const { saveable, lastSaveTime, saveHot, classes } = props;
+  const { saveable, lastSaveTime, saveHot, addTask, classes } = props;
   return (
     <div className={classes.root}>
       <Button className={classes.button} variant="raised" onClick={addTask} color="default">
@@ -48,6 +42,7 @@ TableCtl.propTypes = {
     minute: PropTypes.number.isRequired,
     second: PropTypes.number.isRequired,
   }).isRequired,
+  addTask: PropTypes.func.isRequired,
   saveHot: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
