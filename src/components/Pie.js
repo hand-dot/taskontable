@@ -14,7 +14,7 @@ class Pie extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ctxId: `ctx-${Date.now()}`,
+      ctxId: `ctx-${this.props.title}`,
     };
   }
 
