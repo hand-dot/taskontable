@@ -524,7 +524,7 @@ class Taskontable extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <Grid container alignItems="stretch" justify="center" className={classes.root}>
+      <Grid container spacing={0} alignItems="stretch" justify="center" className={classes.root}>
         <Hidden xsDown>
           <Grid item sm={1}>
             <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
