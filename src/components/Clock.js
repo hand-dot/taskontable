@@ -6,11 +6,11 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = {
   circle: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
     margin: '0 auto',
     position: 'relative',
-    border: '4px solid #888',
+    border: '1px solid #888',
     borderRadius: '50%',
   },
   'face:after': {
@@ -31,8 +31,8 @@ const styles = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    margin: '-2px 0 -2px -25%',
-    padding: '2px 0 2px 25%',
+    margin: '-1px 0 -1px -25%',
+    padding: '1px 0 1px 25%',
     background: '#888',
     transformOrigin: '100% 50%',
     borderRadius: '2px 0 0 2px',
@@ -43,8 +43,8 @@ const styles = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    margin: '-40% -2px 0',
-    padding: '40% 2px 0',
+    margin: '-40% -1px 0',
+    padding: '40% 1px 0',
     background: '#888',
     transformOrigin: '50% 100%',
     borderRadius: '2px 2px 0 0',
