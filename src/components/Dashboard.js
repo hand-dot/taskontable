@@ -124,10 +124,10 @@ class Dashboard extends Component {
                  グラフ
               </Typography>
               <Grid container>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <Pie title={'見積'} data={this.getEstimateTaskData()} labels={this.getEstimateTaskLabel()} />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <Pie title={'実績'} data={this.getActuallyTaskData()} labels={this.getActuallyTaskLabel()} />
                 </Grid>
               </Grid>

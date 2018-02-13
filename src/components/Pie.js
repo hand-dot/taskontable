@@ -16,7 +16,6 @@ class Pie extends Component {
     super(props);
     this.state = {
       ctxId: `ctx-${Date.now()}`,
-      isNodata: false,
     };
   }
 
@@ -25,7 +24,7 @@ class Pie extends Component {
 
   componentDidMount() {
     charts[this.state.ctxId] = new Chart(document.getElementById(this.state.ctxId).getContext('2d'), {
-      type: 'pie',
+      type: 'horizontalBar',
       data: {
         datasets: [{
           data: [''],
@@ -37,7 +36,17 @@ class Pie extends Component {
           display: true,
           text: this.props.title || '',
         },
-        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [{
+            stacked: true,
+          }],
+          yAxes: [{
+            barThickness: 100,
+            maxBarThickness: 100,
+            stacked: true,
+          }],
+        },
         animation: false,
         legend: {
           display: true,
@@ -52,38 +61,21 @@ class Pie extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!charts[this.state.ctxId]) return;
-    if (Array.isArray(nextProps.data) && nextProps.data.length > 0) {
-      const isNodata = nextProps.data.reduce((previousValue, currentValue) => previousValue + currentValue) === 0;
-      this.setState({ isNodata });
-    }
-    charts[this.state.ctxId].data.labels = nextProps.labels.map(label => (label.length < 9 ? label || '' : `${label.substring(0, 7)}..`));
-    const dummyArray = Array(nextProps.data.length).fill(1);
-    charts[this.state.ctxId].data.datasets = [{
-      data: nextProps.data,
-      backgroundColor: dummyArray.map((data, index) => backgroundColors[index % backgroundColors.length]),
-      borderColor: dummyArray.map((data, index) => borderColors[index % backgroundColors.length]),
-      borderWidth: dummyArray,
-    }];
+    if (!charts[this.state.ctxId] || !Array.isArray(nextProps.data)) return;
+    charts[this.state.ctxId].data.datasets = nextProps.data.map((data, index) => ({
+      label: (nextProps.labels[index].length < 9 ? nextProps.labels[index] || '' : `${nextProps.labels[index].substring(0, 7)}..`),
+      data: [data],
+      backgroundColor: backgroundColors[index % backgroundColors.length],
+      borderColor: borderColors[index % backgroundColors.length],
+      borderWidth: 1,
+      fill: false,
+    }));
     charts[this.state.ctxId].update();
   }
 
   render() {
     return (
-      <div>
-        <canvas id={this.state.ctxId} />
-        {(() => {
-          if (this.state.isNodata) {
-            return (
-              <Typography gutterBottom type="caption" align="center">
-                no data
-              </Typography>
-            );
-          }
-          return null;
-        })()}
-
-      </div>
+      <canvas height="200px" id={this.state.ctxId} />
     );
   }
 }
