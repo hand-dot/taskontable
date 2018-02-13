@@ -35,6 +35,9 @@ class Pie extends Component {
           display: true,
           text: this.props.title || '',
         },
+        tooltips: {
+          mode: 'point',
+        },
         maintainAspectRatio: false,
         scales: {
           xAxes: [{
@@ -59,7 +62,7 @@ class Pie extends Component {
   componentWillReceiveProps(nextProps) {
     if (!charts[this.state.ctxId] || !Array.isArray(nextProps.data)) return;
     charts[this.state.ctxId].data.datasets = nextProps.data.map((data, index) => ({
-      label: (nextProps.labels[index].length < 9 ? nextProps.labels[index] || '' : `${nextProps.labels[index].substring(0, 7)}..`),
+      label: (nextProps.labels[index].length < 15 ? nextProps.labels[index] || '' : `${nextProps.labels[index].substring(0, 13)}..`),
       data: [data],
       backgroundColor: backgroundColors[index % backgroundColors.length],
       borderColor: borderColors[index % backgroundColors.length],
