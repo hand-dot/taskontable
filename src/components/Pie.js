@@ -44,8 +44,7 @@ class Pie extends Component {
             stacked: true,
             ticks: {
               beginAtZero: true,
-              // 一日は1440分　24時間に置き換えたほうがいいかもしれない
-              max: 1440,
+              max: 24,
             },
           }],
           yAxes: [{
@@ -68,7 +67,7 @@ class Pie extends Component {
     if (!charts[this.state.ctxId] || !Array.isArray(nextProps.data)) return;
     charts[this.state.ctxId].data.datasets = nextProps.data.map((data, index) => ({
       label: (nextProps.labels[index].length < 15 ? nextProps.labels[index] || '' : `${nextProps.labels[index].substring(0, 13)}..`),
-      data: [data],
+      data: [(data / 60).toFixed(1)],
       backgroundColor: backgroundColors[index % backgroundColors.length],
       borderColor: borderColors[index % backgroundColors.length],
       borderWidth: 1,
