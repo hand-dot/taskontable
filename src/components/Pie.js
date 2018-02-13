@@ -42,6 +42,11 @@ class Pie extends Component {
         scales: {
           xAxes: [{
             stacked: true,
+            ticks: {
+              beginAtZero: true,
+              // 一日は1440分　24時間に置き換えたほうがいいかもしれない
+              max: 1440,
+            },
           }],
           yAxes: [{
             stacked: true,
