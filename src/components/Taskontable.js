@@ -24,7 +24,7 @@ import TaskPool from './TaskPool';
 import DatePicker from './DatePicker';
 import ProcessingDialog from './ProcessingDialog';
 
-import { bindShortcut, hotConf, getEmptyHotData, getEmptyRow, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { hotConf, getEmptyHotData, getEmptyRow, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 
 import constants from '../constants';
 
@@ -125,6 +125,9 @@ class Taskontable extends Component {
 
   componentDidMount() {
     const self = this;
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       contextMenu: {
         callback(key, selection) {
@@ -191,7 +194,6 @@ class Taskontable extends Component {
         self.closeProcessingDialog();
       },
       afterUpdateSettings() { self.setStateFromUpdateHot(); },
-      afterInit() { bindShortcut(this); },
     }));
     // タスクプールをサーバーと同期開始
     this.attachPoolTasks();

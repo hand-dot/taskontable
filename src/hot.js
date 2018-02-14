@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Handsontable from 'handsontable';
 import debounce from 'lodash.debounce';
 import hotSchema from './schemas/hotSchema';
 import constants from './constants';
@@ -9,6 +10,7 @@ const RED = '#ff9b9b';
 const BLUE = '#4f93fc';
 const GRAY = '#cfcfcf';
 
+let notifiIds = [];
 
 const columns = [
   {
@@ -109,106 +111,121 @@ const columns = [
   },
 ];
 
-const setNotifiCell = (hotInstance, row, col, timeout, type = 'startTime') => {
-  const target = type === 'startTime' ? 'startTime' : 'endTime';
+const removeNotifi = (id) => {
+  clearTimeout(id);
+  const index = notifiIds.findIndex(notifiId => notifiId === id);
+  if (index > -1) {
+    notifiIds.splice(index, 1);
+  }
+};
+
+const divideNotifiCellType = (type = 'startTime') => (type === 'startTime' ? 'startTime' : 'endTime');
+
+const removeNotifiCell = (hotInstance, row, col, types) => {
+  types.forEach((type) => {
+    const target = divideNotifiCellType(type);
+    const targetNotifiId = `${target}NotifiId`;
+    const notifiId = hotInstance.getCellMeta(row, col)[targetNotifiId];
+    if (notifiId) {
+      removeNotifi(notifiId);
+      hotInstance.removeCellMeta(row, col, targetNotifiId);
+    }
+  });
+};
+
+const setNotifiCell = (hotInstance, row, col, timeout, type) => {
+  const target = divideNotifiCellType(type);
   // 権限を取得し通知を登録
-  Notification
-    .requestPermission()
-    .then((result) => {
-      // タイマーを登録(セルにタイマーIDを設定)
-      const notifiId = setTimeout(() => {
-        // タイマーが削除されていた場合には何もしない
-        if (!hotInstance.getCellMeta(row, col)[`${target}NotifiId`]) return;
-        hotInstance.removeCellMeta(row, col, `${target}NotifiId`);
-        let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-        const taskTitleLabel = `[${target === 'startTime' ? '開始' : '終了'}] - `;
-        taskTitle = taskTitle ? `${taskTitleLabel}${taskTitle}` : `${taskTitleLabel}無名タスク`;
-        if (result === 'denied' || result === 'default') {
-          alert(taskTitle);
-          window.focus();
-          hotInstance.selectCell(row, hotInstance.propToCol(target));
-        } else {
-          const notifi = new Notification(taskTitle, {
-            icon: logo,
-          });
-          notifi.onclick = () => {
-            notifi.close();
-            window.focus();
-            hotInstance.selectCell(row, hotInstance.propToCol(target));
-          };
-        }
-        hotInstance.render();
-      }, timeout);
-      // 既に設定されているタイマーを削除
-      hotInstance.removeCellMeta(row, col, `${target}NotifiId`);
-      hotInstance.setCellMeta(row, col, `${target}NotifiId`, notifiId);
-      hotInstance.render();
-    });
+  const permission = Notification.permission;
+  const targetNotifiId = `${target}NotifiId`;
+  // タイマーの2重登録にならないように既に登録されているタイマーを削除
+  removeNotifiCell(hotInstance, row, col, [type]);
+  // タイマーを登録(セルにタイマーIDを設定)
+  const notifiId = setTimeout(() => {
+    // タイマーが削除されていた場合には何もしない
+    if (!hotInstance.getCellMeta(row, col)[targetNotifiId]) return;
+    removeNotifiCell(hotInstance, row, col, [type]);
+    let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
+    const taskTitleLabel = `[${target === 'startTime' ? '開始' : '終了'}] - `;
+    taskTitle = taskTitle ? `${taskTitleLabel}${taskTitle}` : `${taskTitleLabel}無名タスク`;
+    if (permission !== 'granted') {
+      alert(taskTitle);
+      window.focus();
+      hotInstance.selectCell(row, hotInstance.propToCol(target));
+    } else {
+      const notifi = new Notification(taskTitle, {
+        icon: logo,
+      });
+      notifi.onclick = () => {
+        notifi.close();
+        window.focus();
+        hotInstance.selectCell(row, hotInstance.propToCol(target));
+      };
+    }
+  }, timeout);
+  notifiIds.push(notifiId);
+  hotInstance.setCellMeta(row, col, targetNotifiId, notifiId);
 };
 
-const removeNotifiCell = (hotInstance, row, col) => {
-  const startNotifiId = hotInstance.getCellMeta(row, col).startNotifiId;
-  const endNotifiId = hotInstance.getCellMeta(row, col).endNotifiId;
-  if (startNotifiId) {
-    clearTimeout(startNotifiId);
-    hotInstance.removeCellMeta(row, col, 'startNotifiId');
-  }
-  if (endNotifiId) {
-    clearTimeout(endNotifiId);
-    hotInstance.removeCellMeta(row, col, 'endNotifiId');
-  }
-  hotInstance.render();
-};
-
-const manageNotification = (hotInstance, row, prop, newVal) => {
+const manageNotifi = (hotInstance, row, prop, newVal) => {
   const col = hotInstance.propToCol(prop);
   // 値が不正な場合は処理を抜ける
   if (!hotInstance.getCellMeta(row, col).valid) return;
-  if (prop === 'startTime') {
-    // 新しい値が空の場合は既に登録されている通知を削除
-    if (newVal === '') {
-      removeNotifiCell(hotInstance, row, col);
+  if (prop === 'startTime' || prop === 'estimate') {
+    // ガードとstartTimeVal,estimateValの組み立て
+    const startTimeVal = prop === 'startTime' ? newVal : hotInstance.getDataAtRowProp(row, 'startTime');
+    const estimateVal = prop === 'estimate' ? newVal : hotInstance.getDataAtRowProp(row, 'estimate');
+    // 開始時刻が空もしくは見積が空か0の場合、既に登録されている通知を削除
+    if (startTimeVal === '' || estimateVal === '' || estimateVal === 0) {
+      removeNotifiCell(hotInstance, row, col, ['startTime', 'endTime']);
       return;
     }
-    const newValMoment = moment(newVal, 'HH:mm');
+    const currentMoment = moment();
+    const startTimeMoment = moment(startTimeVal, 'HH:mm');
     // --------------------------開始時刻に表示する通知の設定--------------------------
-    const startTimeOut = newValMoment.diff(moment());
+    const startTimeOut = startTimeMoment.diff(currentMoment);
     if (startTimeOut > 0) {
       setNotifiCell(hotInstance, row, col, startTimeOut, 'startTime');
     }
     // --------------------------終了時刻に表示する通知の設定--------------------------
-    const estimateVal = hotInstance.getDataAtRowProp(row, 'estimate');
-    // 見積もり時刻が空か0 もしくは 見積もり時間が不正な場合、処理を抜ける
-    if (estimateVal === '' || estimateVal === 0 || !Number.isInteger(+estimateVal)) return;
-    const endTimeOut = newValMoment.add(estimateVal, 'minutes').diff(moment());
+    const endTimeOut = startTimeMoment.add(estimateVal, 'minutes').diff(currentMoment);
     if (endTimeOut > 0) {
       setNotifiCell(hotInstance, row, col, endTimeOut, 'endTime');
     }
   } else if (prop === 'endTime') {
-    // startTimeのセルにタイマーIDがあれば削除
-    const startTimeCol = hotInstance.propToCol('startTime');
-    removeNotifiCell(hotInstance, row, startTimeCol);
+    // 終了時刻を入力したのでstartTimeのセルにタイマーIDがあれば削除
+    removeNotifiCell(hotInstance, row, hotInstance.propToCol('startTime'), ['startTime', 'endTime']);
   }
 };
 
-export const bindShortcut = (hot) => {
+const bindClearNotifi = (hotInstance) => {
+  hotInstance.addHook('clearNotifi', () => {
+    notifiIds.forEach((notifiId) => {
+      clearTimeout(notifiId);
+    });
+    notifiIds = [];
+  });
+};
+
+const bindShortcut = (hotInstance) => {
   // ショートカット処理
-  hot.addHook('afterDocumentKeyDown', debounce((e) => {
+  hotInstance.addHook('afterDocumentKeyDown', debounce((e) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
     if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
-    const selected = hot.getSelected();
+    const selected = hotInstance.getSelected();
     if (!selected) return;
-    const [startRow, startCol, endRow, endCol] = selected;
+    const [startRow, startCol, endRow] = selected;
     if (e.ctrlKey) {
       if (constants.shortcuts.HOT_CURRENTTIME(e)) {
         // 現在時刻を入力
-        const prop = hot.colToProp(startCol);
+        const prop = hotInstance.colToProp(startCol);
         // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
-        if (startRow === endRow && startCol === endCol && (prop === 'endTime' || prop === 'startTime')) {
-          hot.setDataAtCell(startRow, startCol, moment().format('HH:mm'));
+        if ((prop === 'endTime' || prop === 'startTime')) {
+          for (let row = startRow; row <= endRow; row += 1) {
+            hotInstance.setDataAtCell(row, startCol, moment().format('HH:mm'));
+          }
         }
       }
-      hot.render();
     }
   }, constants.KEYEVENT_DELAY));
 };
@@ -239,6 +256,7 @@ export const setDataForHot = (hotInstance, datas) => {
       });
     }
   });
+  hotInstance.runHooks('clearNotifi');
   hotInstance.setDataAtRowProp(dataForHot);
 };
 
@@ -261,9 +279,19 @@ export const hotConf = {
     const changesLength = changes.length;
     for (let i = 0; i < changesLength; i += 1) {
       const [row, prop, oldVal, newVal] = changes[i];
-      if ((prop === 'startTime' || prop === 'endTime') && oldVal !== newVal) {
-        manageNotification(this, row, prop, newVal);
+      if ((prop === 'startTime' || prop === 'endTime' || prop === 'estimate') && oldVal !== newVal) {
+        manageNotifi(this, row, prop, newVal);
       }
     }
+  },
+  beforeInit() {
+    Handsontable.hooks.register('clearNotifi');
+  },
+  afterInit() {
+    bindClearNotifi(this);
+    bindShortcut(this);
+  },
+  afterDestroy() {
+    Handsontable.hooks.deregister('clearNotifi');
   },
 };
