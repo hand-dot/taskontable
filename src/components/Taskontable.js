@@ -566,7 +566,7 @@ class Taskontable extends Component {
                     </Button>
                     <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
                       <div style={{ display: 'inline-block' }}>
-                        <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot} color="default">
+                        <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default">
                           <i className="fa fa-floppy-o fa-lg" />
                             保存
                         </Button>
