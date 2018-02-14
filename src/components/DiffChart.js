@@ -44,10 +44,7 @@ class DiffChart extends Component {
             stacked: true,
             ticks: {
               beginAtZero: true,
-              max: 24,
-              callback(value) {
-                return `${value}h`;
-              },
+              callback: value => value + this.props.unit,
             },
           }],
           yAxes: [{
@@ -96,6 +93,7 @@ DiffChart.propTypes = {
     actually: PropTypes.number.isRequired,
   })).isRequired,
   dataLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
+  unit: PropTypes.string.isRequired,
   theme: PropTypes.object.isRequired,
 };
 

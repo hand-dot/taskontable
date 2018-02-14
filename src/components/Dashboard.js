@@ -127,7 +127,7 @@ class Dashboard extends Component {
               </Typography>
               <Grid container>
                 <Grid item xs={12}>
-                  <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} />
+                  <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} unit={'h'} />
                 </Grid>
               </Grid>
             </Grid>
