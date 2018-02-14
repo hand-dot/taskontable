@@ -10,6 +10,7 @@ import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 
 import Typography from 'material-ui/Typography';
+import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
@@ -18,7 +19,6 @@ import Hidden from 'material-ui/Hidden';
 import '../styles/handsontable-custom.css';
 
 import Dashboard from './Dashboard';
-import TableCtl from './TableCtl';
 import TableStatus from './TableStatus';
 import TaskPool from './TaskPool';
 import DatePicker from './DatePicker';
@@ -46,6 +46,10 @@ const styles = {
     fontSize: 15,
     width: 20,
     height: 20,
+  },
+  tableCtlButton: {
+    fontSize: '9pt',
+    minWidth: 60,
   },
 };
 
@@ -551,16 +555,24 @@ class Taskontable extends Component {
               <div style={{ padding: 24 }}>
                 <i className="fa fa-table fa-lg" />
                 <Typography style={{ display: 'inline' }}>
-                    　テーブル
+                  テーブル
                 </Typography>
                 <div>
                   <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
-                  <TableCtl
-                    saveable={this.state.saveable}
-                    lastSaveTime={this.state.lastSaveTime}
-                    addTask={addTask}
-                    saveHot={this.saveHot.bind(this)}
-                  />
+                  <div style={{ display: 'inline-block', float: 'right' }}>
+                    <Button className={classes.tableCtlButton} variant="raised" onClick={addTask} color="default">
+                      <i className="fa fa-plus fa-lg" />
+                          行追加
+                    </Button>
+                    <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
+                      <div style={{ display: 'inline-block' }}>
+                        <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot} color="default">
+                          <i className="fa fa-floppy-o fa-lg" />
+                            保存
+                        </Button>
+                      </div>
+                    </Tooltip>
+                  </div>
                 </div>
               </div>
               <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
