@@ -61,17 +61,17 @@ function addTask() {
 }
 
 // 開始しているタスクを見つけ、経過時間をタイトルに反映する
-let updateTitleIntervalID = '';
+let oldTimeDiffMinute = '';
+let bindOpenTaskIntervalID = '';
 const bindOpenTasksProcessing = (tasks) => {
   const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
   document.title = 'Taskontable';
-  if (updateTitleIntervalID) clearInterval(updateTitleIntervalID);
+  if (bindOpenTaskIntervalID) clearInterval(bindOpenTaskIntervalID);
   if (openTask) {
-    let oldTimeDiffMinute = '';
-    updateTitleIntervalID = setInterval(() => {
+    bindOpenTaskIntervalID = setInterval(() => {
       const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
       // 1分に一度タイトルが書き変わったタイミングでhotを再描画する。
-      if (newTimeDiffMinute !== oldTimeDiffMinute && !hot) hot.render();
+      if (newTimeDiffMinute !== oldTimeDiffMinute && hot) hot.render();
       if (newTimeDiffMinute === -1) {
         // 開始まで秒単位でカウントダウンする場合
         document.title = `${moment().format('ss') - 60}秒 - ${openTask.title}`;
@@ -211,7 +211,7 @@ class Taskontable extends Component {
     window.onkeydown = '';
     window.onbeforeunload = '';
     hot.destroy();
-    if (updateTitleIntervalID) clearInterval(updateTitleIntervalID);
+    if (bindOpenTaskIntervalID) clearInterval(bindOpenTaskIntervalID);
     hot = null;
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/${this.props.user.uid}/tableTasks`).off();
