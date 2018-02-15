@@ -211,6 +211,7 @@ class Taskontable extends Component {
     window.onkeydown = '';
     window.onbeforeunload = '';
     hot.destroy();
+    if (intervalID) clearInterval(intervalID);
     hot = null;
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/${this.props.user.uid}/tableTasks`).off();
