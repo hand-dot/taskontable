@@ -163,9 +163,8 @@ const setNotifiCell = (hotInstance, row, col, timeout, type) => {
 };
 
 const manageNotifi = (hotInstance, row, prop, newVal) => {
-  const col = hotInstance.propToCol(prop);
-  // 値が不正な場合は処理を抜ける
-  if (!hotInstance.getCellMeta(row, col).valid) return;
+  // 通知を設定するセルはstartTimeのカラム
+  const col = hotInstance.propToCol('startTime');
   if (prop === 'startTime' || prop === 'estimate') {
     // ガードとstartTimeVal,estimateValの組み立て
     const startTimeVal = prop === 'startTime' ? newVal : hotInstance.getDataAtRowProp(row, 'startTime');
@@ -189,7 +188,7 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
     }
   } else if (prop === 'endTime') {
     // 終了時刻を入力したのでstartTimeのセルにタイマーIDがあれば削除
-    removeNotifiCell(hotInstance, row, hotInstance.propToCol('startTime'), ['startTime', 'endTime']);
+    removeNotifiCell(hotInstance, row, col, ['startTime', 'endTime']);
   }
 };
 
