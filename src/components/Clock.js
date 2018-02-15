@@ -71,6 +71,7 @@ class Clock extends Component {
     super(props);
     this.state = {
       moment: moment(),
+      timerId: '',
     };
   }
 
@@ -89,16 +90,17 @@ class Clock extends Component {
     const $minute = this.minute;
     const $second = this.second;
     const timedUpdate = () => {
-      this.setState({
-        moment: this.state.moment.add(1, 'seconds'),
-      });
-      const hour = this.state.moment.hour();
-      const minute = this.state.moment.minute();
-      const second = this.state.moment.second();
+      const newMoment = this.state.moment.add(1, 'seconds');
+      const hour = newMoment.hour();
+      const minute = newMoment.minute();
+      const second = newMoment.second();
       $hour.style.transform = getHourRotate(hour, minute);
       $minute.style.transform = getMinuteRotate(minute, second);
       $second.style.transform = getSecondRotate(second);
-      setTimeout(timedUpdate, 1000);
+      this.setState({
+        moment: newMoment,
+        timerId: setTimeout(timedUpdate, 1000),
+      });
     };
     timedUpdate();
   }
@@ -111,6 +113,10 @@ class Clock extends Component {
     this.setState({
       moment: myMoment,
     });
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.state.timerId);
   }
 
   render() {
