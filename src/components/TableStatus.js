@@ -3,8 +3,15 @@ import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import { LinearProgress } from 'material-ui/Progress';
 import { withStyles } from 'material-ui/styles';
+import constants from '../constants';
 
 const styles = {
+  primaryColor: {
+    background: constants.brandColor.light.BLUE,
+  },
+  primaryColorBar: {
+    background: constants.brandColor.base.BLUE,
+  },
   informationText: {
     paddingLeft: 24,
   },
@@ -38,7 +45,7 @@ function TableStatus(props) {
           );
         })()}
       </div>
-      <LinearProgress variant={isLoading ? 'indeterminate' : 'determinate'} value={(tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length)} />
+      <LinearProgress classes={{ primaryColor: classes.primaryColor, primaryColorBar: classes.primaryColorBar }} variant={isLoading ? 'indeterminate' : 'determinate'} value={(tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length)} />
     </div>
   );
 }

@@ -3,9 +3,9 @@
 }
 
 .handsontable .done td{
-  background-color: #f3f3f3;
+  background-color: rgba(201, 203, 207, 0.2);
 }
 
 .handsontable .progress td{
-  background-color: #ecf1ff;
+  background-color: rgba(54, 162, 235, 0.2);
 }

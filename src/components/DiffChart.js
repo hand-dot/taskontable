@@ -6,8 +6,8 @@ import constants from '../constants';
 
 const styles = {
 };
-const backgroundColors = Object.values(constants.chartColors.background);
-const borderColors = Object.values(constants.chartColors.border);
+const backgroundColors = Object.values(constants.brandColor.light);
+const borderColors = Object.values(constants.brandColor.base);
 const charts = {};
 
 class DiffChart extends Component {

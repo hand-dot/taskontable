@@ -1,3 +1,12 @@
+const rgb = {
+  RED: '255, 99, 132',
+  ORANGE: '255, 159, 64',
+  YELLOW: '255, 205, 86',
+  GREEN: '75, 192, 192',
+  BLUE: '54, 162, 235',
+  PURPLE: '153, 102, 255',
+  GREY: '201, 203, 207',
+};
 export default {
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
@@ -42,25 +51,24 @@ export default {
   DATEFMT: 'YYYY-MM-DD',
   INITIALDATE: '1970-01-01',
   DAY_OF_WEEK_STR: ['日', '月', '火', '水', '木', '金', '土'],
-  chartColors: {
-    background: {
-      RED: 'rgba(255, 99, 132, 0.2)',
-      ORANGE: 'rgba(255, 159, 64, 0.2)',
-      YELLOW: 'rgba(255, 205, 86, 0.2)',
-      GREEN: 'rgba(75, 192, 192, 0.2)',
-      BLUE: 'rgba(54, 162, 235, 0.2)',
-      PURPLE: 'rgba(153, 102, 255, 0.2)',
-      GREY: 'rgba(201, 203, 207, 0.2)' },
-    border: {
-      RED: 'rgb(255, 99, 132)',
-      ORANGE: 'rgb(255, 159, 64)',
-      YELLOW: 'rgb(255, 205, 86)',
-      GREEN: 'rgb(75, 192, 192)',
-      BLUE: 'rgb(54, 162, 235)',
-      PURPLE: 'rgb(153, 102, 255)',
-      GREY: 'rgb(201, 203, 207)',
+  brandColor: {
+    base: {
+      RED: `rgb(${rgb.RED})`,
+      ORANGE: `rgb(${rgb.ORANGE})`,
+      YELLOW: `rgb(${rgb.YELLOW})`,
+      GREEN: `rgb(${rgb.GREEN})`,
+      BLUE: `rgb(${rgb.BLUE})`,
+      PURPLE: `rgb(${rgb.PURPLE})`,
+      GREY: `rgb(${rgb.GREY})`,
+    },
+    light: {
+      RED: `rgba(${rgb.RED},0.2)`,
+      ORANGE: `rgba(${rgb.ORANGE},0.2)`,
+      YELLOW: `rgba(${rgb.YELLOW},0.2)`,
+      GREEN: `rgba(${rgb.GREEN},0.2)`,
+      BLUE: `rgba(${rgb.BLUE},0.2)`,
+      PURPLE: `rgba(${rgb.PURPLE},0.2)`,
+      GREY: `rgba(${rgb.GREY},0.2)`,
     },
   },
-
-
 };

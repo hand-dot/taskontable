@@ -6,10 +6,6 @@ import constants from './constants';
 import util from './util';
 import logo from './images/logo.png';
 
-const RED = '#ff9b9b';
-const BLUE = '#4f93fc';
-const GRAY = '#cfcfcf';
-
 let notifiIds = [];
 
 const columns = [
@@ -66,7 +62,7 @@ const columns = [
         const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
         const estimateVal = instance.getDataAtRowProp(row, 'estimate');
         if (startTimeVal !== '' && estimateVal !== '') {
-          td.innerHTML = `<div style="color:${GRAY}">${moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm')}</div>`; // eslint-disable-line no-param-reassign
+          td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm')}</div>`; // eslint-disable-line no-param-reassign
         }
       }
       return td;
@@ -89,13 +85,13 @@ const columns = [
         const overdue = timeDiffMinute - instance.getDataAtRowProp(row, 'estimate') || 0;
         if (overdue >= 1) {
           // 見積をオーバー
-          value = `${timeDiffMinute}<span style="color:${RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
+          value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
         } else if (overdue === 0) {
           // 見積と同じ
           value = timeDiffMinute; // eslint-disable-line no-param-reassign
         } else if (overdue <= -1) {
           // 見積より少ない
-          value = `${timeDiffMinute}<span style="color:${BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
+          value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
         }
       } else {
         value = ''; // eslint-disable-line no-param-reassign

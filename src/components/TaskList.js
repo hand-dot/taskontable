@@ -14,7 +14,7 @@ import poolTaskSchema from '../schemas/poolTaskSchema';
 import constants from '../constants';
 import util from '../util';
 
-const styles = {
+const styles = theme => ({
   root: {
     padding: 0,
     minHeight: 210,
@@ -23,6 +23,7 @@ const styles = {
   },
   actionIcon: {
     fontSize: 15,
+    width: theme.breakpoints.values.sm < constants.APPWIDTH ? 45 : 17,
   },
   actionIcons: {
     margin: '0 auto',
@@ -40,7 +41,7 @@ const styles = {
     color: '#000',
     fontSize: 12,
   },
-};
+});
 
 
 function getPoolTaskSchema() {
@@ -390,6 +391,7 @@ TaskList.propTypes = {
   topToTask: PropTypes.func.isRequired,
   isRegularTask: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(TaskList);
+export default withStyles(styles, { withTheme: true })(TaskList);
