@@ -85,17 +85,17 @@ const columns = [
       const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
       const endTimeVal = instance.getDataAtRowProp(row, 'endTime');
       if (startTimeVal && endTimeVal) {
-        const diff = util.getTimeDiff(startTimeVal, endTimeVal);
-        const overdue = diff - instance.getDataAtRowProp(row, 'estimate') || 0;
+        const timeDiffMinute = util.getTimeDiffMinute(startTimeVal, endTimeVal);
+        const overdue = timeDiffMinute - instance.getDataAtRowProp(row, 'estimate') || 0;
         if (overdue >= 1) {
           // 見積をオーバー
-          value = `${diff}<span style="color:${RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
+          value = `${timeDiffMinute}<span style="color:${RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
         } else if (overdue === 0) {
           // 見積と同じ
-          value = diff; // eslint-disable-line no-param-reassign
+          value = timeDiffMinute; // eslint-disable-line no-param-reassign
         } else if (overdue <= -1) {
           // 見積より少ない
-          value = `${diff}<span style="color:${BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
+          value = `${timeDiffMinute}<span style="color:${BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
         }
       } else {
         value = ''; // eslint-disable-line no-param-reassign

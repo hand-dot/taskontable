@@ -16,7 +16,7 @@ import util from '../util';
 
 const totalEstimateMinute = datas => datas.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
 
-const totalActuallyMinute = datas => datas.map(data => util.getTimeDiff(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
+const totalActuallyMinute = datas => datas.map(data => util.getTimeDiffMinute(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
 
 class Dashboard extends Component {
   constructor(props) {
@@ -68,7 +68,7 @@ class Dashboard extends Component {
   }
 
   getDiffChartData() {
-    return this.filterForDiffChart().map(tableTask => ({ estimate: tableTask.estimate || 0, actually: util.getTimeDiff(tableTask.startTime, tableTask.endTime) || 0 }));
+    return this.filterForDiffChart().map(tableTask => ({ estimate: tableTask.estimate || 0, actually: util.getTimeDiffMinute(tableTask.startTime, tableTask.endTime) || 0 }));
   }
 
   getDiffChartLabel() {
@@ -76,7 +76,7 @@ class Dashboard extends Component {
   }
 
   filterForDiffChart() {
-    return this.props.tableTasks.filter(tableTask => tableTask.estimate !== 0 || util.getTimeDiff(tableTask.startTime, tableTask.endTime) !== 0);
+    return this.props.tableTasks.filter(tableTask => tableTask.estimate !== 0 || util.getTimeDiffMinute(tableTask.startTime, tableTask.endTime) !== 0);
   }
 
   render() {

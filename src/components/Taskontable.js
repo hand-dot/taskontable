@@ -68,13 +68,13 @@ const setPageTitle = (tasks) => {
   if (intervalID) clearInterval(intervalID);
   if (openTask) {
     intervalID = setInterval(() => {
-      const timeDiff = util.getTimeDiff(openTask.startTime, moment().format('HH:mm'));
-      if (timeDiff === -1) {
+      const timeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
+      if (timeDiffMinute === -1) {
         document.title = `${moment().format('ss') - 60}秒 - ${openTask.title}`;
-      } else if (timeDiff === 0) {
+      } else if (timeDiffMinute === 0) {
         document.title = `${moment().format('ss')}秒 - ${openTask.title}`;
       } else {
-        document.title = `${timeDiff}分 - ${openTask.title}`;
+        document.title = `${timeDiffMinute}分 - ${openTask.title}`;
       }
     }, 1000);
   }

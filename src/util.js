@@ -24,13 +24,12 @@ export default {
       second: currentMoment.second(),
     };
   },
-  getTimeDiff(startTimeVal = 0, endTimeVal = 0, format = 'minutes') { // HH:mm
-    const [startTimeHour, startTimeMinute, startTimeSecond = 0] = startTimeVal.split(':');
-    const [endTimeHour, endTimeMinute, endTimeSecond = 0] = endTimeVal.split(':');
-    if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSecond) &&
-    Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSecond)) {
-      return moment().hour(endTimeHour).minute(endTimeMinute).second(startTimeSecond)
-        .diff(moment().hour(startTimeHour).minute(startTimeMinute).second(endTimeSecond), format);
+  getTimeDiffMinute(startTimeVal = 0, endTimeVal = 0) { // HH:mm
+    const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
+    const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
+    if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) &&
+    Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute)) {
+      return moment(`${endTimeHour}:${endTimeMinute}`, 'HH:mm').diff(moment(`${startTimeHour}:${startTimeMinute}`, 'HH:mm'), 'minutes');
     }
     return 0;
   },
