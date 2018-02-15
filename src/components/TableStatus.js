@@ -20,15 +20,15 @@ function TableStatus(props) {
           const dontTasksLength = tableTasks.filter(data => data.startTime && data.endTime).length;
           if (tableTasksLength === 0) {
             return (
-              <Typography gutterBottom type="body1"><i className="fa fa-asterisk" />タスクがありません</Typography>
+              <Typography gutterBottom variant="caption"><i className="fa fa-asterisk" />タスクがありません</Typography>
             );
           } else if (tableTasksLength === dontTasksLength) {
             return (
-              <Typography gutterBottom type="body1"><i className="fa fa-thumbs-up" />タスクをすべて完了しました!</Typography>
+              <Typography gutterBottom variant="caption"><i className="fa fa-thumbs-up" />タスクをすべて完了しました!</Typography>
             );
           }
           return (
-            <Typography gutterBottom type="body1">
+            <Typography gutterBottom variant="caption">
               <i className="fa fa-exclamation-circle" />
               {tableTasks.length}Open
               <span>&nbsp;</span>

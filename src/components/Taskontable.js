@@ -555,7 +555,7 @@ class Taskontable extends Component {
               <div style={{ padding: 24 }}>
                 <i className="fa fa-table fa-lg" />
                 <Typography style={{ display: 'inline' }}>
-                  テーブル
+                  　テーブル
                 </Typography>
                 <div>
                   <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
