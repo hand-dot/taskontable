@@ -24,7 +24,7 @@ export default {
       second: currentMoment.second(),
     };
   },
-  getTimeDiffMinute(startTimeVal = 0, endTimeVal = 0) { // HH:mm
+  getTimeDiffMinute(startTimeVal = '00:00', endTimeVal = '00:00') { // HH:mm
     const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) &&

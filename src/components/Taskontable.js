@@ -24,7 +24,7 @@ import TaskPool from './TaskPool';
 import DatePicker from './DatePicker';
 import ProcessingDialog from './ProcessingDialog';
 
-import { hotConf, getEmptyHotData, getEmptyRow, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { hotConf, getEmptyHotData, getEmptyRow, getHotTasksIgnoreEmptyTaskAndProp, setDataForHot } from '../hot';
 
 import constants from '../constants';
 
@@ -53,38 +53,38 @@ const styles = {
   },
 };
 
-// ハンズオンテーブルからから行を除き、永続化する必要のない情報を削除し、タスクを返す
-const getHotTasksIgnoreEmptyTaskAndProp = (hot => getHotTasksIgnoreEmptyTask(hot).map((data) => {
-  util.getExTableTaskProp().forEach((prop) => {
-    delete data[prop]; // eslint-disable-line no-param-reassign
-  });
-  return data;
-}));
-// 開始しているタスクを見つけ、経過時間をタイトルに反映する
-let intervalID = '';
-const setPageTitle = (tasks) => {
-  const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
-  document.title = 'Taskontable';
-  if (intervalID) clearInterval(intervalID);
-  if (openTask) {
-    intervalID = setInterval(() => {
-      const timeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
-      if (timeDiffMinute === -1) {
-        document.title = `${moment().format('ss') - 60}秒 - ${openTask.title}`;
-      } else if (timeDiffMinute === 0) {
-        document.title = `${moment().format('ss')}秒 - ${openTask.title}`;
-      } else {
-        document.title = `${timeDiffMinute}分 - ${openTask.title}`;
-      }
-    }, 1000);
-  }
-};
 let hot = null;
 function addTask() {
   if (hot) {
     hot.alter('insert_row');
   }
 }
+
+// 開始しているタスクを見つけ、経過時間をタイトルに反映する
+let updateTitleIntervalID = '';
+const bindOpenTasksProcessing = (tasks) => {
+  const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
+  document.title = 'Taskontable';
+  if (updateTitleIntervalID) clearInterval(updateTitleIntervalID);
+  if (openTask) {
+    let oldTimeDiffMinute = '';
+    updateTitleIntervalID = setInterval(() => {
+      const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
+      // 1分に一度タイトルが書き変わったタイミングでhotを再描画する。
+      if (newTimeDiffMinute !== oldTimeDiffMinute && !hot) hot.render();
+      if (newTimeDiffMinute === -1) {
+        // 開始まで秒単位でカウントダウンする場合
+        document.title = `${moment().format('ss') - 60}秒 - ${openTask.title}`;
+      } else if (newTimeDiffMinute === 0) {
+        document.title = `${moment().format('ss')}秒 - ${openTask.title}`;
+      } else {
+        document.title = `${newTimeDiffMinute}分 - ${openTask.title}`;
+      }
+      oldTimeDiffMinute = newTimeDiffMinute;
+    }, 1000);
+  }
+};
+
 class Taskontable extends Component {
   constructor(props) {
     super(props);
@@ -211,7 +211,7 @@ class Taskontable extends Component {
     window.onkeydown = '';
     window.onbeforeunload = '';
     hot.destroy();
-    if (intervalID) clearInterval(intervalID);
+    if (updateTitleIntervalID) clearInterval(updateTitleIntervalID);
     hot = null;
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/${this.props.user.uid}/tableTasks`).off();
@@ -219,7 +219,7 @@ class Taskontable extends Component {
 
   setStateFromRenderHot() {
     const hotTasks = getHotTasksIgnoreEmptyTaskAndProp(hot);
-    setPageTitle(hotTasks);
+    bindOpenTasksProcessing(hotTasks);
     if (!util.equal(hotTasks, this.state.tableTasks)) {
       this.setState({
         saveable: true,

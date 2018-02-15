@@ -13,17 +13,6 @@ const columns = [
     title: '作業内容',
     data: 'title',
     type: 'text',
-    /* eslint no-param-reassign: ["error", { "props": false }] */
-    renderer(instance, td, row, col, prop, value) {
-      td.innerHTML = value;
-      if (instance.getDataAtRowProp(row, 'startTime') !== '' && instance.getDataAtRowProp(row, 'endTime') !== '') {
-        if (td.parentNode.classList.contains('progress')) td.parentNode.classList.remove('progress');
-        td.parentNode.classList.add('done');
-      } else {
-        td.parentNode.classList.remove('done');
-      }
-      return td;
-    },
   },
   {
     title: '<span title="見積時間 数値で入力してください。">見積(分)</span>',
@@ -40,13 +29,6 @@ const columns = [
     timeFormat: 'HH:mm',
     allowInvalid: false,
     correctFormat: true,
-    renderer(instance, td, row, col, prop, value) {
-      td.innerHTML = value;
-      if (value !== '' && !td.parentNode.classList.contains('done')) {
-        td.parentNode.classList.add('progress');
-      }
-      return td;
-    },
   },
   {
     title: '<span title="HH:mm の形式で入力してください。(例)19:20">終了時刻</span>',
@@ -58,11 +40,28 @@ const columns = [
     correctFormat: true,
     renderer(instance, td, row, col, prop, value) {
       td.innerHTML = value;
-      if (value === '') {
-        const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
+      const endTimeVal = value;
+      const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
+      if (endTimeVal !== '' && startTimeVal !== '') {
+        // 完了しているタスク
+        td.parentNode.className = 'done';
+      } else if (endTimeVal === '') {
         const estimateVal = instance.getDataAtRowProp(row, 'estimate');
         if (startTimeVal !== '' && estimateVal !== '') {
-          td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm')}</div>`; // eslint-disable-line no-param-reassign
+          // 開始時刻、見積もりが設定してあるタスクなので、予約の色(青)と終了が近づいている色をつける処理
+          const expectedEndTimeVal = moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
+          const timeDiffMinute = util.getTimeDiffMinute(moment().format('HH:mm'), expectedEndTimeVal);
+          if (timeDiffMinute <= 1) {
+            td.parentNode.className = ('red');
+          } else {
+            td.parentNode.className = ('blue');
+          }
+          td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
+        } else if (estimateVal === '') {
+          // 見積もりが空なので警告にする
+          td.parentNode.className = ('yellow');
+        } else {
+          td.parentNode.className = '';
         }
       }
       return td;
@@ -230,18 +229,6 @@ export const getEmptyHotData = () => [util.cloneDeep(hotSchema)];
 
 export const getEmptyRow = () => getEmptyHotData()[0];
 
-export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
-  if (hotInstance) {
-    const hotData = [];
-    const rowCount = hotInstance.countSourceRows();
-    for (let index = 0; index < rowCount; index += 1) {
-      hotData[index] = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
-    }
-    return util.cloneDeep(hotData.filter(data => !util.equal(getEmptyRow(), data)));
-  }
-  return getEmptyHotData();
-};
-
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
   const dataForHot = [];
@@ -255,6 +242,26 @@ export const setDataForHot = (hotInstance, datas) => {
   hotInstance.runHooks('clearNotifi');
   hotInstance.setDataAtRowProp(dataForHot);
 };
+
+const getHotTasksIgnoreEmptyTask = (hotInstance) => {
+  if (hotInstance) {
+    const hotData = [];
+    const rowCount = hotInstance.countSourceRows();
+    for (let index = 0; index < rowCount; index += 1) {
+      hotData[index] = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
+    }
+    return util.cloneDeep(hotData.filter(data => !util.equal(getEmptyRow(), data)));
+  }
+  return getEmptyHotData();
+};
+
+// ハンズオンテーブルから行を除き、永続化する必要のない情報を削除し、タスクを返す
+export const getHotTasksIgnoreEmptyTaskAndProp = (hotInstance => getHotTasksIgnoreEmptyTask(hotInstance).map((data) => {
+  util.getExTableTaskProp().forEach((prop) => {
+    delete data[prop]; // eslint-disable-line no-param-reassign
+  });
+  return data;
+}));
 
 export const hotConf = {
   autoRowSize: false,
