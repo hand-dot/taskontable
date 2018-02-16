@@ -69,9 +69,9 @@ const getSecondRotate = second => `rotate(${second * 6}deg)`;
 class Clock extends Component {
   constructor(props) {
     super(props);
+    this.timerId = '';
     this.state = {
       moment: moment(),
-      timerId: '',
     };
   }
 
@@ -99,8 +99,8 @@ class Clock extends Component {
       $second.style.transform = getSecondRotate(second);
       this.setState({
         moment: newMoment,
-        timerId: setTimeout(timedUpdate, 1000),
       });
+      this.timerId = setTimeout(timedUpdate, 1000);
     };
     timedUpdate();
   }
@@ -116,7 +116,7 @@ class Clock extends Component {
   }
 
   componentWillUnmount() {
-    clearTimeout(this.state.timerId);
+    clearTimeout(this.timerId);
   }
 
   render() {
