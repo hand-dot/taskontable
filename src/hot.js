@@ -57,7 +57,7 @@ const columns = [
             td.parentNode.className = ('blue');
           }
           td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
-        } else if (estimateVal === '') {
+        } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
           // 見積もりが空なので警告にする
           td.parentNode.className = ('yellow');
         } else {
