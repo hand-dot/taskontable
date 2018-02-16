@@ -73,11 +73,11 @@ const bindOpenTasksProcessing = (tasks) => {
       if (newTimeDiffMinute !== oldTimeDiffMinute && hot) hot.render();
       if (newTimeDiffMinute === -1) {
         // 開始まで秒単位でカウントダウンする場合
-        document.title = `${moment().format('ss') - 60}秒 - ${openTask.title}`;
+        document.title = `${moment().format('ss') - 60}秒 - ${openTask.title || '無名タスク'}`;
       } else if (newTimeDiffMinute === 0) {
-        document.title = `${moment().format('ss')}秒 - ${openTask.title}`;
+        document.title = `${moment().format('ss')}秒 - ${openTask.title || '無名タスク'}`;
       } else {
-        document.title = `${newTimeDiffMinute}分 - ${openTask.title}`;
+        document.title = `${newTimeDiffMinute}分 - ${openTask.title || '無名タスク'}`;
       }
       oldTimeDiffMinute = newTimeDiffMinute;
     }, 1000);

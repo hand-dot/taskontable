@@ -10,6 +10,8 @@ import AsyncContainer from './AsyncContainer';
 
 import firebaseConf from '../configs/firebase';
 
+import '../styles/keyframes.css';
+
 const GlobalHeader = AsyncContainer(() => import('./GlobalHeader').then(module => module.default), {});
 const Top = AsyncContainer(() => import('./Top').then(module => module.default), {});
 const Login = AsyncContainer(() => import('./Login').then(module => module.default), {});
