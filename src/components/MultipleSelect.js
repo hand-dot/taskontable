@@ -6,67 +6,58 @@ import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 
-const styles = theme => ({
+const styles = {
   container: {
     display: 'flex',
     flexWrap: 'wrap',
   },
-});
+};
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 
 // FIXME keyとvalueで値をやりとりしたい
-class MultipleSelect extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      id: Date.now(),
-    };
-  }
-
-  render() {
-    const { label, value, options, onChange, disabled, classes, theme } = this.props;
-    return (
-      <div className={classes.container}>
-        <FormControl>
-          <InputLabel style={{ fontSize: 12 }} htmlFor={this.state.id}>{label}</InputLabel>
-          <Select
-            disabled={disabled}
-            disableUnderline={disabled}
-            style={{ fontSize: 12 }}
-            multiple
-            value={value}
-            onChange={onChange}
-            input={<Input id={this.state.id.toString()} />}
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                  width: 200,
-                },
+function MultipleSelect(props) {
+  const { label, value, options, onChange, disabled, classes, theme } = props;
+  return (
+    <div className={classes.container}>
+      <FormControl>
+        <InputLabel style={{ fontSize: 12 }} htmlFor={label}>{label}</InputLabel>
+        <Select
+          disabled={disabled}
+          disableUnderline={disabled}
+          style={{ fontSize: 12 }}
+          multiple
+          value={value}
+          onChange={onChange}
+          input={<Input id={label} />}
+          MenuProps={{
+            PaperProps: {
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 200,
               },
-            }}
-          >
-            {options.map(option => (
-              <MenuItem
-                key={option}
-                value={option}
-                style={{
-                  fontWeight:
+            },
+          }}
+        >
+          {options.map(option => (
+            <MenuItem
+              key={option}
+              value={option}
+              style={{
+                fontWeight:
                   options.indexOf(option) === -1
                     ? theme.typography.fontWeightRegular
                     : theme.typography.fontWeightMedium,
-                }}
-              >
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </div>
-    );
-  }
+              }}
+            >
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
+  );
 }
 
 

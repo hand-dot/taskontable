@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
 import debounce from 'lodash.debounce';
-import throttle from 'lodash.throttle';
 
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
@@ -22,7 +21,6 @@ import Dashboard from './Dashboard';
 import TableStatus from './TableStatus';
 import TaskPool from './TaskPool';
 import DatePicker from './DatePicker';
-import ProcessingDialog from './ProcessingDialog';
 
 import { hotConf, getEmptyHotData, getEmptyRow, getHotTasksIgnoreEmptyTaskAndProp, setDataForHot } from '../hot';
 
@@ -54,15 +52,16 @@ const styles = {
 };
 
 let hot = null;
-function addTask() {
+let oldTimeDiffMinute = '';
+let bindOpenTaskIntervalID = '';
+
+const addTask = () => {
   if (hot) {
     hot.alter('insert_row');
   }
-}
+};
 
 // 開始しているタスクを見つけ、経過時間をタイトルに反映する
-let oldTimeDiffMinute = '';
-let bindOpenTaskIntervalID = '';
 const bindOpenTasksProcessing = (tasks) => {
   const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
   document.title = 'Taskontable';
@@ -93,7 +92,6 @@ class Taskontable extends Component {
       saveable: false,
       isOpenDashboard: false,
       isOpenTaskPool: false,
-      isOpenProcessingDialog: false,
       date: moment().format(constants.DATEFMT),
       lastSaveTime: { hour: 0, minute: 0, second: 0 },
       tableTasks: getEmptyHotData(),
@@ -105,11 +103,13 @@ class Taskontable extends Component {
     };
     this.setStateFromUpdateHot = debounce(this.setStateFromUpdateHot, constants.RENDER_DELAY);
     this.setStateFromRenderHot = debounce(this.setStateFromRenderHot, constants.RENDER_DELAY);
-    this.openProcessingDialog = throttle(this.openProcessingDialog, constants.PROCESSING_DELAY);
-    this.closeProcessingDialog = debounce(this.closeProcessingDialog, constants.RENDER_DELAY);
   }
 
   componentWillMount() {
+    hot = null;
+    oldTimeDiffMinute = '';
+    bindOpenTaskIntervalID = '';
+
     // 初期値の最終保存時刻
     this.setState({
       lastSaveTime: util.getCrrentTimeObj(),
@@ -193,9 +193,7 @@ class Taskontable extends Component {
         },
       },
       afterRender() {
-        self.openProcessingDialog();
         self.setStateFromRenderHot();
-        self.closeProcessingDialog();
       },
       afterUpdateSettings() { self.setStateFromUpdateHot(); },
     }));
@@ -237,14 +235,6 @@ class Taskontable extends Component {
       saveable: false,
       tableTasks: getHotTasksIgnoreEmptyTaskAndProp(hot),
     });
-  }
-
-  openProcessingDialog() {
-    this.setState({ isOpenProcessingDialog: true });
-  }
-
-  closeProcessingDialog() {
-    this.setState({ isOpenProcessingDialog: false });
   }
 
   fireShortcut(e) {
@@ -586,7 +576,6 @@ class Taskontable extends Component {
             </Button>
           </Grid>
         </Hidden>
-        <ProcessingDialog open={this.state.isOpenProcessingDialog} />
       </Grid>
     );
   }

@@ -22,7 +22,6 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tableTasks: [],
       estimateTasks: { minute: 0, taskNum: 0 },
       doneTasks: { minute: 0, taskNum: 0 },
       actuallyTasks: { minute: 0, taskNum: 0 },
@@ -50,7 +49,6 @@ class Dashboard extends Component {
     const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState({
-      tableTasks: nextProps.tableTasks,
       estimateTasks: { minute: totalEstimateMinute(nextProps.tableTasks), taskNum: nextProps.tableTasks.length },
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
       doneTasks: { minute: totalEstimateMinute(doneData), taskNum: doneData.length },
