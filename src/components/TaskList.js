@@ -41,8 +41,10 @@ const styles = theme => ({
     color: '#000',
     fontSize: 12,
   },
+  taskRow: {
+    animation: 'blink 2s',
+  },
 });
-
 
 function getPoolTaskSchema() {
   return util.cloneDeep(poolTaskSchema);
@@ -198,7 +200,7 @@ class TaskList extends Component {
           </TableHead>
           <TableBody>
             {tasks.map((task, index) => (
-              <TableRow key={task.title + task.memo + task.estimate}>
+              <TableRow className={classes.taskRow} key={task.title + task.memo + task.estimate}>
                 <TableCell padding="none" className={classes.cell}>
                   <Input
                     className={classes.cellInput}
