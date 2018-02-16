@@ -22,7 +22,7 @@ import TableStatus from './TableStatus';
 import TaskPool from './TaskPool';
 import DatePicker from './DatePicker';
 
-import { hotConf, getEmptyHotData, getEmptyRow, getHotTasksIgnoreEmptyTaskAndProp, setDataForHot } from '../hot';
+import { hotConf, getEmptyHotData, contextMenuCallback, contextMenuItems, getEmptyRow, getHotTasksIgnoreEmptyTaskAndProp, setDataForHot } from '../hot';
 
 import constants from '../constants';
 
@@ -129,9 +129,8 @@ class Taskontable extends Component {
 
   componentDidMount() {
     const self = this;
-    if ('Notification' in window && Notification.permission !== 'granted') {
-      Notification.requestPermission();
-    }
+    if ('Notification' in window && Notification.permission !== 'granted') Notification.requestPermission();
+
     hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
       contextMenu: {
         callback(key, selection) {
@@ -141,60 +140,12 @@ class Taskontable extends Component {
               // テーブルタスクからタスクプールに移すタイミングでテーブルが1行減るので常に選択開始行を処理する
               self.moveTableTaskToPoolTask(taskPoolType, selection.start.row, hot);
             }
-          } else if (key === 'start_task') {
-            let confirm = false;
-            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              if (this.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
-              if (this.getDataAtRowProp(row, 'startTime') !== '') confirm = true;
-            }
-            if (confirm && !window.confirm('終了時刻もしくは開始時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
-            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              this.setDataAtRowProp(row, 'endTime', '');
-              this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
-            }
-          } else if (key === 'done_task') {
-            let confirm = false;
-            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              if (this.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
-            }
-            if (confirm && !window.confirm('終了時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
-            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              // 開始時刻が空だった場合は現在時刻を設定する
-              if (this.getDataAtRowProp(row, 'startTime') === '') this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
-              this.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
-            }
+            contextMenuCallback(key, selection);
           }
         },
-        items: {
-          row_above: {
-            name: '上に行を追加する',
-          },
-          row_below: {
-            name: '下に行を追加する',
-          },
-          hsep1: '---------',
-          remove_row: {
-            name: '行を削除する',
-          },
-          hsep2: '---------',
-          reverse_taskpool_hight: {
-            name: '[すぐにやる]に戻す',
-          },
-          reverse_taskpool_low: {
-            name: '[いつかやる]に戻す',
-          },
-          hsep3: '---------',
-          start_task: {
-            name: 'タスクを開始する',
-          },
-          done_task: {
-            name: 'タスクを終了にする',
-          },
-        },
+        items: contextMenuItems,
       },
-      afterRender() {
-        self.setStateFromRenderHot();
-      },
+      afterRender() { self.setStateFromRenderHot(); },
       afterUpdateSettings() { self.setStateFromUpdateHot(); },
     }));
     // タスクプールをサーバーと同期開始
