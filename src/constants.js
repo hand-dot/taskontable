@@ -14,7 +14,7 @@ export default {
   APPWIDTH: window.innerWidth,
   APPHEIGHT: window.innerHeight,
   KEYEVENT_DELAY: 100,
-  RENDER_DELAY: 500,
+  RENDER_DELAY: 1000,
   PROCESSING_DELAY: 100,
   PROCESSING_DIALOG_THRESHOLD: 3,
   shortcuts: {

@@ -230,7 +230,6 @@ class Taskontable extends Component {
         saveable: false,
       });
     }
-    setTimeout(() => this.forceUpdate());
   }
 
   setStateFromUpdateHot() {
@@ -238,7 +237,6 @@ class Taskontable extends Component {
       saveable: false,
       tableTasks: getHotTasksIgnoreEmptyTaskAndProp(hot),
     });
-    setTimeout(() => this.forceUpdate());
   }
 
   openProcessingDialog() {
