@@ -145,7 +145,7 @@ class Taskontable extends Component {
       // タスクプールからテーブルタスクに移動したら保存する
       setTimeout(() => { this.saveHot(); });
     }
-    setTimeout(() => this.savePoolTasks(this.state.poolTasks));
+    setTimeout(() => this.savePoolTasks(poolTasks));
   }
 
   moveTableTaskToPoolTask(taskPoolType, task) {
@@ -156,8 +156,8 @@ class Taskontable extends Component {
   }
 
   savePoolTasks(poolTasks) {
+    this.setState({ poolTasks });
     const tasks = Object.assign({}, poolTasks);
-    this.setState({ tasks });
     if (tasks.regularTasks) {
       // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
       // https://github.com/hand-dot/taskontable/issues/118
