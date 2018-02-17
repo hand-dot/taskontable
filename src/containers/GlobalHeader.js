@@ -11,8 +11,8 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import Hidden from 'material-ui/Hidden';
 import Avatar from 'material-ui/Avatar';
 
-import DescriptionDialog from './DescriptionDialog';
-import HelpDialog from './HelpDialog';
+import DescriptionDialog from '../components/DescriptionDialog';
+import HelpDialog from '../components/HelpDialog';
 
 import constants from '../constants';
 

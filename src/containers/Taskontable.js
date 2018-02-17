@@ -11,11 +11,11 @@ import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import Hidden from 'material-ui/Hidden';
 
-import Dashboard from './Dashboard';
-import TableStatus from './TableStatus';
-import TaskPool from './TaskPool';
-import TaskTable from './TaskTable';
-import DatePicker from './DatePicker';
+import Dashboard from '../components/Dashboard';
+import TableStatus from '../components/TableStatus';
+import TaskPool from '../components/TaskPool';
+import TaskTable from '../components/TaskTable';
+import DatePicker from '../components/DatePicker';
 
 import { getEmptyHotData } from '../hot';
 
