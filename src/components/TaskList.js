@@ -42,7 +42,7 @@ const styles = theme => ({
     fontSize: 12,
   },
   taskRow: {
-    animation: 'blink 2s',
+    animation: 'blink 1s',
   },
 });
 
@@ -290,13 +290,13 @@ class TaskList extends Component {
                         <i className="fa fa-angle-up" />
                         <Typography>1つ上に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
-                        <i className="fa fa-angle-double-down" />
-                        <Typography>末尾に移動</Typography>
-                      </MenuItem>
                       <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
                         <i className="fa fa-angle-down" />
                         <Typography>1つ下に移動</Typography>
+                      </MenuItem>
+                      <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
+                        <i className="fa fa-angle-double-down" />
+                        <Typography>末尾に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'removeTask'} onClick={this.removeTask.bind(this, index)}>
                         <i className="fa fa-trash-o" />
