@@ -540,7 +540,7 @@ Taskontable.propTypes = {
     uid: PropTypes.string.isRequired,
   }).isRequired,
   toggleHelpDialog: PropTypes.func.isRequired,
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles)(Taskontable);

@@ -34,7 +34,7 @@ function MultipleSelect(props) {
           MenuProps={{
             PaperProps: {
               style: {
-                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                maxHeight: (ITEM_HEIGHT * 4.5) + ITEM_PADDING_TOP,
                 width: 200,
               },
             },
@@ -67,8 +67,8 @@ MultipleSelect.propTypes = {
   options: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired, // eslint-disable-line
+  theme: PropTypes.object.isRequired,  // eslint-disable-line
 };
 
 export default withStyles(styles, { withTheme: true })(MultipleSelect);

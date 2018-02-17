@@ -137,7 +137,7 @@ class App extends Component {
 }
 
 App.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired, // eslint-disable-line
   history: PropTypes.object.isRequired,
 };
 

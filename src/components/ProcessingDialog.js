@@ -22,7 +22,7 @@ function ProcessingDialog(props) {
 
 ProcessingDialog.propTypes = {
   open: PropTypes.bool.isRequired,
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles)(ProcessingDialog);

@@ -392,8 +392,8 @@ TaskList.propTypes = {
   bottomToTask: PropTypes.func.isRequired,
   topToTask: PropTypes.func.isRequired,
   isRegularTask: PropTypes.bool.isRequired,
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired, // eslint-disable-line
+  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles, { withTheme: true })(TaskList);

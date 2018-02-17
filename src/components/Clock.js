@@ -147,7 +147,7 @@ Clock.propTypes = {
     minute: PropTypes.number.isRequired,
     second: PropTypes.number.isRequired,
   }).isRequired,
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles)(Clock);

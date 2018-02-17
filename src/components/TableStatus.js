@@ -53,7 +53,7 @@ function TableStatus(props) {
 TableStatus.propTypes = {
   tableTasks: PropTypes.array.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles)(TableStatus);

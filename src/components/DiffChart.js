@@ -94,7 +94,7 @@ DiffChart.propTypes = {
   })).isRequired,
   dataLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
   unit: PropTypes.string.isRequired,
-  theme: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles, { withTheme: true })(DiffChart);
