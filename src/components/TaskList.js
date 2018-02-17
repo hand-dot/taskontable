@@ -22,8 +22,8 @@ const styles = theme => ({
     overflowY: 'scroll',
   },
   actionIcon: {
-    fontSize: 15,
-    width: theme.breakpoints.values.sm < constants.APPWIDTH ? 45 : 17,
+    fontSize: 14,
+    width: theme.breakpoints.values.sm < constants.APPWIDTH ? 45 : 14,
   },
   actionIcons: {
     margin: '0 auto',
@@ -34,7 +34,7 @@ const styles = theme => ({
   },
   miniCell: {
     border: '1px solid rgba(235, 235, 235, 1)',
-    padding: '0 5px',
+    padding: '0 3px',
     maxWidth: '3rem',
   },
   cellInput: {
