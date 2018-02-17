@@ -280,27 +280,27 @@ class TaskList extends Component {
                     >
                       <MenuItem key={'moveTask'} onClick={this.moveTask.bind(this, index)}>
                         <i className="fa fa-download" />
-                        <Typography>テーブルに移動</Typography>
+                        <Typography variant="caption">テーブルに移動</Typography>
                       </MenuItem>
                       <MenuItem key={'topToTask'} onClick={this.topToTask.bind(this, index)}>
                         <i className="fa fa-angle-double-up" />
-                        <Typography>先頭に移動</Typography>
+                        <Typography variant="caption">先頭に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'upTask'} onClick={this.upTask.bind(this, index)}>
                         <i className="fa fa-angle-up" />
-                        <Typography>1つ上に移動</Typography>
+                        <Typography variant="caption">1つ上に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
                         <i className="fa fa-angle-down" />
-                        <Typography>1つ下に移動</Typography>
+                        <Typography variant="caption">1つ下に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
                         <i className="fa fa-angle-double-down" />
-                        <Typography>末尾に移動</Typography>
+                        <Typography variant="caption">末尾に移動</Typography>
                       </MenuItem>
                       <MenuItem key={'removeTask'} onClick={this.removeTask.bind(this, index)}>
                         <i className="fa fa-trash-o" />
-                        <Typography>削除</Typography>
+                        <Typography variant="caption">削除</Typography>
                       </MenuItem>
                     </Menu>
                   </div>

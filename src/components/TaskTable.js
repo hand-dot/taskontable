@@ -6,10 +6,11 @@ import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
 import debounce from 'lodash.debounce';
 
-import { hotConf, getEmptyHotData, contextMenuCallback, contextMenuItems, getEmptyRow, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { hotConf, getEmptyHotData, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import constants from '../constants';
 import util from '../util';
 
+import '../styles/handsontable-custom.css';
 
 const styles = {
 };

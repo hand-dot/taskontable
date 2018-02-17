@@ -11,8 +11,6 @@ import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import Hidden from 'material-ui/Hidden';
 
-import '../styles/handsontable-custom.css';
-
 import Dashboard from './Dashboard';
 import TableStatus from './TableStatus';
 import TaskPool from './TaskPool';
@@ -111,89 +109,43 @@ class Taskontable extends Component {
   }
 
   changePoolTasks(taskPoolActionType, taskPoolType, value) {
+    const poolTasks = util.cloneDeep(this.state.poolTasks);
     if (taskPoolActionType === constants.taskPoolActionType.ADD) {
-      this.addPoolTask(taskPoolType, value);
+      poolTasks[taskPoolType].push(value);
     } else if (taskPoolActionType === constants.taskPoolActionType.EDIT) {
       this.editPoolTask(taskPoolType, value);
-    } else if (taskPoolActionType === constants.taskPoolActionType.MOVE) {
-      this.movePoolTaskToTableTask(taskPoolType, value);
+      poolTasks[taskPoolType][value.index] = value.task;
     } else if (taskPoolActionType === constants.taskPoolActionType.REMOVE) {
-      this.removePoolTask(taskPoolType, value);
+      poolTasks[taskPoolType].splice(value, 1);
     } else if (taskPoolActionType === constants.taskPoolActionType.DOWN) {
-      this.downPoolTask(taskPoolType, value);
+      if (this.state.poolTasks[taskPoolType].length === value + 1) return;
+      const target = poolTasks[taskPoolType];
+      target.splice(value, 2, target[value + 1], target[value]);
     } else if (taskPoolActionType === constants.taskPoolActionType.UP) {
-      this.upPoolTask(taskPoolType, value);
+      if (value === 0) return;
+      const target = poolTasks[taskPoolType];
+      target.splice(value - 1, 2, target[value], target[value - 1]);
     } else if (taskPoolActionType === constants.taskPoolActionType.BOTTOM) {
-      this.bottomPoolTask(taskPoolType, value);
+      if (this.state.poolTasks[taskPoolType].length === value + 1) return;
+      const target = poolTasks[taskPoolType].splice(value, 1)[0];
+      poolTasks[taskPoolType].push(target);
     } else if (taskPoolActionType === constants.taskPoolActionType.TOP) {
-      this.topPoolTask(taskPoolType, value);
+      if (value === 0) return;
+      const target = poolTasks[taskPoolType].splice(value, 1)[0];
+      poolTasks[taskPoolType].unshift(target);
+    } else if (taskPoolActionType === constants.taskPoolActionType.MOVE) {
+      const tableTasks = this.state.tableTasks;
+      tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
+      this.setState({ tableTasks });
+      this.taskTable.setData(tableTasks);
+      if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
+         taskPoolType === constants.taskPoolType.LOWPRIORITY) {
+        this.removePoolTask(taskPoolType, value);
+      }
+      // タスクプールからテーブルタスクに移動したら保存する
+      setTimeout(() => { this.saveHot(); });
     }
     setTimeout(() => this.savePoolTasks(this.state.poolTasks));
-  }
-
-  addPoolTask(taskPoolType, task) {
-    const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[taskPoolType].push(task);
-    this.setState({ poolTasks });
-  }
-
-  editPoolTask(taskPoolType, { task, index }) {
-    const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[taskPoolType][index] = task;
-    this.setState({ poolTasks });
-  }
-
-
-  removePoolTask(taskPoolType, index) {
-    const poolTasks = Object.assign({}, this.state.poolTasks);
-    poolTasks[taskPoolType].splice(index, 1);
-    this.setState({ poolTasks });
-  }
-
-  downPoolTask(taskPoolType, index) {
-    if (this.state.poolTasks[taskPoolType].length === index + 1) return;
-    const poolTasks = util.cloneDeep(this.state.poolTasks);
-    const target = poolTasks[taskPoolType];
-    target.splice(index, 2, target[index + 1], target[index]);
-    this.setState({ poolTasks });
-  }
-
-  bottomPoolTask(taskPoolType, index) {
-    if (this.state.poolTasks[taskPoolType].length === index + 1) return;
-    const poolTasks = util.cloneDeep(this.state.poolTasks);
-    const target = poolTasks[taskPoolType].splice(index, 1)[0];
-    poolTasks[taskPoolType].push(target);
-    this.setState({ poolTasks });
-  }
-
-  upPoolTask(taskPoolType, index) {
-    if (index === 0) return;
-    const poolTasks = util.cloneDeep(this.state.poolTasks);
-    const target = poolTasks[taskPoolType];
-    target.splice(index - 1, 2, target[index], target[index - 1]);
-    this.setState({ poolTasks });
-  }
-
-
-  topPoolTask(taskPoolType, index) {
-    if (index === 0) return;
-    const poolTasks = util.cloneDeep(this.state.poolTasks);
-    const target = poolTasks[taskPoolType].splice(index, 1)[0];
-    poolTasks[taskPoolType].unshift(target);
-    this.setState({ poolTasks });
-  }
-
-  movePoolTaskToTableTask(taskPoolType, index) {
-    const tableTasks = this.state.tableTasks;
-    tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][index]));
-    this.setState({ tableTasks });
-    this.taskTable.setData(tableTasks);
-    if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
-       taskPoolType === constants.taskPoolType.LOWPRIORITY) {
-      this.removePoolTask(taskPoolType, index);
-    }
-    // タスクプールからテーブルタスクに移動したら保存する
-    setTimeout(() => { this.saveHot(); });
   }
 
   moveTableTaskToPoolTask(taskPoolType, task) {
@@ -205,6 +157,7 @@ class Taskontable extends Component {
 
   savePoolTasks(poolTasks) {
     const tasks = Object.assign({}, poolTasks);
+    this.setState({ tasks });
     if (tasks.regularTasks) {
       // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
       // https://github.com/hand-dot/taskontable/issues/118
@@ -224,6 +177,19 @@ class Taskontable extends Component {
     const tableTasks = this.taskTable.getTasksIgnoreEmptyTaskAndProp();
     this.setState({ tableTasks });
     this.saveTableTask(tableTasks);
+  }
+
+  saveTableTask(data) {
+    this.setState({
+      loading: true,
+    });
+    firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
+      this.setState({
+        loading: false,
+        lastSaveTime: util.getCrrentTimeObj(),
+        saveable: false,
+      });
+    });
   }
 
   addTask() {
@@ -257,19 +223,6 @@ class Taskontable extends Component {
       this.toggleTaskPool();
     }
     return false;
-  }
-
-  saveTableTask(data) {
-    this.setState({
-      loading: true,
-    });
-    firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
-      this.setState({
-        loading: false,
-        lastSaveTime: util.getCrrentTimeObj(),
-        saveable: false,
-      });
-    });
   }
 
   attachPoolTasks() {
@@ -381,39 +334,20 @@ class Taskontable extends Component {
         </Hidden>
         <Grid item xs={12} sm={10}>
           <Grid item xs={12} className={classes.root}>
-            <Dashboard
-              isOpenDashboard={this.state.isOpenDashboard}
-              toggleDashboard={this.toggleDashboard.bind(this)}
-              tableTasks={this.state.tableTasks}
-            />
-            <TaskPool
-              isOpenTaskPool={this.state.isOpenTaskPool}
-              toggleTaskPool={this.toggleTaskPool.bind(this)}
-              poolTasks={this.state.poolTasks}
-              changePoolTasks={this.changePoolTasks.bind(this)}
-            />
+            <Dashboard isOpenDashboard={this.state.isOpenDashboard} toggleDashboard={this.toggleDashboard.bind(this)} tableTasks={this.state.tableTasks} />
+            <TaskPool isOpenTaskPool={this.state.isOpenTaskPool} toggleTaskPool={this.toggleTaskPool.bind(this)} poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} />
             <Paper elevation={1}>
               <div style={{ padding: 24 }}>
                 <i className="fa fa-table fa-lg" />
-                <Typography style={{ display: 'inline' }}>
-                  　テーブル
-                </Typography>
-                <div>
-                  <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
-                  <div style={{ display: 'inline-block', float: 'right' }}>
-                    <Button className={classes.tableCtlButton} variant="raised" onClick={this.addTask.bind(this)} color="default">
-                      <i className="fa fa-plus fa-lg" />
-                          行追加
-                    </Button>
-                    <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
-                      <div style={{ display: 'inline-block' }}>
-                        <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default">
-                          <i className="fa fa-floppy-o fa-lg" />
-                            保存
-                        </Button>
-                      </div>
-                    </Tooltip>
-                  </div>
+                <Typography style={{ display: 'inline', marginRight: 20 }}>　テーブル</Typography>
+                <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
+                <div style={{ display: 'inline-block', float: 'right' }}>
+                  <Button className={classes.tableCtlButton} variant="raised" onClick={this.addTask.bind(this)} color="default"><i className="fa fa-plus fa-lg" /></Button>
+                  <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
+                    <div style={{ display: 'inline-block' }}>
+                      <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
+                    </div>
+                  </Tooltip>
                 </div>
               </div>
               <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
