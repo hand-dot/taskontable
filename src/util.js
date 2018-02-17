@@ -2,14 +2,13 @@ import moment from 'moment';
 import fastclone from 'fast-clone';
 import { deepEqual } from 'fast-equals';
 import constants from './constants';
-import hotSchema from './schemas/hotSchema';
-import poolTaskSchema from './schemas/poolTaskSchema';
 import tableTaskSchema from './schemas/tableTaskSchema';
+import poolTaskSchema from './schemas/poolTaskSchema';
 
 export default {
   getExTableTaskProp() {
     const tableTaskSchemaKey = Object.keys(tableTaskSchema);
-    const exSchemaKey = Object.keys(Object.assign({}, hotSchema, poolTaskSchema));
+    const exSchemaKey = Object.keys(Object.assign({}, poolTaskSchema));
     return this.diffArray(tableTaskSchemaKey, exSchemaKey);
   },
   diffArray(arr1, arr2) {

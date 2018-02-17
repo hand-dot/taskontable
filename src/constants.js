@@ -8,6 +8,7 @@ const rgb = {
   GREY: '201, 203, 207',
 };
 export default {
+  TITLE: 'Taskontable',
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
@@ -19,11 +20,9 @@ export default {
     NEXTDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 190,
     PREVDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 188,
     SAVE: e => e.ctrlKey && !e.shiftKey && e.keyCode === 83,
-    INSERT: e => e.ctrlKey && !e.shiftKey && e.keyCode === 73,
     TOGGLE_HELP: e => e.ctrlKey && e.shiftKey && e.keyCode === 191,
     TOGGLE_DASHBOAD: e => e.ctrlKey && !e.shiftKey && e.keyCode === 74,
     TOGGLE_TASKPOOL: e => e.ctrlKey && !e.shiftKey && e.keyCode === 75,
-    SELECT_TABLE: e => e.ctrlKey && !e.shiftKey && e.keyCode === 76,
     HOT_CURRENTTIME: e => e.ctrlKey && e.shiftKey && e.keyCode === 186,
   },
   menuItemKey: {

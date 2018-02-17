@@ -3,10 +3,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
-import debounce from 'lodash.debounce';
-
-import Handsontable from 'handsontable';
-import 'handsontable/dist/handsontable.full.css';
 
 import Typography from 'material-ui/Typography';
 import Tooltip from 'material-ui/Tooltip';
@@ -20,9 +16,10 @@ import '../styles/handsontable-custom.css';
 import Dashboard from './Dashboard';
 import TableStatus from './TableStatus';
 import TaskPool from './TaskPool';
+import TaskTable from './TaskTable';
 import DatePicker from './DatePicker';
 
-import { hotConf, getEmptyHotData, contextMenuCallback, contextMenuItems, getEmptyRow, getHotTasksIgnoreEmptyTaskAndProp, setDataForHot } from '../hot';
+import { getEmptyHotData } from '../hot';
 
 import constants from '../constants';
 
@@ -51,39 +48,6 @@ const styles = {
   },
 };
 
-let hot = null;
-let oldTimeDiffMinute = '';
-let bindOpenTaskIntervalID = '';
-
-const addTask = () => {
-  if (hot) {
-    hot.alter('insert_row');
-  }
-};
-
-// 開始しているタスクを見つけ、経過時間をタイトルに反映する
-const bindOpenTasksProcessing = (tasks) => {
-  const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
-  document.title = 'Taskontable';
-  if (bindOpenTaskIntervalID) clearInterval(bindOpenTaskIntervalID);
-  if (openTask) {
-    bindOpenTaskIntervalID = setInterval(() => {
-      const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
-      // 1分に一度タイトルが書き変わったタイミングでhotを再描画する。
-      if (newTimeDiffMinute !== oldTimeDiffMinute && hot) hot.render();
-      if (newTimeDiffMinute === -1) {
-        // 開始まで秒単位でカウントダウンする場合
-        document.title = `${moment().format('ss') - 60}秒 - ${openTask.title || '無名タスク'}`;
-      } else if (newTimeDiffMinute === 0) {
-        document.title = `${moment().format('ss')}秒 - ${openTask.title || '無名タスク'}`;
-      } else {
-        document.title = `${newTimeDiffMinute}分 - ${openTask.title || '無名タスク'}`;
-      }
-      oldTimeDiffMinute = newTimeDiffMinute;
-    }, 1000);
-  }
-};
-
 class Taskontable extends Component {
   constructor(props) {
     super(props);
@@ -101,15 +65,9 @@ class Taskontable extends Component {
         regularTasks: [],
       },
     };
-    this.setStateFromUpdateHot = debounce(this.setStateFromUpdateHot, constants.RENDER_DELAY);
-    this.setStateFromRenderHot = debounce(this.setStateFromRenderHot, constants.RENDER_DELAY);
   }
 
   componentWillMount() {
-    hot = null;
-    oldTimeDiffMinute = '';
-    bindOpenTaskIntervalID = '';
-
     // 初期値の最終保存時刻
     this.setState({
       lastSaveTime: util.getCrrentTimeObj(),
@@ -128,26 +86,7 @@ class Taskontable extends Component {
   }
 
   componentDidMount() {
-    const self = this;
     if ('Notification' in window && Notification.permission !== 'granted') Notification.requestPermission();
-
-    hot = new Handsontable(document.getElementById('hot'), Object.assign(hotConf, {
-      contextMenu: {
-        callback(key, selection) {
-          if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
-            const taskPoolType = key === 'reverse_taskpool_hight' ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
-            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              // テーブルタスクからタスクプールに移すタイミングでテーブルが1行減るので常に選択開始行を処理する
-              self.moveTableTaskToPoolTask(taskPoolType, selection.start.row, hot);
-            }
-            contextMenuCallback(key, selection);
-          }
-        },
-        items: contextMenuItems,
-      },
-      afterRender() { self.setStateFromRenderHot(); },
-      afterUpdateSettings() { self.setStateFromUpdateHot(); },
-    }));
     // タスクプールをサーバーと同期開始
     this.attachPoolTasks();
     // テーブルをサーバーと同期開始
@@ -159,59 +98,8 @@ class Taskontable extends Component {
   componentWillUnmount() {
     window.onkeydown = '';
     window.onbeforeunload = '';
-    hot.destroy();
-    if (bindOpenTaskIntervalID) clearInterval(bindOpenTaskIntervalID);
-    hot = null;
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/${this.props.user.uid}/tableTasks`).off();
-  }
-
-  setStateFromRenderHot() {
-    const hotTasks = getHotTasksIgnoreEmptyTaskAndProp(hot);
-    bindOpenTasksProcessing(hotTasks);
-    if (!util.equal(hotTasks, this.state.tableTasks)) {
-      this.setState({
-        saveable: true,
-        tableTasks: hotTasks,
-      });
-    } else if (util.equal(hotTasks, this.state.tableTasks)) {
-      this.setState({
-        saveable: false,
-      });
-    }
-  }
-
-  setStateFromUpdateHot() {
-    this.setState({
-      saveable: false,
-      tableTasks: getHotTasksIgnoreEmptyTaskAndProp(hot),
-    });
-  }
-
-  fireShortcut(e) {
-    if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
-      // 基準日を変更
-      if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
-      this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
-      setTimeout(() => { this.initTableTask(); });
-    } else if (constants.shortcuts.SAVE(e)) {
-      e.preventDefault();
-      this.saveHot();
-    } else if (constants.shortcuts.INSERT(e)) {
-      if (hot) hot.alter('insert_row');
-    } else if (constants.shortcuts.TOGGLE_HELP(e)) {
-      this.props.toggleHelpDialog();
-    } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
-      e.preventDefault();
-      this.toggleDashboard();
-    } else if (constants.shortcuts.TOGGLE_TASKPOOL(e)) {
-      e.preventDefault();
-      this.toggleTaskPool();
-    } else if (constants.shortcuts.SELECT_TABLE(e)) {
-      e.preventDefault();
-      hot.selectCell(0, 0);
-    }
-    return false;
   }
 
   toggleDashboard() {
@@ -265,7 +153,8 @@ class Taskontable extends Component {
   downPoolTask(taskPoolType, index) {
     if (this.state.poolTasks[taskPoolType].length === index + 1) return;
     const poolTasks = util.cloneDeep(this.state.poolTasks);
-    poolTasks[taskPoolType].splice(index, 2, poolTasks[taskPoolType][index + 1], poolTasks[taskPoolType][index]);
+    const target = poolTasks[taskPoolType];
+    target.splice(index, 2, target[index + 1], target[index]);
     this.setState({ poolTasks });
   }
 
@@ -280,7 +169,8 @@ class Taskontable extends Component {
   upPoolTask(taskPoolType, index) {
     if (index === 0) return;
     const poolTasks = util.cloneDeep(this.state.poolTasks);
-    poolTasks[taskPoolType].splice(index - 1, 2, poolTasks[taskPoolType][index], poolTasks[taskPoolType][index - 1]);
+    const target = poolTasks[taskPoolType];
+    target.splice(index - 1, 2, target[index], target[index - 1]);
     this.setState({ poolTasks });
   }
 
@@ -294,19 +184,10 @@ class Taskontable extends Component {
   }
 
   movePoolTaskToTableTask(taskPoolType, index) {
-    if (!hot) return;
-    const hotData = hot.getSourceData();
-    let insertPosition = hotData.lastIndexOf(data => util.equal(getEmptyRow(), data));
-    if (insertPosition === -1) {
-      insertPosition = getHotTasksIgnoreEmptyTaskAndProp(hot).length;
-    }
-    const target = Object.assign({}, this.state.poolTasks[taskPoolType][index]);
-    const dataForHot = [];
-    Object.keys(target).forEach((key) => {
-      dataForHot.push([insertPosition, key, target[key]]);
-    });
-    hot.setDataAtRowProp(dataForHot);
-
+    const tableTasks = this.state.tableTasks;
+    tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][index]));
+    this.setState({ tableTasks });
+    this.taskTable.setData(tableTasks);
     if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
        taskPoolType === constants.taskPoolType.LOWPRIORITY) {
       this.removePoolTask(taskPoolType, index);
@@ -315,19 +196,11 @@ class Taskontable extends Component {
     setTimeout(() => { this.saveHot(); });
   }
 
-  moveTableTaskToPoolTask(taskPoolType, index, hotInstance) {
-    const task = hotInstance.getSourceDataAtRow(index);
-    if (!task.title) {
-      alert('作業内容が未記入のタスクはタスクプールに戻せません。');
-      return;
-    }
-    this.addPoolTask(taskPoolType, hotInstance.getSourceDataAtRow(index));
-    hotInstance.alter('remove_row', index);
+  moveTableTaskToPoolTask(taskPoolType, task) {
+    this.addPoolTask(taskPoolType, task);
     // テーブルタスクからタスクプールに移動したら保存する
-    setTimeout(() => {
-      this.saveHot();
-      this.savePoolTasks(this.state.poolTasks);
-    });
+    this.saveHot();
+    this.savePoolTasks(this.state.poolTasks);
   }
 
   savePoolTasks(poolTasks) {
@@ -347,22 +220,55 @@ class Taskontable extends Component {
   }
 
   saveHot() {
-    if (hot) {
-      // 並び変えられたデータを取得するために処理が入っている。
-      this.saveTableTask(getHotTasksIgnoreEmptyTaskAndProp(hot));
+    // 並び変えられたデータを取得するために処理が入っている。
+    const tableTasks = this.taskTable.getTasksIgnoreEmptyTaskAndProp();
+    this.setState({ tableTasks });
+    this.saveTableTask(tableTasks);
+  }
+
+  addTask() {
+    this.taskTable.addTask();
+  }
+
+  handleSaveable(saveable) {
+    this.setState({ saveable });
+  }
+
+  handleTableTasks(tableTasks) {
+    this.setState({ tableTasks });
+  }
+
+  fireShortcut(e) {
+    if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
+      // 基準日を変更
+      if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
+      this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
+      setTimeout(() => { this.initTableTask(); });
+    } else if (constants.shortcuts.SAVE(e)) {
+      e.preventDefault();
+      this.saveHot();
+    } else if (constants.shortcuts.TOGGLE_HELP(e)) {
+      this.props.toggleHelpDialog();
+    } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
+      e.preventDefault();
+      this.toggleDashboard();
+    } else if (constants.shortcuts.TOGGLE_TASKPOOL(e)) {
+      e.preventDefault();
+      this.toggleTaskPool();
     }
+    return false;
   }
 
   saveTableTask(data) {
-    this.setState(() => ({
+    this.setState({
       loading: true,
-    }));
+    });
     firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
-      this.setState(() => ({
+      this.setState({
         loading: false,
         lastSaveTime: util.getCrrentTimeObj(),
         saveable: false,
-      }));
+      });
     });
   }
 
@@ -399,57 +305,53 @@ class Taskontable extends Component {
   }
 
   attachTableTasks() {
-    if (hot) {
-      hot.updateSettings({ data: getEmptyHotData() });
-      firebase.database().ref(`/${this.props.user.uid}/tableTasks`).on('value', (snapshot) => {
-        this.setState(() => ({
-          loading: true,
-        }));
-        if (snapshot.exists()) {
-          if (snapshot.exists() && !util.equal(getHotTasksIgnoreEmptyTaskAndProp(hot), snapshot.val()[this.state.date])) {
-            // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、
-            // サーバーのデータでテーブルを初期化する
-            setDataForHot(hot, snapshot.val()[this.state.date]);
-          }
-        }
-        this.setState(() => ({
-          loading: false,
-        }));
+    firebase.database().ref(`/${this.props.user.uid}/tableTasks`).on('value', (snapshot) => {
+      this.setState({
+        loading: true,
       });
-    }
+      if (snapshot.exists() && !util.equal(this.taskTable.getTasksIgnoreEmptyTaskAndProp(), snapshot.val()[this.state.date])) {
+      // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
+        this.taskTable.clear();
+        this.taskTable.setData(snapshot.val()[this.state.date]);
+      }
+      this.setState({
+        saveable: false,
+        loading: false,
+      });
+    });
   }
 
   fetchTableTask() {
-    this.setState(() => ({ loading: true }));
+    this.setState({ loading: true });
     return firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
-      this.setState(() => ({ loading: false }));
+      this.setState({
+        saveable: false,
+        loading: false,
+      });
       return snapshot;
     });
   }
 
   initTableTask() {
+    this.taskTable.clear();
     this.fetchTableTask().then((snapshot) => {
-      if (hot) {
-        hot.updateSettings({ data: getEmptyHotData() });
-        if (snapshot.exists() && !util.equal(snapshot.val(), getEmptyHotData())) {
-          // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
-          setDataForHot(hot, snapshot.val());
-        } else if (this.state.poolTasks.regularTasks.length !== 0) {
-          // 定期タスクをテーブルに設定する処理。
-          const dayAndCount = util.getDayAndCount(new Date(this.state.date));
-          // 定期のタスクが設定されており、サーバーにデータが存在しない場合
-          // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
-          // util.getDayOfWeekStr(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
-          // https://github.com/hand-dot/taskontable/issues/118
-          const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-          setDataForHot(hot, regularTasks);
-        }
+      if (snapshot.exists() && !util.equal(snapshot.val(), getEmptyHotData())) {
+        // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
+        this.taskTable.setData(snapshot.val());
+      } else if (this.state.poolTasks.regularTasks.length !== 0) {
+        // 定期タスクをテーブルに設定する処理。
+        const dayAndCount = util.getDayAndCount(new Date(this.state.date));
+        // 定期のタスクが設定されており、サーバーにデータが存在しない場合
+        // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
+        // util.getDayOfWeekStr(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
+        // https://github.com/hand-dot/taskontable/issues/118
+        const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
+        this.taskTable.setData(regularTasks);
       }
     });
   }
 
   changeDate(event) {
-    if (!hot) return;
     const nav = event.currentTarget.getAttribute('data-date-nav');
     let date;
     if (nav) {
@@ -461,9 +363,7 @@ class Taskontable extends Component {
       date = constants.INITIALDATE;
     }
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
-      this.setState(() => ({
-        date,
-      }));
+      this.setState({ date });
       setTimeout(() => { this.initTableTask(); });
     }
   }
@@ -501,7 +401,7 @@ class Taskontable extends Component {
                 <div>
                   <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
                   <div style={{ display: 'inline-block', float: 'right' }}>
-                    <Button className={classes.tableCtlButton} variant="raised" onClick={addTask} color="default">
+                    <Button className={classes.tableCtlButton} variant="raised" onClick={this.addTask.bind(this)} color="default">
                       <i className="fa fa-plus fa-lg" />
                           行追加
                     </Button>
@@ -517,7 +417,14 @@ class Taskontable extends Component {
                 </div>
               </div>
               <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
-              <div id="hot" />
+              <TaskTable
+                onRef={ref => (this.taskTable = ref)}
+                tableTasks={this.state.tableTasks}
+                addTask={this.addTask.bind(this)}
+                handleTableTasks={this.handleTableTasks.bind(this)}
+                handleSaveable={this.handleSaveable.bind(this)}
+                moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
+              />
             </Paper>
           </Grid>
         </Grid>

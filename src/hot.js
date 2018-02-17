@@ -1,7 +1,7 @@
 import moment from 'moment';
 import Handsontable from 'handsontable';
 import debounce from 'lodash.debounce';
-import hotSchema from './schemas/hotSchema';
+import tableTaskSchema from './schemas/tableTaskSchema';
 import constants from './constants';
 import util from './util';
 import logo from './images/logo.png';
@@ -224,28 +224,28 @@ const bindShortcut = (hotInstance) => {
   }, constants.KEYEVENT_DELAY));
 };
 
-export const contextMenuCallback = (key, selection) => {
+export const contextMenuCallback = (key, selection, hotInstance) => {
   if (key === 'start_task') {
     let confirm = false;
     for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-      if (this.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
-      if (this.getDataAtRowProp(row, 'startTime') !== '') confirm = true;
+      if (hotInstance.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
+      if (hotInstance.getDataAtRowProp(row, 'startTime') !== '') confirm = true;
     }
     if (confirm && !window.confirm('終了時刻もしくは開始時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
     for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-      this.setDataAtRowProp(row, 'endTime', '');
-      this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
+      hotInstance.setDataAtRowProp(row, 'endTime', '');
+      hotInstance.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
     }
   } else if (key === 'done_task') {
     let confirm = false;
     for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-      if (this.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
+      if (hotInstance.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
     }
     if (confirm && !window.confirm('終了時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
     for (let row = selection.start.row; row <= selection.end.row; row += 1) {
       // 開始時刻が空だった場合は現在時刻を設定する
-      if (this.getDataAtRowProp(row, 'startTime') === '') this.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
-      this.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
+      if (hotInstance.getDataAtRowProp(row, 'startTime') === '') hotInstance.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
+      hotInstance.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
     }
   }
 };
@@ -277,7 +277,7 @@ export const contextMenuItems = {
   },
 };
 
-export const getEmptyHotData = () => [util.cloneDeep(hotSchema)];
+export const getEmptyHotData = () => [util.cloneDeep(tableTaskSchema)];
 
 export const getEmptyRow = () => getEmptyHotData()[0];
 
@@ -295,7 +295,7 @@ export const setDataForHot = (hotInstance, datas) => {
   hotInstance.setDataAtRowProp(dataForHot);
 };
 
-const getHotTasksIgnoreEmptyTask = (hotInstance) => {
+export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   if (hotInstance) {
     const hotData = [];
     const rowCount = hotInstance.countSourceRows();
@@ -306,14 +306,6 @@ const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   }
   return getEmptyHotData();
 };
-
-// ハンズオンテーブルから行を除き、永続化する必要のない情報を削除し、タスクを返す
-export const getHotTasksIgnoreEmptyTaskAndProp = (hotInstance => getHotTasksIgnoreEmptyTask(hotInstance).map((data) => {
-  util.getExTableTaskProp().forEach((prop) => {
-    delete data[prop]; // eslint-disable-line no-param-reassign
-  });
-  return data;
-}));
 
 export const hotConf = {
   autoRowSize: false,
@@ -328,7 +320,7 @@ export const hotConf = {
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
   data: getEmptyHotData(),
-  dataSchema: hotSchema,
+  dataSchema: tableTaskSchema,
   afterChange(changes) {
     if (!changes) return;
     const changesLength = changes.length;
