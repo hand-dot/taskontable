@@ -269,13 +269,6 @@ class Taskontable extends Component {
     this.setState({ poolTasks });
   }
 
-  upPoolTask(taskPoolType, index) {
-    if (index === 0) return;
-    const poolTasks = util.cloneDeep(this.state.poolTasks);
-    poolTasks[taskPoolType].splice(index - 1, 2, poolTasks[taskPoolType][index], poolTasks[taskPoolType][index - 1]);
-    this.setState({ poolTasks });
-  }
-
   bottomPoolTask(taskPoolType, index) {
     if (this.state.poolTasks[taskPoolType].length === index + 1) return;
     const poolTasks = util.cloneDeep(this.state.poolTasks);
@@ -283,6 +276,14 @@ class Taskontable extends Component {
     poolTasks[taskPoolType].push(target);
     this.setState({ poolTasks });
   }
+
+  upPoolTask(taskPoolType, index) {
+    if (index === 0) return;
+    const poolTasks = util.cloneDeep(this.state.poolTasks);
+    poolTasks[taskPoolType].splice(index - 1, 2, poolTasks[taskPoolType][index], poolTasks[taskPoolType][index - 1]);
+    this.setState({ poolTasks });
+  }
+
 
   topPoolTask(taskPoolType, index) {
     if (index === 0) return;
