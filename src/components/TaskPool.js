@@ -33,7 +33,7 @@ class TaskPool extends Component {
     this.props.changePoolTasks(constants.taskPoolActionType.EDIT, this.state.tab, { task, index });
   }
 
-  moveTask(index) {
+  moveTable(index) {
     this.props.changePoolTasks(constants.taskPoolActionType.MOVE, this.state.tab, index);
   }
 
@@ -98,7 +98,7 @@ class TaskPool extends Component {
                 return (<TaskList
                   addTask={this.addTask.bind(this)}
                   editTask={this.editTask.bind(this)}
-                  moveTask={this.moveTask.bind(this)}
+                  moveTable={this.moveTable.bind(this)}
                   removeTask={this.removeTask.bind(this)}
                   downTask={this.downTask.bind(this)}
                   upTask={this.upTask.bind(this)}

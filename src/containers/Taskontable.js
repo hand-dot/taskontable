@@ -15,6 +15,7 @@ import Dashboard from '../components/Dashboard';
 import TableStatus from '../components/TableStatus';
 import TaskPool from '../components/TaskPool';
 import TaskTable from '../components/TaskTable';
+import TaskTableMobile from '../components/TaskTableMobile';
 import DatePicker from '../components/DatePicker';
 
 import { getEmptyHotData } from '../hot';
@@ -50,6 +51,7 @@ class Taskontable extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isHotMode: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
       loading: true,
       saveable: false,
       isOpenDashboard: false,
@@ -136,7 +138,7 @@ class Taskontable extends Component {
       const tableTasks = this.state.tableTasks;
       tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
       this.setState({ tableTasks });
-      this.taskTable.setData(tableTasks);
+      if (this.state.isHotMode) this.taskTable.setData(tableTasks);
       if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
          taskPoolType === constants.taskPoolType.LOWPRIORITY) {
         poolTasks[taskPoolType].splice(value, 1);
@@ -173,7 +175,7 @@ class Taskontable extends Component {
 
   saveHot() {
     // 並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = this.taskTable.getTasksIgnoreEmptyTaskAndProp();
+    const tableTasks = this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks;
     this.setState({ tableTasks });
     this.saveTableTask(tableTasks);
   }
@@ -192,7 +194,7 @@ class Taskontable extends Component {
   }
 
   addTask() {
-    this.taskTable.addTask();
+    if (this.state.isHotMode) this.taskTable.addTask();
   }
 
   handleSaveable(saveable) {
@@ -261,10 +263,15 @@ class Taskontable extends Component {
       this.setState({
         loading: true,
       });
-      if (snapshot.exists() && !util.equal(this.taskTable.getTasksIgnoreEmptyTaskAndProp(), snapshot.val()[this.state.date])) {
+      if (snapshot.exists() && !util.equal(this.state.tableTasks, snapshot.val()[this.state.date])) {
       // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
-        this.taskTable.clear();
-        this.taskTable.setData(snapshot.val()[this.state.date]);
+        if (this.state.isHotMode) {
+          this.taskTable.clear();
+          this.taskTable.setData(snapshot.val()[this.state.date]);
+        }
+        this.setState({
+          tableTasks: snapshot.val()[this.state.date],
+        });
       }
       this.setState({
         saveable: false,
@@ -285,11 +292,14 @@ class Taskontable extends Component {
   }
 
   initTableTask() {
-    this.taskTable.clear();
+    if (this.state.isHotMode) this.taskTable.clear();
     this.fetchTableTask().then((snapshot) => {
       if (snapshot.exists() && !util.equal(snapshot.val(), getEmptyHotData())) {
         // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
-        this.taskTable.setData(snapshot.val());
+        if (this.state.isHotMode) this.taskTable.setData(snapshot.val());
+        this.setState({
+          tableTasks: snapshot.val(),
+        });
       } else if (this.state.poolTasks.regularTasks.length !== 0) {
         // 定期タスクをテーブルに設定する処理。
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
@@ -298,7 +308,10 @@ class Taskontable extends Component {
         // util.getDayOfWeekStr(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
         // https://github.com/hand-dot/taskontable/issues/118
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-        this.taskTable.setData(regularTasks);
+        if (this.state.isHotMode) this.taskTable.setData(regularTasks);
+        this.setState({
+          tableTasks: regularTasks,
+        });
       }
     });
   }
@@ -341,7 +354,12 @@ class Taskontable extends Component {
                 <Typography style={{ display: 'inline', marginRight: 20 }}>　テーブル</Typography>
                 <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
                 <div style={{ display: 'inline-block', float: 'right' }}>
-                  <Button className={classes.tableCtlButton} variant="raised" onClick={this.addTask.bind(this)} color="default"><i className="fa fa-plus fa-lg" /></Button>
+                  {(() => {
+                    if (this.state.isHotMode) {
+                      return <Button className={classes.tableCtlButton} variant="raised" onClick={this.addTask.bind(this)} color="default"><i className="fa fa-plus fa-lg" /></Button>;
+                    }
+                    return null;
+                  })()}
                   <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
                     <div style={{ display: 'inline-block' }}>
                       <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
@@ -350,14 +368,28 @@ class Taskontable extends Component {
                 </div>
               </div>
               <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
-              <TaskTable
-                onRef={ref => (this.taskTable = ref)}
-                tableTasks={this.state.tableTasks}
-                addTask={this.addTask.bind(this)}
-                handleTableTasks={this.handleTableTasks.bind(this)}
-                handleSaveable={this.handleSaveable.bind(this)}
-                moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
-              />
+              {(() => {
+                if (this.state.isHotMode) {
+                  return (<TaskTable
+                    onRef={ref => (this.taskTable = ref)} // eslint-disable-line
+                    tableTasks={this.state.tableTasks}
+                    addTask={this.addTask.bind(this)}
+                    handleTableTasks={this.handleTableTasks.bind(this)}
+                    handleSaveable={this.handleSaveable.bind(this)}
+                    moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
+                  />);
+                } return (<TaskTableMobile
+                  onRef={ref => (this.taskTable = ref)} // eslint-disable-line
+                  addTask={this.addTask.bind(this)} // FIXME メソッドはダミー
+                  editTask={this.addTask.bind(this)}
+                  removeTask={this.addTask.bind(this)}
+                  downTask={this.addTask.bind(this)}
+                  upTask={this.addTask.bind(this)}
+                  bottomToTask={this.addTask.bind(this)}
+                  topToTask={this.addTask.bind(this)}
+                  tasks={this.state.tableTasks}
+                />);
+              })()}
             </Paper>
           </Grid>
         </Grid>
@@ -381,6 +413,7 @@ Taskontable.propTypes = {
   }).isRequired,
   toggleHelpDialog: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
+  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles)(Taskontable);
+export default withStyles(styles, { withTheme: true })(Taskontable);
