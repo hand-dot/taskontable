@@ -113,7 +113,6 @@ class Taskontable extends Component {
     if (taskPoolActionType === constants.taskPoolActionType.ADD) {
       poolTasks[taskPoolType].push(value);
     } else if (taskPoolActionType === constants.taskPoolActionType.EDIT) {
-      this.editPoolTask(taskPoolType, value);
       poolTasks[taskPoolType][value.index] = value.task;
     } else if (taskPoolActionType === constants.taskPoolActionType.REMOVE) {
       poolTasks[taskPoolType].splice(value, 1);
@@ -140,7 +139,7 @@ class Taskontable extends Component {
       this.taskTable.setData(tableTasks);
       if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
          taskPoolType === constants.taskPoolType.LOWPRIORITY) {
-        this.removePoolTask(taskPoolType, value);
+        poolTasks[taskPoolType].splice(value, 1);
       }
       // タスクプールからテーブルタスクに移動したら保存する
       setTimeout(() => { this.saveHot(); });
