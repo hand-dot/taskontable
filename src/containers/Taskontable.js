@@ -376,32 +376,31 @@ class Taskontable extends Component {
     const { classes } = this.props;
     return (
       <Grid container spacing={0} alignItems="stretch" justify="center" className={classes.root}>
-        <Hidden xsDown>
-          <Grid item sm={1}>
-            <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" >
-              <i className="fa fa-angle-left fa-lg" />
-            </Button>
-          </Grid>
-        </Hidden>
-        <Grid item xs={12} sm={10}>
+        <Grid item xs={12}>
           <Grid item xs={12} className={classes.root}>
             <Dashboard isOpenDashboard={this.state.isOpenDashboard} toggleDashboard={this.toggleDashboard.bind(this)} tableTasks={this.state.tableTasks} />
             <TaskPool isOpenTaskPool={this.state.isOpenTaskPool} toggleTaskPool={this.toggleTaskPool.bind(this)} poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} />
             <Paper elevation={1}>
               <div style={{ padding: 24 }}>
-                <i className="fa fa-table fa-lg" />
-                <Typography style={{ display: 'inline', marginRight: 20 }}>　テーブル</Typography>
+                <div>
+                  <i className="fa fa-table fa-lg" />
+                  <Typography style={{ display: 'inline', marginRight: 20 }}>　テーブル</Typography>
+                </div>
                 <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
                 <div style={{ display: 'inline-block', float: 'right' }}>
-                  {(() => {
-                    if (this.state.isHotMode) {
-                      return <Button className={classes.tableCtlButton} variant="raised" onClick={this.addTask.bind(this)} color="default"><i className="fa fa-plus fa-lg" /></Button>;
-                    }
-                    return null;
-                  })()}
+                  <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(-1, 'day').format('YYYY/MM/DD')} placement="top">
+                    <div style={{ display: 'inline-block' }}>
+                      <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
+                    </div>
+                  </Tooltip>
                   <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
                     <div style={{ display: 'inline-block' }}>
                       <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
+                    </div>
+                  </Tooltip>
+                  <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(1, 'day').format('YYYY/MM/DD')} placement="top">
+                    <div style={{ display: 'inline-block' }}>
+                      <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><i className="fa fa-angle-right fa-lg" /></Button>
                     </div>
                   </Tooltip>
                 </div>
@@ -425,13 +424,6 @@ class Taskontable extends Component {
             </Paper>
           </Grid>
         </Grid>
-        <Hidden xsDown>
-          <Grid item sm={1}>
-            <Button color="default" className={classes.navButton} onClick={this.changeDate.bind(this)} data-date-nav="next" >
-              <i className="fa fa-angle-right fa-lg" />
-            </Button>
-          </Grid>
-        </Hidden>
       </Grid>
     );
   }
