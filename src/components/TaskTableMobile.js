@@ -120,113 +120,32 @@ class TaskTableMobile extends Component {
     }
     this.props.addTask(util.cloneDeep(this.state.addTask));
     this.setState({ addTask: getTableTaskSchema() });
-    const $root = this.root;
-    setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
   }
 
   render() {
     const { tableTasks, classes } = this.props;
     return (
-      <div ref={(root) => { this.root = root; }} className={classes.root}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell padding="none" className={classes.cell}>作業内容</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>見積</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>開始時刻</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>終了時刻</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>アクション</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tableTasks.map((task, index) => (
-              <TableRow className={classes.taskRow} key={task.title + task.memo + task.estimate}>
-                <TableCell padding="none" className={classes.cell}>
-                  <Input
-                    className={classes.cellInput}
-                    fullWidth
-                    onChange={this.changeTaskTitle.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? task.title : this.state.editTask.title}
-                    disabled={this.state.editingTaskIndex !== index}
-                    disableUnderline={this.state.editingTaskIndex !== index}
-                  />
-                </TableCell>
-                <TableCell padding="none" className={classes.miniCell}>
-                  <Input
-                    className={classes.cellInput}
-                    type="number"
-                    fullWidth
-                    onChange={this.changeTaskEstimate.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? task.estimate : this.state.editTask.estimate}
-                    disabled={this.state.editingTaskIndex !== index}
-                    disableUnderline={this.state.editingTaskIndex !== index}
-                  />
-                </TableCell>
-                <TableCell padding="none" className={classes.miniCell}>
-                  <TextField
-                    type="time"
-                    InputProps={{ style: { fontSize: 12, color: '#000' } }}
-                    onChange={this.changeTaskStartTime.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? task.startTime : this.state.editTask.startTime}
-                    disabled={this.state.editingTaskIndex !== index}
-                  />
-                </TableCell>
-                <TableCell padding="none" className={classes.miniCell}>
-                  <TextField
-                    type="time"
-                    InputProps={{ style: { fontSize: 12, color: '#000' } }}
-                    onChange={this.changeTaskEndTime.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? task.endTime : this.state.editTask.endTime}
-                    disabled={this.state.editingTaskIndex !== index}
-                  />
-                </TableCell>
-                <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
-                  <div className={classes.actionIcons}>
-                    <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
-                      <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
-                    </IconButton>
-                    <span>/</span>
-                    <IconButton className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
-                      <i className="fa fa-ellipsis-h" />
-                    </IconButton>
-                    <Menu
-                      anchorEl={this.state.anchorEl[index]}
-                      open={Boolean(this.state.anchorEl[index] || false)}
-                      onClose={this.closeTaskAction.bind(this, index)}
-                    >
-                      <MenuItem key={'topToTask'} onClick={this.topToTask.bind(this, index)}>
-                        <i className="fa fa-angle-double-up" />
-                        <Typography variant="caption">先頭に移動</Typography>
-                      </MenuItem>
-                      <MenuItem key={'upTask'} onClick={this.upTask.bind(this, index)}>
-                        <i className="fa fa-angle-up" />
-                        <Typography variant="caption">1つ上に移動</Typography>
-                      </MenuItem>
-                      <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
-                        <i className="fa fa-angle-down" />
-                        <Typography variant="caption">1つ下に移動</Typography>
-                      </MenuItem>
-                      <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
-                        <i className="fa fa-angle-double-down" />
-                        <Typography variant="caption">末尾に移動</Typography>
-                      </MenuItem>
-                      <MenuItem key={'removeTask'} onClick={this.removeTask.bind(this, index)}>
-                        <i className="fa fa-trash-o" />
-                        <Typography variant="caption">削除</Typography>
-                      </MenuItem>
-                    </Menu>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            <TableRow>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell padding="none" className={classes.cell}>作業内容</TableCell>
+            <TableCell padding="none" className={classes.miniCell}>見積</TableCell>
+            <TableCell padding="none" className={classes.miniCell}>開始時刻</TableCell>
+            <TableCell padding="none" className={classes.miniCell}>終了時刻</TableCell>
+            <TableCell padding="none" className={classes.miniCell}>アクション</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tableTasks.map((task, index) => (
+            <TableRow className={classes.taskRow} key={task.title + task.memo + task.estimate}>
               <TableCell padding="none" className={classes.cell}>
                 <Input
                   className={classes.cellInput}
                   fullWidth
-                  onChange={this.changeTaskTitle.bind(this, 'addTask')}
-                  value={this.state.addTask.title}
-                  placeholder="作業内容"
+                  onChange={this.changeTaskTitle.bind(this, 'editTask')}
+                  value={this.state.editingTaskIndex !== index ? task.title : this.state.editTask.title}
+                  disabled={this.state.editingTaskIndex !== index}
+                  disableUnderline={this.state.editingTaskIndex !== index}
                 />
               </TableCell>
               <TableCell padding="none" className={classes.miniCell}>
@@ -234,38 +153,115 @@ class TaskTableMobile extends Component {
                   className={classes.cellInput}
                   type="number"
                   fullWidth
-                  onChange={this.changeTaskEstimate.bind(this, 'addTask')}
-                  value={this.state.addTask.estimate}
-                  placeholder="見積"
+                  onChange={this.changeTaskEstimate.bind(this, 'editTask')}
+                  value={this.state.editingTaskIndex !== index ? task.estimate : this.state.editTask.estimate}
+                  disabled={this.state.editingTaskIndex !== index}
+                  disableUnderline={this.state.editingTaskIndex !== index}
                 />
               </TableCell>
               <TableCell padding="none" className={classes.miniCell}>
                 <TextField
                   type="time"
                   InputProps={{ style: { fontSize: 12, color: '#000' } }}
-                  onChange={this.changeTaskStartTime.bind(this, 'addTask')}
-                  value={this.state.addTask.startTime}
-                  placeholder="開始時刻"
+                  onChange={this.changeTaskStartTime.bind(this, 'editTask')}
+                  value={this.state.editingTaskIndex !== index ? task.startTime : this.state.editTask.startTime}
+                  disabled={this.state.editingTaskIndex !== index}
                 />
               </TableCell>
               <TableCell padding="none" className={classes.miniCell}>
                 <TextField
                   type="time"
                   InputProps={{ style: { fontSize: 12, color: '#000' } }}
-                  onChange={this.changeTaskEndTime.bind(this, 'addTask')}
-                  value={this.state.addTask.endTime}
-                  placeholder="終了時刻"
+                  onChange={this.changeTaskEndTime.bind(this, 'editTask')}
+                  value={this.state.editingTaskIndex !== index ? task.endTime : this.state.editTask.endTime}
+                  disabled={this.state.editingTaskIndex !== index}
                 />
               </TableCell>
               <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
-                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)}>
-                  <i className="fa fa-plus" />
-                </IconButton>
+                <div className={classes.actionIcons}>
+                  <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
+                    <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
+                  </IconButton>
+                  <span>/</span>
+                  <IconButton className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
+                    <i className="fa fa-ellipsis-h" />
+                  </IconButton>
+                  <Menu
+                    anchorEl={this.state.anchorEl[index]}
+                    open={Boolean(this.state.anchorEl[index] || false)}
+                    onClose={this.closeTaskAction.bind(this, index)}
+                  >
+                    <MenuItem key={'topToTask'} onClick={this.topToTask.bind(this, index)}>
+                      <i className="fa fa-angle-double-up" />
+                      <Typography variant="caption">先頭に移動</Typography>
+                    </MenuItem>
+                    <MenuItem key={'upTask'} onClick={this.upTask.bind(this, index)}>
+                      <i className="fa fa-angle-up" />
+                      <Typography variant="caption">1つ上に移動</Typography>
+                    </MenuItem>
+                    <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
+                      <i className="fa fa-angle-down" />
+                      <Typography variant="caption">1つ下に移動</Typography>
+                    </MenuItem>
+                    <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
+                      <i className="fa fa-angle-double-down" />
+                      <Typography variant="caption">末尾に移動</Typography>
+                    </MenuItem>
+                    <MenuItem key={'removeTask'} onClick={this.removeTask.bind(this, index)}>
+                      <i className="fa fa-trash-o" />
+                      <Typography variant="caption">削除</Typography>
+                    </MenuItem>
+                  </Menu>
+                </div>
               </TableCell>
             </TableRow>
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+          <TableRow>
+            <TableCell padding="none" className={classes.cell}>
+              <Input
+                className={classes.cellInput}
+                fullWidth
+                onChange={this.changeTaskTitle.bind(this, 'addTask')}
+                value={this.state.addTask.title}
+                placeholder="作業内容"
+              />
+            </TableCell>
+            <TableCell padding="none" className={classes.miniCell}>
+              <Input
+                className={classes.cellInput}
+                type="number"
+                fullWidth
+                onChange={this.changeTaskEstimate.bind(this, 'addTask')}
+                value={this.state.addTask.estimate}
+                placeholder="見積"
+              />
+            </TableCell>
+            <TableCell padding="none" className={classes.miniCell}>
+              <TextField
+                type="time"
+                InputProps={{ style: { fontSize: 12, color: '#000' } }}
+                onChange={this.changeTaskStartTime.bind(this, 'addTask')}
+                value={this.state.addTask.startTime}
+                placeholder="開始時刻"
+              />
+            </TableCell>
+            <TableCell padding="none" className={classes.miniCell}>
+              <TextField
+                type="time"
+                InputProps={{ style: { fontSize: 12, color: '#000' } }}
+                onChange={this.changeTaskEndTime.bind(this, 'addTask')}
+                value={this.state.addTask.endTime}
+                placeholder="終了時刻"
+              />
+            </TableCell>
+            <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
+              <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)}>
+                <i className="fa fa-plus" />
+              </IconButton>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     );
   }
 }
