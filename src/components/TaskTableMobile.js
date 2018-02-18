@@ -153,7 +153,18 @@ class TaskTableMobile extends Component {
         </TableHead>
         <TableBody>
           {tableTasks.map((task, index) => (
-            <TableRow className={classes.taskRow} key={task.title + task.memo + task.estimate}>
+            <TableRow
+              className={classes.taskRow}
+              key={task.title + task.memo + task.estimate}
+              style={(() => {
+                const obj = {};
+                if (task.startTime && task.endTime) {
+                  obj.backgroundColor = constants.brandColor.light.GREY;
+                  obj.color = constants.brandColor.base.GREY;
+                }
+                return obj;
+              })()}
+            >
               <TableCell padding="none" className={classes.cell}>
                 <Input
                   className={classes.cellInput}
@@ -178,7 +189,8 @@ class TaskTableMobile extends Component {
               <TableCell padding="none" className={classes.miniCell}>
                 <TextField
                   type="time"
-                  InputProps={{ style: { fontSize: 12, color: '#000' }, disableUnderline: this.state.editingTaskIndex !== index }}
+                  className={classes.cellInput}
+                  InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
                   onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.edit)}
                   value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
                   disabled={this.state.editingTaskIndex !== index}
@@ -187,7 +199,8 @@ class TaskTableMobile extends Component {
               <TableCell padding="none" className={classes.miniCell}>
                 <TextField
                   type="time"
-                  InputProps={{ style: { fontSize: 12, color: '#000' }, disableUnderline: this.state.editingTaskIndex !== index }}
+                  className={classes.cellInput}
+                  InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
                   onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.edit)}
                   value={this.state.editingTaskIndex !== index ? task.endTime : this.state[constants.taskStateType.edit].endTime}
                   disabled={this.state.editingTaskIndex !== index}
@@ -267,7 +280,8 @@ class TaskTableMobile extends Component {
             <TableCell padding="none" className={classes.miniCell}>
               <TextField
                 type="time"
-                InputProps={{ style: { fontSize: 12, color: '#000' }, disableUnderline: this.state.editingTaskIndex !== -1 }}
+                className={classes.cellInput}
+                InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                 onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.add)}
                 value={this.state[constants.taskStateType.add].startTime}
                 placeholder="開始時刻"
@@ -277,7 +291,8 @@ class TaskTableMobile extends Component {
             <TableCell padding="none" className={classes.miniCell}>
               <TextField
                 type="time"
-                InputProps={{ style: { fontSize: 12, color: '#000' }, disableUnderline: this.state.editingTaskIndex !== -1 }}
+                className={classes.cellInput}
+                InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                 onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.add)}
                 value={this.state[constants.taskStateType.add].endTime}
                 placeholder="終了時刻"

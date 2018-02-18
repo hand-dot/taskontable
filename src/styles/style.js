@@ -27,7 +27,6 @@ export default {
       fontSize: 11,
     },
     cellInput: {
-      color: '#000',
       fontSize: 11,
     },
     taskRow: {
