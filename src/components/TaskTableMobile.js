@@ -160,7 +160,7 @@ class TaskTableMobile extends Component {
               <TableCell padding="none" className={classes.miniCell}>
                 <TextField
                   type="time"
-                  InputProps={{ style: { fontSize: 12, color: '#000' } }}
+                  InputProps={{ style: { fontSize: 12, color: '#000' }, disableUnderline: this.state.editingTaskIndex !== index }}
                   onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.edit)}
                   value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
                   disabled={this.state.editingTaskIndex !== index}
@@ -169,7 +169,7 @@ class TaskTableMobile extends Component {
               <TableCell padding="none" className={classes.miniCell}>
                 <TextField
                   type="time"
-                  InputProps={{ style: { fontSize: 12, color: '#000' } }}
+                  InputProps={{ style: { fontSize: 12, color: '#000' }, disableUnderline: this.state.editingTaskIndex !== index }}
                   onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.edit)}
                   value={this.state.editingTaskIndex !== index ? task.endTime : this.state[constants.taskStateType.edit].endTime}
                   disabled={this.state.editingTaskIndex !== index}
