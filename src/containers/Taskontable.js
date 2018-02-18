@@ -378,6 +378,7 @@ class Taskontable extends Component {
                     moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
                   />);
                 } return (<TaskTableMobile
+                  tableTasks={this.state.tableTasks}
                   addTask={this.addTask.bind(this)} // FIXME メソッドはダミー
                   editTask={this.addTask.bind(this)}
                   removeTask={this.addTask.bind(this)}
@@ -385,7 +386,6 @@ class Taskontable extends Component {
                   upTask={this.addTask.bind(this)}
                   bottomToTask={this.addTask.bind(this)}
                   topToTask={this.addTask.bind(this)}
-                  tasks={this.state.tableTasks}
                 />);
               })()}
             </Paper>

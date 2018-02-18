@@ -9,7 +9,7 @@ import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 
 
-import poolTaskSchema from '../schemas/poolTaskSchema';
+import tableTaskSchema from '../schemas/tableTaskSchema';
 
 import constants from '../constants';
 import util from '../util';
@@ -46,8 +46,8 @@ const styles = theme => ({
   },
 });
 
-function getPoolTaskSchema() {
-  return util.cloneDeep(poolTaskSchema);
+function getTableTaskSchema() {
+  return util.cloneDeep(tableTaskSchema);
 }
 
 class TaskTableMobile extends Component {
@@ -55,8 +55,8 @@ class TaskTableMobile extends Component {
     super(props);
     this.state = {
       anchorEl: [],
-      addTask: getPoolTaskSchema(),
-      editTask: getPoolTaskSchema(),
+      addTask: getTableTaskSchema(),
+      editTask: getTableTaskSchema(),
       editingTaskIndex: -1,
     };
   }
@@ -108,10 +108,10 @@ class TaskTableMobile extends Component {
         return;
       }
       this.props.editTask(util.cloneDeep(this.state.editTask), index);
-      this.setState({ editingTaskIndex: -1, editTask: getPoolTaskSchema() });
+      this.setState({ editingTaskIndex: -1, editTask: getTableTaskSchema() });
     } else {
       // 編集スタート
-      this.setState({ editTask: util.cloneDeep(this.props.tasks[index]) });
+      this.setState({ editTask: util.cloneDeep(this.props.tableTasks[index]) });
       setTimeout(() => {
         this.setState({ editingTaskIndex: index });
       });
@@ -148,23 +148,14 @@ class TaskTableMobile extends Component {
       alert('作業内容が空の状態では保存できません。');
       return;
     }
-    if (this.props.isRegularTask) {
-      if (this.state.addTask.week.length === 0) {
-        alert('第何週が空の状態では保存できません。');
-        return;
-      } else if (this.state.addTask.dayOfWeek.length === 0) {
-        alert('何曜日が空の状態では保存できません。');
-        return;
-      }
-    }
     this.props.addTask(util.cloneDeep(this.state.addTask));
-    this.setState({ addTask: getPoolTaskSchema() });
+    this.setState({ addTask: getTableTaskSchema() });
     const $root = this.root;
     setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
   }
 
   render() {
-    const { tasks, classes } = this.props;
+    const { tableTasks, classes } = this.props;
     return (
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
@@ -178,7 +169,7 @@ class TaskTableMobile extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tasks.map((task, index) => (
+            {tableTasks.map((task, index) => (
               <TableRow className={classes.taskRow} key={task.title + task.memo + task.estimate}>
                 <TableCell padding="none" className={classes.cell}>
                   <Input
@@ -310,7 +301,13 @@ class TaskTableMobile extends Component {
 }
 
 TaskTableMobile.propTypes = {
-  tasks: PropTypes.array.isRequired,
+  tableTasks: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    estimate: PropTypes.any.isRequired,
+    endTime: PropTypes.string.isRequired,
+    startTime: PropTypes.string.isRequired,
+    memo: PropTypes.string.isRequired,
+  })).isRequired,
   addTask: PropTypes.func.isRequired,
   editTask: PropTypes.func.isRequired,
   removeTask: PropTypes.func.isRequired,

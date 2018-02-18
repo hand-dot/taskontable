@@ -135,7 +135,13 @@ class TaskTable extends Component {
 }
 
 TaskTable.propTypes = {
-  tableTasks: PropTypes.array.isRequired,
+  tableTasks: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    estimate: PropTypes.any.isRequired,
+    endTime: PropTypes.string.isRequired,
+    startTime: PropTypes.string.isRequired,
+    memo: PropTypes.string.isRequired,
+  })).isRequired,
   handleTableTasks: PropTypes.func.isRequired,
   handleSaveable: PropTypes.func.isRequired,
   onRef: PropTypes.func.isRequired,

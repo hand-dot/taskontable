@@ -382,7 +382,13 @@ class TaskList extends Component {
 }
 
 TaskList.propTypes = {
-  tasks: PropTypes.array.isRequired,
+  tasks: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    estimate: PropTypes.any.isRequired,
+    endTime: PropTypes.string.isRequired,
+    startTime: PropTypes.string.isRequired,
+    memo: PropTypes.string.isRequired,
+  })).isRequired,
   addTask: PropTypes.func.isRequired,
   editTask: PropTypes.func.isRequired,
   moveTable: PropTypes.func.isRequired,
