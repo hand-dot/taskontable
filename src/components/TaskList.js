@@ -94,7 +94,10 @@ class TaskList extends Component {
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getPoolTaskSchema() });
     } else {
       // 編集スタート
-      this.setState({ [constants.taskStateType.edit]: util.cloneDeep(this.props.tasks[index]) });
+      this.setState({
+        [constants.taskStateType.edit]: util.cloneDeep(this.props.tasks[index]),
+        [constants.taskStateType.add]: getPoolTaskSchema(),
+      });
       setTimeout(() => {
         this.setState({ editingTaskIndex: index });
       });
@@ -283,6 +286,8 @@ class TaskList extends Component {
                   onChange={this.changeTaskTitle.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].title}
                   placeholder="作業内容"
+                  disabled={this.state.editingTaskIndex !== -1}
+                  disableUnderline={this.state.editingTaskIndex !== -1}
                 />
               </TableCell>
               <TableCell padding="none" className={classes.cell}>
@@ -292,6 +297,8 @@ class TaskList extends Component {
                   onChange={this.changeTaskMemo.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].memo}
                   placeholder="備考"
+                  disabled={this.state.editingTaskIndex !== -1}
+                  disableUnderline={this.state.editingTaskIndex !== -1}
                 />
               </TableCell>
               <TableCell padding="none" className={classes.miniCell}>
@@ -302,6 +309,8 @@ class TaskList extends Component {
                   onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].estimate}
                   placeholder="見積"
+                  disabled={this.state.editingTaskIndex !== -1}
+                  disableUnderline={this.state.editingTaskIndex !== -1}
                 />
               </TableCell>
               {(() => {
@@ -313,7 +322,7 @@ class TaskList extends Component {
                         value={this.state[constants.taskStateType.add].week}
                         options={[1, 2, 3, 4, 5]}
                         onChange={this.changeWeek.bind(this, constants.taskStateType.add)}
-                        disabled={false}
+                        disabled={this.state.editingTaskIndex !== -1}
                       />
                     </TableCell>
                   );
@@ -329,7 +338,7 @@ class TaskList extends Component {
                         value={this.state[constants.taskStateType.add].dayOfWeek}
                         options={constants.DAY_OF_WEEK_STR}
                         onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.add)}
-                        disabled={false}
+                        disabled={this.state.editingTaskIndex !== -1}
                       />
                     </TableCell>
                   );
@@ -337,7 +346,7 @@ class TaskList extends Component {
                 return null;
               })()}
               <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
-                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)}>
+                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={this.state.editingTaskIndex !== -1}>
                   <i className="fa fa-plus" />
                 </IconButton>
               </TableCell>

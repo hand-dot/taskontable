@@ -79,7 +79,10 @@ class TaskTableMobile extends Component {
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getTableTaskSchema() });
     } else {
       // 編集スタート
-      this.setState({ [constants.taskStateType.edit]: util.cloneDeep(this.props.tableTasks[index]) });
+      this.setState({
+        [constants.taskStateType.edit]: util.cloneDeep(this.props.tableTasks[index]),
+        [constants.taskStateType.add]: getTableTaskSchema(),
+      });
       setTimeout(() => {
         this.setState({ editingTaskIndex: index });
       });
@@ -222,6 +225,8 @@ class TaskTableMobile extends Component {
                 onChange={this.changeTaskTitle.bind(this, constants.taskStateType.add)}
                 value={this.state[constants.taskStateType.add].title}
                 placeholder="作業内容"
+                disabled={this.state.editingTaskIndex !== -1}
+                disableUnderline={this.state.editingTaskIndex !== -1}
               />
             </TableCell>
             <TableCell padding="none" className={classes.miniCell}>
@@ -232,28 +237,32 @@ class TaskTableMobile extends Component {
                 onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.add)}
                 value={this.state[constants.taskStateType.add].estimate}
                 placeholder="見積"
+                disabled={this.state.editingTaskIndex !== -1}
+                disableUnderline={this.state.editingTaskIndex !== -1}
               />
             </TableCell>
             <TableCell padding="none" className={classes.miniCell}>
               <TextField
                 type="time"
-                InputProps={{ style: { fontSize: 12, color: '#000' } }}
+                InputProps={{ style: { fontSize: 12, color: '#000' }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                 onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.add)}
                 value={this.state[constants.taskStateType.add].startTime}
                 placeholder="開始時刻"
+                disabled={this.state.editingTaskIndex !== -1}
               />
             </TableCell>
             <TableCell padding="none" className={classes.miniCell}>
               <TextField
                 type="time"
-                InputProps={{ style: { fontSize: 12, color: '#000' } }}
+                InputProps={{ style: { fontSize: 12, color: '#000' }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                 onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.add)}
                 value={this.state[constants.taskStateType.add].endTime}
                 placeholder="終了時刻"
+                disabled={this.state.editingTaskIndex !== -1}
               />
             </TableCell>
             <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
-              <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)}>
+              <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={this.state.editingTaskIndex !== -1}>
                 <i className="fa fa-plus" />
               </IconButton>
             </TableCell>
