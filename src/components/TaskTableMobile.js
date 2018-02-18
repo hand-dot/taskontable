@@ -7,10 +7,8 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import TextField from 'material-ui/TextField';
 import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-
-
 import tableTaskSchema from '../schemas/tableTaskSchema';
-
+import constants from '../constants';
 import style from '../styles/style';
 import util from '../util';
 
@@ -25,8 +23,8 @@ class TaskTableMobile extends Component {
     super(props);
     this.state = {
       anchorEl: [],
-      addTask: getTableTaskSchema(),
-      editTask: getTableTaskSchema(),
+      [constants.taskStateType.add]: getTableTaskSchema(),
+      [constants.taskStateType.edit]: getTableTaskSchema(),
       editingTaskIndex: -1,
     };
   }
@@ -73,15 +71,15 @@ class TaskTableMobile extends Component {
   editTask(index) {
     if (this.state.editingTaskIndex === index) {
       // 編集を保存する場合
-      if (this.state.editTask.title === '') {
+      if (this.state[constants.taskStateType.edit].title === '') {
         alert('作業内容が空の状態では保存できません。');
         return;
       }
-      this.props.editTask(util.cloneDeep(this.state.editTask), index);
-      this.setState({ editingTaskIndex: -1, editTask: getTableTaskSchema() });
+      this.props.editTask(util.cloneDeep(this.state[constants.taskStateType.edit]), index);
+      this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getTableTaskSchema() });
     } else {
       // 編集スタート
-      this.setState({ editTask: util.cloneDeep(this.props.tableTasks[index]) });
+      this.setState({ [constants.taskStateType.edit]: util.cloneDeep(this.props.tableTasks[index]) });
       setTimeout(() => {
         this.setState({ editingTaskIndex: index });
       });
@@ -114,12 +112,12 @@ class TaskTableMobile extends Component {
   }
 
   addTask() {
-    if (this.state.addTask.title === '') {
+    if (this.state[constants.taskStateType.add].title === '') {
       alert('作業内容が空の状態では保存できません。');
       return;
     }
-    this.props.addTask(util.cloneDeep(this.state.addTask));
-    this.setState({ addTask: getTableTaskSchema() });
+    this.props.addTask(util.cloneDeep(this.state[constants.taskStateType.add]));
+    this.setState({ [constants.taskStateType.add]: getTableTaskSchema() });
   }
 
   render() {
@@ -142,8 +140,8 @@ class TaskTableMobile extends Component {
                 <Input
                   className={classes.cellInput}
                   fullWidth
-                  onChange={this.changeTaskTitle.bind(this, 'editTask')}
-                  value={this.state.editingTaskIndex !== index ? task.title : this.state.editTask.title}
+                  onChange={this.changeTaskTitle.bind(this, constants.taskStateType.edit)}
+                  value={this.state.editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
                   disabled={this.state.editingTaskIndex !== index}
                   disableUnderline={this.state.editingTaskIndex !== index}
                 />
@@ -153,8 +151,8 @@ class TaskTableMobile extends Component {
                   className={classes.cellInput}
                   type="number"
                   fullWidth
-                  onChange={this.changeTaskEstimate.bind(this, 'editTask')}
-                  value={this.state.editingTaskIndex !== index ? task.estimate : this.state.editTask.estimate}
+                  onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.edit)}
+                  value={this.state.editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
                   disabled={this.state.editingTaskIndex !== index}
                   disableUnderline={this.state.editingTaskIndex !== index}
                 />
@@ -163,8 +161,8 @@ class TaskTableMobile extends Component {
                 <TextField
                   type="time"
                   InputProps={{ style: { fontSize: 12, color: '#000' } }}
-                  onChange={this.changeTaskStartTime.bind(this, 'editTask')}
-                  value={this.state.editingTaskIndex !== index ? task.startTime : this.state.editTask.startTime}
+                  onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.edit)}
+                  value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
                   disabled={this.state.editingTaskIndex !== index}
                 />
               </TableCell>
@@ -172,8 +170,8 @@ class TaskTableMobile extends Component {
                 <TextField
                   type="time"
                   InputProps={{ style: { fontSize: 12, color: '#000' } }}
-                  onChange={this.changeTaskEndTime.bind(this, 'editTask')}
-                  value={this.state.editingTaskIndex !== index ? task.endTime : this.state.editTask.endTime}
+                  onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.edit)}
+                  value={this.state.editingTaskIndex !== index ? task.endTime : this.state[constants.taskStateType.edit].endTime}
                   disabled={this.state.editingTaskIndex !== index}
                 />
               </TableCell>
@@ -221,8 +219,8 @@ class TaskTableMobile extends Component {
               <Input
                 className={classes.cellInput}
                 fullWidth
-                onChange={this.changeTaskTitle.bind(this, 'addTask')}
-                value={this.state.addTask.title}
+                onChange={this.changeTaskTitle.bind(this, constants.taskStateType.add)}
+                value={this.state[constants.taskStateType.add].title}
                 placeholder="作業内容"
               />
             </TableCell>
@@ -231,8 +229,8 @@ class TaskTableMobile extends Component {
                 className={classes.cellInput}
                 type="number"
                 fullWidth
-                onChange={this.changeTaskEstimate.bind(this, 'addTask')}
-                value={this.state.addTask.estimate}
+                onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.add)}
+                value={this.state[constants.taskStateType.add].estimate}
                 placeholder="見積"
               />
             </TableCell>
@@ -240,8 +238,8 @@ class TaskTableMobile extends Component {
               <TextField
                 type="time"
                 InputProps={{ style: { fontSize: 12, color: '#000' } }}
-                onChange={this.changeTaskStartTime.bind(this, 'addTask')}
-                value={this.state.addTask.startTime}
+                onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.add)}
+                value={this.state[constants.taskStateType.add].startTime}
                 placeholder="開始時刻"
               />
             </TableCell>
@@ -249,8 +247,8 @@ class TaskTableMobile extends Component {
               <TextField
                 type="time"
                 InputProps={{ style: { fontSize: 12, color: '#000' } }}
-                onChange={this.changeTaskEndTime.bind(this, 'addTask')}
-                value={this.state.addTask.endTime}
+                onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.add)}
+                value={this.state[constants.taskStateType.add].endTime}
                 placeholder="終了時刻"
               />
             </TableCell>

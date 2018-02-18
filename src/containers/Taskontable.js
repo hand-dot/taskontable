@@ -109,31 +109,31 @@ class Taskontable extends Component {
     this.setState({ isOpenTaskPool: !this.state.isOpenTaskPool });
   }
 
-  changePoolTasks(taskPoolActionType, taskPoolType, value) {
+  changePoolTasks(taskActionType, taskPoolType, value) {
     const poolTasks = util.cloneDeep(this.state.poolTasks);
-    if (taskPoolActionType === constants.taskPoolActionType.ADD) {
+    if (taskActionType === constants.taskActionType.ADD) {
       poolTasks[taskPoolType].push(value);
-    } else if (taskPoolActionType === constants.taskPoolActionType.EDIT) {
+    } else if (taskActionType === constants.taskActionType.EDIT) {
       poolTasks[taskPoolType][value.index] = value.task;
-    } else if (taskPoolActionType === constants.taskPoolActionType.REMOVE) {
+    } else if (taskActionType === constants.taskActionType.REMOVE) {
       poolTasks[taskPoolType].splice(value, 1);
-    } else if (taskPoolActionType === constants.taskPoolActionType.DOWN) {
+    } else if (taskActionType === constants.taskActionType.DOWN) {
       if (this.state.poolTasks[taskPoolType].length === value + 1) return;
       const target = poolTasks[taskPoolType];
       target.splice(value, 2, target[value + 1], target[value]);
-    } else if (taskPoolActionType === constants.taskPoolActionType.UP) {
+    } else if (taskActionType === constants.taskActionType.UP) {
       if (value === 0) return;
       const target = poolTasks[taskPoolType];
       target.splice(value - 1, 2, target[value], target[value - 1]);
-    } else if (taskPoolActionType === constants.taskPoolActionType.BOTTOM) {
+    } else if (taskActionType === constants.taskActionType.BOTTOM) {
       if (this.state.poolTasks[taskPoolType].length === value + 1) return;
       const target = poolTasks[taskPoolType].splice(value, 1)[0];
       poolTasks[taskPoolType].push(target);
-    } else if (taskPoolActionType === constants.taskPoolActionType.TOP) {
+    } else if (taskActionType === constants.taskActionType.TOP) {
       if (value === 0) return;
       const target = poolTasks[taskPoolType].splice(value, 1)[0];
       poolTasks[taskPoolType].unshift(target);
-    } else if (taskPoolActionType === constants.taskPoolActionType.MOVE) {
+    } else if (taskActionType === constants.taskActionType.MOVE) {
       const tableTasks = this.state.tableTasks;
       tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
       this.setState({ tableTasks });

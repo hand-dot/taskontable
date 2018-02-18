@@ -35,7 +35,11 @@ export default {
     LOWPRIORITY: 'lowPriorityTasks',
     REGULAR: 'regularTasks',
   },
-  taskPoolActionType: {
+  taskStateType: {
+    add: 'add',
+    edit: 'edit',
+  },
+  taskActionType: {
     ADD: 'add',
     EDIT: 'edit',
     MOVE: 'move',
@@ -45,6 +49,7 @@ export default {
     BOTTOM: 'bottom',
     TOP: 'top',
   },
+
   DATEFMT: 'YYYY-MM-DD',
   INITIALDATE: '1970-01-01',
   DAY_OF_WEEK_STR: ['日', '月', '火', '水', '木', '金', '土'],

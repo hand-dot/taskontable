@@ -6,14 +6,10 @@ import Typography from 'material-ui/Typography';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-
 import MultipleSelect from './MultipleSelect';
-
 import poolTaskSchema from '../schemas/poolTaskSchema';
-
 import constants from '../constants';
 import util from '../util';
-
 import style from '../styles/style';
 
 const styles = style.table;
@@ -27,8 +23,8 @@ class TaskList extends Component {
     super(props);
     this.state = {
       anchorEl: [],
-      addTask: getPoolTaskSchema(),
-      editTask: getPoolTaskSchema(),
+      [constants.taskStateType.add]: getPoolTaskSchema(),
+      [constants.taskStateType.edit]: getPoolTaskSchema(),
       editingTaskIndex: -1,
     };
   }
@@ -81,24 +77,24 @@ class TaskList extends Component {
   editTask(index) {
     if (this.state.editingTaskIndex === index) {
       // 編集を保存する場合
-      if (this.state.editTask.title === '') {
+      if (this.state[constants.taskStateType.edit].title === '') {
         alert('作業内容が空の状態では保存できません。');
         return;
       }
       if (this.props.isRegularTask) {
-        if (this.state.editTask.week.length === 0) {
+        if (this.state[constants.taskStateType.edit].week.length === 0) {
           alert('第何週が空の状態では保存できません。');
           return;
-        } else if (this.state.editTask.dayOfWeek.length === 0) {
+        } else if (this.state[constants.taskStateType.edit].dayOfWeek.length === 0) {
           alert('何曜日が空の状態では保存できません。');
           return;
         }
       }
-      this.props.editTask(util.cloneDeep(this.state.editTask), index);
-      this.setState({ editingTaskIndex: -1, editTask: getPoolTaskSchema() });
+      this.props.editTask(util.cloneDeep(this.state[constants.taskStateType.edit]), index);
+      this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getPoolTaskSchema() });
     } else {
       // 編集スタート
-      this.setState({ editTask: util.cloneDeep(this.props.tasks[index]) });
+      this.setState({ [constants.taskStateType.edit]: util.cloneDeep(this.props.tasks[index]) });
       setTimeout(() => {
         this.setState({ editingTaskIndex: index });
       });
@@ -136,21 +132,21 @@ class TaskList extends Component {
   }
 
   addTask() {
-    if (this.state.addTask.title === '') {
+    if (this.state[constants.taskStateType.add].title === '') {
       alert('作業内容が空の状態では保存できません。');
       return;
     }
     if (this.props.isRegularTask) {
-      if (this.state.addTask.week.length === 0) {
+      if (this.state[constants.taskStateType.add].week.length === 0) {
         alert('第何週が空の状態では保存できません。');
         return;
-      } else if (this.state.addTask.dayOfWeek.length === 0) {
+      } else if (this.state[constants.taskStateType.add].dayOfWeek.length === 0) {
         alert('何曜日が空の状態では保存できません。');
         return;
       }
     }
-    this.props.addTask(util.cloneDeep(this.state.addTask));
-    this.setState({ addTask: getPoolTaskSchema() });
+    this.props.addTask(util.cloneDeep(this.state[constants.taskStateType.add]));
+    this.setState({ [constants.taskStateType.add]: getPoolTaskSchema() });
     const $root = this.root;
     setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
   }
@@ -177,8 +173,8 @@ class TaskList extends Component {
                   <Input
                     className={classes.cellInput}
                     fullWidth
-                    onChange={this.changeTaskTitle.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? task.title : this.state.editTask.title}
+                    onChange={this.changeTaskTitle.bind(this, constants.taskStateType.edit)}
+                    value={this.state.editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -187,8 +183,8 @@ class TaskList extends Component {
                   <Input
                     className={classes.cellInput}
                     fullWidth
-                    onChange={this.changeTaskMemo.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? task.memo : this.state.editTask.memo}
+                    onChange={this.changeTaskMemo.bind(this, constants.taskStateType.edit)}
+                    value={this.state.editingTaskIndex !== index ? task.memo : this.state[constants.taskStateType.edit].memo}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -198,8 +194,8 @@ class TaskList extends Component {
                     className={classes.cellInput}
                     type="number"
                     fullWidth
-                    onChange={this.changeTaskEstimate.bind(this, 'editTask')}
-                    value={this.state.editingTaskIndex !== index ? task.estimate : this.state.editTask.estimate}
+                    onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.edit)}
+                    value={this.state.editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
@@ -210,9 +206,9 @@ class TaskList extends Component {
                       <TableCell padding="none" className={classes.miniCell}>
                         <MultipleSelect
                           label={'第何週'}
-                          value={this.state.editingTaskIndex !== index ? task.week : this.state.editTask.week}
+                          value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
                           options={[1, 2, 3, 4, 5]}
-                          onChange={this.changeWeek.bind(this, 'editTask')}
+                          onChange={this.changeWeek.bind(this, constants.taskStateType.edit)}
                           disabled={this.state.editingTaskIndex !== index}
                         />
                       </TableCell>
@@ -226,9 +222,9 @@ class TaskList extends Component {
                       <TableCell padding="none" className={classes.miniCell}>
                         <MultipleSelect
                           label={'何曜日'}
-                          value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state.editTask.dayOfWeek}
+                          value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
                           options={constants.DAY_OF_WEEK_STR}
-                          onChange={this.changeDayOfWeek.bind(this, 'editTask')}
+                          onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.edit)}
                           disabled={this.state.editingTaskIndex !== index}
                         />
                       </TableCell>
@@ -284,8 +280,8 @@ class TaskList extends Component {
                 <Input
                   className={classes.cellInput}
                   fullWidth
-                  onChange={this.changeTaskTitle.bind(this, 'addTask')}
-                  value={this.state.addTask.title}
+                  onChange={this.changeTaskTitle.bind(this, constants.taskStateType.add)}
+                  value={this.state[constants.taskStateType.add].title}
                   placeholder="作業内容"
                 />
               </TableCell>
@@ -293,8 +289,8 @@ class TaskList extends Component {
                 <Input
                   className={classes.cellInput}
                   fullWidth
-                  onChange={this.changeTaskMemo.bind(this, 'addTask')}
-                  value={this.state.addTask.memo}
+                  onChange={this.changeTaskMemo.bind(this, constants.taskStateType.add)}
+                  value={this.state[constants.taskStateType.add].memo}
                   placeholder="備考"
                 />
               </TableCell>
@@ -303,8 +299,8 @@ class TaskList extends Component {
                   className={classes.cellInput}
                   type="number"
                   fullWidth
-                  onChange={this.changeTaskEstimate.bind(this, 'addTask')}
-                  value={this.state.addTask.estimate}
+                  onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.add)}
+                  value={this.state[constants.taskStateType.add].estimate}
                   placeholder="見積"
                 />
               </TableCell>
@@ -314,9 +310,9 @@ class TaskList extends Component {
                     <TableCell padding="none" className={classes.miniCell}>
                       <MultipleSelect
                         label={'第何週'}
-                        value={this.state.addTask.week}
+                        value={this.state[constants.taskStateType.add].week}
                         options={[1, 2, 3, 4, 5]}
-                        onChange={this.changeWeek.bind(this, 'addTask')}
+                        onChange={this.changeWeek.bind(this, constants.taskStateType.add)}
                         disabled={false}
                       />
                     </TableCell>
@@ -330,9 +326,9 @@ class TaskList extends Component {
                     <TableCell padding="none" className={classes.miniCell}>
                       <MultipleSelect
                         label={'何曜日'}
-                        value={this.state.addTask.dayOfWeek}
+                        value={this.state[constants.taskStateType.add].dayOfWeek}
                         options={constants.DAY_OF_WEEK_STR}
-                        onChange={this.changeDayOfWeek.bind(this, 'addTask')}
+                        onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.add)}
                         disabled={false}
                       />
                     </TableCell>

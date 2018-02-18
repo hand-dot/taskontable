@@ -26,35 +26,35 @@ class TaskPool extends Component {
   }
 
   addTask(task) {
-    this.props.changePoolTasks(constants.taskPoolActionType.ADD, this.state.tab, task);
+    this.props.changePoolTasks(constants.taskActionType.ADD, this.state.tab, task);
   }
 
   editTask(task, index) {
-    this.props.changePoolTasks(constants.taskPoolActionType.EDIT, this.state.tab, { task, index });
+    this.props.changePoolTasks(constants.taskActionType.EDIT, this.state.tab, { task, index });
   }
 
   moveTable(index) {
-    this.props.changePoolTasks(constants.taskPoolActionType.MOVE, this.state.tab, index);
+    this.props.changePoolTasks(constants.taskActionType.MOVE, this.state.tab, index);
   }
 
   removeTask(index) {
     if (window.confirm(`${this.props.poolTasks[this.state.tab][index].title} を本当に削除しますか？`)) {
-      this.props.changePoolTasks(constants.taskPoolActionType.REMOVE, this.state.tab, index);
+      this.props.changePoolTasks(constants.taskActionType.REMOVE, this.state.tab, index);
     }
   }
   downTask(index) {
-    this.props.changePoolTasks(constants.taskPoolActionType.DOWN, this.state.tab, index);
+    this.props.changePoolTasks(constants.taskActionType.DOWN, this.state.tab, index);
   }
 
   upTask(index) {
-    this.props.changePoolTasks(constants.taskPoolActionType.UP, this.state.tab, index);
+    this.props.changePoolTasks(constants.taskActionType.UP, this.state.tab, index);
   }
   bottomToTask(index) {
-    this.props.changePoolTasks(constants.taskPoolActionType.BOTTOM, this.state.tab, index);
+    this.props.changePoolTasks(constants.taskActionType.BOTTOM, this.state.tab, index);
   }
 
   topToTask(index) {
-    this.props.changePoolTasks(constants.taskPoolActionType.TOP, this.state.tab, index);
+    this.props.changePoolTasks(constants.taskActionType.TOP, this.state.tab, index);
   }
   handleTabChange(event, tab) {
     this.setState({ tab });
