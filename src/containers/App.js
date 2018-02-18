@@ -6,7 +6,7 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { CircularProgress } from 'material-ui/Progress';
 import Dialog from 'material-ui/Dialog';
 
-import AsyncContainer from '../components/AsyncContainer';
+import AsyncContainer from './AsyncContainer';
 
 import firebaseConf from '../configs/firebase';
 
