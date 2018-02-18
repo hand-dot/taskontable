@@ -35,7 +35,7 @@ const styles = theme => ({
   miniCell: {
     border: '1px solid rgba(235, 235, 235, 1)',
     padding: '0 3px',
-    maxWidth: '3rem',
+    maxWidth: '2.7rem',
   },
   cellInput: {
     color: '#000',
@@ -97,18 +97,6 @@ class TaskTableMobile extends Component {
   changeTaskEstimate(type, e) {
     const task = Object.assign({}, this.state[type]);
     task.estimate = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeDayOfWeek(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.dayOfWeek = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeWeek(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.week = e.target.value;
     this.setState({ [type]: task });
   }
 
@@ -213,19 +201,19 @@ class TaskTableMobile extends Component {
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
                 </TableCell>
-                <TableCell padding="none" className={classes.cell}>
+                <TableCell padding="none" className={classes.miniCell}>
                   <TextField
                     type="time"
-                    InputProps={{ style: { fontSize: 12 } }}
+                    InputProps={{ style: { fontSize: 12, color: '#000' } }}
                     onChange={this.changeTaskStartTime.bind(this, 'editTask')}
                     value={this.state.editingTaskIndex !== index ? task.startTime : this.state.editTask.startTime}
                     disabled={this.state.editingTaskIndex !== index}
                   />
                 </TableCell>
-                <TableCell padding="none" className={classes.cell}>
+                <TableCell padding="none" className={classes.miniCell}>
                   <TextField
                     type="time"
-                    InputProps={{ style: { fontSize: 12 } }}
+                    InputProps={{ style: { fontSize: 12, color: '#000' } }}
                     onChange={this.changeTaskEndTime.bind(this, 'editTask')}
                     value={this.state.editingTaskIndex !== index ? task.endTime : this.state.editTask.endTime}
                     disabled={this.state.editingTaskIndex !== index}
@@ -293,7 +281,7 @@ class TaskTableMobile extends Component {
               <TableCell padding="none" className={classes.miniCell}>
                 <TextField
                   type="time"
-                  InputProps={{ style: { fontSize: 12 } }}
+                  InputProps={{ style: { fontSize: 12, color: '#000' } }}
                   onChange={this.changeTaskStartTime.bind(this, 'addTask')}
                   value={this.state.addTask.startTime}
                   placeholder="開始時刻"
@@ -302,7 +290,7 @@ class TaskTableMobile extends Component {
               <TableCell padding="none" className={classes.miniCell}>
                 <TextField
                   type="time"
-                  InputProps={{ style: { fontSize: 12 } }}
+                  InputProps={{ style: { fontSize: 12, color: '#000' } }}
                   onChange={this.changeTaskEndTime.bind(this, 'addTask')}
                   value={this.state.addTask.endTime}
                   placeholder="終了時刻"

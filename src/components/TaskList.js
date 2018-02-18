@@ -35,7 +35,7 @@ const styles = theme => ({
   miniCell: {
     border: '1px solid rgba(235, 235, 235, 1)',
     padding: '0 3px',
-    maxWidth: '3rem',
+    maxWidth: '2.7rem',
   },
   cellInput: {
     color: '#000',

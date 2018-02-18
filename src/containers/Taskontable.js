@@ -43,7 +43,7 @@ const styles = {
   },
   tableCtlButton: {
     fontSize: '9pt',
-    minWidth: 60,
+    minWidth: 40,
   },
 };
 
@@ -81,7 +81,6 @@ class Taskontable extends Component {
         e.returnValue = dialogText;
         return dialogText;
       }
-      return false;
     };
   }
 
@@ -379,7 +378,6 @@ class Taskontable extends Component {
                     moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
                   />);
                 } return (<TaskTableMobile
-                  onRef={ref => (this.taskTable = ref)} // eslint-disable-line
                   addTask={this.addTask.bind(this)} // FIXME メソッドはダミー
                   editTask={this.addTask.bind(this)}
                   removeTask={this.addTask.bind(this)}
