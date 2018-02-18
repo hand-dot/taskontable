@@ -109,6 +109,46 @@ class Taskontable extends Component {
     this.setState({ isOpenTaskPool: !this.state.isOpenTaskPool });
   }
 
+  changeTableTasks(taskActionType, value) {
+    const tableTasks = util.cloneDeep(this.state.tableTasks);
+    if (taskActionType === constants.taskActionType.ADD) {
+      tableTasks.push(value);
+    } else if (taskActionType === constants.taskActionType.EDIT) {
+      tableTasks[value.index] = value.task;
+    } else if (taskActionType === constants.taskActionType.REMOVE) {
+      tableTasks.splice(value, 1);
+    } else if (taskActionType === constants.taskActionType.DOWN) {
+      if (this.state.tableTasks.length === value + 1) return;
+      const target = tableTasks;
+      target.splice(value, 2, target[value + 1], target[value]);
+    } else if (taskActionType === constants.taskActionType.UP) {
+      if (value === 0) return;
+      const target = tableTasks;
+      target.splice(value - 1, 2, target[value], target[value - 1]);
+    } else if (taskActionType === constants.taskActionType.BOTTOM) {
+      if (this.state.tableTasks.length === value + 1) return;
+      const target = tableTasks.splice(value, 1)[0];
+      tableTasks.push(target);
+    } else if (taskActionType === constants.taskActionType.TOP) {
+      if (value === 0) return;
+      const target = tableTasks.splice(value, 1)[0];
+      tableTasks.unshift(target);
+    } else if (taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY || taskActionType === constants.taskActionType.MOVE_POOL_LOWPRIORITY) {
+      const taskPoolType = taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
+      const poolTasks = this.state.poolTasks;
+      poolTasks[taskPoolType].push(Object.assign({}, this.state.tableTasks[value]));
+      this.setState({ poolTasks });
+      tableTasks.splice(value, 1);
+      // テーブルタスクからタスクプールに移動したら保存する
+      setTimeout(() => {
+        this.saveHot();
+        this.savePoolTasks(poolTasks);
+      });
+    }
+    const saveable = this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks);
+    this.setState({ tableTasks, saveable });
+  }
+
   changePoolTasks(taskActionType, taskPoolType, value) {
     const poolTasks = util.cloneDeep(this.state.poolTasks);
     if (taskActionType === constants.taskActionType.ADD) {
@@ -133,7 +173,7 @@ class Taskontable extends Component {
       if (value === 0) return;
       const target = poolTasks[taskPoolType].splice(value, 1)[0];
       poolTasks[taskPoolType].unshift(target);
-    } else if (taskActionType === constants.taskActionType.MOVE) {
+    } else if (taskActionType === constants.taskActionType.MOVE_TABLE) {
       const tableTasks = this.state.tableTasks;
       tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
       this.setState({ tableTasks });
@@ -262,7 +302,7 @@ class Taskontable extends Component {
       this.setState({
         loading: true,
       });
-      if (snapshot.exists() && !util.equal(this.state.tableTasks, snapshot.val()[this.state.date])) {
+      if (snapshot.exists() && snapshot.val()[this.state.date] && !util.equal(this.state.tableTasks, snapshot.val()[this.state.date])) {
       // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
         if (this.state.isHotMode) {
           this.taskTable.clear();
@@ -379,13 +419,7 @@ class Taskontable extends Component {
                   />);
                 } return (<TaskTableMobile
                   tableTasks={this.state.tableTasks}
-                  addTask={this.addTask.bind(this)} // FIXME メソッドはダミー
-                  editTask={this.addTask.bind(this)}
-                  removeTask={this.addTask.bind(this)}
-                  downTask={this.addTask.bind(this)}
-                  upTask={this.addTask.bind(this)}
-                  bottomToTask={this.addTask.bind(this)}
-                  topToTask={this.addTask.bind(this)}
+                  changeTableTasks={this.changeTableTasks.bind(this)}
                 />);
               })()}
             </Paper>

@@ -42,7 +42,9 @@ export default {
   taskActionType: {
     ADD: 'add',
     EDIT: 'edit',
-    MOVE: 'move',
+    MOVE_TABLE: 'moveTable',
+    MOVE_POOL_HIGHPRIORITY: 'movePoolHighPriority',
+    MOVE_POOL_LOWPRIORITY: 'movePoolLowPriority',
     REMOVE: 'remove',
     DOWN: 'down',
     UP: 'up',

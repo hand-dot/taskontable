@@ -66,7 +66,7 @@ class Dashboard extends Component {
   }
 
   getDiffChartData() {
-    return this.filterForDiffChart().map(tableTask => ({ estimate: tableTask.estimate || 0, actually: util.getTimeDiffMinute(tableTask.startTime, tableTask.endTime) || 0 }));
+    return this.filterForDiffChart().map(tableTask => ({ estimate: +tableTask.estimate || 0, actually: util.getTimeDiffMinute(tableTask.startTime, tableTask.endTime) || 0 }));
   }
 
   getDiffChartLabel() {

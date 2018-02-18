@@ -34,7 +34,7 @@ class TaskPool extends Component {
   }
 
   moveTable(index) {
-    this.props.changePoolTasks(constants.taskActionType.MOVE, this.state.tab, index);
+    this.props.changePoolTasks(constants.taskActionType.MOVE_TABLE, this.state.tab, index);
   }
 
   removeTask(index) {
@@ -73,7 +73,7 @@ class TaskPool extends Component {
             <Paper elevation={1}>
               <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
                 {(() => {
-                  if (this.props.theme.breakpoints.values.sm < constants.APPWIDTH) {
+                  if (theme.breakpoints.values.sm < constants.APPWIDTH) {
                     return (
                       <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="#888" textColor="inherit">
                         <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />

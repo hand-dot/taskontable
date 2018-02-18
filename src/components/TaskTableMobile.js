@@ -68,6 +68,15 @@ class TaskTableMobile extends Component {
     this.setState({ [type]: task });
   }
 
+  addTask() {
+    if (this.state[constants.taskStateType.add].title === '') {
+      alert('作業内容が空の状態では保存できません。');
+      return;
+    }
+    this.props.changeTableTasks(constants.taskActionType.ADD, util.cloneDeep(this.state[constants.taskStateType.add]));
+    this.setState({ [constants.taskStateType.add]: getTableTaskSchema() });
+  }
+
   editTask(index) {
     if (this.state.editingTaskIndex === index) {
       // 編集を保存する場合
@@ -75,7 +84,7 @@ class TaskTableMobile extends Component {
         alert('作業内容が空の状態では保存できません。');
         return;
       }
-      this.props.editTask(util.cloneDeep(this.state[constants.taskStateType.edit]), index);
+      this.props.changeTableTasks(constants.taskActionType.EDIT, { task: util.cloneDeep(this.state[constants.taskStateType.edit]), index });
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getTableTaskSchema() });
     } else {
       // 編集スタート
@@ -90,38 +99,44 @@ class TaskTableMobile extends Component {
   }
 
   removeTask(index) {
-    this.closeTaskAction(index);
-    this.props.removeTask(index);
+    if (window.confirm(`${this.props.tableTasks[index].title} を本当に削除しますか？`)) {
+      this.closeTaskAction(index);
+      this.props.changeTableTasks(constants.taskActionType.REMOVE, index);
+    }
   }
+
 
   downTask(index) {
     this.closeTaskAction(index);
-    this.props.downTask(index);
+    this.props.changeTableTasks(constants.taskActionType.DOWN, index);
   }
 
   upTask(index) {
     this.closeTaskAction(index);
-    this.props.upTask(index);
+    this.props.changeTableTasks(constants.taskActionType.UP, index);
   }
 
   bottomToTask(index) {
     this.closeTaskAction(index);
-    this.props.bottomToTask(index);
+    this.props.changeTableTasks(constants.taskActionType.BOTTOM, index);
   }
 
   topToTask(index) {
     this.closeTaskAction(index);
-    this.props.topToTask(index);
+    this.props.changeTableTasks(constants.taskActionType.TOP, index);
   }
 
-  addTask() {
-    if (this.state[constants.taskStateType.add].title === '') {
-      alert('作業内容が空の状態では保存できません。');
-      return;
-    }
-    this.props.addTask(util.cloneDeep(this.state[constants.taskStateType.add]));
-    this.setState({ [constants.taskStateType.add]: getTableTaskSchema() });
+  movePoolHighPriority(index) {
+    this.closeTaskAction(index);
+    this.props.changeTableTasks(constants.taskActionType.MOVE_POOL_HIGHPRIORITY, index);
   }
+
+
+  movePoolLowPriority(index) {
+    this.closeTaskAction(index);
+    this.props.changeTableTasks(constants.taskActionType.MOVE_POOL_LOWPRIORITY, index);
+  }
+
 
   render() {
     const { tableTasks, classes } = this.props;
@@ -192,6 +207,14 @@ class TaskTableMobile extends Component {
                     open={Boolean(this.state.anchorEl[index] || false)}
                     onClose={this.closeTaskAction.bind(this, index)}
                   >
+                    <MenuItem key={'movePoolHighPriority'} onClick={this.movePoolHighPriority.bind(this, index)}>
+                      <i className="fa fa-upload" />
+                      <Typography variant="caption">[すぐにやる]に戻す</Typography>
+                    </MenuItem>
+                    <MenuItem key={'movePoolLowPriority'} onClick={this.movePoolLowPriority.bind(this, index)}>
+                      <i className="fa fa-upload" />
+                      <Typography variant="caption">[いつかやる]に戻す</Typography>
+                    </MenuItem>
                     <MenuItem key={'topToTask'} onClick={this.topToTask.bind(this, index)}>
                       <i className="fa fa-angle-double-up" />
                       <Typography variant="caption">先頭に移動</Typography>
@@ -281,13 +304,7 @@ TaskTableMobile.propTypes = {
     startTime: PropTypes.string.isRequired,
     memo: PropTypes.string.isRequired,
   })).isRequired,
-  addTask: PropTypes.func.isRequired,
-  editTask: PropTypes.func.isRequired,
-  removeTask: PropTypes.func.isRequired,
-  downTask: PropTypes.func.isRequired,
-  upTask: PropTypes.func.isRequired,
-  bottomToTask: PropTypes.func.isRequired,
-  topToTask: PropTypes.func.isRequired,
+  changeTableTasks: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
