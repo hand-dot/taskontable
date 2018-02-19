@@ -8,7 +8,6 @@ import Toolbar from 'material-ui/Toolbar';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
-import Hidden from 'material-ui/Hidden';
 import Avatar from 'material-ui/Avatar';
 
 import DescriptionDialog from '../components/DescriptionDialog';
@@ -20,8 +19,7 @@ import title from '../images/title_gr.png';
 
 const styles = theme => ({
   root: {
-    position: 'fixed',
-    top: 0,
+    minHeight: 0,
   },
   button: {
     padding: 3,
@@ -106,13 +104,10 @@ class GlobalHeader extends Component {
     const { anchorEl } = this.state;
 
     return (
-      <AppBar color="default" position="static" className={classes.root}>
+      <AppBar color="default" position="fixed">
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
-          <Hidden xsDown>
-            <Grid item xs={1} />
-          </Hidden>
-          <Grid item xs={12} sm={10}>
-            <Toolbar>
+          <Grid item xs={12}>
+            <Toolbar classes={{ root: classes.root }}>
               <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="22" /></Link>
               {(() => {
                 if (!this.state.login) {
@@ -174,9 +169,6 @@ class GlobalHeader extends Component {
               })()}
             </Toolbar>
           </Grid>
-          <Hidden xsDown>
-            <Grid item xs={1} />
-          </Hidden>
         </Grid>
         <DescriptionDialog
           open={this.state.isOpenDescriptionDialog}

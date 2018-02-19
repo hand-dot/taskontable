@@ -9,7 +9,6 @@ import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
-import Hidden from 'material-ui/Hidden';
 
 import Dashboard from '../components/Dashboard';
 import TableStatus from '../components/TableStatus';
@@ -26,7 +25,7 @@ import util from '../util';
 
 const styles = {
   root: {
-    paddingTop: '2.25em',
+    paddingTop: '2em',
     margin: '0 auto',
     paddingBottom: 20,
     maxWidth: constants.APPWIDTH,
