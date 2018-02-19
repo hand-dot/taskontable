@@ -6,7 +6,6 @@ import Typography from 'material-ui/Typography';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-import uuid from 'uuid';
 import MultipleSelect from './MultipleSelect';
 import poolTaskSchema from '../schemas/poolTaskSchema';
 import constants from '../constants';
@@ -172,7 +171,7 @@ class TaskList extends Component {
           </TableHead>
           <TableBody>
             {tasks.map((task, index) => (
-              <TableRow className={classes.taskRow} key={uuid()}>
+              <TableRow className={classes.taskRow} key={task.title + task.memo + task.estimate}>
                 <TableCell padding="none" className={classes.cell}>
                   <Input
                     className={classes.cellInput}

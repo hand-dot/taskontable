@@ -7,7 +7,6 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import TextField from 'material-ui/TextField';
 import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-import uuid from 'uuid';
 import tableTaskSchema from '../schemas/tableTaskSchema';
 import constants from '../constants';
 import style from '../styles/style';
@@ -156,7 +155,7 @@ class TaskTableMobile extends Component {
           {tableTasks.map((task, index) => (
             <TableRow
               className={classes.taskRow}
-              key={uuid()}
+              key={task.title + task.memo + task.estimate}
               style={(() => {
                 const obj = {};
                 if (task.startTime && task.endTime) {
