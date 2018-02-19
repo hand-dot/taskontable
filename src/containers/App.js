@@ -1,15 +1,14 @@
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles, MuiThemeProvider } from 'material-ui/styles';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { CircularProgress } from 'material-ui/Progress';
 import Dialog from 'material-ui/Dialog';
-
 import AsyncContainer from './AsyncContainer';
 
 import firebaseConf from '../configs/firebase';
-
+import theme from '../assets/theme';
 import '../styles/keyframes.css';
 
 const GlobalHeader = AsyncContainer(() => import('./GlobalHeader').then(module => module.default), {});
@@ -94,44 +93,46 @@ class App extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.root}>
-        <GlobalHeader
-          user={this.state.user}
-          isOpenHelpDialog={this.state.isOpenHelpDialog}
-          openHelpDialog={this.openHelpDialog.bind(this)}
-          closeHelpDialog={this.closeHelpDialog.bind(this)}
-          logout={this.logout.bind(this)}
-        />
-        <Switch>
-          <Route
-            path="/signup"
-            render={props => <Signup login={this.login.bind(this)} {...props} />}
+      <MuiThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <GlobalHeader
+            user={this.state.user}
+            isOpenHelpDialog={this.state.isOpenHelpDialog}
+            openHelpDialog={this.openHelpDialog.bind(this)}
+            closeHelpDialog={this.closeHelpDialog.bind(this)}
+            logout={this.logout.bind(this)}
           />
-          <Route
-            path="/login"
-            render={props => <Login login={this.login.bind(this)} {...props} />}
-          />
-          <Route
-            exact
-            path="/"
-            render={(props) => {
-              if (this.state.user.uid !== '') {
-              // 認証が初期値から変更されたらアプリをスタート
-                return (
-                  <Taskontable
-                    user={this.state.user}
-                    toggleHelpDialog={this.toggleHelpDialog.bind(this)}
-                    {...props}
-                  />);
-              }
-              return (<Top />);
-            }}
-          />
-        </Switch>
-        <Dialog open={this.state.loginProggres}>
-          <CircularProgress className={classes.content} size={60} />
-        </Dialog>
-      </div>
+          <Switch>
+            <Route
+              path="/signup"
+              render={props => <Signup login={this.login.bind(this)} {...props} />}
+            />
+            <Route
+              path="/login"
+              render={props => <Login login={this.login.bind(this)} {...props} />}
+            />
+            <Route
+              exact
+              path="/"
+              render={(props) => {
+                if (this.state.user.uid !== '') {
+                  // 認証が初期値から変更されたらアプリをスタート
+                  return (
+                    <Taskontable
+                      user={this.state.user}
+                      toggleHelpDialog={this.toggleHelpDialog.bind(this)}
+                      {...props}
+                    />);
+                }
+                return (<Top />);
+              }}
+            />
+          </Switch>
+          <Dialog open={this.state.loginProggres}>
+            <CircularProgress className={classes.content} size={60} />
+          </Dialog>
+        </div>
+      </MuiThemeProvider>
     );
   }
 }
