@@ -19,7 +19,6 @@
     "font-awesome": "^4.7.0",
     "handsontable": "^0.35.1",
     "lodash.debounce": "^4.0.8",
-    "lodash.throttle": "^4.1.1",
     "material-ui": "^1.0.0-beta.34",
     "moment": "^2.20.1",
     "prop-types": "^15.6.0",
