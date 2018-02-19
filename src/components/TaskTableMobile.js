@@ -9,7 +9,7 @@ import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import tableTaskSchema from '../schemas/tableTaskSchema';
 import constants from '../constants';
-import style from '../styles/style';
+import style from '../assets/style';
 import util from '../util';
 
 const styles = style.table;

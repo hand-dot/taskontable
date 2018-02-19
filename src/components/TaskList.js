@@ -10,7 +10,7 @@ import MultipleSelect from './MultipleSelect';
 import poolTaskSchema from '../schemas/poolTaskSchema';
 import constants from '../constants';
 import util from '../util';
-import style from '../styles/style';
+import style from '../assets/style';
 
 const styles = style.table;
 
@@ -157,7 +157,7 @@ class TaskList extends Component {
   render() {
     const { tasks, isRegularTask, classes } = this.props;
     return (
-      <div ref={(root) => { this.root = root; }} className={classes.root}>
+      <div ref={(root) => { this.root = root; }}>
         <Table>
           <TableHead>
             <TableRow>
