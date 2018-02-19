@@ -15,26 +15,26 @@ const columns = [
     type: 'text',
   },
   {
-    title: '<span title="見積時間 数値で入力してください。">見積(分)</span>',
+    title: '見積(分)',
     data: 'estimate',
     type: 'numeric',
     allowInvalid: false,
     colWidths: 32,
   },
   {
-    title: '<span title="HH:mm の形式で入力してください。(例)19:20">開始時刻</span>',
+    title: '開始時刻(HH:mm)',
     data: 'startTime',
     type: 'time',
-    colWidths: 32,
+    colWidths: 52,
     timeFormat: 'HH:mm',
     allowInvalid: false,
     correctFormat: true,
   },
   {
-    title: '<span title="HH:mm の形式で入力してください。(例)19:20">終了時刻</span>',
+    title: '終了時刻(HH:mm)',
     data: 'endTime',
     type: 'time',
-    colWidths: 32,
+    colWidths: 52,
     timeFormat: 'HH:mm',
     allowInvalid: false,
     correctFormat: true,
@@ -68,12 +68,12 @@ const columns = [
     },
   },
   {
-    title: '<span title="終了時刻を記入後、自動入力されます。 (編集不可)">実績(分)</span>',
+    title: '実績(分)',
     data: 'actually',
     type: 'numeric',
     readOnly: true,
     validator: false,
-    colWidths: 40,
+    colWidths: 32,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htDimmed');
