@@ -189,10 +189,11 @@ class Taskontable extends Component {
   }
 
   moveTableTaskToPoolTask(taskPoolType, task) {
-    this.addPoolTask(taskPoolType, task);
+    const poolTasks = util.cloneDeep(this.state.poolTasks);
+    poolTasks[taskPoolType].push(task);
     // テーブルタスクからタスクプールに移動したら保存する
     this.saveHot();
-    this.savePoolTasks(this.state.poolTasks);
+    this.savePoolTasks(poolTasks);
   }
 
   savePoolTasks(poolTasks) {
