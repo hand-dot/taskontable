@@ -317,6 +317,7 @@ export const hotConf = {
   rowHeaderWidth: 25,
   autoInsertRow: false,
   manualRowMove: true,
+  height: Math.round(constants.APPHEIGHT / 2),
   minRows: 10,
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,

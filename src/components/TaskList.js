@@ -150,14 +150,13 @@ class TaskList extends Component {
     }
     this.props.addTask(util.cloneDeep(this.state[constants.taskStateType.add]));
     this.setState({ [constants.taskStateType.add]: getPoolTaskSchema() });
-    const $root = this.root;
-    setTimeout(() => { $root.scrollTop = $root.scrollHeight; });
+    setTimeout(() => { this.root.scrollTop = this.root.scrollHeight; });
   }
 
   render() {
     const { tasks, isRegularTask, classes } = this.props;
     return (
-      <div ref={(root) => { this.root = root; }}>
+      <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
           <TableHead>
             <TableRow>
