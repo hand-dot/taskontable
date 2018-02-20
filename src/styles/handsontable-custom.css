@@ -2,23 +2,6 @@
   font-size: 9pt;
 }
 
-.handsontable .done td{
-  background-color: rgba(201, 203, 207, 0.2);
-}
-
-.handsontable .red td{
-  background-color: rgba(255, 99, 132, 0.2);
-  animation: blink 1s infinite;
-}
-
-.handsontable .blue td{
-  background-color: rgba(54, 162, 235, 0.2);
-}
-
-.handsontable .yellow td{
-  background-color: rgba(255, 205, 86, 0.2);
-}
-
-.handsontable .green td{
-  background-color: rgba(75, 192, 192, 0.2);
+.handsontable td{
+  background-color: transparent;
 }

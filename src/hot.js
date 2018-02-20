@@ -19,13 +19,13 @@ const columns = [
     data: 'estimate',
     type: 'numeric',
     allowInvalid: false,
-    colWidths: 32,
+    colWidths: 30,
   },
   {
     title: '開始時刻(HH:mm)',
     data: 'startTime',
     type: 'time',
-    colWidths: 52,
+    colWidths: 60,
     timeFormat: 'HH:mm',
     allowInvalid: false,
     correctFormat: true,
@@ -34,7 +34,7 @@ const columns = [
     title: '終了時刻(HH:mm)',
     data: 'endTime',
     type: 'time',
-    colWidths: 52,
+    colWidths: 60,
     timeFormat: 'HH:mm',
     allowInvalid: false,
     correctFormat: true,
@@ -44,7 +44,7 @@ const columns = [
       const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
       if (endTimeVal !== '' && startTimeVal !== '') {
         // 完了しているタスク
-        td.parentNode.className = 'done';
+        td.parentNode.style.backgroundColor = constants.brandColor.light.GREY;
       } else if (endTimeVal === '') {
         const estimateVal = instance.getDataAtRowProp(row, 'estimate');
         if (startTimeVal !== '' && estimateVal !== '') {
@@ -52,18 +52,19 @@ const columns = [
           const expectedEndTimeVal = moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
           const timeDiffMinute = util.getTimeDiffMinute(moment().format('HH:mm'), expectedEndTimeVal);
           if (timeDiffMinute <= 1) {
-            td.parentNode.className = ('red');
+            td.parentNode.style.backgroundColor = constants.brandColor.light.RED;
           } else {
-            td.parentNode.className = ('blue');
+            td.parentNode.style.backgroundColor = constants.brandColor.light.BLUE;
           }
           td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
         } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
           // 見積もりが空なので警告にする
-          td.parentNode.className = ('yellow');
+          td.parentNode.style.backgroundColor = constants.brandColor.light.YELLOW;
         } else {
-          td.parentNode.className = '';
+          td.parentNode.style.backgroundColor = '';
         }
       }
+      td.style.backgroundColor = '';
       return td;
     },
   },
@@ -73,7 +74,7 @@ const columns = [
     type: 'numeric',
     readOnly: true,
     validator: false,
-    colWidths: 32,
+    colWidths: 30,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htDimmed');
