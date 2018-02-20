@@ -3,13 +3,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
-import Typography from 'material-ui/Typography';
-import Grid from 'material-ui/Grid';
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
-import Paper from 'material-ui/Paper';
 
 import constants from '../constants';
 
@@ -61,68 +54,56 @@ class TaskPool extends Component {
   }
 
   render() {
-    const { theme, isOpenTaskPool, toggleTaskPool, poolTasks } = this.props;
+    const { theme, poolTasks } = this.props;
     return (
-      <ExpansionPanel expanded={isOpenTaskPool}>
-        <ExpansionPanelSummary onClick={toggleTaskPool} expandIcon={<i className="fa fa-angle-down fa-lg" />}>
-          <i className="fa fa-tasks fa-lg" />
-          <Typography>　タスクプール</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails style={{ padding: 0 }}>
-          <Grid item xs={12}>
-            <Paper elevation={1}>
-              <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
-                {(() => {
-                  if (theme.breakpoints.values.sm < constants.APPWIDTH) {
-                    return (
-                      <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="#888" textColor="inherit">
-                        <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
-                        <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
-                        <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="定期的" />
-                      </Tabs>
-                    );
-                  }
-                  return (
-                    <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="#888" textColor="inherit">
-                      <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
-                      <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
-                    </Tabs>
-                  );
-                })()}
-              </AppBar>
-              {(() => {
-                let tasks = null;
-                if (this.state.tab === constants.taskPoolType.HIGHPRIORITY) {
-                  tasks = poolTasks.highPriorityTasks;
-                } else if (this.state.tab === constants.taskPoolType.LOWPRIORITY) {
-                  tasks = poolTasks.lowPriorityTasks;
-                } else if (this.state.tab === constants.taskPoolType.REGULAR) {
-                  tasks = poolTasks.regularTasks;
-                }
-                return (<TaskList
-                  addTask={this.addTask.bind(this)}
-                  editTask={this.editTask.bind(this)}
-                  moveTable={this.moveTable.bind(this)}
-                  removeTask={this.removeTask.bind(this)}
-                  downTask={this.downTask.bind(this)}
-                  upTask={this.upTask.bind(this)}
-                  bottomToTask={this.bottomToTask.bind(this)}
-                  topToTask={this.topToTask.bind(this)}
-                  tasks={tasks}
-                  isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
-                />);
-              })()}
-            </Paper>
-          </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+      <div>
+        <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
+          {(() => {
+            if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+              return (
+                <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor={constants.brandColor.base.BLUE} textColor="inherit">
+                  <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
+                  <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
+                  <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="定期的" />
+                </Tabs>
+              );
+            }
+            return (
+              <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor={constants.brandColor.base.BLUE} textColor="inherit">
+                <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
+                <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
+              </Tabs>
+            );
+          })()}
+        </AppBar>
+        {(() => {
+          let tasks = null;
+          if (this.state.tab === constants.taskPoolType.HIGHPRIORITY) {
+            tasks = poolTasks.highPriorityTasks;
+          } else if (this.state.tab === constants.taskPoolType.LOWPRIORITY) {
+            tasks = poolTasks.lowPriorityTasks;
+          } else if (this.state.tab === constants.taskPoolType.REGULAR) {
+            tasks = poolTasks.regularTasks;
+          }
+          return (<TaskList
+            addTask={this.addTask.bind(this)}
+            editTask={this.editTask.bind(this)}
+            moveTable={this.moveTable.bind(this)}
+            removeTask={this.removeTask.bind(this)}
+            downTask={this.downTask.bind(this)}
+            upTask={this.upTask.bind(this)}
+            bottomToTask={this.bottomToTask.bind(this)}
+            topToTask={this.topToTask.bind(this)}
+            tasks={tasks}
+            isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
+          />);
+        })()}
+      </div>
     );
   }
 }
 
 TaskPool.propTypes = {
-  isOpenTaskPool: PropTypes.bool.isRequired,
-  toggleTaskPool: PropTypes.func.isRequired,
   poolTasks: PropTypes.shape({
     highPriorityTasks: PropTypes.array.isRequired,
     lowPriorityTasks: PropTypes.array.isRequired,

@@ -6,8 +6,8 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = {
   circle: {
-    width: 120,
-    height: 120,
+    width: 75,
+    height: 75,
     margin: '0 auto',
     position: 'relative',
     border: '1px solid #888',
@@ -123,7 +123,7 @@ class Clock extends Component {
     const { classes, caption, title } = this.props;
     return (
       <div>
-        <Typography gutterBottom variant="caption" align="center" title={caption}>
+        <Typography variant="caption" align="center" title={caption}>
           {title}
         </Typography>
         <div className={classes.circle}>
@@ -133,7 +133,7 @@ class Clock extends Component {
             <div ref={(node) => { this.second = node; }} className={classes.second} />
           </div>
         </div>
-        <Typography gutterBottom variant="title" align="center">{`${(`00${this.state.moment.hour()}`).slice(-2)}:${(`00${this.state.moment.minute()}`).slice(-2)}`}</Typography>
+        <Typography gutterBottom variant="body1" align="center">{`${(`00${this.state.moment.hour()}`).slice(-2)}:${(`00${this.state.moment.minute()}`).slice(-2)}`}</Typography>
       </div>
     );
   }

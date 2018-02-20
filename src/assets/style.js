@@ -4,9 +4,6 @@ export default {
   table: theme => ({
     root: {
       padding: 0,
-      minHeight: Math.round(constants.APPHEIGHT / 2),
-      maxHeight: Math.round(constants.APPHEIGHT / 2),
-      overflowY: 'scroll',
     },
     actionIcon: {
       fontSize: 14,

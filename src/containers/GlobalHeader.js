@@ -19,7 +19,7 @@ import title from '../images/title_gr.png';
 
 const styles = theme => ({
   root: {
-    minHeight: 0,
+    minHeight: theme.mixins.toolbar.minHeight,
   },
   button: {
     padding: 3,
@@ -41,7 +41,6 @@ const styles = theme => ({
   },
   link: {
     textDecoration: 'none',
-    color: 'rgba(0, 0, 0, 0.87)',
   },
 });
 

@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
 
 import Typography from 'material-ui/Typography';
+import Tabs, { Tab } from 'material-ui/Tabs';
 import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
@@ -16,19 +17,13 @@ import TaskPool from '../components/TaskPool';
 import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
 import DatePicker from '../components/DatePicker';
-
 import { getEmptyHotData } from '../hot';
 
 import constants from '../constants';
-
 import util from '../util';
 
-const styles = {
+const styles = theme => ({
   root: {
-    paddingTop: '2em',
-    margin: '0 auto',
-    paddingBottom: 20,
-    maxWidth: constants.APPWIDTH,
   },
   navButton: {
     color: '#fff',
@@ -44,7 +39,12 @@ const styles = {
     fontSize: '9pt',
     minWidth: 40,
   },
-};
+  panel: {
+    position: 'relative',
+    overflowY: 'scroll',
+    overflowX: 'hidden',
+  },
+});
 
 class Taskontable extends Component {
   constructor(props) {
@@ -53,8 +53,7 @@ class Taskontable extends Component {
       isHotMode: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
       loading: true,
       saveable: false,
-      isOpenDashboard: false,
-      isOpenTaskPool: false,
+      tab: 0,
       date: moment().format(constants.DATEFMT),
       lastSaveTime: { hour: 0, minute: 0, second: 0 },
       tableTasks: getEmptyHotData(),
@@ -98,14 +97,6 @@ class Taskontable extends Component {
     window.onbeforeunload = '';
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/${this.props.user.uid}/tableTasks`).off();
-  }
-
-  toggleDashboard() {
-    this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
-  }
-
-  toggleTaskPool() {
-    this.setState({ isOpenTaskPool: !this.state.isOpenTaskPool });
   }
 
   changeTableTasks(taskActionType, value) {
@@ -236,6 +227,11 @@ class Taskontable extends Component {
     if (this.state.isHotMode) this.taskTable.addTask();
   }
 
+  handleTabChange(event, tab) {
+    this.setState({ tab });
+    setTimeout(() => this.forceUpdate());
+  }
+
   handleSaveable(saveable) {
     this.setState({ saveable });
   }
@@ -255,12 +251,6 @@ class Taskontable extends Component {
       this.saveHot();
     } else if (constants.shortcuts.TOGGLE_HELP(e)) {
       this.props.toggleHelpDialog();
-    } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
-      e.preventDefault();
-      this.toggleDashboard();
-    } else if (constants.shortcuts.TOGGLE_TASKPOOL(e)) {
-      e.preventDefault();
-      this.toggleTaskPool();
     }
     return false;
   }
@@ -373,19 +363,21 @@ class Taskontable extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, theme } = this.props;
     return (
-      <Grid container spacing={0} alignItems="stretch" justify="center" className={classes.root}>
+      <Grid container spacing={0} alignItems="stretch" justify="center" style={{ paddingTop: theme.mixins.toolbar.minHeight - 1 }}>
         <Grid item xs={12}>
-          <Grid item xs={12} className={classes.root}>
-            <Dashboard isOpenDashboard={this.state.isOpenDashboard} toggleDashboard={this.toggleDashboard.bind(this)} tableTasks={this.state.tableTasks} />
-            <TaskPool isOpenTaskPool={this.state.isOpenTaskPool} toggleTaskPool={this.toggleTaskPool.bind(this)} poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} />
-            <Paper elevation={1}>
-              <div style={{ padding: 24 }}>
-                <div>
-                  <i className="fa fa-table fa-lg" />
-                  <Typography style={{ display: 'inline', marginRight: 20 }}>　テーブル</Typography>
-                </div>
+          <Paper style={{ height: Math.round((constants.APPHEIGHT - theme.mixins.toolbar.minHeight) * 0.35) }} className={classes.panel} elevation={1}>
+            <Tabs value={this.state.tab} onChange={this.handleTabChange.bind(this)} scrollable={false} scrollButtons="off" indicatorColor={constants.brandColor.light.BLUE} style={{ width: '100%', position: 'fixed', zIndex: 999, backgroundColor: '#fff' }}>
+              <Tab label={<span><i className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
+              <Tab label={<span><i className="fa fa-tasks fa-lg" />タスクプール</span>} />
+            </Tabs>
+            {this.state.tab === 0 && <div style={{ paddingTop: theme.mixins.toolbar.minHeight }}><Dashboard tableTasks={this.state.tableTasks} /></div>}
+            {this.state.tab === 1 && <div style={{ paddingTop: theme.mixins.toolbar.minHeight }}><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
+          </Paper>
+          <Paper style={{ height: Math.round((constants.APPHEIGHT - theme.mixins.toolbar.minHeight) * 0.65) }} className={classes.panel} elevation={1}>
+            <div style={{ width: '100%', position: 'fixed', zIndex: 999, backgroundColor: '#fff' }}>
+              <div style={{ padding: theme.spacing.unit }}>
                 <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
                 <div style={{ display: 'inline-block', float: 'right' }}>
                   <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(-1, 'day').format('YYYY/MM/DD')} placement="top">
@@ -406,6 +398,8 @@ class Taskontable extends Component {
                 </div>
               </div>
               <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
+            </div>
+            <div style={{ paddingTop: 70 }}>
               {(() => {
                 if (this.state.isHotMode) {
                   return (<TaskTable
@@ -421,8 +415,8 @@ class Taskontable extends Component {
                   changeTableTasks={this.changeTableTasks.bind(this)}
                 />);
               })()}
-            </Paper>
-          </Grid>
+            </div>
+          </Paper>
         </Grid>
       </Grid>
     );

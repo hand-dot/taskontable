@@ -21,8 +21,6 @@ export default {
     PREVDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 188,
     SAVE: e => e.ctrlKey && !e.shiftKey && e.keyCode === 83,
     TOGGLE_HELP: e => e.ctrlKey && e.shiftKey && e.keyCode === 191,
-    TOGGLE_DASHBOAD: e => e.ctrlKey && !e.shiftKey && e.keyCode === 74,
-    TOGGLE_TASKPOOL: e => e.ctrlKey && !e.shiftKey && e.keyCode === 75,
     HOT_CURRENTTIME: e => e.ctrlKey && e.shiftKey && e.keyCode === 186,
   },
   menuItemKey: {

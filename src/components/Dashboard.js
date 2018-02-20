@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
-
 import TodaySummary from './TodaySummary';
 import Clock from './Clock';
 import DiffChart from './DiffChart';
@@ -18,6 +14,7 @@ const totalEstimateMinute = datas => datas.map(data => (typeof data.estimate ===
 
 const totalActuallyMinute = datas => datas.map(data => util.getTimeDiffMinute(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
 
+const styles = {};
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -78,68 +75,66 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { isOpenDashboard, toggleDashboard } = this.props;
+    const { classes, theme } = this.props;
     return (
-      <ExpansionPanel expanded={isOpenDashboard}>
-        <ExpansionPanelSummary onClick={toggleDashboard} expandIcon={<i className="fa fa-angle-down fa-lg" />}>
-          <i className="fa fa-tachometer fa-lg" />
-          <Typography>　ダッシュボード</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <Grid container>
-            <Grid item xs={12} sm={6}>
-              <Typography gutterBottom variant="subheading">
-                 サマリ
-              </Typography>
-              <TodaySummary
-                data={{
-                  estimateTasks: this.state.estimateTasks,
-                  doneTasks: this.state.doneTasks,
-                  actuallyTasks: this.state.actuallyTasks,
-                  remainingTasks: this.state.remainingTasks,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography gutterBottom variant="subheading">
+      <Grid container style={{ padding: theme.spacing.unit }}>
+        <Grid item xs={12} sm={6}>
+          <Typography variant="subheading">
+            サマリ
+          </Typography>
+          <TodaySummary
+            data={{
+              estimateTasks: this.state.estimateTasks,
+              doneTasks: this.state.doneTasks,
+              actuallyTasks: this.state.actuallyTasks,
+              remainingTasks: this.state.remainingTasks,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography gutterBottom variant="subheading">
                  時刻
-              </Typography>
-              <Grid container>
-                <Grid item xs={6}>
-                  <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
-                </Grid>
-                <Grid item xs={6}>
-                  <Clock title={'終了時刻*'} caption="*現在時刻と残タスクの合計時間" time={this.state.endTime} />
-                </Grid>
-              </Grid>
+          </Typography>
+          <Grid container>
+            <Grid item xs={6}>
+              <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
             </Grid>
-            <Grid item xs={12}>
-              <Typography gutterBottom variant="subheading">
-                 見積と実績の乖離
-              </Typography>
-              <Typography gutterBottom variant="caption">
-                *見積に対して実績が　{(() => {
-                  const diff = ((this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60)).toFixed(1);
-                  return diff > 0 ? `${diff}h　マイナスです` : `${diff * -1}h　オーバーしています`;
-                })()}
-              </Typography>
-              <Grid container>
-                <Grid item xs={12}>
-                  <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} unit={'h'} />
-                </Grid>
-              </Grid>
+            <Grid item xs={6}>
+              <Clock title={'終了時刻*'} caption="*現在時刻と残タスクの合計時間" time={this.state.endTime} />
             </Grid>
           </Grid>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography gutterBottom variant="subheading">
+                 見積と実績の乖離
+          </Typography>
+          <Typography gutterBottom variant="caption">
+                *見積に対して実績が　{(() => {
+              const diff = ((this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60)).toFixed(1);
+              return diff > 0 ? `${diff}h　マイナスです` : `${diff * -1}h　オーバーしています`;
+            })()}
+          </Typography>
+          <Grid container>
+            <Grid item xs={12}>
+              <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} unit={'h'} />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
     );
   }
 }
 
 Dashboard.propTypes = {
-  isOpenDashboard: PropTypes.bool.isRequired,
-  toggleDashboard: PropTypes.func.isRequired,
-  tableTasks: PropTypes.array.isRequired,
+  tableTasks: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    estimate: PropTypes.any.isRequired,
+    endTime: PropTypes.string.isRequired,
+    startTime: PropTypes.string.isRequired,
+    memo: PropTypes.string.isRequired,
+  })).isRequired,
+  classes: PropTypes.object.isRequired, // eslint-disable-line
+  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default Dashboard;
+export default withStyles(styles, { withTheme: true })(Dashboard);
