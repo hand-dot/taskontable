@@ -18,7 +18,7 @@ const ITEM_PADDING_TOP = 8;
 
 // FIXME keyとvalueで値をやりとりしたい
 function MultipleSelect(props) {
-  const { label, value, options, onChange, disabled, classes, theme } = props;
+  const { label, value, options, onChange, disabled, classes } = props;
   return (
     <div className={classes.container}>
       <FormControl>
@@ -45,10 +45,7 @@ function MultipleSelect(props) {
               key={option}
               value={option}
               style={{
-                fontWeight:
-                  options.indexOf(option) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
+                fontSize: 12,
               }}
             >
               {option}
