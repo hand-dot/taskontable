@@ -31,14 +31,10 @@ const styles = theme => ({
     width: constants.APPWIDTH,
     margin: '0 auto',
   },
-  panel: { maxHeight: 470,
+  panel: {
+    maxHeight: 470,
     overflowY: 'scroll',
     overflowX: 'hidden',
-  },
-  helpButton: {
-    fontSize: 15,
-    width: 20,
-    height: 20,
   },
   tableCtlButton: {
     fontSize: 11,

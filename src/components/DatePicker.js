@@ -15,7 +15,7 @@ function DatePicker(props) {
         type="date"
         value={value}
         onChange={changeDate}
-        InputProps={{ style: { fontSize: 12, color: '#000' } }}
+        InputProps={{ style: { fontSize: 12 } }}
         InputLabelProps={{
           shrink: true,
         }}
