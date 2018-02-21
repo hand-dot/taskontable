@@ -41,7 +41,7 @@ const styles = theme => ({
     height: 20,
   },
   tableCtlButton: {
-    fontSize: 7,
+    fontSize: 11,
     minWidth: 25,
   },
 });
