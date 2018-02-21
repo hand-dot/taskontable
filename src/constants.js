@@ -12,7 +12,7 @@ export default {
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
-  APPWIDTH: window.innerWidth,
+  APPWIDTH: window.innerWidth < 1280 ? window.innerWidth : 1280,
   APPHEIGHT: window.innerHeight,
   KEYEVENT_DELAY: 100,
   RENDER_DELAY: 1000,
@@ -21,6 +21,7 @@ export default {
     PREVDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 188,
     SAVE: e => e.ctrlKey && !e.shiftKey && e.keyCode === 83,
     TOGGLE_HELP: e => e.ctrlKey && e.shiftKey && e.keyCode === 191,
+    TOGGLE_DASHBOAD: e => e.ctrlKey && !e.shiftKey && e.keyCode === 74,
     HOT_CURRENTTIME: e => e.ctrlKey && e.shiftKey && e.keyCode === 186,
   },
   menuItemKey: {

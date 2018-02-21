@@ -10,6 +10,10 @@ import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
+import ExpansionPanel, {
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
+} from 'material-ui/ExpansionPanel';
 
 import Dashboard from '../components/Dashboard';
 import TableStatus from '../components/TableStatus';
@@ -24,11 +28,12 @@ import util from '../util';
 
 const styles = theme => ({
   root: {
+    width: constants.APPWIDTH,
+    margin: '0 auto',
   },
-  navButton: {
-    color: '#fff',
-    height: '100%',
-    width: '100%',
+  panel: { maxHeight: 470,
+    overflowY: 'scroll',
+    overflowX: 'hidden',
   },
   helpButton: {
     fontSize: 15,
@@ -36,13 +41,8 @@ const styles = theme => ({
     height: 20,
   },
   tableCtlButton: {
-    fontSize: '9pt',
-    minWidth: 40,
-  },
-  panel: {
-    position: 'relative',
-    overflowY: 'scroll',
-    overflowX: 'hidden',
+    fontSize: 7,
+    minWidth: 25,
   },
 });
 
@@ -54,6 +54,7 @@ class Taskontable extends Component {
       loading: true,
       saveable: false,
       tab: 0,
+      isOpenDashboard: true,
       date: moment().format(constants.DATEFMT),
       lastSaveTime: { hour: 0, minute: 0, second: 0 },
       tableTasks: getEmptyHotData(),
@@ -251,6 +252,9 @@ class Taskontable extends Component {
       this.saveHot();
     } else if (constants.shortcuts.TOGGLE_HELP(e)) {
       this.props.toggleHelpDialog();
+    } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
+      e.preventDefault();
+      this.toggleDashboard();
     }
     return false;
   }
@@ -362,60 +366,88 @@ class Taskontable extends Component {
     }
   }
 
+  toggleDashboard() {
+    this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
+  }
+
   render() {
     const { classes, theme } = this.props;
     return (
-      <Grid container spacing={0} alignItems="stretch" justify="center" style={{ paddingTop: theme.mixins.toolbar.minHeight - 1 }}>
+      <Grid container spacing={0} className={classes.root} style={{ paddingTop: theme.mixins.toolbar.minHeight }}>
         <Grid item xs={12}>
-          <Paper style={{ height: Math.round((constants.APPHEIGHT - theme.mixins.toolbar.minHeight) * 0.35) }} className={classes.panel} elevation={1}>
-            <Tabs value={this.state.tab} onChange={this.handleTabChange.bind(this)} scrollable={false} scrollButtons="off" indicatorColor={constants.brandColor.light.BLUE} style={{ width: '100%', position: 'fixed', zIndex: 999, backgroundColor: '#fff' }}>
-              <Tab label={<span><i className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
-              <Tab label={<span><i className="fa fa-tasks fa-lg" />タスクプール</span>} />
-            </Tabs>
-            {this.state.tab === 0 && <div style={{ paddingTop: theme.mixins.toolbar.minHeight }}><Dashboard tableTasks={this.state.tableTasks} /></div>}
-            {this.state.tab === 1 && <div style={{ paddingTop: theme.mixins.toolbar.minHeight }}><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
-          </Paper>
-          <Paper style={{ height: Math.round((constants.APPHEIGHT - theme.mixins.toolbar.minHeight) * 0.65) }} className={classes.panel} elevation={1}>
-            <div style={{ width: '100%', position: 'fixed', zIndex: 999, backgroundColor: '#fff' }}>
-              <div style={{ padding: theme.spacing.unit }}>
+          <ExpansionPanel expanded={this.state.isOpenDashboard}>
+            <ExpansionPanelSummary expandIcon={<div style={{ width: '100%' }} onClick={this.toggleDashboard.bind(this)}><i className="fa fa-angle-down fa-lg" /></div>}>
+              <Tabs value={this.state.tab} onChange={this.handleTabChange.bind(this)} scrollable={false} scrollButtons="off" indicatorColor={constants.brandColor.light.BLUE} >
+                <Tab label={<span><i className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
+                <Tab label={<span><i className="fa fa-tasks fa-lg" />タスクプール</span>} />
+              </Tabs>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
+              {this.state.tab === 0 && <div className={classes.panel} ><Dashboard tableTasks={this.state.tableTasks} /></div>}
+              {this.state.tab === 1 && <div className={classes.panel} ><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+          <Paper elevation={1}>
+            <Grid style={{ padding: `${theme.spacing.unit * 2}px 0` }} container spacing={0}>
+              <Grid style={{ textAlign: 'center' }} item xs={4}>
                 <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
-                <div style={{ display: 'inline-block', float: 'right' }}>
-                  <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(-1, 'day').format('YYYY/MM/DD')} placement="top">
-                    <div style={{ display: 'inline-block' }}>
-                      <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
-                    </div>
-                  </Tooltip>
-                  <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
-                    <div style={{ display: 'inline-block' }}>
-                      <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
-                    </div>
-                  </Tooltip>
-                  <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(1, 'day').format('YYYY/MM/DD')} placement="top">
-                    <div style={{ display: 'inline-block' }}>
-                      <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><i className="fa fa-angle-right fa-lg" /></Button>
-                    </div>
-                  </Tooltip>
-                </div>
-              </div>
-              <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
-            </div>
-            <div style={{ paddingTop: 70 }}>
-              {(() => {
-                if (this.state.isHotMode) {
-                  return (<TaskTable
+              </Grid>
+              <Grid style={{ textAlign: 'center' }} item xs={4}>
+                {(() => {
+                  if (this.state.tableTasks.length === 0) {
+                    return (
+                      <Typography style={{ marginTop: 10 }} variant="caption"><i className="fa fa-asterisk" />タスクがありません</Typography>
+                    );
+                  } else if (this.state.tableTasks.length === this.state.tableTasks.filter(data => data.startTime && data.endTime).length) {
+                    return (
+                      <Typography style={{ marginTop: 10 }} variant="caption"><i className="fa fa-thumbs-up" />Complete!</Typography>
+                    );
+                  }
+                  return (
+                    <Typography style={{ marginTop: 10 }} variant="caption">
+                      <i className="fa fa-exclamation-circle" />
+                      {this.state.tableTasks.filter(data => !data.startTime && !data.endTime).length}Open
+                      <span>&nbsp;</span>
+                      <i className="fa fa-check" />
+                      {this.state.tableTasks.filter(data => data.startTime && data.endTime).length}Close
+                    </Typography>
+                  );
+                })()}
+              </Grid>
+              <Grid style={{ textAlign: 'center' }} item xs={4}>
+                <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(-1, 'day').format('YYYY/MM/DD')} placement="top">
+                  <div style={{ display: 'inline-block' }}>
+                    <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
+                  </div>
+                </Tooltip>
+                <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
+                  <div style={{ display: 'inline-block' }}>
+                    <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
+                  </div>
+                </Tooltip>
+                <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(1, 'day').format('YYYY/MM/DD')} placement="top">
+                  <div style={{ display: 'inline-block' }}>
+                    <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><i className="fa fa-angle-right fa-lg" /></Button>
+                  </div>
+                </Tooltip>
+              </Grid>
+            </Grid>
+            <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
+            {(() => {
+              if (this.state.isHotMode) {
+                return (<TaskTable
                     onRef={ref => (this.taskTable = ref)} // eslint-disable-line
-                    tableTasks={this.state.tableTasks}
-                    addTask={this.addTask.bind(this)}
-                    handleTableTasks={this.handleTableTasks.bind(this)}
-                    handleSaveable={this.handleSaveable.bind(this)}
-                    moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
-                  />);
-                } return (<TaskTableMobile
                   tableTasks={this.state.tableTasks}
-                  changeTableTasks={this.changeTableTasks.bind(this)}
+                  addTask={this.addTask.bind(this)}
+                  handleTableTasks={this.handleTableTasks.bind(this)}
+                  handleSaveable={this.handleSaveable.bind(this)}
+                  moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
                 />);
-              })()}
-            </div>
+              } return (<TaskTableMobile
+                tableTasks={this.state.tableTasks}
+                changeTableTasks={this.changeTableTasks.bind(this)}
+              />);
+            })()}
           </Paper>
         </Grid>
       </Grid>

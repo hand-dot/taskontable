@@ -75,7 +75,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { classes, theme } = this.props;
+    const { theme } = this.props;
     return (
       <Grid container style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} sm={6}>
