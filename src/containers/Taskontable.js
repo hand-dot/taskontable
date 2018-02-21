@@ -229,7 +229,7 @@ class Taskontable extends Component {
   }
 
   handleTabChange(event, tab) {
-    this.setState({ tab });
+    this.setState({ tab, isOpenDashboard: true });
     setTimeout(() => this.forceUpdate());
   }
 

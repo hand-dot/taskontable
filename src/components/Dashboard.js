@@ -9,6 +9,7 @@ import Clock from './Clock';
 import DiffChart from './DiffChart';
 
 import util from '../util';
+import constants from '../constants';
 
 const totalEstimateMinute = datas => datas.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
 
@@ -75,7 +76,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { theme } = this.props;
+    const { classes, theme } = this.props;
     return (
       <Grid container style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} sm={6}>
@@ -91,19 +92,28 @@ class Dashboard extends Component {
             }}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <Typography gutterBottom variant="subheading">
-                 時刻
-          </Typography>
-          <Grid container>
-            <Grid item xs={6}>
-              <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
-            </Grid>
-            <Grid item xs={6}>
-              <Clock title={'終了時刻*'} caption="*現在時刻と残タスクの合計時間" time={this.state.endTime} />
-            </Grid>
-          </Grid>
-        </Grid>
+
+
+        {(() => {
+          if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+            return (
+              <Grid item xs={12} sm={6}>
+                <Typography gutterBottom variant="subheading">
+                       時刻
+                </Typography>
+                <Grid container>
+                  <Grid item xs={6}>
+                    <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Clock title={'終了時刻*'} caption="*現在時刻と残タスクの合計時間" time={this.state.endTime} />
+                  </Grid>
+                </Grid>
+              </Grid>
+            );
+          }
+          return null;
+        })()}
         <Grid item xs={12}>
           <Typography gutterBottom variant="subheading">
                  見積と実績の乖離
