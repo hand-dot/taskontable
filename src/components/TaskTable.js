@@ -30,6 +30,7 @@ class TaskTable extends Component {
     this.oldTimeDiffMinute = '';
     this.bindOpenTaskIntervalID = '';
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
+    document.title = constants.TITLE;
   }
   componentDidMount() {
     this.props.onRef(this);
