@@ -49,12 +49,13 @@ const columns = [
         const estimateVal = instance.getDataAtRowProp(row, 'estimate');
         if (startTimeVal !== '' && estimateVal !== '') {
           // 開始時刻、見積もりが設定してあるタスクなので、予約の色(青)と終了が近づいている色をつける処理
+          const nowTimeVal = moment().format('HH:mm');
           const expectedEndTimeVal = moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
-          const timeDiffMinute = util.getTimeDiffMinute(moment().format('HH:mm'), expectedEndTimeVal);
-          if (timeDiffMinute <= 1) {
+          const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
+          if (timeDiffMinute < 1) {
             td.parentNode.style.backgroundColor = constants.brandColor.light.RED;
           } else {
-            td.parentNode.style.backgroundColor = constants.brandColor.light.BLUE;
+            td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.brandColor.light.BLUE : constants.brandColor.light.GREEN;
           }
           td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
         } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
