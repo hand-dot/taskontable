@@ -14,7 +14,7 @@ ReactDOM.render(
   <BrowserRouter>
     <MuiThemeProvider theme={theme}>
       <div style={{
-        height: '100vh',
+        minHeight: '100vh',
         backgroundColor: constants.brandColor.base.BLUE,
         backgroundImage: `linear-gradient(${constants.brandColor.light.BLUE}, ${constants.brandColor.base.BLUE})`,
         backgroundAttachment: 'fixed',

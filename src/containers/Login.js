@@ -12,7 +12,7 @@ import google from '../images/google.svg';
 const styles = {
   root: {
     paddingTop: '3em',
-    height: '100%',
+    minHeight: '100vh',
   },
   content: {
     padding: '3em 2em',

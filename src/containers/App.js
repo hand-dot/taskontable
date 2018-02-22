@@ -20,7 +20,7 @@ firebase.initializeApp(firebaseConf);
 
 const styles = {
   root: {
-    height: '100%',
+    minHeight: '100vh',
   },
   content: {
     overflow: 'hidden',
