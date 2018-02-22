@@ -170,8 +170,8 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
     // ガードとstartTimeVal,estimateValの組み立て
     const startTimeVal = prop === 'startTime' ? newVal : hotInstance.getDataAtRowProp(row, 'startTime');
     const estimateVal = prop === 'estimate' ? newVal : hotInstance.getDataAtRowProp(row, 'estimate');
-    // 開始時刻が空もしくは見積が空か0の場合、既に登録されている通知を削除
-    if (startTimeVal === '' || estimateVal === '' || estimateVal === 0) {
+    // 終了時刻が既に入力されているもしくは開始時刻が空もしくは見積が空か0の場合、既に登録されている通知を削除
+    if (hotInstance.getDataAtRowProp(row, 'endTime') !== '' || startTimeVal === '' || estimateVal === '' || estimateVal === 0) {
       removeNotifiCell(hotInstance, row, col, ['startTime', 'endTime']);
       return;
     }
@@ -308,11 +308,11 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   return getEmptyHotData();
 };
 
+const newLocal = 'estimate';
 export const hotConf = {
   autoRowSize: false,
   autoColumnSize: false,
   stretchH: 'all',
-  comments: true,
   rowHeaders: true,
   rowHeaderWidth: 25,
   autoInsertRow: false,
@@ -322,6 +322,12 @@ export const hotConf = {
   columns,
   data: getEmptyHotData(),
   dataSchema: tableTaskSchema,
+  afterRowMove() {
+    const rowCount = this.countSourceRows();
+    for (let index = 0; index < rowCount; index += 1) {
+      manageNotifi(this, index, newLocal, this.getDataAtRowProp(this.toPhysicalRow(index), 'estimate'));
+    }
+  },
   afterChange(changes) {
     if (!changes) return;
     const changesLength = changes.length;
