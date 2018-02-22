@@ -402,7 +402,7 @@ class Taskontable extends Component {
                   return (
                     <Typography style={{ marginTop: 10 }} variant="caption">
                       <i className="fa fa-exclamation-circle" />
-                      {this.state.tableTasks.filter(data => !data.startTime && !data.endTime).length}Open
+                      {this.state.tableTasks.filter(data => !data.startTime || !data.endTime).length}Open
                       <span>&nbsp;</span>
                       <i className="fa fa-check" />
                       {this.state.tableTasks.filter(data => data.startTime && data.endTime).length}Close
