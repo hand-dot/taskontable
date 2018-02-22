@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import Menu, { MenuItem } from 'material-ui/Menu';
+import TextField from 'material-ui/TextField';
 import Input from 'material-ui/Input';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import MultipleSelect from './MultipleSelect';
@@ -59,6 +60,18 @@ class TaskList extends Component {
   changeTaskEstimate(type, e) {
     const task = Object.assign({}, this.state[type]);
     task.estimate = e.target.value;
+    this.setState({ [type]: task });
+  }
+
+  changeTaskStartTime(type, e) {
+    const task = Object.assign({}, this.state[type]);
+    task.startTime = e.target.value;
+    this.setState({ [type]: task });
+  }
+
+  changeTaskEndTime(type, e) {
+    const task = Object.assign({}, this.state[type]);
+    task.endTime = e.target.value;
     this.setState({ [type]: task });
   }
 
@@ -163,6 +176,7 @@ class TaskList extends Component {
               <TableCell padding="none" className={classes.cell}>作業内容</TableCell>
               <TableCell padding="none" className={classes.cell}>備考</TableCell>
               <TableCell padding="none" className={classes.miniCell}>見積</TableCell>
+              {(() => (isRegularTask ? <TableCell padding="none" className={classes.miniCell}>開始時刻</TableCell> : null))()}
               {(() => (isRegularTask ? <TableCell padding="none" className={classes.miniCell}>第何週</TableCell> : null))()}
               {(() => (isRegularTask ? <TableCell padding="none" className={classes.miniCell}>何曜日</TableCell> : null))()}
               <TableCell padding="none" className={classes.miniCell}>アクション</TableCell>
@@ -202,6 +216,24 @@ class TaskList extends Component {
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
                 </TableCell>
+                {(() => {
+                  if (isRegularTask) {
+                    return (
+                      <TableCell padding="none" className={classes.miniCell}>
+                        <TextField
+                          type="time"
+                          className={classes.cellInput}
+                          InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
+                          onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.edit)}
+                          value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
+                          placeholder="開始時刻"
+                          disabled={this.state.editingTaskIndex !== index}
+                        />
+                      </TableCell>
+                    );
+                  }
+                  return null;
+                })()}
                 {(() => {
                   if (isRegularTask) {
                     return (
@@ -312,6 +344,24 @@ class TaskList extends Component {
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
               </TableCell>
+              {(() => {
+                if (isRegularTask) {
+                  return (
+                    <TableCell padding="none" className={classes.miniCell}>
+                      <TextField
+                        type="time"
+                        className={classes.cellInput}
+                        InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
+                        onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.add)}
+                        value={this.state[constants.taskStateType.add].startTime}
+                        placeholder="開始時刻"
+                        disabled={this.state.editingTaskIndex !== -1}
+                      />
+                    </TableCell>
+                  );
+                }
+                return null;
+              })()}
               {(() => {
                 if (isRegularTask) {
                   return (

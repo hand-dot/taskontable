@@ -20,7 +20,7 @@ export default {
     miniCell: {
       border: '1px solid rgba(235, 235, 235, 1)',
       padding: '0 3px',
-      maxWidth: '2.7rem',
+      maxWidth: '3rem',
       fontSize: 11,
     },
     cellInput: {
