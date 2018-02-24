@@ -128,12 +128,12 @@ class Taskontable extends Component {
       tableTasks.splice(value, 1);
       // テーブルタスクからタスクプールに移動したら保存する
       setTimeout(() => {
-        this.saveHot();
         this.savePoolTasks(poolTasks);
       });
     }
     const saveable = this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks);
     this.setState({ tableTasks, saveable });
+    setTimeout(() => { this.saveHot(); });
   }
 
   changePoolTasks(taskActionType, taskPoolType, value) {
@@ -416,11 +416,18 @@ class Taskontable extends Component {
                     <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
                   </div>
                 </Tooltip>
-                <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
-                  <div style={{ display: 'inline-block' }}>
-                    <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
-                  </div>
-                </Tooltip>
+                {(() => {
+                  if (this.state.isHotMode) {
+                    return (
+                      <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
+                        <div style={{ display: 'inline-block' }}>
+                          <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
+                        </div>
+                      </Tooltip>
+                    );
+                  }
+                  return null;
+                })()}
                 <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(1, 'day').format('YYYY/MM/DD')} placement="top">
                   <div style={{ display: 'inline-block' }}>
                     <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><i className="fa fa-angle-right fa-lg" /></Button>
