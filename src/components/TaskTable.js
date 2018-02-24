@@ -123,7 +123,7 @@ class TaskTable extends Component {
         } else if (newTimeDiffMinute === 0) {
           document.title = `${moment().format('ss')}秒 - ${openTask.title || '無名タスク'}`;
         } else {
-          document.title = `${newTimeDiffMinute}分 - ${openTask.title || '無名タスク'}`;
+          document.title = `${newTimeDiffMinute > 0 ? `${newTimeDiffMinute}分` : `${newTimeDiffMinute * -1}分後`} - ${openTask.title || '無名タスク'}`;
         }
         this.oldTimeDiffMinute = newTimeDiffMinute;
       }, 1000);
