@@ -56,19 +56,13 @@ function HelpDialog(props) {
             <h5>アプリ</h5>
             <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography>
             <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – 保存</Typography>
-            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>I</kbd> – 行追加</Typography>
             <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
-            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>K</kbd> – タスクプール開閉</Typography>
-            <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>L</kbd> – テーブルを選択</Typography>
             <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
             <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
           </Grid>
           <Grid className={classes.shotcut} item xs={6}>
             <h5>テーブル編集</h5>
             <Typography gutterBottom variant="caption"><kbd>右クリック</kbd> – コンテキストメニュー表示</Typography>
-            <Typography gutterBottom variant="caption"><kbd>Enter</kbd> – 編集開始/終了</Typography>
-            <Typography gutterBottom variant="caption"><kbd>Esc</kbd> – 編集をキャンセル</Typography>
-            <Typography gutterBottom variant="caption"><kbd>Backspace</kbd> – セルを空にする</Typography>
             <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>C</kbd> – コピー</Typography>
             <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>X</kbd> – 切り取り</Typography>
             <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>V</kbd> – 貼り付け</Typography>

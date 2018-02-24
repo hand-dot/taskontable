@@ -99,7 +99,7 @@ class GlobalHeader extends Component {
   }
 
   render() {
-    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes } = this.props;
+    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes, theme } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -136,11 +136,18 @@ class GlobalHeader extends Component {
                       </MenuItem>
                     </Menu>
                   </div>
-                  <div>
-                    <IconButton className={classes.iconButton} onClick={openHelpDialog}>
-                      <i className="fa fa-question-circle" />
-                    </IconButton>
-                  </div>
+                  {(() => {
+                    if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+                      return (
+                        <div>
+                          <IconButton className={classes.iconButton} onClick={openHelpDialog}>
+                            <i className="fa fa-question-circle" />
+                          </IconButton>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                   <div>
                     <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
                       <i className="fa fa-info-circle" />
@@ -193,6 +200,7 @@ GlobalHeader.propTypes = {
   closeHelpDialog: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
+  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles)(GlobalHeader);
+export default withStyles(styles, { withTheme: true })(GlobalHeader);
