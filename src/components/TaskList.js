@@ -30,6 +30,12 @@ class TaskList extends Component {
     };
   }
 
+  componentWillReceiveProps() {
+    this.setState({
+      editingTaskIndex: -1,
+    });
+  }
+
   openTaskAction(index, e) {
     const anchorEl = Object.assign([], this.state.anchorEl);
     anchorEl[index] = e.currentTarget;
@@ -108,11 +114,9 @@ class TaskList extends Component {
     } else {
       // 編集スタート
       this.setState({
+        editingTaskIndex: index,
         [constants.taskStateType.edit]: util.cloneDeep(this.props.tasks[index]),
         [constants.taskStateType.add]: getPoolTaskSchema(),
-      });
-      setTimeout(() => {
-        this.setState({ editingTaskIndex: index });
       });
     }
   }

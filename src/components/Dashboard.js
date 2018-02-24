@@ -76,7 +76,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { classes, theme } = this.props;
+    const { theme } = this.props;
     return (
       <Grid container style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} sm={6}>
@@ -119,9 +119,9 @@ class Dashboard extends Component {
                  見積と実績の乖離
           </Typography>
           <Typography gutterBottom variant="caption">
-                *見積に対して実績が　{(() => {
+                *見積に対して実績が{(() => {
               const diff = ((this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60)).toFixed(1);
-              return diff > 0 ? `${diff}h　マイナスです` : `${diff * -1}h　オーバーしています`;
+              return diff > 0 ? `${diff}hマイナスです` : `${diff * -1}hオーバーしています`;
             })()}
           </Typography>
           <Grid container>
