@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { withStyles } from 'material-ui/styles';
 import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
@@ -160,9 +161,22 @@ class TaskTableMobile extends Component {
                 key={task.title + task.memo + task.estimate}
                 style={(() => {
                   const obj = {};
-                  if (task.startTime && task.endTime) {
+                  if (task.estimate === '') {
+                    obj.backgroundColor = constants.brandColor.light.YELLOW;
+                  } else if (task.startTime && task.endTime) {
                     obj.backgroundColor = constants.brandColor.light.GREY;
-                    obj.color = constants.brandColor.base.GREY;
+                    obj.color = constants.brandColor.base.RED;
+                  } else if (task.startTime) {
+                    // 開始時刻、見積もりが設定してあるタスクなので、予約の色(青)と終了が近づいている色をつける処理
+                    const nowTimeVal = moment().format('HH:mm');
+                    const expectedEndTimeVal = moment(task.startTime, 'HH:mm').add(task.estimate, 'minutes').format('HH:mm');
+                    const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
+                    obj.backgroundColor = constants.brandColor.light.BLUE;
+                    if (timeDiffMinute < 1) {
+                      obj.backgroundColor = constants.brandColor.light.RED;
+                    } else {
+                      obj.backgroundColor = util.getTimeDiffMinute(nowTimeVal, task.startTime) < 1 ? constants.brandColor.light.BLUE : constants.brandColor.light.GREEN;
+                    }
                   }
                   return obj;
                 })()}
