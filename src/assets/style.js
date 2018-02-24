@@ -27,7 +27,7 @@ export default {
       fontSize: 11,
     },
     taskRow: {
-      animation: 'blink 1s',
+      animation: 'blink 0.5s',
     },
   }),
 };

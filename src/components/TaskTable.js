@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 import { withStyles } from 'material-ui/styles';
-import moment from 'moment';
 import debounce from 'lodash.debounce';
 
 import { hotConf, getEmptyHotData, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
@@ -19,18 +18,10 @@ class TaskTable extends Component {
   constructor(props) {
     super(props);
     this.hot = null;
-    this.oldTimeDiffMinute = '';
-    this.bindOpenTaskIntervalID = '';
-    this.state = {
-    };
     this.syncPropByUpdate = debounce(this.syncPropByUpdate, constants.RENDER_DELAY);
     this.syncPropByRender = debounce(this.syncPropByRender, constants.RENDER_DELAY);
   }
   componentWillMount() {
-    this.oldTimeDiffMinute = '';
-    this.bindOpenTaskIntervalID = '';
-    if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
-    document.title = constants.TITLE;
   }
   componentDidMount() {
     this.props.onRef(this);
@@ -54,11 +45,8 @@ class TaskTable extends Component {
       afterUpdateSettings() { self.syncPropByUpdate(); },
     }));
   }
-  componentWillReceiveProps() {
-  }
   componentWillUnmount() {
     this.props.onRef(undefined);
-    if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
     if (!this.hot) return;
     this.hot.destroy();
     this.hot = null;
@@ -85,7 +73,6 @@ class TaskTable extends Component {
   syncPropByRender() {
     if (!this.hot) return;
     const hotTasks = getHotTasksIgnoreEmptyTask(this.hot);
-    this.bindOpenTasksProcessing(hotTasks);
     if (!util.equal(hotTasks, this.props.tableTasks)) {
       this.props.handleSaveable(true);
       this.props.handleTableTasks(hotTasks);
@@ -107,27 +94,8 @@ class TaskTable extends Component {
     if (this.hot) this.hot.updateSettings({ data: getEmptyHotData() });
   }
 
-  // 開始しているタスクを見つけ、経過時間をタイトルに反映する
-  bindOpenTasksProcessing = (tasks) => {
-    const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
-    document.title = constants.TITLE;
-    if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
-    if (openTask) {
-      this.bindOpenTaskIntervalID = setInterval(() => {
-        const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
-        // 1分に一度タイトルが書き変わったタイミングでhotを再描画する。
-        if (newTimeDiffMinute !== this.oldTimeDiffMinute && this.hot) this.hot.render();
-        if (newTimeDiffMinute === -1) {
-          // 開始まで秒単位でカウントダウンする場合
-          document.title = `${moment().format('ss') - 60}秒 - ${openTask.title || '無名タスク'}`;
-        } else if (newTimeDiffMinute === 0) {
-          document.title = `${moment().format('ss')}秒 - ${openTask.title || '無名タスク'}`;
-        } else {
-          document.title = `${newTimeDiffMinute > 0 ? `${newTimeDiffMinute}分` : `${newTimeDiffMinute * -1}分後`} - ${openTask.title || '無名タスク'}`;
-        }
-        this.oldTimeDiffMinute = newTimeDiffMinute;
-      }, 1000);
-    }
+  renderHot() {
+    if (this.hot) this.hot.render();
   }
 
   render() {

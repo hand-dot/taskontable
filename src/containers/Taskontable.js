@@ -14,6 +14,7 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
+import Hidden from 'material-ui/Hidden';
 
 import Dashboard from '../components/Dashboard';
 import TableStatus from '../components/TableStatus';
@@ -45,14 +46,17 @@ const styles = theme => ({
 class Taskontable extends Component {
   constructor(props) {
     super(props);
+    this.oldTimeDiffMinute = '';
+    this.bindOpenTaskIntervalID = '';
     this.state = {
       isHotMode: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
       loading: true,
       saveable: false,
       tab: 0,
+      hasOpenTask: false,
       isOpenDashboard: true,
       date: moment().format(constants.DATEFMT),
-      lastSaveTime: { hour: 0, minute: 0, second: 0 },
+      lastSaveTime: util.getCrrentTimeObj(),
       tableTasks: getEmptyHotData(),
       poolTasks: {
         highPriorityTasks: [],
@@ -63,10 +67,6 @@ class Taskontable extends Component {
   }
 
   componentWillMount() {
-    // 初期値の最終保存時刻
-    this.setState({
-      lastSaveTime: util.getCrrentTimeObj(),
-    });
     window.onkeydown = (e) => {
       this.fireShortcut(e);
     };
@@ -90,6 +90,7 @@ class Taskontable extends Component {
   }
 
   componentWillUnmount() {
+    if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
     window.onkeydown = '';
     window.onbeforeunload = '';
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
@@ -127,12 +128,10 @@ class Taskontable extends Component {
       this.setState({ poolTasks });
       tableTasks.splice(value, 1);
       // テーブルタスクからタスクプールに移動したら保存する
-      setTimeout(() => {
-        this.savePoolTasks(poolTasks);
-      });
+      setTimeout(() => { this.savePoolTasks(poolTasks); });
     }
-    const saveable = this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks);
-    this.setState({ tableTasks, saveable });
+    this.handleTableTasks(tableTasks);
+    this.handleSaveable(this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks));
     setTimeout(() => { this.saveHot(); });
   }
 
@@ -234,6 +233,7 @@ class Taskontable extends Component {
   }
 
   handleTableTasks(tableTasks) {
+    this.bindOpenTasksProcessing(tableTasks);
     this.setState({ tableTasks });
   }
 
@@ -253,6 +253,33 @@ class Taskontable extends Component {
       this.toggleDashboard();
     }
     return false;
+  }
+
+  // 開始しているタスクを見つけ、経過時間をタイトルに反映する
+  bindOpenTasksProcessing = (tasks) => {
+    const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
+    if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
+    if (openTask) {
+      this.setState({ hasOpenTask: true });
+      this.bindOpenTaskIntervalID = setInterval(() => {
+        const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
+        // 1分に一度タイトルが書き変わったタイミングでhotを再描画する。
+        if (newTimeDiffMinute !== this.oldTimeDiffMinute && this.state.isHotMode) this.taskTable.renderHot();
+        if (newTimeDiffMinute === -1) {
+          // 開始まで秒単位でカウントダウンする場合
+          document.title = `${moment().format('ss') - 60}秒 - ${openTask.title || '無名タスク'}`;
+        } else if (newTimeDiffMinute === 0) {
+          document.title = `${moment().format('ss')}秒 - ${openTask.title || '無名タスク'}`;
+        } else {
+          document.title = `${newTimeDiffMinute > 0 ? `${newTimeDiffMinute}分` : `${newTimeDiffMinute * -1}分後`} - ${openTask.title || '無名タスク'}`;
+        }
+        this.oldTimeDiffMinute = newTimeDiffMinute;
+      }, 1000);
+    } else {
+      this.setState({ hasOpenTask: false });
+      this.bindOpenTaskIntervalID = '';
+      document.title = constants.TITLE;
+    }
   }
 
   attachPoolTasks() {
@@ -298,9 +325,7 @@ class Taskontable extends Component {
           this.taskTable.clear();
           this.taskTable.setData(snapshot.val()[this.state.date]);
         }
-        this.setState({
-          tableTasks: snapshot.val()[this.state.date],
-        });
+        this.handleTableTasks(snapshot.val()[this.state.date]);
       }
       this.setState({
         saveable: false,
@@ -326,9 +351,7 @@ class Taskontable extends Component {
       if (snapshot.exists() && !util.equal(snapshot.val(), getEmptyHotData())) {
         // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
         if (this.state.isHotMode) this.taskTable.setData(snapshot.val());
-        this.setState({
-          tableTasks: snapshot.val(),
-        });
+        this.handleTableTasks(snapshot.val());
       } else if (this.state.poolTasks.regularTasks.length !== 0) {
         // 定期タスクをテーブルに設定する処理。
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
@@ -338,9 +361,7 @@ class Taskontable extends Component {
         // https://github.com/hand-dot/taskontable/issues/118
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
         if (this.state.isHotMode) this.taskTable.setData(regularTasks);
-        this.setState({
-          tableTasks: regularTasks,
-        });
+        this.handleTableTasks(regularTasks);
       }
     });
   }
@@ -385,10 +406,15 @@ class Taskontable extends Component {
           </ExpansionPanel>
           <Paper elevation={1}>
             <Grid style={{ padding: `${theme.spacing.unit * 2}px 0` }} container spacing={0}>
-              <Grid style={{ textAlign: 'center' }} item xs={4}>
+              <Hidden xsDown>
+                <Grid style={{ textAlign: 'center' }} item xs={3}>
+                  <Typography style={{ marginTop: 10, color: this.state.hasOpenTask ? constants.brandColor.base.RED : constants.brandColor.light.GREY, animation: this.state.hasOpenTask ? 'blink 1s infinite' : '' }} variant="caption">[●REC]</Typography>
+                </Grid>
+              </Hidden>
+              <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
                 <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
               </Grid>
-              <Grid style={{ textAlign: 'center' }} item xs={4}>
+              <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
                 {(() => {
                   if (this.state.tableTasks.length === 0) {
                     return (
@@ -410,7 +436,7 @@ class Taskontable extends Component {
                   );
                 })()}
               </Grid>
-              <Grid style={{ textAlign: 'center' }} item xs={4}>
+              <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
                 <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(-1, 'day').format('YYYY/MM/DD')} placement="top">
                   <div style={{ display: 'inline-block' }}>
                     <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
