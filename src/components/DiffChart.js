@@ -69,7 +69,7 @@ class DiffChart extends Component {
     if (!charts[this.state.ctxId] || !Array.isArray(nextProps.data)) return;
     charts[this.state.ctxId].data.datasets = nextProps.dataLabels.map((label, index) => ({
       label: (label.length < 13 ? label || '' : `${label.substring(0, 10)}..`),
-      data: [(nextProps.data[index].estimate / 60).toFixed(1), (nextProps.data[index].actually / 60).toFixed(1)],
+      data: [nextProps.data[index].estimate, nextProps.data[index].actually],
       backgroundColor: backgroundColors[index % backgroundColors.length],
       borderColor: borderColors[index % backgroundColors.length],
       borderWidth: 1,
