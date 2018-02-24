@@ -371,7 +371,7 @@ class Taskontable extends Component {
     return (
       <Grid container spacing={0} className={classes.root} style={{ paddingTop: theme.mixins.toolbar.minHeight }}>
         <Grid item xs={12}>
-          <ExpansionPanel expanded={this.state.isOpenDashboard}>
+          <ExpansionPanel expanded={this.state.isOpenDashboard} style={{ margin: 0 }} elevation={1}>
             <ExpansionPanelSummary expandIcon={<div style={{ width: '100%' }} onClick={this.toggleDashboard.bind(this)}><i className="fa fa-angle-down fa-lg" /></div>}>
               <Tabs value={this.state.tab} onChange={this.handleTabChange.bind(this)} scrollable={false} scrollButtons="off" indicatorColor={constants.brandColor.light.BLUE} >
                 <Tab label={<span><i className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
