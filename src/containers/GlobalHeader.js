@@ -98,6 +98,11 @@ class GlobalHeader extends Component {
     setTimeout(() => this.props.logout());
   }
 
+  goSettings() {
+    this.closeMenu();
+    setTimeout(() => this.props.goSettings());
+  }
+
   render() {
     const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes, theme } = this.props;
     const { anchorEl } = this.state;
@@ -131,6 +136,16 @@ class GlobalHeader extends Component {
                       onClose={this.closeMenu.bind(this)}
                     >
                       <MenuItem>アカウント名: {user.displayName}</MenuItem>
+                      {(() => {
+                        if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+                          return (
+                            <MenuItem onClick={this.goSettings.bind(this)}>
+                              <i className="fa fa-cog" aria-hidden="true" />　設定
+                            </MenuItem>
+                          );
+                        }
+                        return null;
+                      })()}
                       <MenuItem onClick={this.logout.bind(this)}>
                         <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
                       </MenuItem>
@@ -199,6 +214,7 @@ GlobalHeader.propTypes = {
   openHelpDialog: PropTypes.func.isRequired,
   closeHelpDialog: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
+  goSettings: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

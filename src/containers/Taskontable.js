@@ -83,6 +83,7 @@ class Taskontable extends Component {
 
   componentWillUnmount() {
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
+    document.title = constants.TITLE;
     window.onkeydown = '';
     window.onbeforeunload = '';
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();

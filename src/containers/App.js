@@ -14,6 +14,7 @@ const GlobalHeader = AsyncContainer(() => import('./GlobalHeader').then(module =
 const Top = AsyncContainer(() => import('./Top').then(module => module.default), {});
 const Login = AsyncContainer(() => import('./Login').then(module => module.default), {});
 const Signup = AsyncContainer(() => import('./Signup').then(module => module.default), {});
+const Settings = AsyncContainer(() => import('./Settings').then(module => module.default), {});
 const Taskontable = AsyncContainer(() => import('./Taskontable').then(module => module.default), {});
 
 firebase.initializeApp(firebaseConf);
@@ -89,6 +90,10 @@ class App extends Component {
     });
   }
 
+  goSettings() {
+    this.props.history.push('settings');
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -99,6 +104,7 @@ class App extends Component {
           openHelpDialog={this.openHelpDialog.bind(this)}
           closeHelpDialog={this.closeHelpDialog.bind(this)}
           logout={this.logout.bind(this)}
+          goSettings={this.goSettings.bind(this)}
         />
         <Switch>
           <Route
@@ -108,6 +114,10 @@ class App extends Component {
           <Route
             path="/login"
             render={props => <Login login={this.login.bind(this)} {...props} />}
+          />
+          <Route
+            path="/settings"
+            render={props => <Settings {...props} />}
           />
           <Route
             exact
@@ -137,7 +147,7 @@ class App extends Component {
 
 App.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line
-  history: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 
