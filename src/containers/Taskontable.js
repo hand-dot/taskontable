@@ -4,24 +4,20 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
 
-import Typography from 'material-ui/Typography';
 import Tabs, { Tab } from 'material-ui/Tabs';
-import Tooltip from 'material-ui/Tooltip';
 import Grid from 'material-ui/Grid';
-import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
-import Hidden from 'material-ui/Hidden';
 
 import Dashboard from '../components/Dashboard';
+import TableCtl from '../components/TableCtl';
 import TableStatus from '../components/TableStatus';
 import TaskPool from '../components/TaskPool';
 import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
-import DatePicker from '../components/DatePicker';
 import { getEmptyHotData } from '../hot';
 
 import constants from '../constants';
@@ -36,10 +32,6 @@ const styles = theme => ({
     maxHeight: 470,
     overflowY: 'scroll',
     overflowX: 'hidden',
-  },
-  tableCtlButton: {
-    fontSize: 11,
-    minWidth: 25,
   },
 });
 
@@ -405,62 +397,15 @@ class Taskontable extends Component {
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <Paper elevation={1}>
-            <Grid style={{ padding: `${theme.spacing.unit * 2}px 0` }} container spacing={0}>
-              <Hidden xsDown>
-                <Grid style={{ textAlign: 'center' }} item xs={3}>
-                  <Typography style={{ marginTop: 10, color: this.state.hasOpenTask ? constants.brandColor.base.RED : constants.brandColor.light.GREY, animation: this.state.hasOpenTask ? 'blink 1s infinite' : '' }} variant="caption">[●REC]</Typography>
-                </Grid>
-              </Hidden>
-              <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
-                <DatePicker value={this.state.date} changeDate={this.changeDate.bind(this)} label={''} />
-              </Grid>
-              <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
-                {(() => {
-                  if (this.state.tableTasks.length === 0) {
-                    return (
-                      <Typography style={{ marginTop: 10 }} variant="caption"><i className="fa fa-asterisk" />タスクがありません</Typography>
-                    );
-                  } else if (this.state.tableTasks.length === this.state.tableTasks.filter(data => data.startTime && data.endTime).length) {
-                    return (
-                      <Typography style={{ marginTop: 10 }} variant="caption"><i className="fa fa-thumbs-up" />Complete!</Typography>
-                    );
-                  }
-                  return (
-                    <Typography style={{ marginTop: 10 }} variant="caption">
-                      <i className="fa fa-exclamation-circle" />
-                      {this.state.tableTasks.filter(data => !data.startTime || !data.endTime).length}Open
-                      <span>&nbsp;</span>
-                      <i className="fa fa-check" />
-                      {this.state.tableTasks.filter(data => data.startTime && data.endTime).length}Close
-                    </Typography>
-                  );
-                })()}
-              </Grid>
-              <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
-                <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(-1, 'day').format('YYYY/MM/DD')} placement="top">
-                  <div style={{ display: 'inline-block' }}>
-                    <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
-                  </div>
-                </Tooltip>
-                {(() => {
-                  if (this.state.isHotMode) {
-                    return (
-                      <Tooltip title={`最終保存時刻 : ${(`00${this.state.lastSaveTime.hour}`).slice(-2)}:${(`00${this.state.lastSaveTime.minute}`).slice(-2)}`} placement="top">
-                        <div style={{ display: 'inline-block' }}>
-                          <Button className={classes.tableCtlButton} disabled={!this.state.saveable} variant="raised" onClick={this.saveHot.bind(this)} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
-                        </div>
-                      </Tooltip>
-                    );
-                  }
-                  return null;
-                })()}
-                <Tooltip title={moment(this.state.date, 'YYYY-MM-DD').add(1, 'day').format('YYYY/MM/DD')} placement="top">
-                  <div style={{ display: 'inline-block' }}>
-                    <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><i className="fa fa-angle-right fa-lg" /></Button>
-                  </div>
-                </Tooltip>
-              </Grid>
-            </Grid>
+            <TableCtl
+              tableTasks={this.state.tableTasks}
+              hasOpenTask={this.state.hasOpenTask}
+              date={this.state.date}
+              lastSaveTime={this.state.lastSaveTime}
+              saveable={this.state.saveable}
+              changeDate={this.changeDate.bind(this)}
+              saveHot={this.saveHot.bind(this)}
+            />
             <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
             {(() => {
               if (this.state.isHotMode) {
