@@ -161,11 +161,10 @@ class TaskTableMobile extends Component {
                 key={task.title + task.memo + task.estimate}
                 style={(() => {
                   const obj = {};
-                  if (task.estimate === '') {
-                    obj.backgroundColor = constants.brandColor.light.YELLOW;
-                  } else if (task.startTime && task.endTime) {
+                  if (task.startTime && task.endTime) {
                     obj.backgroundColor = constants.brandColor.light.GREY;
-                    obj.color = constants.brandColor.base.RED;
+                  } else if (task.estimate === '') {
+                    obj.backgroundColor = constants.brandColor.light.YELLOW;
                   } else if (task.startTime) {
                     // 開始時刻、見積もりが設定してあるタスクなので、予約の色(青)と終了が近づいている色をつける処理
                     const nowTimeVal = moment().format('HH:mm');
