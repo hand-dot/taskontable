@@ -11,6 +11,7 @@ import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
+import Snackbar from 'material-ui/Snackbar';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';
@@ -41,6 +42,7 @@ class Taskontable extends Component {
     this.oldTimeDiffMinute = '';
     this.bindOpenTaskIntervalID = '';
     this.state = {
+      isOpenSnackbar: false,
       isHotMode: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
       loading: true,
       saveable: false,
@@ -195,7 +197,7 @@ class Taskontable extends Component {
   saveHot() {
     // 並び変えられたデータを取得するために処理が入っている。
     const tableTasks = this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks;
-    this.setState({ tableTasks });
+    this.setState({ tableTasks, isOpenSnackbar: true });
     this.saveTableTask(tableTasks);
   }
 
@@ -425,6 +427,17 @@ class Taskontable extends Component {
             })()}
           </Paper>
         </Grid>
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={this.state.isOpenSnackbar}
+          onClose={() => {
+            this.setState({ isOpenSnackbar: false });
+          }}
+          SnackbarContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">保存しました。</span>}
+        />
       </Grid>
     );
   }

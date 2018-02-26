@@ -117,7 +117,7 @@ class App extends Component {
           />
           <Route
             path="/settings"
-            render={props => <Settings {...props} />}
+            render={props => <Settings user={this.state.user} {...props} />}
           />
           <Route
             exact
