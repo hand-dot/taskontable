@@ -86,16 +86,16 @@ class TaskTableMobile extends Component {
         alert('作業内容が空の状態では保存できません。');
         return;
       }
-      this.props.changeTableTasks(constants.taskActionType.EDIT, { task: util.cloneDeep(this.state[constants.taskStateType.edit]), index });
+      if (!util.equal(this.props.tableTasks[index], this.state[constants.taskStateType.edit])) {
+        this.props.changeTableTasks(constants.taskActionType.EDIT, { task: util.cloneDeep(this.state[constants.taskStateType.edit]), index });
+      }
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getTableTaskSchema() });
     } else {
       // 編集スタート
       this.setState({
+        editingTaskIndex: index,
         [constants.taskStateType.edit]: util.cloneDeep(this.props.tableTasks[index]),
         [constants.taskStateType.add]: getTableTaskSchema(),
-      });
-      setTimeout(() => {
-        this.setState({ editingTaskIndex: index });
       });
     }
   }
