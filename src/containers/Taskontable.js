@@ -201,10 +201,29 @@ class Taskontable extends Component {
     this.saveTableTask(tableTasks);
   }
 
+
+  fireScript(data, scriptType = 'exportScript') {
+    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    firebase.database().ref(`/${this.props.user.uid}/settings/${scriptType}`).once('value').then((snapshot) => {
+      if (snapshot.exists() && snapshot.val() !== '') {
+        const script = snapshot.val();
+        const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
+        worker.postMessage(data.length === 0 ? getEmptyHotData() : data);
+        // 終了したときに呼ばれる
+        worker.onmessage = (e) => {
+          console.log(`------${scriptType}------`);
+          console.log(e.data);
+          console.log(`------${scriptType}------`);
+        };
+      }
+    });
+  }
+
   saveTableTask(data) {
     this.setState({
       loading: true,
     });
+    this.fireScript(data, 'exportScript');
     firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
       this.setState({
         loading: false,
@@ -347,6 +366,7 @@ class Taskontable extends Component {
         // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
         if (this.state.isHotMode) this.taskTable.setData(snapshot.val());
         this.handleTableTasks(snapshot.val());
+        this.fireScript(snapshot.val(), 'importScript');
       } else if (this.state.poolTasks.regularTasks.length !== 0) {
         // 定期タスクをテーブルに設定する処理。
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
@@ -357,6 +377,7 @@ class Taskontable extends Component {
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
         if (this.state.isHotMode) this.taskTable.setData(regularTasks);
         this.handleTableTasks(regularTasks);
+        this.fireScript(regularTasks, 'importScript');
       }
     });
   }

@@ -27,7 +27,7 @@ function importScript(e) {
   e.data.forEach(data => {
     data.title = data.title + '!';
   });
-  postMessage(e);
+  postMessage(e.data);
 }`;
 
 const exampleExportScript =
@@ -36,7 +36,7 @@ function exportScript(e) {
   e.data.forEach(data => {
     data.title = data.title + '!';
   });
-  postMessage(e);
+  postMessage(e.data);
 }`;
 
 const styles = {
