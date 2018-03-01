@@ -70,7 +70,7 @@ class DiffChart extends Component {
     if (!charts[this.state.ctxId] || !Array.isArray(nextProps.data)) return;
     if (util.equal(nextProps.data, this.state.data)) return;
     charts[this.state.ctxId].data.datasets = nextProps.dataLabels.map((label, index) => ({
-      label: (label.length < 13 ? label || '' : `${label.substring(0, 10)}..`),
+      label: (label.length < 13 ? label || '' : `${label.substring(0, 10)}...`),
       data: [nextProps.data[index].estimate, nextProps.data[index].actually],
       backgroundColor: backgroundColors[index % backgroundColors.length],
       borderColor: borderColors[index % backgroundColors.length],

@@ -119,9 +119,12 @@ class Dashboard extends Component {
                  見積と実績の乖離
           </Typography>
           <Typography gutterBottom variant="caption">
-                *見積に対して実績が{(() => {
-              const diff = ((this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60)).toFixed(1);
-              return diff > 0 ? `${diff}hマイナスです` : `${diff * -1}hオーバーしています`;
+            {(() => {
+              const diff = +((this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60)).toFixed(1);
+              if (diff !== 0) {
+                return diff > 0 ? `*見積に対して実績が${diff}hマイナスです` : `*見積に対して実績が${diff * -1}hオーバーしています`;
+              }
+              return '　';
             })()}
           </Typography>
           <Grid container>
