@@ -46,7 +46,7 @@ class DiffChart extends Component {
             stacked: true,
             ticks: {
               beginAtZero: true,
-              callback: value => value + this.props.unit,
+              callback: value => value.toFixed(1) + this.props.unit,
             },
           }],
           yAxes: [{
