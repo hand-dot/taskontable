@@ -42,28 +42,27 @@ const columns = [
       td.innerHTML = value;
       const endTimeVal = value;
       const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
+      const estimateVal = instance.getDataAtRowProp(row, 'estimate');
+      const isToday = instance.getSettings().isToday;
+      if (!isToday) td.parentNode.style.backgroundColor = '';
       if (endTimeVal !== '' && startTimeVal !== '') {
         // 完了しているタスク
         td.parentNode.style.backgroundColor = constants.brandColor.light.GREY;
-      } else if (endTimeVal === '') {
-        const estimateVal = instance.getDataAtRowProp(row, 'estimate');
-        if (startTimeVal !== '' && estimateVal !== '') {
-          // 開始時刻、見積もりが設定してあるタスクなので、予約の色(青)と終了が近づいている色をつける処理
-          const nowTimeVal = moment().format('HH:mm');
-          const expectedEndTimeVal = moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
-          const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
-          if (timeDiffMinute < 1) {
-            td.parentNode.style.backgroundColor = constants.brandColor.light.RED;
-          } else {
-            td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.brandColor.light.BLUE : constants.brandColor.light.GREEN;
-          }
-          td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
-        } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
-          // 見積もりが空なので警告にする
-          td.parentNode.style.backgroundColor = constants.brandColor.light.YELLOW;
+      } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
+        // 見積もりが空なので警告にする
+        td.parentNode.style.backgroundColor = constants.brandColor.light.YELLOW;
+      }
+      if (isToday && startTimeVal !== '' && estimateVal !== '') {
+      // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
+        const nowTimeVal = moment().format('HH:mm');
+        const expectedEndTimeVal = moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
+        const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
+        if (timeDiffMinute < 1) {
+          td.parentNode.style.backgroundColor = constants.brandColor.light.RED;
         } else {
-          td.parentNode.style.backgroundColor = '';
+          td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.brandColor.light.BLUE : constants.brandColor.light.GREEN;
         }
+        td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
       }
       td.style.backgroundColor = '';
       return td;
@@ -331,6 +330,7 @@ export const hotConf = {
   },
   afterChange(changes) {
     if (!changes) return;
+    if (!this.getSettings().isToday) return;
     const changesLength = changes.length;
     for (let i = 0; i < changesLength; i += 1) {
       const [row, prop, oldVal, newVal] = changes[i];

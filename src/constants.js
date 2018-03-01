@@ -1,6 +1,5 @@
 const rgb = {
   RED: '255, 99, 132',
-  ORANGE: '255, 159, 64',
   YELLOW: '255, 205, 86',
   GREEN: '75, 192, 192',
   BLUE: '54, 162, 235',
@@ -57,7 +56,6 @@ export default {
   brandColor: {
     base: {
       RED: `rgb(${rgb.RED})`,
-      ORANGE: `rgb(${rgb.ORANGE})`,
       YELLOW: `rgb(${rgb.YELLOW})`,
       GREEN: `rgb(${rgb.GREEN})`,
       BLUE: `rgb(${rgb.BLUE})`,
@@ -66,7 +64,6 @@ export default {
     },
     light: {
       RED: `rgba(${rgb.RED},0.2)`,
-      ORANGE: `rgba(${rgb.ORANGE},0.2)`,
       YELLOW: `rgba(${rgb.YELLOW},0.2)`,
       GREEN: `rgba(${rgb.GREEN},0.2)`,
       BLUE: `rgba(${rgb.BLUE},0.2)`,

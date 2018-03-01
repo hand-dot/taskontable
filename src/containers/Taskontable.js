@@ -440,11 +440,13 @@ class Taskontable extends Component {
                   addTask={this.addTask.bind(this)}
                   handleTableTasks={this.handleTableTasks.bind(this)}
                   handleSaveable={this.handleSaveable.bind(this)}
+                  isToday={moment(this.state.date, constants.DATEFMT).isSame(new Date(), 'day')}
                   moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
                 />);
               } return (<TaskTableMobile
                 tableTasks={this.state.tableTasks}
                 changeTableTasks={this.changeTableTasks.bind(this)}
+                isToday={moment(this.state.date, constants.DATEFMT).isSame(new Date(), 'day')}
               />);
             })()}
           </Paper>
