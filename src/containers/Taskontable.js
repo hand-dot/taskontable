@@ -86,8 +86,8 @@ class Taskontable extends Component {
     document.title = constants.TITLE;
     window.onkeydown = '';
     window.onbeforeunload = '';
-    firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
-    firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).off();
+    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
   }
 
   changeTableTasks(taskActionType, value) {
@@ -189,7 +189,7 @@ class Taskontable extends Component {
         return copyTask;
       });
     }
-    firebase.database().ref(`/${this.props.user.uid}/poolTasks`).set(tasks);
+    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(tasks);
   }
 
   saveHot() {
@@ -202,7 +202,7 @@ class Taskontable extends Component {
 
   fireScript(data, scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
-    firebase.database().ref(`/${this.props.user.uid}/settings/${scriptType}`).once('value').then((snapshot) => {
+    firebase.database().ref(`/users/${this.props.user.uid}/settings/${scriptType}`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val() !== '') {
         const script = snapshot.val();
         const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
@@ -222,7 +222,7 @@ class Taskontable extends Component {
       loading: true,
     });
     this.fireScript(data, 'exportScript');
-    firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
+    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
       this.setState({
         loading: false,
         lastSaveTime: util.getCrrentTimeObj(),
@@ -253,7 +253,7 @@ class Taskontable extends Component {
     if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
       // 基準日を変更
       if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
-      firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
       setTimeout(() => { this.initTableTask(); });
     } else if (constants.shortcuts.SAVE(e)) {
@@ -296,7 +296,7 @@ class Taskontable extends Component {
   }
 
   attachPoolTasks() {
-    firebase.database().ref(`/${this.props.user.uid}/poolTasks`).on('value', (snapshot) => {
+    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
         const poolTasks = snapshot.val();
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
@@ -328,7 +328,7 @@ class Taskontable extends Component {
   }
 
   attachTableTasks() {
-    firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
+    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       this.setState({
         loading: true,
       });
@@ -349,7 +349,7 @@ class Taskontable extends Component {
 
   fetchTableTask() {
     this.setState({ loading: true });
-    return firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
+    return firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
       this.setState({
         saveable: false,
         loading: false,
@@ -394,7 +394,7 @@ class Taskontable extends Component {
       date = constants.INITIALDATE;
     }
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
-      firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date });
       setTimeout(() => { this.initTableTask(); });
     }

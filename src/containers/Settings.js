@@ -70,7 +70,7 @@ class Settings extends Component {
   }
 
   setScripts() {
-    firebase.database().ref(`/${this.props.user.uid}/settings/importScript`).once('value').then((snapshot) => {
+    firebase.database().ref(`/users/${this.props.user.uid}/settings/importScript`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val() !== '') {
         const importScript = snapshot.val();
         this.setState({ importScript });
@@ -78,7 +78,7 @@ class Settings extends Component {
         this.setState({ importScript: exampleImportScript });
       }
     });
-    firebase.database().ref(`/${this.props.user.uid}/settings/exportScript`).once('value').then((snapshot) => {
+    firebase.database().ref(`/users/${this.props.user.uid}/settings/exportScript`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val() !== '') {
         const exportScript = snapshot.val();
         this.setState({ exportScript });
@@ -94,8 +94,8 @@ class Settings extends Component {
 
   save() {
     Promise.all([
-      firebase.database().ref(`/${this.props.user.uid}/settings/importScript`).set(this.state.importScript),
-      firebase.database().ref(`/${this.props.user.uid}/settings/exportScript`).set(this.state.exportScript),
+      firebase.database().ref(`/users/${this.props.user.uid}/settings/importScript`).set(this.state.importScript),
+      firebase.database().ref(`/users/${this.props.user.uid}/settings/exportScript`).set(this.state.exportScript),
     ]).then(() => {
       this.setState({ isOpenSnackbar: true });
     });
