@@ -268,11 +268,15 @@ class Taskontable extends Component {
     return false;
   }
 
+  isTodayTasks() {
+    return moment(this.state.date, constants.DATEFMT).isSame(new Date(), 'day');
+  }
+
   // 開始しているタスクを見つけ、経過時間をタイトルに反映する
   bindOpenTasksProcessing = (tasks) => {
     const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
-    if (openTask) {
+    if (this.isTodayTasks() && openTask) {
       this.setState({ hasOpenTask: true });
       this.bindOpenTaskIntervalID = setInterval(() => {
         const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
@@ -440,13 +444,13 @@ class Taskontable extends Component {
                   addTask={this.addTask.bind(this)}
                   handleTableTasks={this.handleTableTasks.bind(this)}
                   handleSaveable={this.handleSaveable.bind(this)}
-                  isToday={moment(this.state.date, constants.DATEFMT).isSame(new Date(), 'day')}
+                  isToday={this.isTodayTasks()}
                   moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
                 />);
               } return (<TaskTableMobile
                 tableTasks={this.state.tableTasks}
                 changeTableTasks={this.changeTableTasks.bind(this)}
-                isToday={moment(this.state.date, constants.DATEFMT).isSame(new Date(), 'day')}
+                isToday={this.isTodayTasks()}
               />);
             })()}
           </Paper>
