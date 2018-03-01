@@ -3,6 +3,7 @@ import Chart from 'chart.js';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import constants from '../constants';
+import util from '../util';
 
 const styles = {
 };
@@ -14,7 +15,8 @@ class DiffChart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ctxId: `ctx-${this.props.title}`,
+      ctxId: `ctx-${this.props.title}-${Date.now()}`,
+      data: [],
     };
   }
 
@@ -51,7 +53,6 @@ class DiffChart extends Component {
             stacked: true,
           }],
         },
-        animation: false,
         legend: {
           display: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
           position: 'right',
@@ -67,6 +68,7 @@ class DiffChart extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!charts[this.state.ctxId] || !Array.isArray(nextProps.data)) return;
+    if (util.equal(nextProps.data, this.state.data)) return;
     charts[this.state.ctxId].data.datasets = nextProps.dataLabels.map((label, index) => ({
       label: (label.length < 13 ? label || '' : `${label.substring(0, 10)}..`),
       data: [nextProps.data[index].estimate, nextProps.data[index].actually],
@@ -76,6 +78,12 @@ class DiffChart extends Component {
       fill: false,
     }));
     charts[this.state.ctxId].update();
+    this.setState({ data: nextProps.data });
+  }
+
+  componentWillUnmount() {
+    charts[this.state.ctxId].destroy();
+    delete charts[this.state.ctxId];
   }
 
   render() {
