@@ -77,9 +77,7 @@ class Taskontable extends Component {
     if ('Notification' in window && Notification.permission !== 'granted') Notification.requestPermission();
     // タスクプールをサーバーと同期開始
     this.attachPoolTasks();
-    // テーブルをサーバーと同期開始
-    this.attachTableTasks();
-    // テーブルを初期化
+    // テーブルを同期開始&初期化
     this.initTableTask();
   }
 
@@ -89,7 +87,7 @@ class Taskontable extends Component {
     window.onkeydown = '';
     window.onbeforeunload = '';
     firebase.database().ref(`/${this.props.user.uid}/poolTasks`).off();
-    firebase.database().ref(`/${this.props.user.uid}/tableTasks`).off();
+    firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
   }
 
   changeTableTasks(taskActionType, value) {
@@ -255,6 +253,7 @@ class Taskontable extends Component {
     if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
       // 基準日を変更
       if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
+      firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
       setTimeout(() => { this.initTableTask(); });
     } else if (constants.shortcuts.SAVE(e)) {
@@ -329,17 +328,17 @@ class Taskontable extends Component {
   }
 
   attachTableTasks() {
-    firebase.database().ref(`/${this.props.user.uid}/tableTasks`).on('value', (snapshot) => {
+    firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       this.setState({
         loading: true,
       });
-      if (snapshot.exists() && snapshot.val()[this.state.date] && !util.equal(this.state.tableTasks, snapshot.val()[this.state.date])) {
-      // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
+      if (snapshot.exists() && snapshot.val() && !util.equal(this.state.tableTasks, snapshot.val())) {
+        // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
         if (this.state.isHotMode) {
           this.taskTable.clear();
-          this.taskTable.setData(snapshot.val()[this.state.date]);
+          this.taskTable.setData(snapshot.val());
         }
-        this.handleTableTasks(snapshot.val()[this.state.date]);
+        this.handleTableTasks(snapshot.val());
       }
       this.setState({
         saveable: false,
@@ -361,6 +360,7 @@ class Taskontable extends Component {
 
   initTableTask() {
     if (this.state.isHotMode) this.taskTable.clear();
+    this.attachTableTasks();
     this.fetchTableTask().then((snapshot) => {
       if (snapshot.exists() && !util.equal(snapshot.val(), getEmptyHotData())) {
         // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
@@ -394,6 +394,7 @@ class Taskontable extends Component {
       date = constants.INITIALDATE;
     }
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
+      firebase.database().ref(`/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date });
       setTimeout(() => { this.initTableTask(); });
     }

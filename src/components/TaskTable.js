@@ -76,8 +76,6 @@ class TaskTable extends Component {
     if (!util.equal(hotTasks, this.props.tableTasks)) {
       this.props.handleSaveable(true);
       this.props.handleTableTasks(hotTasks);
-    } else if (util.equal(hotTasks, this.props.tableTasks)) {
-      this.props.handleSaveable(false);
     }
   }
 
