@@ -125,7 +125,7 @@ class Taskontable extends Component {
     }
     this.handleTableTasks(tableTasks);
     this.handleSaveable(this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks));
-    setTimeout(() => { this.saveHot(); });
+    setTimeout(() => { this.saveTableTask(); });
   }
 
   changePoolTasks(taskActionType, taskPoolType, value) {
@@ -162,7 +162,7 @@ class Taskontable extends Component {
         poolTasks[taskPoolType].splice(value, 1);
       }
       // タスクプールからテーブルタスクに移動したら保存する
-      setTimeout(() => { this.saveHot(); });
+      setTimeout(() => { this.saveTableTask(); });
     }
     setTimeout(() => this.savePoolTasks(poolTasks));
   }
@@ -171,7 +171,7 @@ class Taskontable extends Component {
     const poolTasks = util.cloneDeep(this.state.poolTasks);
     poolTasks[taskPoolType].push(task);
     // テーブルタスクからタスクプールに移動したら保存する
-    this.saveHot();
+    this.saveTableTask();
     this.savePoolTasks(poolTasks);
   }
 
@@ -192,13 +192,6 @@ class Taskontable extends Component {
     firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(tasks);
   }
 
-  saveHot() {
-    // 並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks;
-    this.setState({ tableTasks, isOpenSnackbar: true });
-    this.saveTableTask(tableTasks);
-  }
-
 
   fireScript(data, scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
@@ -217,12 +210,17 @@ class Taskontable extends Component {
     });
   }
 
-  saveTableTask(data) {
+  saveTableTask() {
+    // 並び変えられたデータを取得するために処理が入っている。
+    const tableTasks = this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks;
+    this.bindOpenTasksProcessing(tableTasks);
     this.setState({
+      tableTasks,
+      isOpenSnackbar: true,
       loading: true,
     });
-    this.fireScript(data, 'exportScript');
-    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data.length === 0 ? getEmptyHotData() : data).then(() => {
+    this.fireScript(tableTasks, 'exportScript');
+    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(tableTasks.length === 0 ? getEmptyHotData() : tableTasks).then(() => {
       this.setState({
         loading: false,
         lastSaveTime: util.getCrrentTimeObj(),
@@ -258,7 +256,7 @@ class Taskontable extends Component {
       setTimeout(() => { this.initTableTask(); });
     } else if (constants.shortcuts.SAVE(e)) {
       e.preventDefault();
-      this.saveHot();
+      this.saveTableTask();
     } else if (constants.shortcuts.TOGGLE_HELP(e)) {
       this.props.toggleHelpDialog();
     } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
@@ -273,7 +271,7 @@ class Taskontable extends Component {
   }
 
   // 開始しているタスクを見つけ、経過時間をタイトルに反映する
-  bindOpenTasksProcessing = (tasks) => {
+  bindOpenTasksProcessing(tasks) {
     const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
     if (this.isTodayTasks() && openTask) {
@@ -433,7 +431,7 @@ class Taskontable extends Component {
               lastSaveTime={this.state.lastSaveTime}
               saveable={this.state.saveable}
               changeDate={this.changeDate.bind(this)}
-              saveHot={this.saveHot.bind(this)}
+              saveTableTask={this.saveTableTask.bind(this)}
             />
             <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
             {(() => {
