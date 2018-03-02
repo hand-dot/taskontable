@@ -51,7 +51,7 @@ class Taskontable extends Component {
       isOpenDashboard: true,
       date: moment().format(constants.DATEFMT),
       lastSaveTime: util.getCrrentTimeObj(),
-      tableTasks: getEmptyHotData(),
+      tableTasks: [],
       poolTasks: {
         highPriorityTasks: [],
         lowPriorityTasks: [],
