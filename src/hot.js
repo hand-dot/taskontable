@@ -51,8 +51,7 @@ const columns = [
       } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
         // 見積もりが空なので警告にする
         td.parentNode.style.backgroundColor = constants.brandColor.light.YELLOW;
-      }
-      if (isToday && startTimeVal !== '' && estimateVal !== '') {
+      } else if (isToday && startTimeVal !== '' && estimateVal !== '') {
       // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
         const nowTimeVal = moment().format('HH:mm');
         const expectedEndTimeVal = moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
