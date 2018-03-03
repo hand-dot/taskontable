@@ -183,7 +183,7 @@ class TaskList extends Component {
               {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>開始時刻</TableCell> : null))()}
               {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>第何週</TableCell> : null))()}
               {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>何曜日</TableCell> : null))()}
-              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>etc</TableCell>
+              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>編集</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

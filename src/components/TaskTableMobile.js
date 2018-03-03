@@ -151,7 +151,7 @@ class TaskTableMobile extends Component {
               <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>見積</TableCell>
               <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>開始</TableCell>
               <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>終了</TableCell>
-              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>etc</TableCell>
+              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>編集</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
