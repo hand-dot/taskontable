@@ -97,9 +97,9 @@ class GlobalHeader extends Component {
     setTimeout(() => this.props.logout());
   }
 
-  goSettings() {
+  goScripts() {
     this.closeMenu();
-    setTimeout(() => this.props.goSettings());
+    setTimeout(() => this.props.goScripts());
   }
 
   render() {
@@ -138,8 +138,8 @@ class GlobalHeader extends Component {
                       {(() => {
                         if (theme.breakpoints.values.sm < constants.APPWIDTH) {
                           return (
-                            <MenuItem onClick={this.goSettings.bind(this)}>
-                              <i className="fa fa-cog" aria-hidden="true" />　設定
+                            <MenuItem onClick={this.goScripts.bind(this)}>
+                              <i className="fa fa-code" aria-hidden="true" />　スクリプト設定
                             </MenuItem>
                           );
                         }
@@ -198,7 +198,7 @@ GlobalHeader.propTypes = {
   openHelpDialog: PropTypes.func.isRequired,
   closeHelpDialog: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
-  goSettings: PropTypes.func.isRequired,
+  goScripts: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

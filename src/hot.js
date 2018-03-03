@@ -313,8 +313,7 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   return getEmptyHotData();
 };
 
-const newLocal = 'estimate';
-export const hotConf = {
+export const hotBaseConf = {
   autoRowSize: false,
   autoColumnSize: false,
   stretchH: 'all',
@@ -327,10 +326,23 @@ export const hotConf = {
   columns,
   data: getEmptyHotData(),
   dataSchema: tableTaskSchema,
+  beforeInit() {
+    Handsontable.hooks.register('clearNotifi');
+  },
+  afterInit() {
+    bindClearNotifi(this);
+    bindShortcut(this);
+  },
+  afterDestroy() {
+    Handsontable.hooks.deregister('clearNotifi');
+  },
+};
+
+export const hotConf = Object.assign({}, hotBaseConf, {
   afterRowMove() {
     const rowCount = this.countSourceRows();
     for (let index = 0; index < rowCount; index += 1) {
-      manageNotifi(this, index, newLocal, this.getDataAtRowProp(this.toPhysicalRow(index), 'estimate'));
+      manageNotifi(this, index, 'estimate', this.getDataAtRowProp(this.toPhysicalRow(index), 'estimate'));
     }
   },
   afterChange(changes) {
@@ -344,14 +356,4 @@ export const hotConf = {
       }
     }
   },
-  beforeInit() {
-    Handsontable.hooks.register('clearNotifi');
-  },
-  afterInit() {
-    bindClearNotifi(this);
-    bindShortcut(this);
-  },
-  afterDestroy() {
-    Handsontable.hooks.deregister('clearNotifi');
-  },
-};
+});

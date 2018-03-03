@@ -195,7 +195,7 @@ class Taskontable extends Component {
 
   fireScript(data, scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
-    firebase.database().ref(`/users/${this.props.user.uid}/settings/${scriptType}`).once('value').then((snapshot) => {
+    firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val() !== '') {
         const script = snapshot.val();
         const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
