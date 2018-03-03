@@ -10,7 +10,6 @@ import IconButton from 'material-ui/IconButton';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Avatar from 'material-ui/Avatar';
 
-import DescriptionDialog from '../components/DescriptionDialog';
 import HelpDialog from '../components/HelpDialog';
 
 import constants from '../constants';
@@ -151,18 +150,11 @@ class GlobalHeader extends Component {
                       </MenuItem>
                     </Menu>
                   </div>
-                  {(() => {
-                    if (theme.breakpoints.values.sm < constants.APPWIDTH) {
-                      return (
-                        <div>
-                          <IconButton className={classes.iconButton} onClick={openHelpDialog}>
-                            <i className="fa fa-question-circle" />
-                          </IconButton>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })()}
+                  <div>
+                    <IconButton className={classes.iconButton} onClick={openHelpDialog}>
+                      <i className="fa fa-question-circle" />
+                    </IconButton>
+                  </div>
                   <div>
                     <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
                       <i className="fa fa-info-circle" />
@@ -172,10 +164,6 @@ class GlobalHeader extends Component {
                       open={this.state.openMenuKey === 'info'}
                       onClose={this.closeMenu.bind(this)}
                     >
-                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.DESCRIPTION}>
-                        <i className="fa fa-info" aria-hidden="true" />
-                    　サービスについて
-                      </MenuItem>
                       <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.CONTACT}>
                         <i className="fa fa-envelope-o" aria-hidden="true" />
                     　お問い合わせ
@@ -191,10 +179,6 @@ class GlobalHeader extends Component {
             </Toolbar>
           </Grid>
         </Grid>
-        <DescriptionDialog
-          open={this.state.isOpenDescriptionDialog}
-          onClose={this.closeDescriptionDialog.bind(this)}
-        />
         <HelpDialog
           open={isOpenHelpDialog}
           onClose={closeHelpDialog}

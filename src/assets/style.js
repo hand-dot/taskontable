@@ -12,15 +12,19 @@ export default {
     actionIcons: {
       margin: '0 auto',
     },
+    tableHeader: {
+      backgroundColor: '#f3f3f3',
+      padding: 0,
+    },
     cell: {
-      border: '1px solid rgba(235, 235, 235, 1)',
+      border: '1px solid #CCC',
       padding: '0 5px',
       fontSize: 11,
     },
     miniCell: {
-      border: '1px solid rgba(235, 235, 235, 1)',
+      border: '1px solid #CCC',
       padding: '0 3px',
-      maxWidth: '3rem',
+      width: '3rem',
       fontSize: 11,
     },
     cellInput: {

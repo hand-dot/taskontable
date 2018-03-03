@@ -24,7 +24,6 @@ export default {
     HOT_CURRENTTIME: e => e.ctrlKey && e.shiftKey && e.keyCode === 186,
   },
   menuItemKey: {
-    DESCRIPTION: 'description',
     CONTACT: 'contact',
     GIT: 'git',
   },
@@ -70,5 +69,12 @@ export default {
       PURPLE: `rgba(${rgb.PURPLE},0.2)`,
       GREY: `rgba(${rgb.GREY},0.2)`,
     },
+  },
+  cellColor: {
+    DONE: `rgba(${rgb.GREY},0.2)`,
+    RESERVATION: `rgba(${rgb.GREEN},0.2)`,
+    WARNING: `rgba(${rgb.YELLOW},0.2)`,
+    RUNNING: `rgba(${rgb.BLUE},0.2)`,
+    OUT: `rgba(${rgb.RED},0.2)`,
   },
 };

@@ -147,11 +147,11 @@ class TaskTableMobile extends Component {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell padding="none" className={classes.cell}>作業内容</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>見積</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>開始時刻</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>終了時刻</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>アクション</TableCell>
+              <TableCell padding="none" className={`${classes.cell} ${classes.tableHeader}`}>作業内容</TableCell>
+              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>見積</TableCell>
+              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>開始</TableCell>
+              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>終了</TableCell>
+              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>etc</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -162,19 +162,18 @@ class TaskTableMobile extends Component {
                 style={(() => {
                   const obj = {};
                   if (task.startTime && task.endTime) {
-                    obj.backgroundColor = constants.brandColor.light.GREY;
+                    obj.backgroundColor = constants.cellColor.DONE;
                   } else if (task.estimate === '') {
-                    obj.backgroundColor = constants.brandColor.light.YELLOW;
+                    obj.backgroundColor = constants.cellColor.WARNING;
                   } else if (this.props.isToday && task.startTime) {
                     // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
                     const nowTimeVal = moment().format('HH:mm');
                     const expectedEndTimeVal = moment(task.startTime, 'HH:mm').add(task.estimate, 'minutes').format('HH:mm');
                     const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
-                    obj.backgroundColor = constants.brandColor.light.BLUE;
                     if (timeDiffMinute < 1) {
-                      obj.backgroundColor = constants.brandColor.light.RED;
+                      obj.backgroundColor = constants.cellColor.OUT;
                     } else {
-                      obj.backgroundColor = util.getTimeDiffMinute(nowTimeVal, task.startTime) < 1 ? constants.brandColor.light.BLUE : constants.brandColor.light.GREEN;
+                      obj.backgroundColor = util.getTimeDiffMinute(nowTimeVal, task.startTime) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
                     }
                   }
                   return obj;

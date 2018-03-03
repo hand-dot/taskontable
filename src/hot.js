@@ -47,21 +47,21 @@ const columns = [
       const isToday = instance.getSettings().isToday;
       if (endTimeVal !== '' && startTimeVal !== '') {
         // 完了しているタスク
-        td.parentNode.style.backgroundColor = constants.brandColor.light.GREY;
+        td.parentNode.style.backgroundColor = constants.cellColor.DONE;
       } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
         // 見積もりが空なので警告にする
-        td.parentNode.style.backgroundColor = constants.brandColor.light.YELLOW;
+        td.parentNode.style.backgroundColor = constants.cellColor.WARNING;
       } else if (isToday && startTimeVal !== '' && estimateVal !== '') {
       // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
         const nowTimeVal = moment().format('HH:mm');
         const expectedEndTimeVal = moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
         const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
         if (timeDiffMinute < 1) {
-          td.parentNode.style.backgroundColor = constants.brandColor.light.RED;
+          td.parentNode.style.backgroundColor = constants.cellColor.OUT;
         } else {
-          td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.brandColor.light.BLUE : constants.brandColor.light.GREEN;
+          td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
         }
-        td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<div style="color:${constants.cellColor.DONE}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },

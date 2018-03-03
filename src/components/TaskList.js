@@ -177,13 +177,13 @@ class TaskList extends Component {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell padding="none" className={classes.cell}>作業内容</TableCell>
-              <TableCell padding="none" className={classes.cell}>備考</TableCell>
-              <TableCell padding="none" className={classes.miniCell}>見積</TableCell>
-              {(() => (isRegularTask ? <TableCell padding="none" className={classes.miniCell}>開始時刻</TableCell> : null))()}
-              {(() => (isRegularTask ? <TableCell padding="none" className={classes.miniCell}>第何週</TableCell> : null))()}
-              {(() => (isRegularTask ? <TableCell padding="none" className={classes.miniCell}>何曜日</TableCell> : null))()}
-              <TableCell padding="none" className={classes.miniCell}>アクション</TableCell>
+              <TableCell padding="none" className={`${classes.cell} ${classes.tableHeader}`}>作業内容</TableCell>
+              <TableCell padding="none" className={`${classes.cell} ${classes.tableHeader}`}>備考</TableCell>
+              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>見積</TableCell>
+              {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>開始時刻</TableCell> : null))()}
+              {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>第何週</TableCell> : null))()}
+              {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>何曜日</TableCell> : null))()}
+              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>etc</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
