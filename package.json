@@ -21,7 +21,7 @@
     "handsontable": "^0.37.0",
     "lodash.debounce": "^4.0.8",
     "material-ui": "^1.0.0-beta.35",
-    "moment": "^2.20.1",
+    "moment": "^2.21.0",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
     "react-codemirror2": "^4.0.1",
@@ -30,7 +30,7 @@
     "react-scripts": "1.0.17"
   },
   "devDependencies": {
-    "eslint": "^4.18.1",
+    "eslint": "^4.18.2",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
