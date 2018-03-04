@@ -1,7 +1,5 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export default function importScript(e) {
-  e.data.forEach((data) => {
-    data.title += '!';
-  });
+  // TODO githubからissueを所得する
   postMessage(e.data);
 }

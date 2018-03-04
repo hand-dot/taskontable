@@ -17,7 +17,7 @@ import 'codemirror/mode/javascript/javascript';
 import { withRouter } from 'react-router-dom';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
-import { hotBaseConf, getHotTasksIgnoreEmptyTask, getEmptyHotData } from '../hot';
+import { hotBaseConf, getHotTasksIgnoreEmptyTask, getEmptyHotData, setDataForHot } from '../hot';
 import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
 import exampleExportScript from '../exampleDatas/exampleExportScript';
@@ -39,9 +39,11 @@ const styles = {
     backgroundColor: '#fff',
   },
   button: {
-    marginTop: 15,
-    marginBottom: 15,
-    width: '100%',
+    fontSize: 11,
+    minWidth: 25,
+  },
+  divider: {
+    margin: '0 1rem',
   },
 };
 
@@ -53,7 +55,6 @@ class Scripts extends Component {
     this.state = {
       isOpenSaveSnackbar: false,
       isOpenScriptSnackbar: false,
-      scriptSnackbarLabel: '',
       scriptSnackbarText: '',
       exampleTaskData: JSON.stringify(exampleTaskData, null, '\t'),
       importScript: '',
@@ -103,6 +104,10 @@ class Scripts extends Component {
     this.props.history.push('/');
   }
 
+  resetExampleHot() {
+    this.exampleHot.loadData(util.cloneDeep(exampleTaskData));
+  }
+
   resetScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
@@ -124,28 +129,42 @@ class Scripts extends Component {
   saveScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
-      this.setState({ isOpenSaveSnackbar: true });
+      this.setState({
+        isOpenSaveSnackbar: true,
+        [`${scriptType}Bk`]: this.state[scriptType],
+      });
     });
   }
 
   fireScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     const script = this.state[scriptType];
-    const data = getHotTasksIgnoreEmptyTask(this.hot);
+    const data = getHotTasksIgnoreEmptyTask(this.exampleHot);
     const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
+    const promise = new Promise((resolve, reject) => {
+      worker.onerror = (e) => {
+        reject(`ERROR[${scriptType.toUpperCase()}]:${e.message}`);
+        alert(`ERROR[${scriptType.toUpperCase()}]:${e.message}`);
+      };
+      worker.onmessage = (e) => {
+        resolve(e.data);
+        this.setState({
+          isOpenScriptSnackbar: true,
+          scriptSnackbarText: `${scriptType}を実行しました。`,
+        });
+      };
+    });
     worker.postMessage(data.length === 0 ? getEmptyHotData() : data);
-    worker.onerror = (e) => {
-      alert(e.message);
-    };
-    worker.onmessage = (e) => {
-      this.setState({
-        isOpenScriptSnackbar: true,
-        scriptSnackbarLabel: scriptType,
-        scriptSnackbarText: JSON.stringify(e.data, null, '\t'),
-      });
-    };
+    promise.then((result) => {
+      if (!Array.isArray(result)) {
+        this.setState({
+          scriptSnackbarText: `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`,
+        });
+        return;
+      }
+      setDataForHot(this.exampleHot, result);
+    });
   }
-
   loadExampleScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     this.setState({ [scriptType]: scriptType === 'exportScript' ? exampleExportScript.toString() : exampleImportScript.toString() });
@@ -160,13 +179,15 @@ class Scripts extends Component {
               スクリプト設定
           </Typography>
           <Typography gutterBottom variant="caption">
-          タスクテーブルのデータの取得時・保存時に実行されるスクリプトをプログラミングできます。
+            タスクテーブルのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。
           </Typography>
         </Grid>
         <Grid item xs={12}>
           <Paper square elevation={0}>
             <Typography gutterBottom variant="subheading">
             タスクテーブルのデータの例
+              <span className={classes.divider}>/</span>
+              <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><i className="fa fa-refresh" /></Button>
             </Typography>
             <Typography gutterBottom variant="caption">
                 タスクテーブルのデータは左のテーブルに対して右のJSON形式で保存されます。
@@ -190,12 +211,22 @@ class Scripts extends Component {
                  インポートスクリプト
             </Typography>
             <Typography gutterBottom variant="caption">
-                タスクテーブルのデータの取得時に実行される処理をここに追加することができます。
+              初期表示・日付の移動時のタスクテーブルのデータの取得時に実行される処理を追加することができます。
             </Typography>
-            <Button disabled={this.state.importScript === this.state.importScriptBk} onClick={this.resetScript.bind(this, 'importScript')} variant="raised" color="default">保存前に戻す</Button>
-            <Button onClick={this.saveScript.bind(this, 'importScript')} variant="raised" color="primary">保存</Button>
-            <Button onClick={this.fireScript.bind(this, 'importScript')} variant="raised" color="secondary">テスト実行</Button>
-            <Button onClick={this.loadExampleScript.bind(this, 'importScript')} variant="raised" color="default">サンプルを読み込む</Button>
+            <br />
+            <Typography gutterBottom variant="caption">
+                タスクテーブルのデータにアクセスするにはimportScriptの引数のe.dataにアクセスしてください。
+            </Typography>
+            <br />
+            <Typography gutterBottom variant="caption">
+                外部サービスからのタスクのフェッチやタスクの文字列操作を終えたら、postMessage関数にタスクテーブルのデータを渡してください。
+                postMessage関数に渡されたデータを使ってタスクテーブルを構成します。
+            </Typography>
+            <br />
+            <Button size="small" disabled={this.state.importScript === this.state.importScriptBk} onClick={this.resetScript.bind(this, 'importScript')} variant="raised" color="default">保存前に戻す</Button>
+            <Button size="small" onClick={this.saveScript.bind(this, 'importScript')} variant="raised" color="primary">保存</Button>
+            <Button size="small" onClick={this.fireScript.bind(this, 'importScript')} variant="raised" color="secondary">テスト実行</Button>
+            <Button size="small" onClick={this.loadExampleScript.bind(this, 'importScript')} variant="raised" color="default">サンプルを読み込む</Button>
           </Paper>
         </Grid>
         <Grid item xs={6}>
@@ -213,12 +244,21 @@ class Scripts extends Component {
                  エクスポートスクリプト
             </Typography>
             <Typography gutterBottom variant="caption">
-                タスクテーブルのデータの保存時に実行される処理をここに追加することができます。
+                タスクテーブルのデータの保存時に実行される処理を追加することができます。
             </Typography>
-            <Button disabled={this.state.exportScript === this.state.exportScriptBk} onClick={this.resetScript.bind(this, 'exportScript')} variant="raised" color="default">保存前に戻す</Button>
-            <Button onClick={this.saveScript.bind(this, 'exportScript')} variant="raised" color="primary">保存</Button>
-            <Button onClick={this.fireScript.bind(this, 'exportScript')} variant="raised" color="secondary">テスト実行</Button>
-            <Button onClick={this.loadExampleScript.bind(this, 'exportScript')} variant="raised" color="default">サンプルを読み込む</Button>
+            <Typography gutterBottom variant="caption">
+                タスクテーブルのデータにアクセスするにはexportScriptの引数のe.dataにアクセスしてください。
+            </Typography>
+            <br />
+            <Typography gutterBottom variant="caption">
+                外部サービスへのタスクの連携やタスクの文字列操作を終えたら、postMessage関数にタスクテーブルのデータを渡してください。
+                postMessage関数に渡されたデータを使ってタスクテーブルを構成します。
+            </Typography>
+            <br />
+            <Button size="small" disabled={this.state.exportScript === this.state.exportScriptBk} onClick={this.resetScript.bind(this, 'exportScript')} variant="raised" color="default">保存前に戻す</Button>
+            <Button size="small" onClick={this.saveScript.bind(this, 'exportScript')} variant="raised" color="primary">保存</Button>
+            <Button size="small" onClick={this.fireScript.bind(this, 'exportScript')} variant="raised" color="secondary">テスト実行</Button>
+            <Button size="small" onClick={this.loadExampleScript.bind(this, 'exportScript')} variant="raised" color="default">サンプルを読み込む</Button>
           </Paper>
         </Grid>
         <Grid item xs={6}>
@@ -231,24 +271,19 @@ class Scripts extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button onClick={this.backToApp.bind(this)} variant="raised" color="default">アプリに戻る</Button>
+          <Button size="small" onClick={this.backToApp.bind(this)} variant="raised" color="default">アプリに戻る</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSaveSnackbar}
-          onClose={() => {
-            this.setState({ isOpenSaveSnackbar: false });
-          }}
+          onClose={() => { this.setState({ isOpenSaveSnackbar: false }); }}
           message={'保存しました。'}
         />
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           open={this.state.isOpenScriptSnackbar}
-          onClose={() => {
-            this.setState({ isOpenScriptSnackbar: false });
-          }}
+          onClose={() => { this.setState({ isOpenScriptSnackbar: false }); }}
           message={this.state.scriptSnackbarText}
-          action={<Button color="secondary" size="small">{this.state.scriptSnackbarLabel}</Button>}
         />
       </Grid>
     );

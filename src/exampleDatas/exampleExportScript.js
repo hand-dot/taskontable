@@ -1,7 +1,5 @@
 /* eslint no-param-reassign: ["error", { "props": false }] */
 export default function exportScript(e) {
-  e.data.forEach((data) => {
-    data.title += '!';
-  });
+  // TODO githubに連携する
   postMessage(e.data);
 }

@@ -45,7 +45,6 @@ class Taskontable extends Component {
     this.state = {
       isOpenSaveSnackbar: false,
       isOpenScriptSnackbar: false,
-      scriptSnackbarLabel: '',
       scriptSnackbarText: '',
       isHotMode: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
       loading: true,
@@ -194,25 +193,6 @@ class Taskontable extends Component {
       });
     }
     firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(tasks);
-  }
-
-
-  fireScript(data, scriptType = 'exportScript') {
-    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
-    firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
-      if (snapshot.exists() && snapshot.val() !== '') {
-        const script = snapshot.val();
-        const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
-        worker.postMessage(data.length === 0 ? getEmptyHotData() : data);
-        worker.onmessage = (e) => {
-          this.setState({
-            isOpenScriptSnackbar: true,
-            scriptSnackbarLabel: scriptType,
-            scriptSnackbarText: JSON.stringify(e.data, null, '\t'),
-          });
-        };
-      }
-    });
   }
 
   saveTableTask() {
@@ -407,6 +387,41 @@ class Taskontable extends Component {
     }
   }
 
+  fireScript(data, scriptType = 'exportScript') {
+    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    this.setState({ isOpenScriptSnackbar: false });
+    firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
+      if (snapshot.exists() && snapshot.val() !== '') {
+        const script = snapshot.val();
+        const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
+        const promise = new Promise((resolve, reject) => {
+          worker.onerror = (e) => {
+            reject(`ERROR[${scriptType.toUpperCase()}]:${e.message}`);
+            alert(`ERROR[${scriptType.toUpperCase()}]:${e.message}`);
+          };
+          worker.onmessage = (e) => {
+            resolve(e.data);
+            this.setState({
+              isOpenScriptSnackbar: true,
+              scriptSnackbarText: `${scriptType}を実行しました。`,
+            });
+          };
+        });
+        worker.postMessage(data.length === 0 ? getEmptyHotData() : data);
+        promise.then((result) => {
+          if (!Array.isArray(result)) {
+            this.setState({
+              scriptSnackbarText: `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`,
+            });
+            return;
+          }
+          this.handleTableTasks(result);
+          if (this.state.isHotMode) this.taskTable.setData(result);
+        });
+      }
+    });
+  }
+
   toggleDashboard() {
     this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
   }
@@ -461,19 +476,14 @@ class Taskontable extends Component {
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSaveSnackbar}
-          onClose={() => {
-            this.setState({ isOpenSaveSnackbar: false });
-          }}
+          onClose={() => { this.setState({ isOpenSaveSnackbar: false }); }}
           message={'保存しました。'}
         />
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           open={this.state.isOpenScriptSnackbar}
-          onClose={() => {
-            this.setState({ isOpenScriptSnackbar: false });
-          }}
+          onClose={() => { this.setState({ isOpenScriptSnackbar: false }); }}
           message={this.state.scriptSnackbarText}
-          action={<Button color="secondary" size="small">{this.state.scriptSnackbarLabel}</Button>}
         />
       </Grid>
     );
