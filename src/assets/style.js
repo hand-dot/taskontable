@@ -24,7 +24,7 @@ export default {
     miniCell: {
       border: '1px solid #CCC',
       padding: '0 3px',
-      width: '3rem',
+      width: theme.breakpoints.values.sm < constants.APPWIDTH ? '6.4rem' : '3rem',
       fontSize: 11,
     },
     cellInput: {
