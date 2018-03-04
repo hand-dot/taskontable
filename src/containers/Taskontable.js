@@ -12,6 +12,7 @@ import ExpansionPanel, {
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
 import Snackbar from 'material-ui/Snackbar';
+import Button from 'material-ui/Button';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';
@@ -42,7 +43,10 @@ class Taskontable extends Component {
     this.oldTimeDiffMinute = '';
     this.bindOpenTaskIntervalID = '';
     this.state = {
-      isOpenSnackbar: false,
+      isOpenSaveSnackbar: false,
+      isOpenScriptSnackbar: false,
+      scriptSnackbarLabel: '',
+      scriptSnackbarText: '',
       isHotMode: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
       loading: true,
       saveable: false,
@@ -200,11 +204,12 @@ class Taskontable extends Component {
         const script = snapshot.val();
         const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
         worker.postMessage(data.length === 0 ? getEmptyHotData() : data);
-        // 終了したときに呼ばれる
         worker.onmessage = (e) => {
-          console.log(`------${scriptType}------`);
-          console.log(e.data);
-          console.log(`------${scriptType}------`);
+          this.setState({
+            isOpenScriptSnackbar: true,
+            scriptSnackbarLabel: scriptType,
+            scriptSnackbarText: JSON.stringify(e.data, null, '\t'),
+          });
         };
       }
     });
@@ -216,7 +221,7 @@ class Taskontable extends Component {
     this.bindOpenTasksProcessing(tableTasks);
     this.setState({
       tableTasks,
-      isOpenSnackbar: true,
+      isOpenSaveSnackbar: true,
       loading: true,
     });
     this.fireScript(tableTasks, 'exportScript');
@@ -455,14 +460,20 @@ class Taskontable extends Component {
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSnackbar}
+          open={this.state.isOpenSaveSnackbar}
           onClose={() => {
-            this.setState({ isOpenSnackbar: false });
+            this.setState({ isOpenSaveSnackbar: false });
           }}
-          SnackbarContentProps={{
-            'aria-describedby': 'message-id',
+          message={'保存しました。'}
+        />
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          open={this.state.isOpenScriptSnackbar}
+          onClose={() => {
+            this.setState({ isOpenScriptSnackbar: false });
           }}
-          message={<span id="message-id">保存しました。</span>}
+          message={this.state.scriptSnackbarText}
+          action={<Button color="secondary" size="small">{this.state.scriptSnackbarLabel}</Button>}
         />
       </Grid>
     );

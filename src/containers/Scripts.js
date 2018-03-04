@@ -17,14 +17,11 @@ import 'codemirror/mode/javascript/javascript';
 import { withRouter } from 'react-router-dom';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
-import { hotBaseConf, getHotTasksIgnoreEmptyTask } from '../hot';
+import { hotBaseConf, getHotTasksIgnoreEmptyTask, getEmptyHotData } from '../hot';
 import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
 import exampleExportScript from '../exampleDatas/exampleExportScript';
 import util from '../util';
-
-// window.jsonlint = eslint;
-// window.JSHINT = eslint;
 
 const editorOptions = {
   mode: 'javascript',
@@ -54,17 +51,19 @@ class Scripts extends Component {
     this.exampleHot = null;
     this.syncStateByRender = debounce(this.syncStateByRender, constants.RENDER_DELAY);
     this.state = {
-      isOpenSnackbar: false,
+      isOpenSaveSnackbar: false,
+      isOpenScriptSnackbar: false,
+      scriptSnackbarLabel: '',
+      scriptSnackbarText: '',
       exampleTaskData: JSON.stringify(exampleTaskData, null, '\t'),
       importScript: '',
       exportScript: '',
+      importScriptBk: '',
+      exportScriptBk: '',
     };
   }
 
   componentWillMount() {
-    window.onkeydown = (e) => {
-      this.fireShortcut(e);
-    };
     this.setScripts();
   }
 
@@ -81,29 +80,14 @@ class Scripts extends Component {
   }
 
   componentWillUnmount() {
-    window.onkeydown = '';
     if (!this.exampleHot) return;
     this.exampleHot.destroy();
     this.exampleHot = null;
   }
 
   setScripts() {
-    firebase.database().ref(`/users/${this.props.user.uid}/scripts/importScript`).once('value').then((snapshot) => {
-      if (snapshot.exists() && snapshot.val() !== '') {
-        const importScript = snapshot.val();
-        this.setState({ importScript });
-      } else {
-        this.setState({ importScript: exampleImportScript.toString() });
-      }
-    });
-    firebase.database().ref(`/users/${this.props.user.uid}/scripts/exportScript`).once('value').then((snapshot) => {
-      if (snapshot.exists() && snapshot.val() !== '') {
-        const exportScript = snapshot.val();
-        this.setState({ exportScript });
-      } else {
-        this.setState({ exportScript: exampleExportScript.toString() });
-      }
-    });
+    this.resetScript('importScript');
+    this.resetScript('exportScript');
   }
 
 
@@ -119,21 +103,52 @@ class Scripts extends Component {
     this.props.history.push('/');
   }
 
-  fireShortcut(e) {
-    if (constants.shortcuts.SAVE(e)) {
-      e.preventDefault();
-      this.save();
-    }
-    return false;
+  resetScript(scriptType = 'exportScript') {
+    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        const script = snapshot.val();
+        this.setState({
+          [scriptType]: script,
+          [`${scriptType}Bk`]: script,
+        });
+      } else {
+        this.setState({
+          [scriptType]: '',
+          [`${scriptType}Bk`]: '',
+        });
+      }
+    });
   }
 
-  save() {
-    Promise.all([
-      firebase.database().ref(`/users/${this.props.user.uid}/scripts/importScript`).set(this.state.importScript),
-      firebase.database().ref(`/users/${this.props.user.uid}/scripts/exportScript`).set(this.state.exportScript),
-    ]).then(() => {
-      this.setState({ isOpenSnackbar: true });
+  saveScript(scriptType = 'exportScript') {
+    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
+      this.setState({ isOpenSaveSnackbar: true });
     });
+  }
+
+  fireScript(scriptType = 'exportScript') {
+    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    const script = this.state[scriptType];
+    const data = getHotTasksIgnoreEmptyTask(this.hot);
+    const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
+    worker.postMessage(data.length === 0 ? getEmptyHotData() : data);
+    worker.onerror = (e) => {
+      alert(e.message);
+    };
+    worker.onmessage = (e) => {
+      this.setState({
+        isOpenScriptSnackbar: true,
+        scriptSnackbarLabel: scriptType,
+        scriptSnackbarText: JSON.stringify(e.data, null, '\t'),
+      });
+    };
+  }
+
+  loadExampleScript(scriptType = 'exportScript') {
+    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    this.setState({ [scriptType]: scriptType === 'exportScript' ? exampleExportScript.toString() : exampleImportScript.toString() });
   }
 
   render() {
@@ -151,11 +166,10 @@ class Scripts extends Component {
         <Grid item xs={12}>
           <Paper square elevation={0}>
             <Typography gutterBottom variant="subheading">
-            タスクテーブルのデータ
+            タスクテーブルのデータの例
             </Typography>
             <Typography gutterBottom variant="caption">
                 タスクテーブルのデータは左のテーブルに対して右のJSON形式で保存されます。
-
             </Typography>
           </Paper>
         </Grid>
@@ -178,6 +192,10 @@ class Scripts extends Component {
             <Typography gutterBottom variant="caption">
                 タスクテーブルのデータの取得時に実行される処理をここに追加することができます。
             </Typography>
+            <Button disabled={this.state.importScript === this.state.importScriptBk} onClick={this.resetScript.bind(this, 'importScript')} variant="raised" color="default">保存前に戻す</Button>
+            <Button onClick={this.saveScript.bind(this, 'importScript')} variant="raised" color="primary">保存</Button>
+            <Button onClick={this.fireScript.bind(this, 'importScript')} variant="raised" color="secondary">テスト実行</Button>
+            <Button onClick={this.loadExampleScript.bind(this, 'importScript')} variant="raised" color="default">サンプルを読み込む</Button>
           </Paper>
         </Grid>
         <Grid item xs={6}>
@@ -197,6 +215,10 @@ class Scripts extends Component {
             <Typography gutterBottom variant="caption">
                 タスクテーブルのデータの保存時に実行される処理をここに追加することができます。
             </Typography>
+            <Button disabled={this.state.exportScript === this.state.exportScriptBk} onClick={this.resetScript.bind(this, 'exportScript')} variant="raised" color="default">保存前に戻す</Button>
+            <Button onClick={this.saveScript.bind(this, 'exportScript')} variant="raised" color="primary">保存</Button>
+            <Button onClick={this.fireScript.bind(this, 'exportScript')} variant="raised" color="secondary">テスト実行</Button>
+            <Button onClick={this.loadExampleScript.bind(this, 'exportScript')} variant="raised" color="default">サンプルを読み込む</Button>
           </Paper>
         </Grid>
         <Grid item xs={6}>
@@ -209,19 +231,24 @@ class Scripts extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button onClick={this.save.bind(this)} variant="raised" color="primary">保存</Button>
           <Button onClick={this.backToApp.bind(this)} variant="raised" color="default">アプリに戻る</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSnackbar}
+          open={this.state.isOpenSaveSnackbar}
           onClose={() => {
-            this.setState({ isOpenSnackbar: false });
+            this.setState({ isOpenSaveSnackbar: false });
           }}
-          SnackbarContentProps={{
-            'aria-describedby': 'message-id',
+          message={'保存しました。'}
+        />
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          open={this.state.isOpenScriptSnackbar}
+          onClose={() => {
+            this.setState({ isOpenScriptSnackbar: false });
           }}
-          message={<span id="message-id">保存しました。</span>}
+          message={this.state.scriptSnackbarText}
+          action={<Button color="secondary" size="small">{this.state.scriptSnackbarLabel}</Button>}
         />
       </Grid>
     );
