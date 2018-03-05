@@ -433,6 +433,13 @@ class Taskontable extends Component {
     this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
   }
 
+  closeSnackbars() {
+    this.setState({
+      isOpenSaveSnackbar: false,
+      isOpenScriptSnackbar: false,
+    });
+  }
+
   render() {
     const { classes, theme } = this.props;
     return (
@@ -483,13 +490,13 @@ class Taskontable extends Component {
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSaveSnackbar}
-          onClose={() => { this.setState({ isOpenSaveSnackbar: false }); }}
+          onClose={this.closeSnackbars.bind(this)}
           message={'保存しました。'}
         />
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           open={this.state.isOpenScriptSnackbar}
-          onClose={() => { this.setState({ isOpenScriptSnackbar: false }); }}
+          onClose={this.closeSnackbars.bind(this)}
           message={this.state.scriptSnackbarText}
         />
       </Grid>
