@@ -12,7 +12,6 @@ import ExpansionPanel, {
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
 import Snackbar from 'material-ui/Snackbar';
-import Button from 'material-ui/Button';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';
@@ -263,8 +262,16 @@ class Taskontable extends Component {
       this.setState({ hasOpenTask: true });
       this.bindOpenTaskIntervalID = setInterval(() => {
         const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
-        // 1分に一度タイトルが書き変わったタイミングでhotを再描画する。
-        if (newTimeDiffMinute !== this.oldTimeDiffMinute && this.state.isHotMode) this.taskTable.renderHot();
+        // 1分に一度タイトルが書き変わったタイミングでセルの色を書き換える必要があるので再描画する。
+        if (newTimeDiffMinute !== this.oldTimeDiffMinute) {
+          if (this.state.isHotMode) {
+            // hotmodeの場合はレンダーする
+            this.taskTable.renderHot();
+          } else {
+            // モバイルの場合は再描画する
+            this.forceUpdate();
+          }
+        }
         if (newTimeDiffMinute === -1) {
           // 開始まで秒単位でカウントダウンする場合
           document.title = `${moment().format('ss') - 60}秒 - ${openTask.title || '無名タスク'}`;
