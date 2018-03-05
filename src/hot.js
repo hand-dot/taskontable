@@ -61,7 +61,7 @@ const columns = [
         } else {
           td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
         }
-        td.innerHTML = `<div style="color:${constants.cellColor.DONE}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
