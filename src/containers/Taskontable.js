@@ -355,8 +355,8 @@ class Taskontable extends Component {
         if (this.state.isHotMode) this.taskTable.setData(snapshot.val());
         this.handleTableTasks(snapshot.val());
         this.fireScript(snapshot.val(), 'importScript');
-      } else if (this.state.poolTasks.regularTasks.length !== 0) {
-        // 定期タスクをテーブルに設定する処理。
+      } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment())) {
+        // 定期タスクをテーブルに設定する処理。未来日付しか動作しない
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合
         // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
