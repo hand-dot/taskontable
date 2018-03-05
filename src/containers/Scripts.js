@@ -138,32 +138,20 @@ class Scripts extends Component {
 
   fireScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
-    const script = this.state[scriptType];
     const data = getHotTasksIgnoreEmptyTask(this.exampleHot);
-    const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
-    const promise = new Promise((resolve, reject) => {
-      worker.onerror = (e) => {
-        reject(`ERROR[${scriptType.toUpperCase()}]:${e.message}`);
-        alert(`ERROR[${scriptType.toUpperCase()}]:${e.message}`);
-      };
-      worker.onmessage = (e) => {
-        resolve(e.data);
-        this.setState({
-          isOpenScriptSnackbar: true,
-          scriptSnackbarText: `${scriptType}を実行しました。`,
-        });
-      };
-    });
-    worker.postMessage(data);
-    promise.then((result) => {
-      if (!Array.isArray(result)) {
-        this.setState({
-          scriptSnackbarText: `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`,
-        });
-        return;
-      }
-      setDataForHot(this.exampleHot, result);
-    });
+    const script = this.state[scriptType];
+    util.runWorker(script, data,
+      (result) => {
+        this.exampleHot.clear();
+        setDataForHot(this.exampleHot, result);
+        setTimeout(() => { this.exampleHot.render(); });
+        this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
+      },
+      (reason) => {
+        const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
+        this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText });
+      },
+    );
   }
 
   loadExampleScript(scriptType = 'exportScript') {

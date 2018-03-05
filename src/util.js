@@ -59,4 +59,25 @@ export default {
   getDayAndCount(date) {
     return { day: date.getDay(), count: Math.floor((date.getDate() - 1) / 7) + 1 };
   },
+  runWorker(script, data, success, failure) {
+    const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
+    const promise = new Promise((resolve, reject) => {
+      worker.onerror = (e) => {
+        reject(e.message);
+      };
+      worker.onmessage = (e) => {
+        resolve(e.data);
+      };
+    });
+    worker.postMessage(data);
+    promise.then((result) => {
+      if (!Array.isArray(result)) {
+        failure();
+      } else {
+        success(result);
+      }
+    }, (reason) => {
+      failure(reason);
+    });
+  },
 };

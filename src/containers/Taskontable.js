@@ -202,12 +202,13 @@ class Taskontable extends Component {
       isOpenSaveSnackbar: true,
       loading: true,
     });
-    this.fireScript(tableTasks, 'exportScript');
-    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(tableTasks).then(() => {
-      this.setState({
-        loading: false,
-        lastSaveTime: util.getCrrentTimeObj(),
-        saveable: false,
+    this.fireScript(tableTasks, 'exportScript').then((data) => {
+      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data).then(() => {
+        this.setState({ loading: false, lastSaveTime: util.getCrrentTimeObj(), saveable: false });
+      });
+    }, () => {
+      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(tableTasks).then(() => {
+        this.setState({ loading: false, lastSaveTime: util.getCrrentTimeObj(), saveable: false });
       });
     });
   }
@@ -322,11 +323,7 @@ class Taskontable extends Component {
       });
       if (snapshot.exists() && snapshot.val() && !util.equal(this.state.tableTasks, snapshot.val())) {
         // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
-        if (this.state.isHotMode) {
-          this.taskTable.clear();
-          this.taskTable.setData(snapshot.val());
-        }
-        this.handleTableTasks(snapshot.val());
+        this.resetTable(snapshot.val());
       }
       this.setState({
         saveable: false,
@@ -346,15 +343,22 @@ class Taskontable extends Component {
     });
   }
 
+  resetTable(data) {
+    if (this.state.isHotMode) {
+      this.taskTable.clear();
+      this.taskTable.setData(data);
+    }
+    this.handleTableTasks(data);
+  }
+
   initTableTask() {
-    if (this.state.isHotMode) this.taskTable.clear();
-    this.attachTableTasks();
     this.fetchTableTask().then((snapshot) => {
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
-        // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
-        if (this.state.isHotMode) this.taskTable.setData(snapshot.val());
-        this.handleTableTasks(snapshot.val());
-        this.fireScript(snapshot.val(), 'importScript');
+        this.fireScript(snapshot.val(), 'importScript').then((data) => {
+          this.resetTable(data);
+        }, () => {
+          this.resetTable(snapshot.val());
+        });
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment())) {
         // 定期タスクをテーブルに設定する処理。未来日付しか動作しない
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
@@ -365,11 +369,17 @@ class Taskontable extends Component {
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
         if (this.state.isHotMode) this.taskTable.setData(regularTasks);
         this.handleTableTasks(regularTasks);
-        this.fireScript(regularTasks, 'importScript');
+        this.fireScript(regularTasks, 'importScript').then((data) => {
+          this.resetTable(data);
+        }, () => {
+          this.resetTable(snapshot.val());
+        });
       } else {
         // サーバーにデータが無く、定期タスクも登録されていない場合
-        this.handleTableTasks([]);
+        this.resetTable([]);
       }
+      // 同期を開始
+      setTimeout(() => this.attachTableTasks());
     });
   }
 
@@ -392,38 +402,31 @@ class Taskontable extends Component {
   }
 
   fireScript(data, scriptType = 'exportScript') {
-    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
-    if (!util.isToday(this.state.date)) return; // スクリプトを発火するのは本日のタスクテーブルのみ
-    this.setState({ isOpenScriptSnackbar: false });
-    firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
-      if (snapshot.exists() && snapshot.val() !== '') {
-        const script = snapshot.val();
-        const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
-        const promise = new Promise((resolve, reject) => {
-          worker.onerror = (e) => {
-            reject(`ERROR[${scriptType.toUpperCase()}]:${e.message}`);
-            alert(`ERROR[${scriptType.toUpperCase()}]:${e.message}`);
-          };
-          worker.onmessage = (e) => {
-            resolve(e.data);
-            this.setState({
-              isOpenScriptSnackbar: true,
-              scriptSnackbarText: `${scriptType}を実行しました。`,
-            });
-          };
-        });
-        worker.postMessage(data);
-        promise.then((result) => {
-          if (!Array.isArray(result)) {
-            this.setState({
-              scriptSnackbarText: `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`,
-            });
-            return;
-          }
-          this.handleTableTasks(result);
-          if (this.state.isHotMode) this.taskTable.setData(result);
-        });
+    return new Promise((resolve, reject) => {
+      // スクリプトを発火するのは本日のタスクテーブルのみ
+      if (!util.isToday(this.state.date)) {
+        reject();
+        return;
       }
+      this.setState({ isOpenScriptSnackbar: false });
+      firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
+        if (snapshot.exists() && snapshot.val() !== '') {
+          const script = snapshot.val();
+          util.runWorker(script, data,
+            (result) => {
+              this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
+              resolve(result);
+            },
+            (reason) => {
+              const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
+              this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText });
+              reject();
+            },
+          );
+        } else {
+          reject();
+        }
+      });
     });
   }
 
