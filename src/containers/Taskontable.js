@@ -19,7 +19,6 @@ import TableStatus from '../components/TableStatus';
 import TaskPool from '../components/TaskPool';
 import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
-import { getEmptyHotData } from '../hot';
 
 import constants from '../constants';
 import util from '../util';
@@ -204,7 +203,7 @@ class Taskontable extends Component {
       loading: true,
     });
     this.fireScript(tableTasks, 'exportScript');
-    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(tableTasks.length === 0 ? getEmptyHotData() : tableTasks).then(() => {
+    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(tableTasks).then(() => {
       this.setState({
         loading: false,
         lastSaveTime: util.getCrrentTimeObj(),
@@ -356,7 +355,7 @@ class Taskontable extends Component {
     if (this.state.isHotMode) this.taskTable.clear();
     this.attachTableTasks();
     this.fetchTableTask().then((snapshot) => {
-      if (snapshot.exists() && !util.equal(snapshot.val(), getEmptyHotData())) {
+      if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに初期値以外のタスクが存在した場合サーバーのデータでテーブルを初期化する
         if (this.state.isHotMode) this.taskTable.setData(snapshot.val());
         this.handleTableTasks(snapshot.val());
@@ -372,6 +371,9 @@ class Taskontable extends Component {
         if (this.state.isHotMode) this.taskTable.setData(regularTasks);
         this.handleTableTasks(regularTasks);
         this.fireScript(regularTasks, 'importScript');
+      } else {
+        // サーバーにデータが無く、定期タスクも登録されていない場合
+        this.handleTableTasks([]);
       }
     });
   }
@@ -414,7 +416,7 @@ class Taskontable extends Component {
             });
           };
         });
-        worker.postMessage(data.length === 0 ? getEmptyHotData() : data);
+        worker.postMessage(data);
         promise.then((result) => {
           if (!Array.isArray(result)) {
             this.setState({

@@ -17,7 +17,7 @@ import 'codemirror/mode/javascript/javascript';
 import { withRouter } from 'react-router-dom';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
-import { hotBaseConf, getHotTasksIgnoreEmptyTask, getEmptyHotData, setDataForHot } from '../hot';
+import { hotBaseConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
 import exampleExportScript from '../exampleDatas/exampleExportScript';
@@ -154,7 +154,7 @@ class Scripts extends Component {
         });
       };
     });
-    worker.postMessage(data.length === 0 ? getEmptyHotData() : data);
+    worker.postMessage(data);
     promise.then((result) => {
       if (!Array.isArray(result)) {
         this.setState({

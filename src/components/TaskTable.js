@@ -5,7 +5,7 @@ import 'handsontable/dist/handsontable.full.css';
 import { withStyles } from 'material-ui/styles';
 import debounce from 'lodash.debounce';
 
-import { hotConf, getEmptyHotData, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { hotConf, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import constants from '../constants';
 import util from '../util';
 
@@ -90,7 +90,7 @@ class TaskTable extends Component {
   }
 
   clear() {
-    if (this.hot) this.hot.updateSettings({ isToday: this.props.isToday, data: getEmptyHotData() });
+    if (this.hot) this.hot.updateSettings({ isToday: this.props.isToday, data: [] });
   }
 
   renderHot() {

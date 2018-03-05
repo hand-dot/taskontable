@@ -283,15 +283,11 @@ export const contextMenuItems = {
   },
 };
 
-export const getEmptyHotData = () => [util.cloneDeep(tableTaskSchema)];
-
-export const getEmptyRow = () => getEmptyHotData()[0];
-
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
   const dataForHot = [];
   util.cloneDeep(datas).forEach((data, rowIndex) => {
-    if (!util.equal(getEmptyRow(), data)) {
+    if (!util.equal(tableTaskSchema, data)) {
       Object.entries(data).forEach(([key, value]) => {
         dataForHot.push([rowIndex, key, value]);
       });
@@ -302,15 +298,12 @@ export const setDataForHot = (hotInstance, datas) => {
 };
 
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
-  if (hotInstance) {
-    const hotData = [];
-    const rowCount = hotInstance.countSourceRows();
-    for (let index = 0; index < rowCount; index += 1) {
-      hotData[index] = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
-    }
-    return util.cloneDeep(hotData.filter(data => !util.equal(getEmptyRow(), data)));
+  const hotData = [];
+  const rowCount = hotInstance.countSourceRows();
+  for (let index = 0; index < rowCount; index += 1) {
+    hotData[index] = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
   }
-  return getEmptyHotData();
+  return util.cloneDeep(hotData.filter(data => !util.equal(tableTaskSchema, data)));
 };
 
 export const hotBaseConf = {
@@ -324,7 +317,7 @@ export const hotBaseConf = {
   minRows: 20,
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
-  data: getEmptyHotData(),
+  data: [],
   dataSchema: tableTaskSchema,
   beforeInit() {
     Handsontable.hooks.register('clearNotifi');
