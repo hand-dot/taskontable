@@ -187,7 +187,7 @@ class Scripts extends Component {
               スクリプト設定
           </Typography>
           <Typography gutterBottom variant="caption">
-            タスクテーブルのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。
+            本日のタスクテーブルのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -219,7 +219,7 @@ class Scripts extends Component {
                  インポートスクリプト
             </Typography>
             <Typography gutterBottom variant="caption">
-              初期表示・日付の移動時のタスクテーブルのデータの取得時に実行される処理を追加することができます。
+                本日のタスクテーブルのデータの取得時に実行される処理を追加することができます。
             </Typography>
             <br />
             <Typography gutterBottom variant="caption">
@@ -252,7 +252,7 @@ class Scripts extends Component {
                  エクスポートスクリプト
             </Typography>
             <Typography gutterBottom variant="caption">
-                タスクテーブルのデータの保存時に実行される処理を追加することができます。
+                本日のタスクテーブルのデータの保存時に実行される処理を追加することができます。
             </Typography>
             <Typography gutterBottom variant="caption">
                 タスクテーブルのデータにアクセスするにはexportScriptの引数のe.dataにアクセスしてください。
