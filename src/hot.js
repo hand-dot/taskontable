@@ -22,20 +22,20 @@ const columns = [
     colWidths: 30,
   },
   {
-    title: '開始時刻(HH:mm)',
+    title: `開始時刻(${constants.TIMEFMT})`,
     data: 'startTime',
     type: 'time',
     colWidths: 60,
-    timeFormat: 'HH:mm',
+    timeFormat: constants.TIMEFMT,
     allowInvalid: false,
     correctFormat: true,
   },
   {
-    title: '終了時刻(HH:mm)',
+    title: `終了時刻(${constants.TIMEFMT})`,
     data: 'endTime',
     type: 'time',
     colWidths: 60,
-    timeFormat: 'HH:mm',
+    timeFormat: constants.TIMEFMT,
     allowInvalid: false,
     correctFormat: true,
     renderer(instance, td, row, col, prop, value) {
@@ -53,8 +53,8 @@ const columns = [
         td.parentNode.style.backgroundColor = constants.cellColor.WARNING;
       } else if (isToday && startTimeVal !== '' && estimateVal !== '') {
       // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
-        const nowTimeVal = moment().format('HH:mm');
-        const expectedEndTimeVal = moment(startTimeVal, 'HH:mm').add(estimateVal, 'minutes').format('HH:mm');
+        const nowTimeVal = moment().format(constants.TIMEFMT);
+        const expectedEndTimeVal = moment(startTimeVal, constants.TIMEFMT).add(estimateVal, 'minutes').format(constants.TIMEFMT);
         const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
         if (timeDiffMinute < 1) {
           td.parentNode.style.backgroundColor = constants.cellColor.OUT;
@@ -174,7 +174,7 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
       return;
     }
     const currentMoment = moment();
-    const startTimeMoment = moment(startTimeVal, 'HH:mm');
+    const startTimeMoment = moment(startTimeVal, constants.TIMEFMT);
     // --------------------------開始時刻に表示する通知の設定--------------------------
     const startTimeOut = startTimeMoment.diff(currentMoment);
     if (startTimeOut > 0) {
@@ -214,7 +214,7 @@ const bindShortcut = (hotInstance) => {
       const endProp = hotInstance.colToProp(endCol);
       // 選択しているセルが1つかつ、開始時刻・終了時刻のカラム
       if (startProp === 'endTime' || startProp === 'startTime') {
-        const currentTime = moment().format('HH:mm');
+        const currentTime = moment().format(constants.TIMEFMT);
         for (let row = startRow; row <= endRow; row += 1) {
           if (startCol !== endCol) {
             if (endProp === 'endTime' || endProp === 'startTime') {
@@ -239,7 +239,7 @@ export const contextMenuCallback = (key, selections, hotInstance) => {
       if (confirm && !window.confirm('終了時刻もしくは開始時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
       for (let row = selection.start.row; row <= selection.end.row; row += 1) {
         hotInstance.setDataAtRowProp(row, 'endTime', '');
-        hotInstance.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
+        hotInstance.setDataAtRowProp(row, 'startTime', moment().format(constants.TIMEFMT));
       }
     } else if (key === 'done_task') {
       let confirm = false;
@@ -249,8 +249,8 @@ export const contextMenuCallback = (key, selections, hotInstance) => {
       if (confirm && !window.confirm('終了時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
       for (let row = selection.start.row; row <= selection.end.row; row += 1) {
         // 開始時刻が空だった場合は現在時刻を設定する
-        if (hotInstance.getDataAtRowProp(row, 'startTime') === '') hotInstance.setDataAtRowProp(row, 'startTime', moment().format('HH:mm'));
-        hotInstance.setDataAtRowProp(row, 'endTime', moment().format('HH:mm'));
+        if (hotInstance.getDataAtRowProp(row, 'startTime') === '') hotInstance.setDataAtRowProp(row, 'startTime', moment().format(constants.TIMEFMT));
+        hotInstance.setDataAtRowProp(row, 'endTime', moment().format(constants.TIMEFMT));
       }
     }
   });

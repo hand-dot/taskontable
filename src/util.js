@@ -23,12 +23,24 @@ export default {
       second: currentMoment.second(),
     };
   },
-  getTimeDiffMinute(startTimeVal = '00:00', endTimeVal = '00:00') { // HH:mm
+  /**
+   * constants.DATEFMT形式の文字列が今日か判断します。
+   * @param  {String} constants.DATEFMT形式の文字列
+   */
+  isToday(date) {
+    return moment(date, constants.DATEFMT).isSame(new Date(), 'day');
+  },
+  /**
+   * constants.TIMEFMT形式の文字列の2つの差分を分で求めます。
+   * @param  {String} startTimeVal constants.TIMEFMT形式の文字列
+   * @param  {String} endTimeVal constants.TIMEFMT形式の文字列
+   */
+  getTimeDiffMinute(startTimeVal = '00:00', endTimeVal = '00:00') {
     const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) &&
     Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute)) {
-      return moment(`${endTimeHour}:${endTimeMinute}`, 'HH:mm').diff(moment(`${startTimeHour}:${startTimeMinute}`, 'HH:mm'), 'minutes');
+      return moment(`${endTimeHour}:${endTimeMinute}`, constants.TIMEFMT).diff(moment(`${startTimeHour}:${startTimeMinute}`, constants.TIMEFMT), 'minutes');
     }
     return 0;
   },

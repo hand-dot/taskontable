@@ -248,19 +248,14 @@ class Taskontable extends Component {
     }
     return false;
   }
-
-  isTodayTasks() {
-    return moment(this.state.date, constants.DATEFMT).isSame(new Date(), 'day');
-  }
-
   // 開始しているタスクを見つけ、経過時間をタイトルに反映する
   bindOpenTasksProcessing(tasks) {
     const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
-    if (this.isTodayTasks() && openTask) {
+    if (util.isToday(this.state.date) && openTask) {
       this.setState({ hasOpenTask: true });
       this.bindOpenTaskIntervalID = setInterval(() => {
-        const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format('HH:mm'));
+        const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format(constants.TIMEFMT));
         // 1分に一度タイトルが書き変わったタイミングでセルの色を書き換える必要があるので再描画する。
         if (newTimeDiffMinute !== this.oldTimeDiffMinute) {
           if (this.state.isHotMode) {
@@ -398,6 +393,7 @@ class Taskontable extends Component {
 
   fireScript(data, scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    if (!util.isToday(this.state.date)) return; // スクリプトを発火するのは本日のタスクテーブルのみ
     this.setState({ isOpenScriptSnackbar: false });
     firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val() !== '') {
@@ -478,13 +474,13 @@ class Taskontable extends Component {
                   addTask={this.addTask.bind(this)}
                   handleTableTasks={this.handleTableTasks.bind(this)}
                   handleSaveable={this.handleSaveable.bind(this)}
-                  isToday={this.isTodayTasks()}
+                  isToday={util.isToday(this.state.date)}
                   moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
                 />);
               } return (<TaskTableMobile
                 tableTasks={this.state.tableTasks}
                 changeTableTasks={this.changeTableTasks.bind(this)}
-                isToday={this.isTodayTasks()}
+                isToday={util.isToday(this.state.date)}
               />);
             })()}
           </Paper>

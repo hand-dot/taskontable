@@ -50,6 +50,7 @@ export default {
   },
 
   DATEFMT: 'YYYY-MM-DD',
+  TIMEFMT: 'HH:mm',
   INITIALDATE: '1970-01-01',
   DAY_OF_WEEK_STR: ['日', '月', '火', '水', '木', '金', '土'],
   brandColor: {

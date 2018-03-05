@@ -167,8 +167,8 @@ class TaskTableMobile extends Component {
                     obj.backgroundColor = constants.cellColor.WARNING;
                   } else if (this.props.isToday && task.startTime) {
                     // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
-                    const nowTimeVal = moment().format('HH:mm');
-                    const expectedEndTimeVal = moment(task.startTime, 'HH:mm').add(task.estimate, 'minutes').format('HH:mm');
+                    const nowTimeVal = moment().format(constants.TIMEFMT);
+                    const expectedEndTimeVal = moment(task.startTime, constants.TIMEFMT).add(task.estimate, 'minutes').format(constants.TIMEFMT);
                     const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
                     if (timeDiffMinute < 1) {
                       obj.backgroundColor = constants.cellColor.OUT;
