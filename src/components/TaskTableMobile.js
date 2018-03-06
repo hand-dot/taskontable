@@ -158,7 +158,7 @@ class TaskTableMobile extends Component {
             {tableTasks.map((task, index) => (
               <TableRow
                 className={classes.taskRow}
-                key={task.title + task.memo + task.estimate}
+                key={task.id}
                 style={(() => {
                   const obj = {};
                   if (task.startTime && task.endTime) {
@@ -328,6 +328,7 @@ class TaskTableMobile extends Component {
 
 TaskTableMobile.propTypes = {
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     estimate: PropTypes.any.isRequired,
     endTime: PropTypes.string.isRequired,

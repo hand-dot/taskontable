@@ -177,12 +177,14 @@ class Taskontable extends Component {
   }
 
   savePoolTasks(poolTasks) {
-    this.setState({ poolTasks });
-    const tasks = Object.assign({}, poolTasks);
-    if (tasks.regularTasks) {
+    const newPoolTasks = {};
+    // IDの生成処理
+    Object.keys(poolTasks).forEach((poolTaskKey) => { newPoolTasks[poolTaskKey] = poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask)); });
+    this.setState({ poolTasks: newPoolTasks });
+    if (newPoolTasks.regularTasks) {
       // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
       // https://github.com/hand-dot/taskontable/issues/118
-      tasks.regularTasks = tasks.regularTasks.map((task) => {
+      newPoolTasks.regularTasks = newPoolTasks.regularTasks.map((task) => {
         const copyTask = Object.assign({}, task);
         if (copyTask.dayOfWeek) {
           copyTask.dayOfWeek = copyTask.dayOfWeek.map(day => util.getDayOfWeek(day));
@@ -190,12 +192,12 @@ class Taskontable extends Component {
         return copyTask;
       });
     }
-    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(tasks);
+    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(newPoolTasks);
   }
 
   saveTableTask() {
-    // 並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks;
+    // IDを生成し並び変えられたデータを取得するために処理が入っている。
+    const tableTasks = this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp().map(tableTask => util.setIdIfNotExist(tableTask)) : this.state.tableTasks.map(tableTask => util.setIdIfNotExist(tableTask));
     this.bindOpenTasksProcessing(tableTasks);
     this.setState({
       tableTasks,
@@ -227,8 +229,8 @@ class Taskontable extends Component {
   }
 
   handleTableTasks(tableTasks) {
-      this.bindOpenTasksProcessing(tableTasks);
-      this.setState({ tableTasks });
+    this.bindOpenTasksProcessing(tableTasks);
+    this.setState({ tableTasks });
   }
 
   fireShortcut(e) {
@@ -369,7 +371,7 @@ class Taskontable extends Component {
         this.fireScript(regularTasks, 'importScript').then((data) => { this.resetTable(data); }, () => { this.resetTable(regularTasks); });
       } else {
         // サーバーにデータが無く、定期タスクも登録されていない場合
-        this.resetTable([]);
+        this.fireScript([], 'importScript').then((data) => { this.resetTable(data); }, () => { this.resetTable([]); });
       }
       this.setState({ saveable: false, loading: false });
       // 同期を開始

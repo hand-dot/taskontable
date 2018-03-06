@@ -1,4 +1,5 @@
 import moment from 'moment';
+import uuid from 'uuid';
 import fastclone from 'fast-clone';
 import { deepEqual } from 'fast-equals';
 import constants from './constants';
@@ -79,5 +80,8 @@ export default {
     }, (reason) => {
       failure(reason);
     });
+  },
+  setIdIfNotExist(obj) {
+    return obj.id ? obj : Object.assign(obj, { id: uuid() });
   },
 };

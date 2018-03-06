@@ -27,7 +27,8 @@
     "react-codemirror2": "^4.1.0",
     "react-dom": "^16.2.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.0.17"
+    "react-scripts": "1.0.17",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "eslint": "^4.18.2",

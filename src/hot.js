@@ -298,6 +298,7 @@ export const setDataForHot = (hotInstance, datas) => {
 };
 
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
+  if (!hotInstance) return [];
   const hotData = [];
   const rowCount = hotInstance.countSourceRows();
   for (let index = 0; index < rowCount; index += 1) {

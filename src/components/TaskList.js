@@ -188,7 +188,7 @@ class TaskList extends Component {
           </TableHead>
           <TableBody>
             {tasks.map((task, index) => (
-              <TableRow className={classes.taskRow} key={task.title + task.memo + task.estimate}>
+              <TableRow className={classes.taskRow} key={task.id} >
                 <TableCell padding="none" className={classes.cell}>
                   <Input
                     className={classes.cellInput}
@@ -413,6 +413,7 @@ class TaskList extends Component {
 
 TaskList.propTypes = {
   tasks: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     estimate: PropTypes.any.isRequired,
     endTime: PropTypes.string.isRequired,

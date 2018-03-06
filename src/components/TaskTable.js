@@ -104,6 +104,7 @@ class TaskTable extends Component {
 
 TaskTable.propTypes = {
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     estimate: PropTypes.any.isRequired,
     endTime: PropTypes.string.isRequired,
