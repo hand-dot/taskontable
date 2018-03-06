@@ -360,8 +360,8 @@ class Taskontable extends Component {
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         this.fireScript(snapshot.val(), 'importScript').then((data) => { this.resetTable(data); }, () => { this.resetTable(snapshot.val()); });
-      } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment())) {
-        // 定期タスクをテーブルに設定する処理。未来日付しか動作しない
+      } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
+        // 定期タスクをテーブルに設定する処理。本日以降しか動作しない
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合
         // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
