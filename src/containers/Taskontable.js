@@ -316,33 +316,6 @@ class Taskontable extends Component {
     });
   }
 
-  attachTableTasks() {
-    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
-      this.setState({
-        loading: true,
-      });
-      if (snapshot.exists() && snapshot.val() && !util.equal(this.state.tableTasks, snapshot.val())) {
-        // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
-        this.resetTable(snapshot.val());
-      }
-      this.setState({
-        saveable: false,
-        loading: false,
-      });
-    });
-  }
-
-  fetchTableTask() {
-    this.setState({ loading: true });
-    return firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
-      this.setState({
-        saveable: false,
-        loading: false,
-      });
-      return snapshot;
-    });
-  }
-
   resetTable(data) {
     if (this.state.isHotMode) {
       this.taskTable.clear();
@@ -352,35 +325,39 @@ class Taskontable extends Component {
   }
 
   initTableTask() {
-    this.fetchTableTask().then((snapshot) => {
-      if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
-        this.fireScript(snapshot.val(), 'importScript').then((data) => {
-          this.resetTable(data);
-        }, () => {
-          this.resetTable(snapshot.val());
-        });
-      } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment())) {
+    this.setState({ loading: true });
+    return firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
+      this.setState({ saveable: false, loading: false });
+      return snapshot;
+    })
+      .then((snapshot) => {
+        if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
+          this.fireScript(snapshot.val(), 'importScript').then((data) => { this.resetTable(data); }, () => { this.resetTable(snapshot.val()); });
+        } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment())) {
         // 定期タスクをテーブルに設定する処理。未来日付しか動作しない
-        const dayAndCount = util.getDayAndCount(new Date(this.state.date));
-        // 定期のタスクが設定されており、サーバーにデータが存在しない場合
-        // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
-        // util.getDayOfWeekStr(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
-        // https://github.com/hand-dot/taskontable/issues/118
-        const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-        if (this.state.isHotMode) this.taskTable.setData(regularTasks);
-        this.handleTableTasks(regularTasks);
-        this.fireScript(regularTasks, 'importScript').then((data) => {
-          this.resetTable(data);
-        }, () => {
-          this.resetTable(snapshot.val());
-        });
-      } else {
+          const dayAndCount = util.getDayAndCount(new Date(this.state.date));
+          // 定期のタスクが設定されており、サーバーにデータが存在しない場合
+          // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
+          // util.getDayOfWeekStr(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
+          // https://github.com/hand-dot/taskontable/issues/118
+          const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
+          this.fireScript(regularTasks, 'importScript').then((data) => { this.resetTable(data); }, () => { this.resetTable(snapshot.val()); });
+        } else {
         // サーバーにデータが無く、定期タスクも登録されていない場合
-        this.resetTable([]);
-      }
-      // 同期を開始
-      setTimeout(() => this.attachTableTasks());
-    });
+          this.resetTable([]);
+        }
+        // 同期を開始
+        setTimeout(() => {
+          firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (newSnapshot) => {
+            this.setState({ loading: true });
+            if (newSnapshot.exists() && newSnapshot.val() && !util.equal(this.state.tableTasks, newSnapshot.val())) {
+              // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
+              this.resetTable(newSnapshot.val());
+            }
+            this.setState({ saveable: false, loading: false });
+          });
+        });
+      });
   }
 
   changeDate(event) {
@@ -435,10 +412,7 @@ class Taskontable extends Component {
   }
 
   closeSnackbars() {
-    this.setState({
-      isOpenSaveSnackbar: false,
-      isOpenScriptSnackbar: false,
-    });
+    this.setState({ isOpenSaveSnackbar: false, isOpenScriptSnackbar: false });
   }
 
   render() {

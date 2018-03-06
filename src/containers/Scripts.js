@@ -111,28 +111,15 @@ class Scripts extends Component {
   resetScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
-      if (snapshot.exists()) {
-        const script = snapshot.val();
-        this.setState({
-          [scriptType]: script,
-          [`${scriptType}Bk`]: script,
-        });
-      } else {
-        this.setState({
-          [scriptType]: '',
-          [`${scriptType}Bk`]: '',
-        });
-      }
+      const script = snapshot.exists() ? snapshot.val() : '';
+      this.setState({ [scriptType]: script, [`${scriptType}Bk`]: script });
     });
   }
 
   saveScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
-      this.setState({
-        isOpenSaveSnackbar: true,
-        [`${scriptType}Bk`]: this.state[scriptType],
-      });
+      this.setState({ isOpenSaveSnackbar: true, [`${scriptType}Bk`]: this.state[scriptType] });
     });
   }
 
@@ -160,10 +147,7 @@ class Scripts extends Component {
   }
 
   closeSnackbars() {
-    this.setState({
-      isOpenSaveSnackbar: false,
-      isOpenScriptSnackbar: false,
-    });
+    this.setState({ isOpenSaveSnackbar: false, isOpenScriptSnackbar: false });
   }
 
   render() {
