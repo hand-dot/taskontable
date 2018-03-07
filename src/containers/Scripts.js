@@ -12,7 +12,7 @@ import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css';
+import 'codemirror/theme/monokai.css';
 import 'codemirror/mode/javascript/javascript';
 import { withRouter } from 'react-router-dom';
 import constants from '../constants';
@@ -25,7 +25,7 @@ import util from '../util';
 
 const editorOptions = {
   mode: 'javascript',
-  theme: 'material',
+  theme: 'monokai',
   lineNumbers: true,
 };
 
