@@ -308,6 +308,7 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 };
 
 export const hotBaseConf = {
+  selectionMode: 'range',
   autoRowSize: false,
   autoColumnSize: false,
   stretchH: 'all',

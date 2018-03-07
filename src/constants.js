@@ -14,6 +14,7 @@ export default {
   APPWIDTH: window.innerWidth < 1280 ? window.innerWidth : 1280,
   APPHEIGHT: window.innerHeight,
   KEYEVENT_DELAY: 100,
+  SAVE_DELAY: 500,
   RENDER_DELAY: 1000,
   shortcuts: {
     NEXTDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 190,

@@ -111,7 +111,7 @@ class Scripts extends Component {
   resetScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
-      const script = snapshot.exists() ? snapshot.val() : '';
+      const script = snapshot.exists() && snapshot.val() ? snapshot.val() : '';
       this.setState({ [scriptType]: script, [`${scriptType}Bk`]: script });
     });
   }
@@ -204,9 +204,9 @@ class Scripts extends Component {
             </Typography>
             <br />
             <Button size="small" disabled={this.state.importScript === this.state.importScriptBk} onClick={this.resetScript.bind(this, 'importScript')} variant="raised" color="default">保存前に戻す</Button>
-            <Button size="small" onClick={this.saveScript.bind(this, 'importScript')} variant="raised" color="primary">保存</Button>
+            <Button size="small" disabled={this.state.importScript === this.state.importScriptBk} onClick={this.saveScript.bind(this, 'importScript')} variant="raised" color="primary">保存</Button>
             <Button size="small" disabled={this.state.importScript === ''} onClick={this.fireScript.bind(this, 'importScript')} variant="raised" color="secondary">テスト実行</Button>
-            <Button size="small" onClick={this.loadExampleScript.bind(this, 'importScript')} variant="raised" color="default">サンプルを読み込む</Button>
+            <Button size="small" disabled={this.state.importScript === exampleImportScript.toString()} onClick={this.loadExampleScript.bind(this, 'importScript')} variant="raised" color="default">サンプルを読み込む</Button>
           </Paper>
         </Grid>
         <Grid item xs={6}>
@@ -236,9 +236,9 @@ class Scripts extends Component {
             </Typography>
             <br />
             <Button size="small" disabled={this.state.exportScript === this.state.exportScriptBk} onClick={this.resetScript.bind(this, 'exportScript')} variant="raised" color="default">保存前に戻す</Button>
-            <Button size="small" onClick={this.saveScript.bind(this, 'exportScript')} variant="raised" color="primary">保存</Button>
+            <Button size="small" disabled={this.state.exportScript === this.state.exportScriptBk} onClick={this.saveScript.bind(this, 'exportScript')} variant="raised" color="primary">保存</Button>
             <Button size="small" disabled={this.state.exportScript === ''} onClick={this.fireScript.bind(this, 'exportScript')} variant="raised" color="secondary">テスト実行</Button>
-            <Button size="small" onClick={this.loadExampleScript.bind(this, 'exportScript')} variant="raised" color="default">サンプルを読み込む</Button>
+            <Button size="small" disabled={this.state.exportScript === exampleExportScript.toString()} onClick={this.loadExampleScript.bind(this, 'exportScript')} variant="raised" color="default">サンプルを読み込む</Button>
           </Paper>
         </Grid>
         <Grid item xs={6}>

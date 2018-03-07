@@ -29,15 +29,17 @@ class TaskTable extends Component {
     this.hot = new Handsontable(this.hotDom, Object.assign(hotConf, {
       isToday: self.props.isToday,
       contextMenu: {
-        callback(key, selection) {
+        callback(key, selections) {
           if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
             const taskPoolType = key === 'reverse_taskpool_hight' ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
-            for (let row = selection.start.row; row <= selection.end.row; row += 1) {
-              // テーブルタスクからタスクプールに移すタイミングでテーブルが1行減るので常に選択開始行を処理する
-              self.moveTableTaskToPoolTask(taskPoolType, selection.start.row, this);
-            }
+            selections.forEach((selection) => {
+              for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+                // テーブルタスクからタスクプールに移すタイミングでテーブルが1行減るので常に選択開始行を処理する
+                self.moveTableTaskToPoolTask(taskPoolType, selection.start.row, this);
+              }
+            });
           } else {
-            contextMenuCallback(key, selection, this);
+            contextMenuCallback(key, selections, this);
           }
         },
         items: contextMenuItems,

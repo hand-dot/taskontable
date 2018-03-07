@@ -5,10 +5,10 @@ import { withStyles } from 'material-ui/styles';
 import constants from '../constants';
 
 const styles = {
-  primaryColor: {
+  barColorPrimary: {
     background: constants.brandColor.light.BLUE,
   },
-  primaryColorBar: {
+  barColorSecondary: {
     background: constants.brandColor.base.BLUE,
   },
 };
@@ -16,7 +16,7 @@ const styles = {
 function TableStatus(props) {
   const { tableTasks, isLoading, classes } = props;
   return (
-    <LinearProgress classes={{ primaryColor: classes.primaryColor, primaryColorBar: classes.primaryColorBar }} variant={isLoading ? 'indeterminate' : 'determinate'} value={(tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length)} />
+    <LinearProgress classes={{ barColorPrimary: classes.barColorPrimary, barColorSecondary: classes.barColorSecondary }} variant={isLoading ? 'indeterminate' : 'determinate'} value={(tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length)} />
   );
 }
 

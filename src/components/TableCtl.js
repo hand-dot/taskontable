@@ -18,7 +18,7 @@ const styles = {
 };
 
 function TableCtl(props) {
-  const { tableTasks, hasOpenTask, date, lastSaveTime, saveable, changeDate, saveTableTask, classes, theme } = props;
+  const { tableTasks, hasOpenTask, date, lastSaveTime, saveable, changeDate, saveTableTasks, classes, theme } = props;
   return (
     <Grid style={{ padding: `${theme.spacing.unit * 2}px 0` }} container spacing={0}>
       <Hidden xsDown>
@@ -62,7 +62,7 @@ function TableCtl(props) {
             return (
               <Tooltip title={`最終保存時刻 : ${(`00${lastSaveTime.hour}`).slice(-2)}:${(`00${lastSaveTime.minute}`).slice(-2)}`} placement="top">
                 <div style={{ display: 'inline-block' }}>
-                  <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveTableTask} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
+                  <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveTableTasks} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
                 </div>
               </Tooltip>
             );
@@ -97,7 +97,7 @@ TableCtl.propTypes = {
   }).isRequired,
   saveable: PropTypes.bool.isRequired,
   changeDate: PropTypes.func.isRequired,
-  saveTableTask: PropTypes.func.isRequired,
+  saveTableTasks: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

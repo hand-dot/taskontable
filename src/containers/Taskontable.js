@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import moment from 'moment';
+import debounce from 'lodash.debounce';
 
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Grid from 'material-ui/Grid';
@@ -38,6 +39,8 @@ const styles = theme => ({
 class Taskontable extends Component {
   constructor(props) {
     super(props);
+    this.saveTableTasks = debounce(this.saveTableTasks, constants.SAVE_DELAY);
+    this.savePoolTasks = debounce(this.savePoolTasks, constants.SAVE_DELAY);
     this.oldTimeDiffMinute = '';
     this.bindOpenTaskIntervalID = '';
     this.state = {
@@ -126,13 +129,13 @@ class Taskontable extends Component {
     }
     this.handleTableTasks(tableTasks);
     this.handleSaveable(this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks));
-    setTimeout(() => { this.saveTableTask(); });
+    setTimeout(() => { this.saveTableTasks(); });
   }
 
   changePoolTasks(taskActionType, taskPoolType, value) {
     const poolTasks = util.cloneDeep(this.state.poolTasks);
     if (taskActionType === constants.taskActionType.ADD) {
-      poolTasks[taskPoolType].push(value);
+      poolTasks[taskPoolType].push(util.setIdIfNotExist(value));
     } else if (taskActionType === constants.taskActionType.EDIT) {
       poolTasks[taskPoolType][value.index] = value.task;
     } else if (taskActionType === constants.taskActionType.REMOVE) {
@@ -163,28 +166,31 @@ class Taskontable extends Component {
         poolTasks[taskPoolType].splice(value, 1);
       }
       // タスクプールからテーブルタスクに移動したら保存する
-      setTimeout(() => { this.saveTableTask(); });
+      setTimeout(() => { this.saveTableTasks(); });
     }
-    setTimeout(() => this.savePoolTasks(poolTasks));
+    this.setState({ poolTasks });
+    setTimeout(() => this.savePoolTasks());
   }
 
   moveTableTaskToPoolTask(taskPoolType, task) {
     const poolTasks = util.cloneDeep(this.state.poolTasks);
     poolTasks[taskPoolType].push(task);
+    this.setState({ poolTasks });
     // テーブルタスクからタスクプールに移動したら保存する
-    this.saveTableTask();
-    this.savePoolTasks(poolTasks);
+    setTimeout(() => {
+      this.saveTableTasks();
+      this.savePoolTasks();
+    });
   }
 
-  savePoolTasks(poolTasks) {
-    const newPoolTasks = {};
+  savePoolTasks() {
+    const poolTasks = util.cloneDeep(this.state.poolTasks);
     // IDの生成処理
-    Object.keys(poolTasks).forEach((poolTaskKey) => { newPoolTasks[poolTaskKey] = poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask)); });
-    this.setState({ poolTasks: newPoolTasks });
-    if (newPoolTasks.regularTasks) {
+    Object.keys(poolTasks).forEach((poolTaskKey) => { poolTasks[poolTaskKey] = poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask)); });
+    if (poolTasks.regularTasks) {
       // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
       // https://github.com/hand-dot/taskontable/issues/118
-      newPoolTasks.regularTasks = newPoolTasks.regularTasks.map((task) => {
+      poolTasks.regularTasks = poolTasks.regularTasks.map((task) => {
         const copyTask = Object.assign({}, task);
         if (copyTask.dayOfWeek) {
           copyTask.dayOfWeek = copyTask.dayOfWeek.map(day => util.getDayOfWeek(day));
@@ -192,12 +198,12 @@ class Taskontable extends Component {
         return copyTask;
       });
     }
-    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(newPoolTasks);
+    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(poolTasks);
   }
 
-  saveTableTask() {
+  saveTableTasks() {
     // IDを生成し並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp().map(tableTask => util.setIdIfNotExist(tableTask)) : this.state.tableTasks.map(tableTask => util.setIdIfNotExist(tableTask));
+    const tableTasks = (this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => util.setIdIfNotExist(tableTask));
     this.bindOpenTasksProcessing(tableTasks);
     this.setState({
       tableTasks,
@@ -242,7 +248,7 @@ class Taskontable extends Component {
       setTimeout(() => { this.initTableTask(); });
     } else if (constants.shortcuts.SAVE(e)) {
       e.preventDefault();
-      this.saveTableTask();
+      this.saveTableTasks();
     } else if (constants.shortcuts.TOGGLE_HELP(e)) {
       this.props.toggleHelpDialog();
     } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
@@ -284,6 +290,17 @@ class Taskontable extends Component {
       this.bindOpenTaskIntervalID = '';
       document.title = constants.TITLE;
     }
+  }
+
+  attachTableTasks() {
+    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
+      this.setState({ loading: true });
+      if (snapshot.exists() && snapshot.val() && !util.equal(this.state.tableTasks, snapshot.val())) {
+        // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
+        this.resetTable(snapshot.val());
+      }
+      this.setState({ saveable: false, loading: false });
+    });
   }
 
   attachPoolTasks() {
@@ -376,14 +393,7 @@ class Taskontable extends Component {
       this.setState({ saveable: false, loading: false });
       // 同期を開始
       setTimeout(() => {
-        firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (newSnapshot) => {
-          this.setState({ loading: true });
-          if (newSnapshot.exists() && newSnapshot.val() && !util.equal(this.state.tableTasks, newSnapshot.val())) {
-            // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
-            this.resetTable(newSnapshot.val());
-          }
-          this.setState({ saveable: false, loading: false });
-        });
+        this.attachTableTasks();
       });
     });
   }
@@ -439,7 +449,7 @@ class Taskontable extends Component {
               lastSaveTime={this.state.lastSaveTime}
               saveable={this.state.saveable}
               changeDate={this.changeDate.bind(this)}
-              saveTableTask={this.saveTableTask.bind(this)}
+              saveTableTasks={this.saveTableTasks.bind(this)}
             />
             <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
             {(() => {
