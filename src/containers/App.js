@@ -117,7 +117,12 @@ class App extends Component {
           />
           <Route
             path="/Scripts"
-            render={props => <Scripts user={this.state.user} {...props} />}
+            render={(props) => {
+              if (this.state.user.uid !== '') {
+                return <Scripts user={this.state.user} {...props} />;
+              }
+              return null;
+            }}
           />
           <Route
             exact
