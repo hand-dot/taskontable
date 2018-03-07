@@ -302,7 +302,9 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   const hotData = [];
   const rowCount = hotInstance.countSourceRows();
   for (let index = 0; index < rowCount; index += 1) {
-    hotData[index] = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
+    if (!hotInstance.isEmptyRow(index)) {
+      hotData.push(hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
+    }
   }
   return util.cloneDeep(hotData.filter(data => !util.equal(tableTaskSchema, data)));
 };
