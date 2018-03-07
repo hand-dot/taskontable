@@ -29,11 +29,6 @@ const styles = theme => ({
     width: constants.APPWIDTH,
     margin: '0 auto',
   },
-  panel: {
-    maxHeight: 470,
-    overflowY: 'scroll',
-    overflowX: 'hidden',
-  },
 });
 
 class Taskontable extends Component {
@@ -437,8 +432,8 @@ class Taskontable extends Component {
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
-              {this.state.tab === 0 && <div className={classes.panel} ><Dashboard tableTasks={this.state.tableTasks} /></div>}
-              {this.state.tab === 1 && <div className={classes.panel} ><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
+              {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} /></div>}
+              {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <Paper elevation={1}>
