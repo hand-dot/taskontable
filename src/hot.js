@@ -113,12 +113,10 @@ const removeNotifi = (id) => {
   }
 };
 
-const divideNotifiCellType = (type = 'startTime') => (type === 'startTime' ? 'startTime' : 'endTime');
-
-const removeNotifiCell = (hotInstance, row, col, types) => {
+const removeNotifiCell = (hotInstance, row, types) => {
   types.forEach((type) => {
-    const target = divideNotifiCellType(type);
-    const targetNotifiId = `${target}NotifiId`;
+    const col = hotInstance.propToCol(type);
+    const targetNotifiId = `${type}NotifiId`;
     const notifiId = hotInstance.getCellMeta(row, col)[targetNotifiId];
     if (notifiId) {
       removeNotifi(notifiId);
@@ -127,33 +125,31 @@ const removeNotifiCell = (hotInstance, row, col, types) => {
   });
 };
 
-const setNotifiCell = (hotInstance, row, col, timeout, type) => {
-  const target = divideNotifiCellType(type);
+const setNotifiCell = (hotInstance, row, type, timeout) => {
   // 権限を取得し通知を登録
   const permission = Notification.permission;
-  const targetNotifiId = `${target}NotifiId`;
+  const targetNotifiId = `${type}NotifiId`;
   // タイマーの2重登録にならないように既に登録されているタイマーを削除
-  removeNotifiCell(hotInstance, row, col, [type]);
+  removeNotifiCell(hotInstance, row, [type]);
   // タイマーを登録(セルにタイマーIDを設定)
+  const col = hotInstance.propToCol(type);
   const notifiId = setTimeout(() => {
     // タイマーが削除されていた場合には何もしない
     if (!hotInstance.getCellMeta(row, col)[targetNotifiId]) return;
-    removeNotifiCell(hotInstance, row, col, [type]);
+    removeNotifiCell(hotInstance, row, [type]);
     let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-    const taskTitleLabel = `[${target === 'startTime' ? '開始' : '終了'}] - `;
+    const taskTitleLabel = `[${type === 'startTime' ? '開始' : '終了'}] - `;
     taskTitle = taskTitle ? `${taskTitleLabel}${taskTitle}` : `${taskTitleLabel}無名タスク`;
     if (permission !== 'granted') {
       alert(taskTitle);
       window.focus();
-      hotInstance.selectCell(row, hotInstance.propToCol(target));
+      hotInstance.selectCell(row, hotInstance.propToCol(type));
     } else {
-      const notifi = new Notification(taskTitle, {
-        icon: logo,
-      });
+      const notifi = new Notification(taskTitle, { icon: logo });
       notifi.onclick = () => {
         notifi.close();
         window.focus();
-        hotInstance.selectCell(row, hotInstance.propToCol(target));
+        hotInstance.selectCell(row, hotInstance.propToCol(type));
       };
     }
   }, timeout);
@@ -161,33 +157,48 @@ const setNotifiCell = (hotInstance, row, col, timeout, type) => {
   hotInstance.setCellMeta(row, col, targetNotifiId, notifiId);
 };
 
+/**
+ * 通知を管理する処理。
+ * ロジックは下記の通り
+ * case0 [作成]・見積・開始時刻のペアが成立した→通知を予約する
+ * case1 [削除]・見積・開始時刻のペアが不成立になった→通知を破棄する
+ * case2 [削除]・終了時刻が入力された→通知を破棄する(case0のペアが成立している場合は新しい通知を予約)
+ * case3 [更新]・見積・開始時刻のペアが成立した状態で見積or開始時刻が新しい値として入力された→既存の通知
+ * 通知の情報は開始時刻の通知はstartTime,終了時刻はendTimeのcellMetaに設定する
+ * @param  {Object} hotInstance
+ * @param  {Integer} row
+ * @param  {String} prop
+ * @param  {any} newVal
+ */
 const manageNotifi = (hotInstance, row, prop, newVal) => {
   // 通知を設定するセルはstartTimeのカラム
-  const col = hotInstance.propToCol('startTime');
-  if (prop === 'startTime' || prop === 'estimate') {
-    // ガードとstartTimeVal,estimateValの組み立て
-    const startTimeVal = prop === 'startTime' ? newVal : hotInstance.getDataAtRowProp(row, 'startTime');
+  if (prop === 'estimate' || prop === 'startTime' || prop === 'endTime') {
+    // ガードと値の組み立て
     const estimateVal = prop === 'estimate' ? newVal : hotInstance.getDataAtRowProp(row, 'estimate');
-    // 終了時刻が既に入力されているもしくは開始時刻が空もしくは見積が空か0の場合、既に登録されている通知を削除
-    if (hotInstance.getDataAtRowProp(row, 'endTime') !== '' || startTimeVal === '' || estimateVal === '' || estimateVal === 0) {
-      removeNotifiCell(hotInstance, row, col, ['startTime', 'endTime']);
+    const startTimeVal = prop === 'startTime' ? newVal : hotInstance.getDataAtRowProp(row, 'startTime');
+    const endTimeVal = prop === 'endTime' ? newVal : hotInstance.getDataAtRowProp(row, 'endTime');
+    // case1 見積が空か0,もしくは開始時刻が空の場合、既に登録されている通知を削除
+    if (estimateVal === '' || estimateVal === 0 || startTimeVal === '') {
+      removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
       return;
+    }
+    // case2 終了時刻が空じゃない場合、既に登録されている通知を削除
+    if (endTimeVal !== '') {
+      removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
     }
     const currentMoment = moment();
     const startTimeMoment = moment(startTimeVal, constants.TIMEFMT);
+    // case0 or case3 setNotifiCellはupsertで通知を登録する
     // --------------------------開始時刻に表示する通知の設定--------------------------
     const startTimeOut = startTimeMoment.diff(currentMoment);
     if (startTimeOut > 0) {
-      setNotifiCell(hotInstance, row, col, startTimeOut, 'startTime');
+      setNotifiCell(hotInstance, row, 'startTime', startTimeOut);
     }
     // --------------------------終了時刻に表示する通知の設定--------------------------
     const endTimeOut = startTimeMoment.add(estimateVal, 'minutes').diff(currentMoment);
     if (endTimeOut > 0) {
-      setNotifiCell(hotInstance, row, col, endTimeOut, 'endTime');
+      setNotifiCell(hotInstance, row, 'endTime', endTimeOut);
     }
-  } else if (prop === 'endTime') {
-    // 終了時刻を入力したのでstartTimeのセルにタイマーIDがあれば削除
-    removeNotifiCell(hotInstance, row, col, ['startTime', 'endTime']);
   }
 };
 
