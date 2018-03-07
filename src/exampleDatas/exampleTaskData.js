@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-export default [
+export default[
   {
     id: uuid(),
     title: '可燃ごみ',
@@ -30,7 +30,7 @@ export default [
     title: '日報',
     estimate: 10,
     startTime: '10:21',
-    endTime: '10:32',
+    endTime: '',
     memo: '',
   },
   {
@@ -38,7 +38,7 @@ export default [
     title: '勤怠入力',
     estimate: 3,
     startTime: '10:52',
-    endTime: '10:52',
+    endTime: '',
     memo: '',
   },
   {
@@ -46,7 +46,7 @@ export default [
     title: '朝会',
     estimate: 15,
     startTime: '11:10',
-    endTime: '11:25',
+    endTime: '',
     memo: '',
   },
   {
@@ -54,7 +54,7 @@ export default [
     title: '#123 の対応',
     estimate: 20,
     startTime: '11:55',
-    endTime: '12:13',
+    endTime: '',
     memo: '',
   },
   {
@@ -62,22 +62,22 @@ export default [
     title: '昼飯',
     estimate: 60,
     startTime: '13:00',
-    endTime: '14:00',
+    endTime: '',
     memo: '',
   },
   {
     id: uuid(),
     title: '開発MTG',
     estimate: 60,
-    startTime: '14:00',
-    endTime: '15:40',
+    startTime: '',
+    endTime: '',
     memo: '',
   },
   {
     id: uuid(),
     title: 'コードレビュー',
     estimate: 40,
-    startTime: '18:00',
+    startTime: '',
     endTime: '',
     memo: 'feature/issue01',
   },
