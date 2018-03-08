@@ -155,7 +155,7 @@ class Taskontable extends Component {
       const tableTasks = this.state.tableTasks;
       tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
       this.setState({ tableTasks });
-      if (this.state.isHotMode) this.taskTable.setData(tableTasks);
+      if (this.state.isHotMode) this.taskTable.setDataForHot(tableTasks);
       if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
          taskPoolType === constants.taskPoolType.LOWPRIORITY) {
         poolTasks[taskPoolType].splice(value, 1);
@@ -331,10 +331,7 @@ class Taskontable extends Component {
   }
 
   resetTable(data) {
-    if (this.state.isHotMode) {
-      this.taskTable.clear();
-      this.taskTable.setData(data);
-    }
+    if (this.state.isHotMode) this.taskTable.setDataForHot(data);
     this.handleTableTasks(data);
   }
 
@@ -407,7 +404,10 @@ class Taskontable extends Component {
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date });
-      setTimeout(() => { this.initTableTask(); });
+      setTimeout(() => {
+        this.taskTable.updateIsToday();
+        this.initTableTask();
+      });
     }
   }
 

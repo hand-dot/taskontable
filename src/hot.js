@@ -202,8 +202,8 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
   }
 };
 
-const bindClearNotifi = (hotInstance) => {
-  hotInstance.addHook('clearNotifi', () => {
+const bindClearAllNotifi = (hotInstance) => {
+  hotInstance.addHook('clearAllNotifi', () => {
     notifiIds.forEach((notifiId) => {
       clearTimeout(notifiId);
     });
@@ -294,20 +294,6 @@ export const contextMenuItems = {
   },
 };
 
-export const setDataForHot = (hotInstance, datas) => {
-  if (!Array.isArray(datas)) return;
-  const dataForHot = [];
-  util.cloneDeep(datas).forEach((data, rowIndex) => {
-    if (!util.equal(tableTaskSchema, data)) {
-      Object.entries(data).forEach(([key, value]) => {
-        dataForHot.push([rowIndex, key, value]);
-      });
-    }
-  });
-  hotInstance.runHooks('clearNotifi');
-  hotInstance.setDataAtRowProp(dataForHot);
-};
-
 export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   if (!hotInstance) return [];
   const hotData = [];
@@ -320,6 +306,44 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   return util.cloneDeep(hotData.filter(data => !util.equal(tableTaskSchema, data)));
 };
 
+export const setDataForHot = (hotInstance, datas) => {
+  if (!Array.isArray(datas)) return;
+  const dataForHot = [];
+  let rowIndex = 0;
+  util.cloneDeep(datas).forEach((data) => {
+    if (!util.equal(tableTaskSchema, data)) {
+      Object.entries(data).forEach(([key, value]) => {
+        dataForHot.push([rowIndex, key, value]);
+      });
+    }
+    rowIndex += 1;
+  });
+  const rowCount = getHotTasksIgnoreEmptyTask(hotInstance).length;
+  let emptyRows = [];
+  // rowIndex これから入れる行数
+  // rowCount 今の行数
+  let needTrim = false;
+  if (rowIndex < rowCount) {
+    needTrim = true;
+  } else if (rowIndex > constants.HOT_MINROW) {
+    emptyRows = Array(Math.max(constants.HOT_MINROW, rowCount) - constants.HOT_MINROW).fill(tableTaskSchema);
+  }
+  emptyRows.forEach((data) => {
+    Object.entries(data).forEach(([key, value]) => {
+      dataForHot.push([rowIndex, key, value]);
+    });
+    rowIndex += 1;
+  });
+  // 既に登録されている通知をすべてクリアする
+  hotInstance.runHooks('clearAllNotifi');
+  hotInstance.setDataAtRowProp(dataForHot);
+  // 不要な行を削除する
+  if (needTrim) hotInstance.alter('remove_row', rowIndex, rowCount);
+  // 保存ボタンが活性化するのを防ぐ
+  hotInstance.runHooks('afterUpdateSettings');
+};
+
+
 export const hotBaseConf = {
   selectionMode: 'range',
   autoRowSize: false,
@@ -329,20 +353,20 @@ export const hotBaseConf = {
   rowHeaderWidth: 25,
   autoInsertRow: false,
   manualRowMove: true,
-  minRows: 20,
+  minRows: constants.HOT_MINROW,
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
   data: [],
   dataSchema: tableTaskSchema,
   beforeInit() {
-    Handsontable.hooks.register('clearNotifi');
+    Handsontable.hooks.register('clearAllNotifi');
   },
   afterInit() {
-    bindClearNotifi(this);
+    bindClearAllNotifi(this);
     bindShortcut(this);
   },
   afterDestroy() {
-    Handsontable.hooks.deregister('clearNotifi');
+    Handsontable.hooks.deregister('clearAllNotifi');
   },
 };
 

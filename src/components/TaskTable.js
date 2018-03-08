@@ -55,7 +55,7 @@ class TaskTable extends Component {
     this.hot = null;
   }
 
-  setData(datas) {
+  setDataForHot(datas) {
     setDataForHot(this.hot, datas);
   }
 
@@ -91,8 +91,8 @@ class TaskTable extends Component {
     if (this.hot) this.hot.alter('insert_row');
   }
 
-  clear() {
-    if (this.hot) this.hot.updateSettings({ isToday: this.props.isToday, data: [] });
+  updateIsToday() {
+    if (this.hot) this.hot.updateSettings({ isToday: this.props.isToday });
   }
 
   renderHot() {

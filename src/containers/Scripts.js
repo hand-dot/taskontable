@@ -132,7 +132,6 @@ class Scripts extends Component {
     const script = this.state[scriptType];
     util.runWorker(script, data,
       (result) => {
-        this.exampleHot.clear();
         setDataForHot(this.exampleHot, result);
         setTimeout(() => { this.exampleHot.render(); });
         this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
