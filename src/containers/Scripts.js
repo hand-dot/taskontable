@@ -105,6 +105,7 @@ class Scripts extends Component {
   }
 
   resetExampleHot() {
+    if (!window.confirm('テーブルをリセットしてもよろしいですか？')) return;
     this.exampleHot.loadData(util.cloneDeep(exampleTaskData));
     setTimeout(() => { this.exampleHot.render(); });
   }
@@ -128,6 +129,7 @@ class Scripts extends Component {
 
   fireScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    if (!window.confirm(`${scriptType}を実行してもよろしいですか？`)) return;
     const data = getHotTasksIgnoreEmptyTask(this.exampleHot);
     const script = this.state[scriptType];
     util.runWorker(script, data,
@@ -145,6 +147,7 @@ class Scripts extends Component {
 
   loadExampleScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    if (!window.confirm(`${scriptType}のサンプルをロードしてもよろしいですか？`)) return;
     this.setState({ [scriptType]: scriptType === 'exportScript' ? exampleExportScript.toString() : exampleImportScript.toString() });
   }
 
