@@ -77,13 +77,14 @@ class Scripts extends Component {
     const self = this;
     this.exampleHot = new Handsontable(this.exampleHotDom, Object.assign({}, hotBaseConf, {
       isToday: true,
+      renderAllRows: true,
       height: 300,
       colWidths: 'auto',
       minRows: 10,
       data: JSON.parse(self.state.exampleTaskData),
       afterRender() { self.syncStateByRender(); },
+      afterInit() { this.render(); },
     }));
-    setTimeout(() => { this.exampleHot.render(); });
   }
 
   componentWillUnmount() {
