@@ -162,8 +162,9 @@ const setNotifiCell = (hotInstance, row, prop, timeout) => {
  * ロジックは下記の通り
  * case0 [作成]・見積・開始時刻のペアが成立した→通知を予約する
  * case1 [削除]・見積・開始時刻のペアが不成立になった→通知を破棄する
- * case2 [削除]・終了時刻が入力された→通知を破棄する(case0のペアが成立している場合は新しい通知を予約)
- * case3 [更新]・見積・開始時刻のペアが成立した状態で見積or開始時刻が新しい値として入力された→既存の通知
+ * case2 [削除]・終了時刻が入力された→通知を破棄する
+ * case3 [削除・更新]・終了時刻が空になった→通知を破棄し、新しい通知を設定する
+ * case4 [更新]・見積・開始時刻のペアが成立した状態で見積or開始時刻が新しい値として入力された→既存の通知
  * 通知の情報は開始時刻の通知はstartTime,終了時刻はendTimeのcellMetaに設定する
  * @param  {Object} hotInstance
  * @param  {Integer} row
@@ -182,13 +183,16 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
       removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
       return;
     }
-    // case2 終了時刻が空じゃない場合、既に登録されている通知を削除
-    if (endTimeVal !== '') {
+
+    if (endTimeVal === '') { // case3 終了時刻に空を入力された場合通知を破棄し、新しい通知を設定
       removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
+    } else { // case2 終了時刻が入力された場合、既に登録されている通知を削除
+      removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
+      return;
     }
     const currentMoment = moment();
     const startTimeMoment = moment(startTimeVal, constants.TIMEFMT);
-    // case0 or case3 setNotifiCellはupsertで通知を登録する
+    // case0 or case4 setNotifiCellはupsertで通知を登録する
     // --------------------------開始時刻に表示する通知の設定--------------------------
     const startTimeOut = startTimeMoment.diff(currentMoment);
     if (startTimeOut > 0) {
