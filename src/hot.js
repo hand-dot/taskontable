@@ -319,22 +319,11 @@ export const setDataForHot = (hotInstance, datas) => {
     rowIndex += 1;
   });
   const rowCount = getHotTasksIgnoreEmptyTask(hotInstance).length;
-  let emptyRows = [];
   // rowIndex これから入れる行数
   // rowCount 今の行数
   let needTrim = false;
-  if (rowIndex < rowCount) {
-    needTrim = true;
-  } else if (rowIndex > constants.HOT_MINROW) {
-    emptyRows = Array(Math.max(constants.HOT_MINROW, rowCount) - constants.HOT_MINROW).fill(tableTaskSchema);
-  }
-  emptyRows.forEach((data) => {
-    Object.entries(data).forEach(([key, value]) => {
-      dataForHot.push([rowIndex, key, value]);
-    });
-    rowIndex += 1;
-  });
-  // 既に登録されている通知をすべてクリアする
+  if (rowIndex < rowCount) needTrim = true;
+  // 既に登録されている通知をすべてクリアし、データを設定
   hotInstance.runHooks('clearAllNotifi');
   hotInstance.setDataAtRowProp(dataForHot);
   // 不要な行を削除する
