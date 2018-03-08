@@ -113,10 +113,10 @@ const removeNotifi = (id) => {
   }
 };
 
-const removeNotifiCell = (hotInstance, row, types) => {
-  types.forEach((type) => {
-    const col = hotInstance.propToCol(type);
-    const targetNotifiId = `${type}NotifiId`;
+const removeNotifiCell = (hotInstance, row, props) => {
+  props.forEach((prop) => {
+    const col = hotInstance.propToCol(prop);
+    const targetNotifiId = `${prop}NotifiId`;
     const notifiId = hotInstance.getCellMeta(row, col)[targetNotifiId];
     if (notifiId) {
       removeNotifi(notifiId);
@@ -125,31 +125,31 @@ const removeNotifiCell = (hotInstance, row, types) => {
   });
 };
 
-const setNotifiCell = (hotInstance, row, type, timeout) => {
+const setNotifiCell = (hotInstance, row, prop, timeout) => {
   // 権限を取得し通知を登録
   const permission = Notification.permission;
-  const targetNotifiId = `${type}NotifiId`;
+  const targetNotifiId = `${prop}NotifiId`;
   // タイマーの2重登録にならないように既に登録されているタイマーを削除
-  removeNotifiCell(hotInstance, row, [type]);
+  removeNotifiCell(hotInstance, row, [prop]);
   // タイマーを登録(セルにタイマーIDを設定)
-  const col = hotInstance.propToCol(type);
+  const col = hotInstance.propToCol(prop);
   const notifiId = setTimeout(() => {
     // タイマーが削除されていた場合には何もしない
     if (!hotInstance.getCellMeta(row, col)[targetNotifiId]) return;
-    removeNotifiCell(hotInstance, row, [type]);
+    removeNotifiCell(hotInstance, row, [prop]);
     let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-    const taskTitleLabel = `[${type === 'startTime' ? '開始' : '終了'}] - `;
+    const taskTitleLabel = `[${prop === 'startTime' ? '開始' : '終了'}] - `;
     taskTitle = taskTitle ? `${taskTitleLabel}${taskTitle}` : `${taskTitleLabel}無名タスク`;
     if (permission !== 'granted') {
       alert(taskTitle);
       window.focus();
-      hotInstance.selectCell(row, hotInstance.propToCol(type));
+      hotInstance.selectCell(row, hotInstance.propToCol(prop));
     } else {
       const notifi = new Notification(taskTitle, { icon: logo });
       notifi.onclick = () => {
         notifi.close();
         window.focus();
-        hotInstance.selectCell(row, hotInstance.propToCol(type));
+        hotInstance.selectCell(row, hotInstance.propToCol(prop));
       };
     }
   }, timeout);
