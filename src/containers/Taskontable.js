@@ -199,6 +199,9 @@ class Taskontable extends Component {
   saveTableTasks() {
     // IDを生成し並び変えられたデータを取得するために処理が入っている。
     const tableTasks = (this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => util.setIdIfNotExist(tableTask));
+    // 開始時刻順に並び替える
+    const sortedTableTask = util.getSortedTasks(tableTasks);
+    if (this.state.isHotMode) this.taskTable.setDataForHot(sortedTableTask);
     this.bindOpenTasksProcessing(tableTasks);
     this.setState({
       tableTasks,
@@ -330,9 +333,10 @@ class Taskontable extends Component {
     });
   }
 
-  resetTable(data) {
-    if (this.state.isHotMode) this.taskTable.setDataForHot(data);
-    this.handleTableTasks(data);
+  resetTable(tableTasks) {
+    const sortedTableTask = util.getSortedTasks(tableTasks);
+    if (this.state.isHotMode) this.taskTable.setDataForHot(sortedTableTask);
+    this.handleTableTasks(sortedTableTask);
   }
 
   fireScript(data, scriptType = 'exportScript') {
