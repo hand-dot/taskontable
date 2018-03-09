@@ -92,11 +92,21 @@ export default {
    * @param  {Array} tasks タスク
    */
   getSortedTasks(tasks) {
-    return tasks.filter(task => task.startTime !== '').sort((a, b) => {
+    const hasStartTimeTasks = [];
+    const hasNotStartTimeTasks = [];
+    for (let i = 0; i < tasks.length; i += 1) {
+      const task = tasks[i];
+      if (task.startTime !== '') {
+        hasStartTimeTasks.push(task);
+      } else {
+        hasNotStartTimeTasks.push(task);
+      }
+    }
+    return hasStartTimeTasks.sort((a, b) => {
       if (a.startTime > b.startTime) return 1;
       if (a.startTime < b.startTime) return -1;
       return 0;
-    }).concat(tasks.filter(task => task.startTime === '').sort((a, b) => {
+    }).concat(hasNotStartTimeTasks.sort((a, b) => {
       if (a.title === '') return 1;
       if (a.title !== '') return -1;
       if (a.estimate === '') return 1;

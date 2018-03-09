@@ -285,9 +285,15 @@ export const contextMenuItems = {
   hsep2: '---------',
   reverse_taskpool_hight: {
     name: '[すぐにやる]に戻す',
+    disabled() {
+      return this.getDataAtProp('endTime') !== '';
+    },
   },
   reverse_taskpool_low: {
     name: '[いつかやる]に戻す',
+    disabled() {
+      return this.getDataAtProp('endTime') !== '';
+    },
   },
   hsep3: '---------',
   start_task: {
@@ -365,10 +371,11 @@ export const hotBaseConf = {
 
 export const hotConf = Object.assign({}, hotBaseConf, {
   afterRowMove() {
-    const rowCount = this.countSourceRows();
-    for (let index = 0; index < rowCount; index += 1) {
-      manageNotifi(this, index, 'estimate', this.getDataAtRowProp(this.toPhysicalRow(index), 'estimate'));
-    }
+    // 通知をすべてクリアし、再設定
+    this.runHooks('clearAllNotifi');
+    this.getDataAtCol(columns.findIndex(colmun => colmun.data === 'estimate').forEach((estimate, index) => {
+      if (estimate) manageNotifi(this, index, 'estimate', estimate);
+    }));
   },
   afterChange(changes) {
     if (!changes) return;

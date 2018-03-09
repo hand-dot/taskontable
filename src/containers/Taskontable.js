@@ -89,7 +89,7 @@ class Taskontable extends Component {
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
   }
 
-  changeTableTasks(taskActionType, value) {
+  changeTableTasksByMobile(taskActionType, value) {
     const tableTasks = util.cloneDeep(this.state.tableTasks);
     if (taskActionType === constants.taskActionType.ADD) {
       tableTasks.push(value);
@@ -115,15 +115,13 @@ class Taskontable extends Component {
       tableTasks.unshift(target);
     } else if (taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY || taskActionType === constants.taskActionType.MOVE_POOL_LOWPRIORITY) {
       const taskPoolType = taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
-      const poolTasks = this.state.poolTasks;
-      poolTasks[taskPoolType].push(Object.assign({}, this.state.tableTasks[value]));
-      this.setState({ poolTasks });
       tableTasks.splice(value, 1);
-      // テーブルタスクからタスクプールに移動したら保存する
-      setTimeout(() => { this.savePoolTasks(poolTasks); });
+      this.handleTableTasks(tableTasks);
+      setTimeout(() => { this.moveTableTaskToPoolTask(taskPoolType, this.state.tableTasks[value]); });
+      return;
     }
-    this.handleTableTasks(tableTasks);
     this.handleSaveable(this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks));
+    this.handleTableTasks(tableTasks);
     setTimeout(() => { this.saveTableTasks(); });
   }
 
@@ -168,8 +166,11 @@ class Taskontable extends Component {
   }
 
   moveTableTaskToPoolTask(taskPoolType, task) {
+    const willPooltask = util.cloneDeep(task);
+    willPooltask.startTime = '';
+    willPooltask.endTime = '';
     const poolTasks = util.cloneDeep(this.state.poolTasks);
-    poolTasks[taskPoolType].push(task);
+    poolTasks[taskPoolType].push(willPooltask);
     this.setState({ poolTasks });
     // テーブルタスクからタスクプールに移動したら保存する
     setTimeout(() => {
@@ -200,21 +201,15 @@ class Taskontable extends Component {
     // IDを生成し並び変えられたデータを取得するために処理が入っている。
     const tableTasks = (this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => util.setIdIfNotExist(tableTask));
     // 開始時刻順に並び替える
-    const sortedTableTask = util.getSortedTasks(tableTasks);
-    if (this.state.isHotMode) this.taskTable.setDataForHot(sortedTableTask);
-    this.bindOpenTasksProcessing(tableTasks);
-    this.setState({
-      tableTasks,
-      isOpenSaveSnackbar: true,
-      loading: true,
-    });
-    this.fireScript(tableTasks, 'exportScript').then((data) => {
+    const sortedTableTask = this.resetTable(tableTasks);
+    this.setState({ loading: true });
+    this.fireScript(sortedTableTask, 'exportScript').then((data) => {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data).then(() => {
-        this.setState({ loading: false, lastSaveTime: util.getCrrentTimeObj(), saveable: false });
+        this.setState({ isOpenSaveSnackbar: true, loading: false, lastSaveTime: util.getCrrentTimeObj(), saveable: false });
       });
     }, () => {
-      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(tableTasks).then(() => {
-        this.setState({ loading: false, lastSaveTime: util.getCrrentTimeObj(), saveable: false });
+      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(sortedTableTask).then(() => {
+        this.setState({ isOpenSaveSnackbar: true, loading: false, lastSaveTime: util.getCrrentTimeObj(), saveable: false });
       });
     });
   }
@@ -337,6 +332,7 @@ class Taskontable extends Component {
     const sortedTableTask = util.getSortedTasks(tableTasks);
     if (this.state.isHotMode) this.taskTable.setDataForHot(sortedTableTask);
     this.handleTableTasks(sortedTableTask);
+    return sortedTableTask;
   }
 
   fireScript(data, scriptType = 'exportScript') {
@@ -464,7 +460,7 @@ class Taskontable extends Component {
                 />);
               } return (<TaskTableMobile
                 tableTasks={this.state.tableTasks}
-                changeTableTasks={this.changeTableTasks.bind(this)}
+                changeTableTasks={this.changeTableTasksByMobile.bind(this)}
                 isToday={util.isToday(this.state.date)}
               />);
             })()}
