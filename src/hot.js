@@ -29,6 +29,9 @@ const columns = [
     timeFormat: constants.TIMEFMT,
     allowInvalid: false,
     correctFormat: true,
+    renderer(instance, td, row, col, prop, value, cellProperties) {
+      td.innerHTML = `${value} ${cellProperties.startTimeNotifiId ? '<i class="fa fa-bell-o"></i>' : ''}`; // eslint-disable-line no-param-reassign
+    },
   },
   {
     title: `終了時刻(${constants.TIMEFMT})`,
@@ -38,7 +41,7 @@ const columns = [
     timeFormat: constants.TIMEFMT,
     allowInvalid: false,
     correctFormat: true,
-    renderer(instance, td, row, col, prop, value) {
+    renderer(instance, td, row, col, prop, value, cellProperties) {
       td.innerHTML = value;
       td.parentNode.style.backgroundColor = '';
       const endTimeVal = value;
@@ -61,7 +64,7 @@ const columns = [
         } else {
           td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
         }
-        td.innerHTML = `<div style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal}</div>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${cellProperties.endTimeNotifiId ? '<i class="fa fa-bell-o"></i>' : ''}</span>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
@@ -72,7 +75,7 @@ const columns = [
     type: 'numeric',
     readOnly: true,
     validator: false,
-    colWidths: 30,
+    colWidths: 35,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htDimmed');
