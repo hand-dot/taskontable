@@ -16,7 +16,6 @@ import Snackbar from 'material-ui/Snackbar';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';
-import TableStatus from '../components/TableStatus';
 import TaskPool from '../components/TaskPool';
 import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
@@ -441,12 +440,12 @@ class Taskontable extends Component {
               tableTasks={this.state.tableTasks}
               hasOpenTask={this.state.hasOpenTask}
               date={this.state.date}
+              isLoading={this.state.loading}
               lastSaveTime={this.state.lastSaveTime}
               saveable={this.state.saveable}
               changeDate={this.changeDate.bind(this)}
               saveTableTasks={this.saveTableTasks.bind(this)}
             />
-            <TableStatus tableTasks={this.state.tableTasks} isLoading={this.state.loading} />
             {(() => {
               if (this.state.isHotMode) {
                 return (<TaskTable
