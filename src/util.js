@@ -84,12 +84,12 @@ export default {
   setIdIfNotExist(obj) {
     return obj.id ? obj : Object.assign(obj, { id: uuid() });
   },
-  
+
   /**
    * タスクを開始時刻順に並び替えます。
    * 開始時刻が空の場合は後ろに行きます。
-   * 開始時刻が空のタスクは見積もりが小さい順に並び替えます。
-   * @param  {Array} tasks
+   * 開始時刻が空のタスクはタイトルがあれば上、なければ下。見積もり済が上、見積もりをしていなければ下に行きます。
+   * @param  {Array} tasks タスク
    */
   getSortedTasks(tasks) {
     return tasks.filter(task => task.startTime !== '').sort((a, b) => {
@@ -97,6 +97,10 @@ export default {
       if (a.startTime < b.startTime) return -1;
       return 0;
     }).concat(tasks.filter(task => task.startTime === '').sort((a, b) => {
+      if (a.title === '') return 1;
+      if (a.title !== '') return -1;
+      if (a.estimate === '') return 1;
+      if (a.estimate !== '') return -1;
       if (a.estimate > b.estimate) return 1;
       if (a.estimate < b.estimate) return -1;
       return 0;

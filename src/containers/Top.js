@@ -13,7 +13,7 @@ import constants from '../constants';
 
 const styles = theme => ({
   content: {
-    paddingTop: '3em',
+    paddingTop: '7em',
     paddingBottom: '3em',
     paddingLeft: 10,
     paddingRight: 10,

@@ -32,7 +32,7 @@ function Login(props) {
   return (
     <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
       <Grid item xs={12}>
-        <Paper style={{ minHeight: '100%' }} square elevation={0}>
+        <Paper style={{ minHeight: '100vh' }} square elevation={0}>
           <div className={classes.content}>
             <Typography variant="title">
               Taskontableにログイン
