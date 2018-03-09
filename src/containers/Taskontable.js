@@ -405,7 +405,7 @@ class Taskontable extends Component {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date });
       setTimeout(() => {
-        this.taskTable.updateIsToday();
+        if (this.state.isHotMode) this.taskTable.updateIsToday();
         this.initTableTask();
       });
     }

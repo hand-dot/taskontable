@@ -16,7 +16,7 @@
     "codemirror": "^5.35.0",
     "fast-clone": "^1.4.2",
     "fast-equals": "^1.2.1",
-    "firebase": "^4.10.1",
+    "firebase": "^4.11.0",
     "font-awesome": "^4.7.0",
     "handsontable": "^0.37.0",
     "lodash.debounce": "^4.0.8",
