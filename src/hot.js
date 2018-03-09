@@ -217,7 +217,7 @@ const bindClearAllNotifi = (hotInstance) => {
 
 const bindShortcut = (hotInstance) => {
   // ショートカット処理
-  hotInstance.addHook('afterDocumentKeyDown', debounce((e) => {
+  hotInstance.addHook('afterDocumentKeyDown', (e) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
     if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
     const selected = hotInstance.getSelectedLast();
@@ -240,7 +240,7 @@ const bindShortcut = (hotInstance) => {
         }
       }
     }
-  }, constants.KEYEVENT_DELAY));
+  });
 };
 
 export const contextMenuCallback = (key, selections, hotInstance) => {

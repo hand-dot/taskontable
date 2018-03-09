@@ -13,8 +13,7 @@ export default {
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   APPWIDTH: window.innerWidth < 1280 ? window.innerWidth : 1280,
   APPHEIGHT: window.innerHeight,
-  KEYEVENT_DELAY: 100,
-  SAVE_DELAY: 500,
+  REQEST_DELAY: 500,
   RENDER_DELAY: 1000,
   HOT_MINROW: 20,
   shortcuts: {

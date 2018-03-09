@@ -33,8 +33,9 @@ const styles = theme => ({
 class Taskontable extends Component {
   constructor(props) {
     super(props);
-    this.saveTableTasks = debounce(this.saveTableTasks, constants.SAVE_DELAY);
-    this.savePoolTasks = debounce(this.savePoolTasks, constants.SAVE_DELAY);
+    this.saveTableTasks = debounce(this.saveTableTasks, constants.REQEST_DELAY);
+    this.savePoolTasks = debounce(this.savePoolTasks, constants.REQEST_DELAY);
+    this.initTableTask = debounce(this.initTableTask, constants.REQEST_DELAY);
     this.oldTimeDiffMinute = '';
     this.bindOpenTaskIntervalID = '';
     this.state = {
@@ -227,7 +228,7 @@ class Taskontable extends Component {
   }
 
   handleTableTasks(tableTasks) {
-    this.bindOpenTasksProcessing(tableTasks);
+    if (this.state.isHotMode) this.bindOpenTasksProcessing(tableTasks);
     this.setState({ tableTasks });
   }
 
@@ -269,7 +270,7 @@ class Taskontable extends Component {
         }
         if (newTimeDiffMinute === -1) {
           // 開始まで秒単位でカウントダウンする場合
-          document.title = `${moment().format('ss') - 60}秒 - ${openTask.title || '無名タスク'}`;
+          document.title = `${(moment().format('ss') - 60) * -1}秒後 - ${openTask.title || '無名タスク'}`;
         } else if (newTimeDiffMinute === 0) {
           document.title = `${moment().format('ss')}秒 - ${openTask.title || '無名タスク'}`;
         } else {
