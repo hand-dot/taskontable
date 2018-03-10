@@ -288,13 +288,27 @@ export const contextMenuItems = {
   reverse_taskpool_hight: {
     name: '[すぐにやる]に戻す',
     disabled() {
-      return this.getDataAtProp('endTime') !== '';
+      const selected = this.getSelectedLast();
+      const startRow = selected[0];
+      const endRow = selected[2];
+      const selectedEndTimes = [];
+      for (let row = startRow; row <= endRow; row += 1) {
+        selectedEndTimes.push(this.getDataAtRowProp(row, 'endTime'));
+      }
+      return selectedEndTimes.some(selectedEndTime => selectedEndTime !== '');
     },
   },
   reverse_taskpool_low: {
     name: '[いつかやる]に戻す',
     disabled() {
-      return this.getDataAtProp('endTime') !== '';
+      const selected = this.getSelectedLast();
+      const startRow = selected[0];
+      const endRow = selected[2];
+      const selectedEndTimes = [];
+      for (let row = startRow; row <= endRow; row += 1) {
+        selectedEndTimes.push(this.getDataAtRowProp(row, 'endTime'));
+      }
+      return selectedEndTimes.some(selectedEndTime => selectedEndTime !== '');
     },
   },
   hsep3: '---------',
