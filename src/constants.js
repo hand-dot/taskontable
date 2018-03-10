@@ -13,8 +13,8 @@ export default {
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   APPWIDTH: window.innerWidth < 1280 ? window.innerWidth : 1280,
   APPHEIGHT: window.innerHeight,
-  REQEST_DELAY: 500,
-  RENDER_DELAY: 1000,
+  REQEST_DELAY: 100,
+  RENDER_DELAY: 500,
   HOT_MINROW: 20,
   shortcuts: {
     NEXTDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 190,
@@ -49,7 +49,10 @@ export default {
     BOTTOM: 'bottom',
     TOP: 'top',
   },
-
+  scriptType: {
+    IMPORTSCRIPT: 'importScript',
+    EXPORTSCRIPT: 'exportScript',
+  },
   DATEFMT: 'YYYY-MM-DD',
   TIMEFMT: 'HH:mm',
   INITIALDATE: '1970-01-01',

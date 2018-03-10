@@ -88,7 +88,11 @@ class Taskontable extends Component {
     firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
   }
-
+  /**
+   * テーブルタスクを開始時刻順にソートしstateに設定します。
+   * ソートしたテーブルタスクを返却します。
+   * @param  {Array} tableTasks テーブルタスク
+   */
   setSortedTableTasks(tableTasks) {
     const sortedTableTask = util.getSortedTasks(tableTasks);
     if (this.state.isHotMode) {
@@ -99,6 +103,11 @@ class Taskontable extends Component {
     return sortedTableTask;
   }
 
+  /**
+   * モバイルのタスクテーブルを変更したときにここでハンドリングを行う
+   * @param  {String} taskActionType 操作種別
+   * @param  {any} value 値
+   */
   changeTableTasksByMobile(taskActionType, value) {
     const tableTasks = util.cloneDeep(this.state.tableTasks);
     if (taskActionType === constants.taskActionType.ADD) {
@@ -135,6 +144,11 @@ class Taskontable extends Component {
     setTimeout(() => { this.saveTableTasks(); });
   }
 
+  /**
+   * タスクプールを変更したときにここでハンドリングを行う
+   * @param  {String} taskActionType 操作種別
+   * @param  {any} value 値
+   */
   changePoolTasks(taskActionType, taskPoolType, value) {
     const poolTasks = util.cloneDeep(this.state.poolTasks);
     if (taskActionType === constants.taskActionType.ADD) {
@@ -162,19 +176,23 @@ class Taskontable extends Component {
     } else if (taskActionType === constants.taskActionType.MOVE_TABLE) {
       const tableTasks = this.state.tableTasks;
       tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
-      this.setState({ tableTasks });
-      if (this.state.isHotMode) this.taskTable.setDataForHot(tableTasks);
       if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
          taskPoolType === constants.taskPoolType.LOWPRIORITY) {
         poolTasks[taskPoolType].splice(value, 1);
       }
       // タスクプールからテーブルタスクに移動したら保存する
+      this.setState({ tableTasks });
+      if (this.state.isHotMode) this.taskTable.setDataForHot(tableTasks);
       setTimeout(() => { this.saveTableTasks(); });
     }
     this.setState({ poolTasks });
     setTimeout(() => this.savePoolTasks());
   }
-
+  /**
+   * テーブルタスクをプールタスクに移動します。
+   * @param  {String} taskPoolType プールタスクのタイプ(constants.taskPoolType)
+   * @param  {Object} task タスク
+   */
   moveTableTaskToPoolTask(taskPoolType, task) {
     const willPooltask = util.cloneDeep(task);
     willPooltask.startTime = '';
@@ -183,12 +201,11 @@ class Taskontable extends Component {
     poolTasks[taskPoolType].push(willPooltask);
     this.setState({ poolTasks });
     // テーブルタスクからタスクプールに移動したら保存する
-    setTimeout(() => {
-      this.saveTableTasks();
-      this.savePoolTasks();
-    });
+    setTimeout(() => { this.saveTableTasks(); this.savePoolTasks(); });
   }
-
+  /**
+   * stateのpoolTasksをサーバーに保存します。
+   */
   savePoolTasks() {
     const poolTasks = util.cloneDeep(this.state.poolTasks);
     // IDの生成処理
@@ -206,7 +223,9 @@ class Taskontable extends Component {
     }
     firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(poolTasks);
   }
-
+  /**
+   * stateのtableTasksをサーバーに保存します。
+   */
   saveTableTasks() {
     // IDを生成し並び変えられたデータを取得するために処理が入っている。
     const tableTasks = (this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => util.setIdIfNotExist(tableTask));
@@ -224,14 +243,17 @@ class Taskontable extends Component {
     });
   }
 
-
+  /**
+   * ショートカットを実行します。
+   * @param  {} e イベント
+   */
   fireShortcut(e) {
     if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
       // 基準日を変更
       if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
-      setTimeout(() => { this.initTableTask(); });
+      setTimeout(() => this.initTableTask());
     } else if (constants.shortcuts.SAVE(e)) {
       e.preventDefault();
       this.saveTableTasks();
@@ -277,8 +299,11 @@ class Taskontable extends Component {
       document.title = constants.TITLE;
     }
   }
-
+  /**
+   * テーブルタスクを同期します。
+   */
   attachTableTasks() {
+    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       this.setState({ loading: true });
       if (snapshot.exists() && snapshot.val() && !util.equal(this.state.tableTasks, snapshot.val())) {
@@ -288,7 +313,9 @@ class Taskontable extends Component {
       this.setState({ saveable: false, loading: false });
     });
   }
-
+  /**
+   * プールタスクを同期します。
+   */
   attachPoolTasks() {
     firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
@@ -321,7 +348,11 @@ class Taskontable extends Component {
     });
   }
 
-
+  /**
+   * スクリプトを取得し、処理データに対してwokerで処理を実行します。
+   * @param  {} data 処理データ
+   * @param  {} scriptType='exportScript' スクリプト種別(インポートスクリプトorエクスポートスクリプト)
+   */
   fireScript(data, scriptType = 'exportScript') {
     return new Promise((resolve, reject) => {
       // スクリプトを発火するのは本日のタスクテーブルのみ
@@ -351,6 +382,10 @@ class Taskontable extends Component {
     });
   }
 
+
+  /**
+   * stateの日付に従ってデータを取得し、テーブルを初期化します。
+   */
   initTableTask() {
     this.setState({ loading: true });
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
@@ -371,25 +406,25 @@ class Taskontable extends Component {
       }
       this.setState({ saveable: false, loading: false });
       // 同期を開始
-      setTimeout(() => {
-        this.attachTableTasks();
-      });
+      setTimeout(() => this.attachTableTasks());
     });
   }
-
-  changeDate(event) {
-    const nav = event.currentTarget.getAttribute('data-date-nav');
+  /**
+   * 日付の変更を行います。
+   * @param  {Object} e イベント
+   */
+  changeDate(e) {
+    const nav = e.currentTarget.getAttribute('data-date-nav');
     let date;
     if (nav) {
       date = moment(this.state.date).add(nav === 'next' ? 1 : -1, 'day').format(constants.DATEFMT);
-    } else if (moment(event.target.value).isValid()) {
-      event.persist();
-      date = event.target.value;
+    } else if (moment(e.target.value).isValid()) {
+      e.persist();
+      date = e.target.value;
     } else {
       date = constants.INITIALDATE;
     }
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
-      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date });
       setTimeout(() => {
         if (this.state.isHotMode) this.taskTable.updateIsToday();
@@ -408,7 +443,7 @@ class Taskontable extends Component {
             <ExpansionPanelSummary expandIcon={<div style={{ width: '100vw' }} onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><i className="fa fa-angle-down fa-lg" /></div>}>
               <Tabs
                 value={this.state.tab}
-                onChange={(event, tab) => {
+                onChange={(e, tab) => {
                   this.setState({ tab, isOpenDashboard: true });
                   setTimeout(() => this.forceUpdate());
                 }}
