@@ -87,10 +87,6 @@ class TaskTable extends Component {
     this.props.handleTableTasks(getHotTasksIgnoreEmptyTask(this.hot));
   }
 
-  addTask() {
-    if (this.hot) this.hot.alter('insert_row');
-  }
-
   updateIsToday() {
     if (this.hot) this.hot.updateSettings({ isToday: this.props.isToday });
   }

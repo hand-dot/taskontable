@@ -61,7 +61,22 @@ class Taskontable extends Component {
 
   componentWillMount() {
     window.onkeydown = (e) => {
-      this.fireShortcut(e);
+      if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
+        // 基準日を変更
+        if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
+        firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+        this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
+        setTimeout(() => { this.initTableTask(); });
+      } else if (constants.shortcuts.SAVE(e)) {
+        e.preventDefault();
+        this.saveTableTasks();
+      } else if (constants.shortcuts.TOGGLE_HELP(e)) {
+        this.props.toggleHelpDialog();
+      } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
+        e.preventDefault();
+        this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
+      }
+      return false;
     };
     window.onbeforeunload = (e) => {
       if (this.state.saveable) {
@@ -87,6 +102,16 @@ class Taskontable extends Component {
     window.onbeforeunload = '';
     firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+  }
+
+  setSortedTableTasks(tableTasks) {
+    const sortedTableTask = util.getSortedTasks(tableTasks);
+    if (this.state.isHotMode) {
+      this.taskTable.setDataForHot(sortedTableTask);
+      this.bindOpenTasksProcessing(sortedTableTask);
+    }
+    this.setState({ tableTasks: sortedTableTask });
+    return sortedTableTask;
   }
 
   changeTableTasksByMobile(taskActionType, value) {
@@ -116,12 +141,12 @@ class Taskontable extends Component {
     } else if (taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY || taskActionType === constants.taskActionType.MOVE_POOL_LOWPRIORITY) {
       const taskPoolType = taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
       tableTasks.splice(value, 1);
-      this.handleTableTasks(tableTasks);
+      this.setState({ tableTasks });
       setTimeout(() => { this.moveTableTaskToPoolTask(taskPoolType, this.state.tableTasks[value]); });
       return;
     }
-    this.handleSaveable(this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks));
-    this.handleTableTasks(tableTasks);
+    this.setState({ saveable: this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks) });
+    this.setState({ tableTasks });
     setTimeout(() => { this.saveTableTasks(); });
   }
 
@@ -201,7 +226,7 @@ class Taskontable extends Component {
     // IDを生成し並び変えられたデータを取得するために処理が入っている。
     const tableTasks = (this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => util.setIdIfNotExist(tableTask));
     // 開始時刻順に並び替える
-    const sortedTableTask = this.resetTable(tableTasks);
+    const sortedTableTask = this.setSortedTableTasks(tableTasks);
     this.setState({ loading: true });
     this.fireScript(sortedTableTask, 'exportScript').then((data) => {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data).then(() => {
@@ -214,42 +239,6 @@ class Taskontable extends Component {
     });
   }
 
-  addTask() {
-    if (this.state.isHotMode) this.taskTable.addTask();
-  }
-
-  handleTabChange(event, tab) {
-    this.setState({ tab, isOpenDashboard: true });
-    setTimeout(() => this.forceUpdate());
-  }
-
-  handleSaveable(saveable) {
-    this.setState({ saveable });
-  }
-
-  handleTableTasks(tableTasks) {
-    if (this.state.isHotMode) this.bindOpenTasksProcessing(tableTasks);
-    this.setState({ tableTasks });
-  }
-
-  fireShortcut(e) {
-    if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
-      // 基準日を変更
-      if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
-      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
-      this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
-      setTimeout(() => { this.initTableTask(); });
-    } else if (constants.shortcuts.SAVE(e)) {
-      e.preventDefault();
-      this.saveTableTasks();
-    } else if (constants.shortcuts.TOGGLE_HELP(e)) {
-      this.props.toggleHelpDialog();
-    } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
-      e.preventDefault();
-      this.toggleDashboard();
-    }
-    return false;
-  }
   // 開始しているタスクを見つけ、経過時間をタイトルに反映する
   bindOpenTasksProcessing(tasks) {
     const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
@@ -290,7 +279,7 @@ class Taskontable extends Component {
       this.setState({ loading: true });
       if (snapshot.exists() && snapshot.val() && !util.equal(this.state.tableTasks, snapshot.val())) {
         // サーバーにタスクが存在した場合 かつ、サーバーから配信されたデータが自分のデータと違う場合、サーバーのデータでテーブルを初期化する
-        this.resetTable(snapshot.val());
+        this.setSortedTableTasks(snapshot.val());
       }
       this.setState({ saveable: false, loading: false });
     });
@@ -328,12 +317,6 @@ class Taskontable extends Component {
     });
   }
 
-  resetTable(tableTasks) {
-    const sortedTableTask = util.getSortedTasks(tableTasks);
-    if (this.state.isHotMode) this.taskTable.setDataForHot(sortedTableTask);
-    this.handleTableTasks(sortedTableTask);
-    return sortedTableTask;
-  }
 
   fireScript(data, scriptType = 'exportScript') {
     return new Promise((resolve, reject) => {
@@ -368,7 +351,7 @@ class Taskontable extends Component {
     this.setState({ loading: true });
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).once('value').then((snapshot) => {
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
-        this.fireScript(snapshot.val(), 'importScript').then((data) => { this.resetTable(data); }, () => { this.resetTable(snapshot.val()); });
+        this.fireScript(snapshot.val(), 'importScript').then((data) => { this.setSortedTableTasks(data); }, () => { this.setSortedTableTasks(snapshot.val()); });
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
         // 定期タスクをテーブルに設定する処理。本日以降しか動作しない
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
@@ -377,10 +360,10 @@ class Taskontable extends Component {
         // util.getDayOfWeekStr(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
         // https://github.com/hand-dot/taskontable/issues/118
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-        this.fireScript(regularTasks, 'importScript').then((data) => { this.resetTable(data); }, () => { this.resetTable(regularTasks); });
+        this.fireScript(regularTasks, 'importScript').then((data) => { this.setSortedTableTasks(data); }, () => { this.setSortedTableTasks(regularTasks); });
       } else {
         // サーバーにデータが無く、定期タスクも登録されていない場合
-        this.fireScript([], 'importScript').then((data) => { this.resetTable(data); }, () => { this.resetTable([]); });
+        this.fireScript([], 'importScript').then((data) => { this.setSortedTableTasks(data); }, () => { this.setSortedTableTasks([]); });
       }
       this.setState({ saveable: false, loading: false });
       // 同期を開始
@@ -411,13 +394,6 @@ class Taskontable extends Component {
     }
   }
 
-  toggleDashboard() {
-    this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
-  }
-
-  closeSnackbars() {
-    this.setState({ isOpenSaveSnackbar: false, isOpenScriptSnackbar: false });
-  }
 
   render() {
     const { classes, theme } = this.props;
@@ -425,8 +401,17 @@ class Taskontable extends Component {
       <Grid container spacing={0} className={classes.root} style={{ paddingTop: theme.mixins.toolbar.minHeight }}>
         <Grid item xs={12}>
           <ExpansionPanel expanded={this.state.isOpenDashboard} style={{ margin: 0 }} elevation={1}>
-            <ExpansionPanelSummary expandIcon={<div style={{ width: '100vw' }} onClick={this.toggleDashboard.bind(this)}><i className="fa fa-angle-down fa-lg" /></div>}>
-              <Tabs value={this.state.tab} onChange={this.handleTabChange.bind(this)} scrollable={false} scrollButtons="off" indicatorColor={constants.brandColor.light.BLUE} >
+            <ExpansionPanelSummary expandIcon={<div style={{ width: '100vw' }} onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><i className="fa fa-angle-down fa-lg" /></div>}>
+              <Tabs
+                value={this.state.tab}
+                onChange={(event, tab) => {
+                  this.setState({ tab, isOpenDashboard: true });
+                  setTimeout(() => this.forceUpdate());
+                }}
+                scrollable={false}
+                scrollButtons="off"
+                indicatorColor={constants.brandColor.light.BLUE}
+              >
                 <Tab label={<span><i className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
                 <Tab label={<span><i className="fa fa-tasks fa-lg" />タスクプール</span>} />
               </Tabs>
@@ -452,9 +437,11 @@ class Taskontable extends Component {
                 return (<TaskTable
                     onRef={ref => (this.taskTable = ref)} // eslint-disable-line
                   tableTasks={this.state.tableTasks}
-                  addTask={this.addTask.bind(this)}
-                  handleTableTasks={this.handleTableTasks.bind(this)}
-                  handleSaveable={this.handleSaveable.bind(this)}
+                  handleTableTasks={(newTableTasks) => {
+                    this.bindOpenTasksProcessing(newTableTasks);
+                    this.setState({ tableTasks: newTableTasks });
+                  }}
+                  handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
                   isToday={util.isToday(this.state.date)}
                   moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
                 />);
@@ -469,13 +456,13 @@ class Taskontable extends Component {
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSaveSnackbar}
-          onClose={this.closeSnackbars.bind(this)}
+          onClose={() => { this.setState({ isOpenSaveSnackbar: false, isOpenScriptSnackbar: false }); }}
           message={'保存しました。'}
         />
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           open={this.state.isOpenScriptSnackbar}
-          onClose={this.closeSnackbars.bind(this)}
+          onClose={() => { this.setState({ isOpenSaveSnackbar: false, isOpenScriptSnackbar: false }); }}
           message={this.state.scriptSnackbarText}
         />
       </Grid>

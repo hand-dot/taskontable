@@ -1,6 +1,5 @@
 import moment from 'moment';
 import Handsontable from 'handsontable';
-import debounce from 'lodash.debounce';
 import tableTaskSchema from './schemas/tableTaskSchema';
 import constants from './constants';
 import util from './util';
