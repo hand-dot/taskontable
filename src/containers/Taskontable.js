@@ -61,22 +61,7 @@ class Taskontable extends Component {
 
   componentWillMount() {
     window.onkeydown = (e) => {
-      if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
-        // 基準日を変更
-        if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
-        firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
-        this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
-        setTimeout(() => { this.initTableTask(); });
-      } else if (constants.shortcuts.SAVE(e)) {
-        e.preventDefault();
-        this.saveTableTasks();
-      } else if (constants.shortcuts.TOGGLE_HELP(e)) {
-        this.props.toggleHelpDialog();
-      } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
-        e.preventDefault();
-        this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
-      }
-      return false;
+      this.fireShortcut(e);
     };
     window.onbeforeunload = (e) => {
       if (this.state.saveable) {
@@ -239,6 +224,25 @@ class Taskontable extends Component {
     });
   }
 
+
+  fireShortcut(e) {
+    if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
+      // 基準日を変更
+      if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
+      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+      this.setState({ date: moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT) });
+      setTimeout(() => { this.initTableTask(); });
+    } else if (constants.shortcuts.SAVE(e)) {
+      e.preventDefault();
+      this.saveTableTasks();
+    } else if (constants.shortcuts.TOGGLE_HELP(e)) {
+      this.props.toggleHelpDialog();
+    } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
+      e.preventDefault();
+      this.setState({ isOpenDashboard: !this.state.isOpenDashboard });
+    }
+    return false;
+  }
   // 開始しているタスクを見つけ、経過時間をタイトルに反映する
   bindOpenTasksProcessing(tasks) {
     const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
