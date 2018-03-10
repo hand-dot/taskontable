@@ -60,9 +60,6 @@ function Top(props) {
             </Typography>
             <Link style={{ marginBottom: '1em', display: 'inline-block' }} className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >無料登録して始める</Button></Link>
             <div><Link to="/login">アカウントへのログインはこちら</Link></div>
-            <Typography variant="caption" gutterBottom>
-              *現在Beta版のためデータがクリアさせる可能性があります。
-            </Typography>
           </div>
         </Paper>
       </Grid>

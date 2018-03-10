@@ -277,7 +277,7 @@ class TaskList extends Component {
                     </IconButton>
                     <span>/</span>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
-                      <i className="fa fa-ellipsis-h" />
+                      <i className="fa fa-ellipsis-v" />
                     </IconButton>
                     <Menu
                       anchorEl={this.state.anchorEl[index]}
