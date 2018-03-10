@@ -234,11 +234,11 @@ class TaskTableMobile extends Component {
                       open={Boolean(this.state.anchorEl[index] || false)}
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
-                      <MenuItem key={'movePoolHighPriority'} onClick={this.movePoolHighPriority.bind(this, index)}>
+                      <MenuItem key={'movePoolHighPriority'} disabled={task.endTime !== ''} onClick={this.movePoolHighPriority.bind(this, index)}>
                         <i className="fa fa-upload" />
                         <Typography variant="caption">[すぐにやる]に戻す</Typography>
                       </MenuItem>
-                      <MenuItem key={'movePoolLowPriority'} onClick={this.movePoolLowPriority.bind(this, index)}>
+                      <MenuItem key={'movePoolLowPriority'} disabled={task.endTime !== ''} onClick={this.movePoolLowPriority.bind(this, index)}>
                         <i className="fa fa-upload" />
                         <Typography variant="caption">[いつかやる]に戻す</Typography>
                       </MenuItem>
