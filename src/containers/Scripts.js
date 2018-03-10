@@ -59,7 +59,7 @@ class Scripts extends Component {
       isOpenSaveSnackbar: false,
       isOpenScriptSnackbar: false,
       scriptSnackbarText: '',
-      exampleTaskData: JSON.stringify(exampleTaskData, null, '\t'),
+      exampleTaskData: JSON.stringify(util.cloneDeep(exampleTaskData), null, '\t'),
       importScript: '',
       exportScript: '',
       importScriptBk: '',
@@ -81,10 +81,10 @@ class Scripts extends Component {
       height: 300,
       colWidths: 'auto',
       minRows: 10,
-      data: JSON.parse(self.state.exampleTaskData),
+      data: util.cloneDeep(exampleTaskData),
       afterRender() { self.syncStateByRender(); },
-      afterInit() { this.render(); },
     }));
+    setTimeout(() => this.exampleHot.render());
   }
 
   componentWillUnmount() {
@@ -108,7 +108,7 @@ class Scripts extends Component {
   resetExampleHot() {
     if (!window.confirm('テーブルをリセットしてもよろしいですか？')) return;
     this.exampleHot.loadData(util.cloneDeep(exampleTaskData));
-    setTimeout(() => { this.exampleHot.render(); });
+    setTimeout(() => { if (this.exampleHot) this.exampleHot.render(); });
   }
 
   resetScript(scriptType = 'exportScript', noConfirm) {
