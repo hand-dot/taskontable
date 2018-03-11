@@ -29,7 +29,8 @@ const columns = [
     allowInvalid: false,
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
-      td.innerHTML = `${value} ${cellProperties.startTimeNotifiId ? '<i class="fa fa-bell-o"></i>' : ''}`; // eslint-disable-line no-param-reassign
+      const isToday = instance.getSettings().isToday;
+      td.innerHTML = `${value} ${isToday && cellProperties.startTimeNotifiId ? '<i class="fa fa-bell-o"></i>' : ''}`; // eslint-disable-line no-param-reassign
     },
   },
   {
@@ -63,7 +64,7 @@ const columns = [
         } else {
           td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
         }
-        td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${cellProperties.endTimeNotifiId ? '<i class="fa fa-bell-o"></i>' : ''}</span>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${isToday && cellProperties.endTimeNotifiId ? '<i class="fa fa-bell-o"></i>' : ''}</span>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
