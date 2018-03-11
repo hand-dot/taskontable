@@ -24,7 +24,7 @@ class DiffChart extends Component {
   }
 
   componentDidMount() {
-    charts[this.state.ctxId] = new Chart(document.getElementById(this.state.ctxId).getContext('2d'), {
+    const conf = {
       type: 'horizontalBar',
       data: {
         labels: this.props.chartLabels,
@@ -54,7 +54,6 @@ class DiffChart extends Component {
           }],
         },
         legend: {
-          display: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
           position: 'right',
           labels: {
             boxWidth: 10,
@@ -63,7 +62,12 @@ class DiffChart extends Component {
           },
         },
       },
-    });
+    };
+    if (this.props.theme.breakpoints.values.sm > constants.APPWIDTH) {
+      conf.options.animation = null;
+      conf.options.legend.display = false;
+    }
+    charts[this.state.ctxId] = new Chart(document.getElementById(this.state.ctxId).getContext('2d'), conf);
   }
 
   componentWillReceiveProps(nextProps) {
