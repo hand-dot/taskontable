@@ -68,12 +68,12 @@ class Scripts extends Component {
   }
 
   componentWillMount() {
-    const noConfirm = true;
-    this.resetScript('importScript', noConfirm);
-    this.resetScript('exportScript', noConfirm);
   }
 
   componentDidMount() {
+    const noConfirm = true;
+    this.resetScript('importScript', noConfirm);
+    this.resetScript('exportScript', noConfirm);
     const self = this;
     this.exampleHot = new Handsontable(this.exampleHotDom, Object.assign({}, hotBaseConf, {
       isToday: true,
