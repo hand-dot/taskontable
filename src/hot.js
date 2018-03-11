@@ -349,8 +349,6 @@ export const setDataForHot = (hotInstance, datas) => {
   // rowCount 今の行数
   let needTrim = false;
   if (rowIndex < rowCount) needTrim = true;
-  // 既に登録されている通知をすべてクリアし、データを設定
-  hotInstance.runHooks('clearAllNotifi');
   hotInstance.setDataAtRowProp(dataForHot);
   // 不要な行を削除する
   if (needTrim) hotInstance.alter('remove_row', rowIndex, rowCount);

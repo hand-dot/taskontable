@@ -80,6 +80,7 @@ class TaskTable extends Component {
       this.props.handleSaveable(true);
       this.props.handleTableTasks(hotTasks);
     }
+    this.hot.render();
   }
 
   syncPropByUpdate() {
