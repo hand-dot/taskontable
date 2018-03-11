@@ -59,7 +59,7 @@ class Scripts extends Component {
       isOpenSaveSnackbar: false,
       isOpenScriptSnackbar: false,
       scriptSnackbarText: '',
-      exampleTaskData: JSON.stringify(util.cloneDeep(exampleTaskData), null, '\t'),
+      exampleTaskData: '',
       importScript: '',
       exportScript: '',
       importScriptBk: '',
@@ -201,7 +201,6 @@ class Scripts extends Component {
           <CodeMirror
             value={this.state.exampleTaskData}
             options={Object.assign({}, editorOptions, { readOnly: true })}
-            onBeforeChange={(editor, data, newExampleTaskData) => this.setState({ exampleTaskData: newExampleTaskData })}
           />
         </Grid>
         <Grid item xs={12}>
