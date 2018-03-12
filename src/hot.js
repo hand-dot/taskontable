@@ -387,9 +387,9 @@ export const hotConf = Object.assign({}, hotBaseConf, {
   afterRowMove() {
     // 通知をすべてクリアし、再設定
     this.runHooks('clearAllNotifi');
-    this.getDataAtCol(columns.findIndex(colmun => colmun.data === 'estimate').forEach((estimate, index) => {
+    this.getDataAtCol(columns.findIndex(colmun => colmun.data === 'estimate')).forEach((estimate, index) => {
       if (estimate) manageNotifi(this, index, 'estimate', estimate);
-    }));
+    });
   },
   afterChange(changes) {
     if (!changes) return;
