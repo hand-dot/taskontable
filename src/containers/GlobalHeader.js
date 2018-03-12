@@ -119,10 +119,6 @@ class GlobalHeader extends Component {
                 }
                 return <Link className={classes.title} to="/"><img src={logo} alt="taskontable" height="22" /></Link>;
               })()}
-              <div style={{ display: 'inline-flex', padding: 3 }}>
-                <i style={{ fontSize: 20, top: 15, position: 'absolute', color: 'rgba(0, 0, 0, 0.54)' }} className="fa fa-bell-o" />
-                <span id="changelog" />
-              </div>
               {(() => {
                 if (!this.state.login) {
                   return (<div style={{ display: 'inline-flex' }}>
@@ -187,6 +183,10 @@ class GlobalHeader extends Component {
                   </div>
                 </div>);
               })()}
+              <div style={{ display: 'inline-flex', padding: 3 }}>
+                <i style={{ fontSize: 20, top: 15, position: 'absolute', color: 'rgba(0, 0, 0, 0.54)' }} className="fa fa-bell-o" />
+                <span id="changelog" />
+              </div>
             </Toolbar>
           </Grid>
         </Grid>
