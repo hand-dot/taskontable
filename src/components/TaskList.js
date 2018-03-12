@@ -16,7 +16,7 @@ import style from '../assets/style';
 const styles = style.table;
 
 function getPoolTaskSchema() {
-  return util.cloneDeep(poolTaskSchema);
+  return util.setIdIfNotExist(util.cloneDeep(poolTaskSchema));
 }
 
 class TaskList extends Component {

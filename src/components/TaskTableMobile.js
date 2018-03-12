@@ -16,7 +16,7 @@ import util from '../util';
 const styles = style.table;
 
 function getTableTaskSchema() {
-  return util.cloneDeep(tableTaskSchema);
+  return util.setIdIfNotExist(util.cloneDeep(tableTaskSchema));
 }
 
 class TaskTableMobile extends Component {

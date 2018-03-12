@@ -29,6 +29,23 @@ const theme = createMuiTheme({
       },
     },
   },
+  transitions: {
+    easing: {
+      easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      easeOut: 'cubic-bezier(0.0, 0, 0.2, 1)',
+      easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+      sharp: 'cubic-bezier(0.4, 0, 0.6, 1)',
+    },
+  },
+  duration: {
+    shortest: 0,
+    shorter: 50,
+    short: 100,
+    standard: 150,
+    complex: 225,
+    enteringScreen: 75,
+    leavingScreen: 45,
+  },
 });
 
 export default theme;

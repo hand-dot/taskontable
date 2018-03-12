@@ -134,14 +134,30 @@ class Taskontable extends Component {
       tableTasks.unshift(target);
     } else if (taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY || taskActionType === constants.taskActionType.MOVE_POOL_LOWPRIORITY) {
       const taskPoolType = taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
-      tableTasks.splice(value, 1);
+      const removeTask = tableTasks.splice(value, 1)[0];
       this.setState({ tableTasks });
-      setTimeout(() => { this.moveTableTaskToPoolTask(taskPoolType, this.state.tableTasks[value]); });
+      setTimeout(() => { this.moveTableTaskToPoolTask(taskPoolType, removeTask); });
       return;
     }
     this.setState({ saveable: this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks) });
     this.setState({ tableTasks });
     setTimeout(() => { this.saveTableTasks(); });
+  }
+
+  /**
+   * テーブルタスクをプールタスクに移動します。
+   * @param  {String} taskPoolType プールタスクのタイプ(constants.taskPoolType)
+   * @param  {Object} task タスク
+   */
+  moveTableTaskToPoolTask(taskPoolType, task) {
+    const willPooltask = util.cloneDeep(task);
+    willPooltask.startTime = '';
+    willPooltask.endTime = '';
+    const poolTasks = util.cloneDeep(this.state.poolTasks);
+    poolTasks[taskPoolType].push(willPooltask);
+    this.setState({ poolTasks });
+    // テーブルタスクからタスクプールに移動したら保存する
+    setTimeout(() => { this.saveTableTasks(); this.savePoolTasks(); });
   }
 
   /**
@@ -188,21 +204,7 @@ class Taskontable extends Component {
     this.setState({ poolTasks });
     setTimeout(() => this.savePoolTasks());
   }
-  /**
-   * テーブルタスクをプールタスクに移動します。
-   * @param  {String} taskPoolType プールタスクのタイプ(constants.taskPoolType)
-   * @param  {Object} task タスク
-   */
-  moveTableTaskToPoolTask(taskPoolType, task) {
-    const willPooltask = util.cloneDeep(task);
-    willPooltask.startTime = '';
-    willPooltask.endTime = '';
-    const poolTasks = util.cloneDeep(this.state.poolTasks);
-    poolTasks[taskPoolType].push(willPooltask);
-    this.setState({ poolTasks });
-    // テーブルタスクからタスクプールに移動したら保存する
-    setTimeout(() => { this.saveTableTasks(); this.savePoolTasks(); });
-  }
+
   /**
    * stateのpoolTasksをサーバーに保存します。
    */
