@@ -112,12 +112,7 @@ class GlobalHeader extends Component {
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
           <Grid item xs={12}>
             <Toolbar className={classes.root}>
-              {(() => {
-                if (theme.breakpoints.values.sm < constants.APPWIDTH) {
-                  return <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="22" /></Link>;
-                }
-                return <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="15" /></Link>;
-              })()}
+              <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="22" /></Link>
               {(() => {
                 if (!this.state.login) {
                   return (<div style={{ display: 'inline-flex' }}>
