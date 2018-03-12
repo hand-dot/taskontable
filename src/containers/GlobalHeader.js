@@ -15,14 +15,16 @@ import HelpDialog from '../components/HelpDialog';
 import constants from '../constants';
 
 import title from '../images/title_gr.png';
+import logo from '../images/logo.png';
 
 const styles = theme => ({
   root: {
     minHeight: theme.mixins.toolbar.minHeight,
   },
   button: {
+    minWidth: 70,
     padding: 3,
-    fontSize: 11,
+    fontSize: 9,
     margin: theme.spacing.unit,
   },
   userPhoto: {
@@ -111,7 +113,16 @@ class GlobalHeader extends Component {
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
           <Grid item xs={12}>
             <Toolbar className={classes.root}>
-              <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="22" /></Link>
+              {(() => {
+                if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+                  return <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="22" /></Link>;
+                }
+                return <Link className={classes.title} to="/"><img src={logo} alt="taskontable" height="22" /></Link>;
+              })()}
+              <div style={{ display: 'inline-flex', padding: 3 }}>
+                <i style={{ fontSize: 20, top: 15, position: 'absolute', color: 'rgba(0, 0, 0, 0.54)' }} className="fa fa-bell-o" />
+                <span id="changelog" />
+              </div>
               {(() => {
                 if (!this.state.login) {
                   return (<div style={{ display: 'inline-flex' }}>
