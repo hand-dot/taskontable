@@ -59,11 +59,13 @@ class GlobalHeader extends Component {
   }
 
   componentDidMount() {
+    if (window.Headway) window.Headway.init({ selector: '#changelog', account: constants.HEADWAY_ACCOUNT });
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.user.uid !== '') {
       this.setState({ login: true });
+      setTimeout(() => this.forceUpdate());
     } else {
       this.setState({ login: false });
     }
@@ -86,6 +88,8 @@ class GlobalHeader extends Component {
       window.open(constants.CONTACT_URL);
     } else if (constants.menuItemKey.GIT === menuItemKey) {
       window.open(constants.REPOSITORY_URL);
+    } else if (constants.menuItemKey.ROADMAP === menuItemKey) {
+      window.open(constants.ROADMAP_URL);
     }
   }
 
@@ -169,6 +173,10 @@ class GlobalHeader extends Component {
                         <i className="fa fa-envelope-o" aria-hidden="true" />
                     　お問い合わせ
                       </MenuItem>
+                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.ROADMAP}>
+                        <i className="fa fa-trello" aria-hidden="true" />
+                        ロードマップ
+                      </MenuItem>
                       <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.GIT}>
                         <i className="fa fa-github" aria-hidden="true" />
                     　ソースコード
@@ -191,6 +199,7 @@ class GlobalHeader extends Component {
           open={isOpenHelpDialog}
           onClose={closeHelpDialog}
         />
+        <script async src="//cdn.headwayapp.co/widget.js" />
       </AppBar>
     );
   }

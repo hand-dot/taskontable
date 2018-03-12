@@ -10,6 +10,8 @@ export default {
   TITLE: 'Taskontable',
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
+  ROADMAP_URL: 'https://trello.com/b/fFhYhlCu/taskontable-roadmap',
+  HEADWAY_ACCOUNT: '7zwPXJ',
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   APPWIDTH: window.innerWidth < 1280 ? window.innerWidth : 1280,
   APPHEIGHT: window.innerHeight,
@@ -27,6 +29,7 @@ export default {
   menuItemKey: {
     CONTACT: 'contact',
     GIT: 'git',
+    ROADMAP: 'roadmap',
   },
   taskPoolType: {
     HIGHPRIORITY: 'highPriorityTasks',
