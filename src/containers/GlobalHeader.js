@@ -15,7 +15,6 @@ import HelpDialog from '../components/HelpDialog';
 import constants from '../constants';
 
 import title from '../images/title_gr.png';
-import logo from '../images/logo.png';
 
 const styles = theme => ({
   root: {
@@ -117,7 +116,7 @@ class GlobalHeader extends Component {
                 if (theme.breakpoints.values.sm < constants.APPWIDTH) {
                   return <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="22" /></Link>;
                 }
-                return <Link className={classes.title} to="/"><img src={logo} alt="taskontable" height="22" /></Link>;
+                return <Link className={classes.title} to="/"><img src={title} alt="taskontable" height="15" /></Link>;
               })()}
               {(() => {
                 if (!this.state.login) {
@@ -183,9 +182,12 @@ class GlobalHeader extends Component {
                   </div>
                 </div>);
               })()}
-              <div style={{ display: 'inline-flex', padding: 3 }}>
-                <i style={{ fontSize: 20, top: 15, position: 'absolute', color: 'rgba(0, 0, 0, 0.54)' }} className="fa fa-bell-o" />
-                <span id="changelog" />
+              <div style={{ display: 'inline-flex' }}>
+
+                <IconButton className={classes.iconButton}>
+                  <i style={{ position: 'absolute', left: 10, top: 16, fontSize: 20, color: 'rgba(0, 0, 0, 0.54)' }} className="fa fa-bell-o" />
+                  <span style={{ position: 'absolute', left: 10, top: 15 }} id="changelog" />
+                </IconButton>
               </div>
             </Toolbar>
           </Grid>
