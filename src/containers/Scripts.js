@@ -59,7 +59,7 @@ class Scripts extends Component {
       isOpenSaveSnackbar: false,
       isOpenScriptSnackbar: false,
       scriptSnackbarText: '',
-      exampleTaskData: JSON.stringify(util.cloneDeep(exampleTaskData), null, '\t'),
+      exampleTaskData: '',
       importScript: '',
       exportScript: '',
       importScriptBk: '',
@@ -68,12 +68,12 @@ class Scripts extends Component {
   }
 
   componentWillMount() {
-    const noConfirm = true;
-    this.resetScript('importScript', noConfirm);
-    this.resetScript('exportScript', noConfirm);
   }
 
   componentDidMount() {
+    const noConfirm = true;
+    this.resetScript('importScript', noConfirm);
+    this.resetScript('exportScript', noConfirm);
     const self = this;
     this.exampleHot = new Handsontable(this.exampleHotDom, Object.assign({}, hotBaseConf, {
       isToday: true,
@@ -201,7 +201,6 @@ class Scripts extends Component {
           <CodeMirror
             value={this.state.exampleTaskData}
             options={Object.assign({}, editorOptions, { readOnly: true })}
-            onBeforeChange={(editor, data, newExampleTaskData) => this.setState({ exampleTaskData: newExampleTaskData })}
           />
         </Grid>
         <Grid item xs={12}>

@@ -116,7 +116,7 @@ class App extends Component {
             render={props => <Login login={this.login.bind(this)} {...props} />}
           />
           <Route
-            path="/Scripts"
+            path="/scripts"
             render={(props) => {
               if (this.state.user.uid !== '') {
                 return <Scripts user={this.state.user} {...props} />;
