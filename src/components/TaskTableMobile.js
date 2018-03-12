@@ -30,6 +30,13 @@ class TaskTableMobile extends Component {
     };
   }
 
+  componentWillReceiveProps() {
+    this.setState({
+      anchorEl: [],
+      editingTaskIndex: -1,
+    });
+  }
+
   openTaskAction(index, e) {
     const anchorEl = Object.assign([], this.state.anchorEl);
     anchorEl[index] = e.currentTarget;
