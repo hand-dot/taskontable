@@ -175,7 +175,7 @@ class GlobalHeader extends Component {
                       </MenuItem>
                       <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.ROADMAP}>
                         <i className="fa fa-trello" aria-hidden="true" />
-                        ロードマップ
+                    　ロードマップ
                       </MenuItem>
                       <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.GIT}>
                         <i className="fa fa-github" aria-hidden="true" />
