@@ -47,9 +47,6 @@ const styles = theme => ({
 });
 
 function Top(props) {
-  fetch('https://api.github.com/repos/hand-dot/taskontable').then(res => res.json()).then((data) => {
-    console.log(data);
-  });
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
