@@ -36,7 +36,7 @@ const styles = {
   root: {
     paddingTop: '5em',
     minHeight: '100vh',
-    padding: '4em 2em 0',
+    padding: '4em 2em 2em',
     width: constants.APPWIDTH,
     margin: '0 auto',
     backgroundColor: '#fff',

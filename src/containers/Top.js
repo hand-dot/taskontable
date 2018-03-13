@@ -12,6 +12,7 @@ import titleWh from '../images/title_wh.png';
 import screencapture from '../images/screencapture.png';
 import scripts from '../images/scripts.png';
 import devices from '../images/devices.png';
+import bar from '../images/bar.png';
 import constants from '../constants';
 
 const styles = theme => ({
@@ -55,9 +56,6 @@ function Top(props) {
           <div className={classes.content}>
             <Typography color="textSecondary" variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
               Build Your WorkFlow
-            </Typography>
-            <Typography color="textSecondary" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
-              with
             </Typography>
             <img style={{ margin: '2em 2em 2em 1.7em' }} src={titleGr} alt="taskontable" height="40" />
             <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
@@ -147,8 +145,9 @@ function Top(props) {
               Open Source
             </Typography>
             <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
-              ソースコードを<a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">github</a>で公開・配布されています。<br />全てが無料です。
+              ソースコードを<a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">github</a>で公開・配布しています。<br />全てが無料です。
             </Typography>
+            <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={bar} alt="taskontable" />
           </div>
         </Paper>
       </Grid>
@@ -157,9 +156,6 @@ function Top(props) {
           <div className={classes.content}>
             <Typography color="textSecondary" variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
               Build Your WorkFlow
-            </Typography>
-            <Typography color="textSecondary" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
-              with
             </Typography>
             <img style={{ margin: '2em auto', display: 'block' }} src={titleWh} alt="taskontable" height="40" />
           </div>
