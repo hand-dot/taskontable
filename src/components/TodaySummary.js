@@ -13,12 +13,12 @@ function TodaySummary(props) {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell padding="none" title="見積は全タスクの見積の合計">見積*</TableCell>
+              <TableCell padding="none">見積</TableCell>
               <TableCell padding="none">{(data.estimateTasks.minute / 60).toFixed(1)}h</TableCell>
               <TableCell padding="none">{data.estimateTasks.taskNum}タスク</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none" title="残は残タスクの見積の合計">残*</TableCell>
+              <TableCell padding="none">残</TableCell>
               <TableCell padding="none">{(data.remainingTasks.minute / 60).toFixed(1)}h</TableCell>
               <TableCell padding="none">{data.remainingTasks.taskNum}タスク</TableCell>
             </TableRow>
@@ -29,12 +29,12 @@ function TodaySummary(props) {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell padding="none" title="消化は済タスクの見積の合計">消化*</TableCell>
+              <TableCell padding="none">消化</TableCell>
               <TableCell padding="none">{(data.doneTasks.minute / 60).toFixed(1)}h</TableCell>
               <TableCell padding="none">{data.doneTasks.taskNum}タスク</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none" title="消費は済タスクの実績の合計">消費*</TableCell>
+              <TableCell padding="none">消費</TableCell>
               <TableCell padding="none">{(data.actuallyTasks.minute / 60).toFixed(1)}h</TableCell>
               <TableCell padding="none">{data.actuallyTasks.taskNum}タスク</TableCell>
             </TableRow>
