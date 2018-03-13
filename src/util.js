@@ -3,27 +3,8 @@ import uuid from 'uuid';
 import fastclone from 'fast-clone';
 import { deepEqual } from 'fast-equals';
 import constants from './constants';
-import tableTaskSchema from './schemas/tableTaskSchema';
-import poolTaskSchema from './schemas/poolTaskSchema';
 
 export default {
-  getExTableTaskProp() {
-    const tableTaskSchemaKey = Object.keys(tableTaskSchema);
-    const exSchemaKey = Object.keys(Object.assign({}, poolTaskSchema));
-    return this.diffArray(tableTaskSchemaKey, exSchemaKey);
-  },
-  diffArray(arr1, arr2) {
-    return arr1.concat(arr2)
-      .filter(item => !arr1.includes(item) || !arr2.includes(item));
-  },
-  getCrrentTimeObj() {
-    const currentMoment = moment();
-    return {
-      hour: currentMoment.hour(),
-      minute: currentMoment.minute(),
-      second: currentMoment.second(),
-    };
-  },
   /**
    * constants.DATEFMT形式の文字列が今日か判断します。
    * @param  {String} constants.DATEFMT形式の文字列
@@ -45,21 +26,52 @@ export default {
     }
     return 0;
   },
-  cloneDeep(a) {
-    return fastclone(a);
+  /**
+   * ディープコピーを行います。
+   * @param  {Object} obj オブジェクト
+   */
+  cloneDeep(obj) {
+    return fastclone(obj);
   },
+  /**
+   * オブジェクトの比較を行います。
+   * @param  {Object} a オブジェクト a
+   * @param  {Object} b オブジェクト a
+  */
   equal(a, b) {
     return deepEqual(a, b);
   },
-  getDayOfWeekStr(dayOfWeek) {
+  
+  /**
+   * getDayメソッドで取得したものを文字列の曜日に変換します。
+   * https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay
+   * @param  {Number} dayOfWeek
+   */
+  convertDayOfWeekToString(dayOfWeek) {
     return constants.DAY_OF_WEEK_STR[dayOfWeek];
   },
-  getDayOfWeek(dayOfWeekStr) {
+  /**
+   * 文字列の曜日からgetDayメソッドで取得できる数値の曜日に変換します。
+   * https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay
+   * @param  {String} dayOfWeekStr
+   */
+  convertDayOfWeekFromString(dayOfWeekStr) {
     return constants.DAY_OF_WEEK_STR.findIndex(str => str === dayOfWeekStr);
   },
+  /**
+   * Dateオブジェクトから何週目の何曜日という情報を持ったオブジェクトを返します。
+   * @param  {Date} date
+   */
   getDayAndCount(date) {
     return { day: date.getDay(), count: Math.floor((date.getDate() - 1) / 7) + 1 };
   },
+  /**
+   * 文字列からワーカーを実行します。
+   * @param  {String} script スクリプト
+   * @param  {Array} data ワーカーに処理させるデータ
+   * @param  {Function} success 成功処理
+   * @param  {Function} failure 失敗処理
+   */
   runWorker(script, data, success, failure) {
     const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
     const promise = new Promise((resolve, reject) => {

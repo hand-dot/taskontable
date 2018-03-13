@@ -6,6 +6,7 @@ import moment from 'moment';
 import debounce from 'lodash.debounce';
 
 import Tabs, { Tab } from 'material-ui/Tabs';
+import IconButton from 'material-ui/IconButton';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import ExpansionPanel, {
@@ -49,7 +50,7 @@ class Taskontable extends Component {
       hasOpenTask: false,
       isOpenDashboard: true,
       date: moment().format(constants.DATEFMT),
-      lastSaveTime: util.getCrrentTimeObj(),
+      lastSaveTime: moment().format(constants.TIMEFMT),
       tableTasks: [],
       poolTasks: {
         highPriorityTasks: [],
@@ -218,7 +219,7 @@ class Taskontable extends Component {
       poolTasks.regularTasks = poolTasks.regularTasks.map((task) => {
         const copyTask = Object.assign({}, task);
         if (copyTask.dayOfWeek) {
-          copyTask.dayOfWeek = copyTask.dayOfWeek.map(day => util.getDayOfWeek(day));
+          copyTask.dayOfWeek = copyTask.dayOfWeek.map(day => util.convertDayOfWeekFromString(day));
         }
         return copyTask;
       });
@@ -236,17 +237,21 @@ class Taskontable extends Component {
     this.setState({ loading: true });
     this.fireScript(sortedTableTask, 'exportScript').then((data) => {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data).then(() => {
-        this.setState({ isOpenSaveSnackbar: true, loading: false, lastSaveTime: util.getCrrentTimeObj(), saveable: false });
+        this.setState({ isOpenSaveSnackbar: true, loading: false, lastSaveTime: moment().format(constants.TIMEFMT), saveable: false });
       });
     }, () => {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(sortedTableTask).then(() => {
-        this.setState({ isOpenSaveSnackbar: true, loading: false, lastSaveTime: util.getCrrentTimeObj(), saveable: false });
+        this.setState({ isOpenSaveSnackbar: true, loading: false, lastSaveTime: moment().format(constants.TIMEFMT), saveable: false });
       });
     });
   }
 
-  // 開始しているタスクを見つけ、経過時間をタイトルに反映する
+  /**
+   * 開始しているタスクを見つけ、経過時間をタイトルに反映する
+   * @param  {Array} tasks タスクの配列
+   */
   bindOpenTasksProcessing(tasks) {
+    if (!this.state.isHotMode) return;
     const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
     if (util.isToday(this.state.date) && openTask) {
@@ -254,15 +259,7 @@ class Taskontable extends Component {
       this.bindOpenTaskIntervalID = setInterval(() => {
         const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format(constants.TIMEFMT));
         // 1分に一度タイトルが書き変わったタイミングでセルの色を書き換える必要があるので再描画する。
-        if (newTimeDiffMinute !== this.oldTimeDiffMinute) {
-          if (this.state.isHotMode) {
-            // hotmodeの場合はレンダーする
-            this.taskTable.renderHot();
-          } else {
-            // モバイルの場合は再描画する
-            this.forceUpdate();
-          }
-        }
+        if (newTimeDiffMinute !== this.oldTimeDiffMinute) this.taskTable.renderHot();
         if (newTimeDiffMinute === -1) {
           // 開始まで秒単位でカウントダウンする場合
           document.title = `${(moment().format('ss') - 60) * -1}秒後 - ${openTask.title || '無名タスク'}`;
@@ -310,7 +307,7 @@ class Taskontable extends Component {
             // MultipleSelectコンポーネントで扱えるように,['日','月'...]へ変換
             // https://github.com/hand-dot/taskontable/issues/118
             if (poolTasks.regularTasks[index].dayOfWeek) {
-              copyTask.dayOfWeek = poolTasks.regularTasks[index].dayOfWeek.map(d => util.getDayOfWeekStr(d));
+              copyTask.dayOfWeek = poolTasks.regularTasks[index].dayOfWeek.map(d => util.convertDayOfWeekToString(d));
             } else {
               copyTask.dayOfWeek = [];
             }
@@ -397,9 +394,9 @@ class Taskontable extends Component {
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合
         // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
-        // util.getDayOfWeekStr(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
+        // util.convertDayOfWeekToString(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
         // https://github.com/hand-dot/taskontable/issues/118
-        const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.getDayOfWeekStr(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
+        const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.convertDayOfWeekToString(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
         this.fireScript(regularTasks, 'importScript').then((data) => { this.setSortedTableTasks(data); }, () => { this.setSortedTableTasks(regularTasks); });
       } else {
         // サーバーにデータが無く、定期タスクも登録されていない場合
@@ -432,7 +429,7 @@ class Taskontable extends Component {
       <Grid container spacing={0} className={classes.root} style={{ paddingTop: theme.mixins.toolbar.minHeight }}>
         <Grid item xs={12}>
           <ExpansionPanel expanded={this.state.isOpenDashboard} style={{ margin: 0 }} elevation={1}>
-            <ExpansionPanelSummary expandIcon={<div style={{ width: '100vw' }} onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><i className="fa fa-angle-down fa-lg" /></div>}>
+            <ExpansionPanelSummary expandIcon={<IconButton onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><i className="fa fa-angle-down fa-lg" /></IconButton>}>
               <Tabs
                 value={this.state.tab}
                 onChange={(e, tab) => {

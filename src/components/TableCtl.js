@@ -104,7 +104,7 @@ class TableCtl extends Component {
             {(() => {
               if (theme.breakpoints.values.sm < constants.APPWIDTH) {
                 return (
-                  <Tooltip title={`最終保存時刻 : ${(`00${lastSaveTime.hour}`).slice(-2)}:${(`00${lastSaveTime.minute}`).slice(-2)}`} placement="top">
+                  <Tooltip title={`最終保存時刻 : ${lastSaveTime}`} placement="top">
                     <div style={{ display: 'inline-block' }}>
                       <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveTableTasks} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
                     </div>
@@ -137,11 +137,7 @@ TableCtl.propTypes = {
   hasOpenTask: PropTypes.bool.isRequired,
   date: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  lastSaveTime: PropTypes.shape({
-    hour: PropTypes.number.isRequired,
-    minute: PropTypes.number.isRequired,
-    second: PropTypes.number.isRequired,
-  }).isRequired,
+  lastSaveTime: PropTypes.string.isRequired,
   saveable: PropTypes.bool.isRequired,
   changeDate: PropTypes.func.isRequired,
   saveTableTasks: PropTypes.func.isRequired,

@@ -31,9 +31,15 @@ class Dashboard extends Component {
 
   componentWillMount() {
     // 初期値の現在時刻と終了時刻
+    const currentMoment = moment();
+    const timeObj = {
+      hour: currentMoment.hour(),
+      minute: currentMoment.minute(),
+      second: currentMoment.second(),
+    };
     this.setState({
-      currentTime: util.getCrrentTimeObj(),
-      endTime: util.getCrrentTimeObj(),
+      currentTime: timeObj,
+      endTime: timeObj,
     });
   }
 
