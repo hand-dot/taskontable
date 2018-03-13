@@ -10,8 +10,9 @@ import Button from 'material-ui/Button';
 import titleGr from '../images/title_gr.png';
 import titleWh from '../images/title_wh.png';
 import screencapture from '../images/screencapture.png';
-import scripts from '../images/scripts.png';
+import plugins from '../images/plugins.png';
 import devices from '../images/devices.png';
+import collaboration from '../images/collaboration.png';
 import bar from '../images/bar.png';
 import constants from '../constants';
 
@@ -89,12 +90,10 @@ function Top(props) {
               Plugin
             </Typography>
             <Grid spacing={0} container alignItems="stretch" justify="center">
-              <Grid item xs={12} md={6}>
-                <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
-                  <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={scripts} alt="taskontable" />
-                </Typography>
+              <Grid item xs={12} md={5}>
+                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={plugins} alt="taskontable" />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={7}>
                 <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
                 プラグインをインストールしてさまざまなサービスと連携できます。<br />
               また誰でもプラグインを公開することが可能です。
@@ -110,10 +109,17 @@ function Top(props) {
             <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
               Collaboration
             </Typography>
-            <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
+            <Grid spacing={0} container alignItems="stretch" justify="center">
+              <Grid item xs={12} md={7}>
+                <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
             ワークフローをチームで共有することが可能です。<br />
               リアルタイムに進捗状況・予定を把握することができます。
-            </Typography>
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={5}>
+                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={collaboration} alt="taskontable" />
+              </Grid>
+            </Grid>
           </div>
         </Paper>
       </Grid>
@@ -123,18 +129,12 @@ function Top(props) {
             <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
             Anytime, anywhere
             </Typography>
-            <Grid spacing={0} container alignItems="stretch" justify="center">
-              <Grid item xs={12} md={6}>
-                <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
+            <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
                 いつ、どこにいてもあらゆるデバイスで快適なタスク管理が可能です。
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
-                  <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={devices} alt="taskontable" />
-                </Typography>
-              </Grid>
-            </Grid>
+            </Typography>
+            <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
+              <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={devices} alt="taskontable" />
+            </Typography>
           </div>
         </Paper>
       </Grid>
