@@ -112,7 +112,7 @@ class Dashboard extends Component {
                     <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
                   </Grid>
                   <Grid item xs={6}>
-                    <Clock title={'終了時刻*'} caption="*現在時刻と残タスクの合計時間" time={this.state.endTime} />
+                    <Clock title={'終了時刻'} caption="" time={this.state.endTime} />
                   </Grid>
                 </Grid>
               </Grid>
