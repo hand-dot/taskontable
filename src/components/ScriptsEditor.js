@@ -79,7 +79,19 @@ function ScriptsEditor(props) {
               }
               return '外部サービスへのタスクの連携やタスクの文字列操作を終えたら、postMessage関数にタスクテーブルのデータを渡してください。postMessage関数に渡されたデータを使ってタスクテーブルを構成します。';
             })()}
-
+          </Typography>
+          <br />
+          <Typography gutterBottom variant="caption">
+            <i className="fa fa-exclamation-circle" />サンプルのスクリプトを読み込んでみてください。<br />
+            {(() => {
+              if (scriptType === 'importScript') {
+                return 'githubの特定のラベルが付いたissueをインポートしている例です。';
+              }
+              return '完了したタスクをgithubのissueでクローズしている例です。';
+            })()}
+            <Typography gutterBottom variant="caption">
+            参考:<a href={'https://developer.github.com/v3/'} target="_blank">https://developer.github.com/v3/</a>
+            </Typography>
           </Typography>
         </Paper>
       </Grid>
