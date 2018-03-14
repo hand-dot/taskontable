@@ -5,6 +5,7 @@ const rgb = {
   BLUE: '54, 162, 235',
   PURPLE: '153, 102, 255',
   GREY: '201, 203, 207',
+  NAVY: '65, 76, 91',
 };
 export default {
   TITLE: 'Taskontable',
@@ -68,6 +69,7 @@ export default {
       BLUE: `rgb(${rgb.BLUE})`,
       PURPLE: `rgb(${rgb.PURPLE})`,
       GREY: `rgb(${rgb.GREY})`,
+      NAVY: `rgb(${rgb.NAVY})`,
     },
     light: {
       RED: `rgba(${rgb.RED},0.2)`,
@@ -76,6 +78,7 @@ export default {
       BLUE: `rgba(${rgb.BLUE},0.2)`,
       PURPLE: `rgba(${rgb.PURPLE},0.2)`,
       GREY: `rgba(${rgb.GREY},0.2)`,
+      NAVY: `rgba(${rgb.NAVY},0.2)`,
     },
   },
   cellColor: {

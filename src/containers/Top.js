@@ -35,7 +35,6 @@ const styles = theme => ({
   },
   link: {
     textDecoration: 'none',
-    color: 'rgba(0, 0, 0, 0.87)',
     display: 'block',
   },
   button: {
@@ -46,6 +45,10 @@ const styles = theme => ({
     margin: '0 auto',
     textAlign: 'center',
   },
+  stroke: {
+    color: '#fff',
+    WebkitTextStroke: `2px ${constants.brandColor.light.BLUE}`,
+  },
 });
 
 function Top(props) {
@@ -55,7 +58,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography color="textSecondary" variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
               Build Your WorkFlow
             </Typography>
             <img style={{ margin: '2em 2em 2em 1.7em' }} src={titleGr} alt="taskontable" height="40" />
@@ -66,7 +69,6 @@ function Top(props) {
             タスクをシーケンシャルにすることで生産性を向上させ一日をスムーズに進行することができます。<br />
             </Typography>
             <Link style={{ marginBottom: '1em', display: 'inline-block' }} className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >無料登録して始める</Button></Link>
-            <div><Link to="/login">アカウントへのログインはこちら</Link></div>
           </div>
         </Paper>
       </Grid>
@@ -86,12 +88,12 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display1" align="center" style={{ marginBottom: '2em' }}>
               Plugin
             </Typography>
             <Grid spacing={0} container alignItems="stretch" justify="center">
               <Grid item xs={12} md={5}>
-                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={plugins} alt="taskontable" />
+                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={plugins} alt="taskontable" />
               </Grid>
               <Grid item xs={12} md={7}>
                 <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
@@ -106,7 +108,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display1" align="center" style={{ marginBottom: '2em' }}>
               Collaboration
             </Typography>
             <Grid spacing={0} container alignItems="stretch" justify="center">
@@ -117,7 +119,7 @@ function Top(props) {
                 </Typography>
               </Grid>
               <Grid item xs={12} md={5}>
-                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={collaboration} alt="taskontable" />
+                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={collaboration} alt="taskontable" />
               </Grid>
             </Grid>
           </div>
@@ -126,22 +128,20 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper square className={classes.center} elevation={0}>
           <div className={classes.content}>
-            <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display1" align="center" style={{ marginBottom: '2em' }}>
             Anytime, anywhere
             </Typography>
             <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
                 いつ、どこにいてもあらゆるデバイスで快適なタスク管理が可能です。
             </Typography>
-            <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
-              <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={devices} alt="taskontable" />
-            </Typography>
+            <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={devices} alt="taskontable" />
           </div>
         </Paper>
       </Grid>
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography color="textSecondary" variant="headline" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display1" align="center" style={{ marginBottom: '2em' }}>
               Open Source
             </Typography>
             <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
@@ -158,9 +158,7 @@ function Top(props) {
               Build Your WorkFlow
             </Typography>
             <img style={{ margin: '2em auto', display: 'block' }} src={titleWh} alt="taskontable" height="40" />
-          </div>
-          <div className={classes.content}>
-            <Grid spacing={0} container alignItems="stretch" justify="center">
+            <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '4em' }}>
               <Grid item xs={4} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.CONTACT_URL} target="_blank">お問い合わせ</a>
               </Grid>

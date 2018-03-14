@@ -1,7 +1,7 @@
 import { createMuiTheme } from 'material-ui/styles';
 import constants from '../constants';
 // https://material-ui-next.com/customization/themes/
-// https://material-ui-next.com/customization/theme-default/
+// https://material-ui-next.com/customization/default-theme/
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -16,6 +16,12 @@ const theme = createMuiTheme({
       // dark: will be calculated from palette.secondary.main,
       contrastText: '#fff',
     },
+    text: {
+      primary: 'rgba(0, 0, 0, 0.5)',
+      secondary: 'rgba(0, 0, 0, 0.4)',
+    }
+    ,
+
     // error: will us the default color
   },
   mixins: {
