@@ -70,7 +70,7 @@ class Dashboard extends Component {
   }
 
   getDiffChartData() {
-    return this.filterForDiffChart().map(tableTask => ({ estimate: +(+tableTask.estimate / 60).toFixed(1) || 0, actually: +(util.getTimeDiffMinute(tableTask.startTime, tableTask.endTime) / 60).toFixed(1) || 0 }));
+    return this.filterForDiffChart().map(tableTask => ({ estimate: +(+tableTask.estimate / 60).toFixed(2) || 0, actually: +(util.getTimeDiffMinute(tableTask.startTime, tableTask.endTime) / 60).toFixed(2) || 0 }));
   }
 
   getDiffChartLabel() {
@@ -126,7 +126,7 @@ class Dashboard extends Component {
           </Typography>
           <Grid container>
             <Grid item xs={12}>
-              <DiffChart title={''} chartLabels={['見積', '消費']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} unit={'h'} />
+              <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} unit={'h'} />
             </Grid>
           </Grid>
         </Grid>

@@ -18,9 +18,9 @@ function TodaySummary(props) {
               <TableCell padding="none">{data.estimateTasks.taskNum}タスク</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none">残</TableCell>
-              <TableCell padding="none">{(data.remainingTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.remainingTasks.taskNum}タスク</TableCell>
+              <TableCell padding="none">実績</TableCell>
+              <TableCell padding="none">{(data.actuallyTasks.minute / 60).toFixed(1)}h</TableCell>
+              <TableCell padding="none">{data.actuallyTasks.taskNum}タスク</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -34,9 +34,9 @@ function TodaySummary(props) {
               <TableCell padding="none">{data.doneTasks.taskNum}タスク</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none">消費</TableCell>
-              <TableCell padding="none">{(data.actuallyTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.actuallyTasks.taskNum}タスク</TableCell>
+              <TableCell padding="none">残</TableCell>
+              <TableCell padding="none">{(data.remainingTasks.minute / 60).toFixed(1)}h</TableCell>
+              <TableCell padding="none">{data.remainingTasks.taskNum}タスク</TableCell>
             </TableRow>
           </TableBody>
         </Table>
