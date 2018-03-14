@@ -41,7 +41,7 @@ export default {
   equal(a, b) {
     return deepEqual(a, b);
   },
-  
+
   /**
    * getDayメソッドで取得したものを文字列の曜日に変換します。
    * https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay
@@ -100,14 +100,13 @@ export default {
   /**
    * タスクを開始時刻順に並び替えます。
    * 開始時刻が空の場合は後ろに行きます。
-   * 開始時刻が空のタスクはタイトルがあれば上、なければ下。見積もり済が上、見積もりをしていなければ下に行きます。
    * @param  {Array} tasks タスク
    */
   getSortedTasks(tasks) {
     const hasStartTimeTasks = [];
     const hasNotStartTimeTasks = [];
     for (let i = 0; i < tasks.length; i += 1) {
-      const task = tasks[i];
+      const task = this.cloneDeep(tasks[i]);
       if (task.startTime !== '') {
         hasStartTimeTasks.push(task);
       } else {
@@ -118,14 +117,6 @@ export default {
       if (a.startTime > b.startTime) return 1;
       if (a.startTime < b.startTime) return -1;
       return 0;
-    }).concat(hasNotStartTimeTasks.sort((a, b) => {
-      if (a.title === '') return 1;
-      if (a.title !== '') return -1;
-      if (a.estimate === '') return 1;
-      if (a.estimate !== '') return -1;
-      if (a.estimate > b.estimate) return 1;
-      if (a.estimate < b.estimate) return -1;
-      return 0;
-    }));
+    }).concat(hasNotStartTimeTasks.sort(() => 0));
   },
 };
