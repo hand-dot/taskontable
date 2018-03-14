@@ -81,7 +81,7 @@ class DiffChart extends Component {
       borderWidth: 1,
       fill: false,
     }));
-    charts[this.state.ctxId].update();
+    charts[this.state.ctxId].update({ lazy: true });
     this.setState({ data: nextProps.data });
   }
 
