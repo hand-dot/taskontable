@@ -122,20 +122,11 @@ class Dashboard extends Component {
         })()}
         <Grid item xs={12}>
           <Typography gutterBottom variant="subheading">
-                 見積と実績の乖離
-          </Typography>
-          <Typography gutterBottom variant="caption">
-            {(() => {
-              const diff = +((this.state.estimateTasks.minute / 60) - (this.state.actuallyTasks.minute / 60)).toFixed(1);
-              if (diff !== 0) {
-                return diff > 0 ? `*見積に対して実績が${diff}hマイナスです` : `*見積に対して実績が${diff * -1}hオーバーしています`;
-              }
-              return '　';
-            })()}
+          見積と実績の乖離
           </Typography>
           <Grid container>
             <Grid item xs={12}>
-              <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} unit={'h'} />
+              <DiffChart title={''} chartLabels={['見積', '消費']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} unit={'h'} />
             </Grid>
           </Grid>
         </Grid>

@@ -24,9 +24,6 @@ const styles = theme => ({
   grey: {
     background: constants.brandColor.base.GREY,
   },
-  yellow: {
-    background: constants.brandColor.base.YELLOW,
-  },
   tableCtlButton: {
     fontSize: 11,
     minWidth: 25,
@@ -60,10 +57,9 @@ class TableCtl extends Component {
   render() {
     const { tableTasks, hasOpenTask, date, isLoading, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
     const progressPer = (tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length);
-    const isComplete = progressPer >= 100;
     return (
       <div>
-        <LinearProgress classes={{ root: classes.progress, barColorPrimary: isComplete ? classes.yellow : classes.blue, colorPrimary: isComplete ? classes.yellow : classes.lightBlue }} variant={isLoading ? 'indeterminate' : 'determinate'} value={progressPer} />
+        <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} variant={isLoading ? 'indeterminate' : 'determinate'} value={progressPer} />
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container spacing={0}>
           <Hidden xsDown>
             <Grid style={{ textAlign: 'center' }} item xs={3}>
@@ -81,7 +77,7 @@ class TableCtl extends Component {
                 );
               } else if (tableTasks.length === tableTasks.filter(data => data.startTime && data.endTime).length) {
                 return (
-                  <Typography style={{ marginTop: 10 }} variant="caption"><i className="fa fa-thumbs-up" />Complete!</Typography>
+                  <Typography style={{ animation: 'good 1s linear 0s 1', marginTop: 10, color: constants.brandColor.base.BLUE }} variant="caption"><i className="fa fa-thumbs-up" />Complete!</Typography>
                 );
               }
               return (
@@ -96,7 +92,7 @@ class TableCtl extends Component {
             })()}
           </Grid>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
-            <Tooltip title={moment(date, 'YYYY-MM-DD').add(-1, 'day').format('YYYY/MM/DD')} placement="top">
+            <Tooltip title={moment(date, constants.DATEFMT).add(-1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
                 <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
               </div>
@@ -113,7 +109,7 @@ class TableCtl extends Component {
               }
               return null;
             })()}
-            <Tooltip title={moment(date, 'YYYY-MM-DD').add(1, 'day').format('YYYY/MM/DD')} placement="top">
+            <Tooltip title={moment(date, constants.DATEFMT).add(1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
                 <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><i className="fa fa-angle-right fa-lg" /></Button>
               </div>
