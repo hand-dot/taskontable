@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import 'babel-polyfill';
-import Reboot from 'material-ui/Reboot';
+import CssBaselines from 'material-ui/CssBaseline';
 import { MuiThemeProvider } from 'material-ui/styles';
 import 'font-awesome/css/font-awesome.min.css';
 import App from './containers/App';
@@ -20,7 +20,7 @@ ReactDOM.render(
         backgroundAttachment: 'fixed',
       }}
       >
-        <Reboot />
+        <CssBaselines />
         <App />
       </div>
     </MuiThemeProvider>
