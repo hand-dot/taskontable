@@ -27,6 +27,7 @@ class TaskTable extends Component {
     this.props.onRef(this);
     const self = this;
     this.hot = new Handsontable(this.hotDom, Object.assign(hotConf, {
+      data: [],
       isToday: self.props.isToday,
       contextMenu: {
         callback(key, selections) {
@@ -79,8 +80,8 @@ class TaskTable extends Component {
     if (!util.equal(hotTasks, this.props.tableTasks)) {
       this.props.handleSaveable(true);
       this.props.handleTableTasks(hotTasks);
+      this.hot.render();
     }
-    this.hot.render();
   }
 
   syncPropByUpdate() {
@@ -88,8 +89,8 @@ class TaskTable extends Component {
     this.props.handleTableTasks(getHotTasksIgnoreEmptyTask(this.hot));
   }
 
-  updateIsToday() {
-    if (this.hot) this.hot.updateSettings({ isToday: this.props.isToday });
+  updateIsToday(isToday) {
+    if (this.hot) this.hot.updateSettings({ isToday });
   }
 
   renderHot() {
