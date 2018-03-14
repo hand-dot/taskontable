@@ -99,9 +99,8 @@ class Taskontable extends Component {
     if (this.state.isHotMode) {
       this.taskTable.setDataForHot(sortedTableTask);
       this.bindOpenTasksProcessing(sortedTableTask);
-    } else {
-      this.setState({ tableTasks: sortedTableTask });
     }
+    this.setState({ tableTasks: sortedTableTask });
     return sortedTableTask;
   }
 
@@ -282,12 +281,17 @@ class Taskontable extends Component {
   attachTableTasks() {
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       this.setState({ loading: true });
+      if (util.equal(this.state.tableTasks, snapshot.val())) {
+        // 同期したがテーブルのデータと差分がなかった場合
+        this.setState({ saveable: false, loading: false });
+        return;
+      }
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
+        // サーバーに保存されたデータが存在する場合
         this.fireScript(snapshot.val(), 'importScript').then((data) => { this.setSortedTableTasks(data); }, () => { this.setSortedTableTasks(snapshot.val()); });
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
-        // 定期タスクをテーブルに設定する処理。本日以降しか動作しない
+        // 定期のタスクが設定されており、サーバーにデータが存在しない場合(定期タスクをテーブルに設定する処理。本日以降しか動作しない)
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
-        // 定期のタスクが設定されており、サーバーにデータが存在しない場合
         // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
         // util.convertDayOfWeekToString(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
         // https://github.com/hand-dot/taskontable/issues/118
