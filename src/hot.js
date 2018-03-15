@@ -325,9 +325,7 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   const hotData = [];
   const rowCount = hotInstance.countSourceRows();
   for (let index = 0; index < rowCount; index += 1) {
-    if (!hotInstance.isEmptyRow(index)) {
-      hotData.push(hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
-    }
+    if (!hotInstance.isEmptyRow(index)) hotData.push(hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
   }
   return util.cloneDeep(hotData.filter(data => !util.equal(tableTaskSchema, data)));
 };
@@ -344,7 +342,7 @@ export const setDataForHot = (hotInstance, datas) => {
     }
     rowIndex += 1;
   });
-  const rowCount = getHotTasksIgnoreEmptyTask(hotInstance).length;
+  const rowCount = hotInstance.countRows();
   // rowIndex これから入れる行数
   // rowCount 今の行数
   let needTrim = false;

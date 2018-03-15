@@ -281,7 +281,7 @@ class Taskontable extends Component {
   attachTableTasks() {
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       this.setState({ loading: true });
-      if (util.equal(this.state.tableTasks, snapshot.val())) {
+      if (snapshot.exists() && util.equal(this.state.tableTasks, snapshot.val())) {
         // 同期したがテーブルのデータと差分がなかった場合(自分の更新)
         this.setState({ saveable: false, loading: false });
         return;
