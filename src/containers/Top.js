@@ -58,7 +58,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
+            <Typography color="textSecondary" variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
               Build Your WorkFlow
             </Typography>
             <img style={{ margin: '2em 2em 2em 1.7em' }} src={titleGr} alt="taskontable" height="40" />
@@ -88,7 +88,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display1" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display2" align="center" style={{ marginBottom: '2em' }}>
               Plugin
             </Typography>
             <Grid spacing={0} container alignItems="stretch" justify="center">
@@ -108,7 +108,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display1" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display2" align="center" style={{ marginBottom: '2em' }}>
               Collaboration
             </Typography>
             <Grid spacing={0} container alignItems="stretch" justify="center">
@@ -128,7 +128,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper square className={classes.center} elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display1" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display2" align="center" style={{ marginBottom: '2em' }}>
             Anytime, anywhere
             </Typography>
             <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
@@ -141,7 +141,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display1" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} color="textSecondary" variant="display2" align="center" style={{ marginBottom: '2em' }}>
               Open Source
             </Typography>
             <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
