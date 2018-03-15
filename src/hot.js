@@ -94,8 +94,6 @@ const columns = [
           // 見積より少ない
           value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
         }
-      } else {
-        value = ''; // eslint-disable-line no-param-reassign
       }
       td.innerHTML = value;
       return td;
@@ -158,6 +156,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout) => {
   }, timeout);
   notifiIds.push(notifiId);
   hotInstance.setCellMeta(row, col, targetNotifiId, notifiId);
+  hotInstance.render(); // メタをセットしたのでレンダラーで表示しているアイコンを移動させるためにレンダー
 };
 
 /**
