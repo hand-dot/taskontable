@@ -117,6 +117,6 @@ export default {
       if (a.startTime > b.startTime) return 1;
       if (a.startTime < b.startTime) return -1;
       return 0;
-    }).concat(hasNotStartTimeTasks.sort(() => 0));
+    }).concat(hasNotStartTimeTasks);
   },
 };
