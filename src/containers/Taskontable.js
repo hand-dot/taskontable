@@ -427,8 +427,8 @@ class Taskontable extends Component {
                 scrollButtons="off"
                 indicatorColor={constants.brandColor.light.BLUE}
               >
-                <Tab label={<span><i className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
-                <Tab label={<span><i className="fa fa-tasks fa-lg" />タスクプール</span>} />
+                <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
+                <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-tasks fa-lg" />タスクプール</span>} />
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
