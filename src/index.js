@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import 'babel-polyfill';
+import 'babel-polyfill'; // TODO サポートブラウザを制限し削除したい。
 import CssBaselines from 'material-ui/CssBaseline';
 import { MuiThemeProvider } from 'material-ui/styles';
 import 'font-awesome/css/font-awesome.min.css';
