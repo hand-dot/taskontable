@@ -58,6 +58,8 @@ class App extends Component {
         this.setState({ loginProggres: false });
       }
     });
+
+    this.props.history.push('/top');
   }
 
   componentDidMount() {
@@ -83,10 +85,10 @@ class App extends Component {
   }
 
   logout() {
-    this.props.history.push('/');
     firebase.auth().signOut().then(() => {
       // userの初期化
       this.setState({ user: { displayName: '', photoURL: '', uid: '' } });
+      this.props.history.push('/top');
     }).catch((error) => {
       // FIXME エラーをどこかのサービスに送信したい
       // https://sentry.io/
@@ -130,6 +132,10 @@ class App extends Component {
             }}
           />
           <Route
+            path="/top"
+            render={props => <Top {...props} />}
+          />
+          <Route
             exact
             path="/"
             render={(props) => {
@@ -142,7 +148,7 @@ class App extends Component {
                     {...props}
                   />);
               }
-              return (<Top />);
+              return (<Login login={this.login.bind(this)} />);
             }}
           />
         </Switch>
