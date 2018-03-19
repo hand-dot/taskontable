@@ -9,6 +9,7 @@ import AsyncContainer from './AsyncContainer';
 
 import firebaseConf from '../configs/firebase';
 import '../styles/keyframes.css';
+import constants from '../constants';
 
 const GlobalHeader = AsyncContainer(() => import('./GlobalHeader').then(module => module.default), {});
 const Top = AsyncContainer(() => import('./Top').then(module => module.default), {});
@@ -41,6 +42,10 @@ class App extends Component {
   }
 
   componentWillMount() {
+    // 認証でfirebaseのdefaultのhosturl(https://myapp.firebaseapp.com)にリダイレクトされた場合にURLを書き換える処理
+    // https://stackoverflow.com/questions/34212039/redirect-to-firebase-hosting-custom-domain
+    if (window.location.origin !== constants.URL && window.location.origin !== constants.DEVURL) window.location.href = constants.URL;
+
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         const currentUser = firebase.auth().currentUser;

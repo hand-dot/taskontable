@@ -9,6 +9,8 @@ const rgb = {
 };
 export default {
   TITLE: 'Taskontable',
+  URL: 'https://taskontable.com',
+  DEVURL: 'http://localhost:3000',
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
   ROADMAP_URL: 'https://trello.com/b/fFhYhlCu/taskontable-roadmap',
