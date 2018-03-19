@@ -11,12 +11,11 @@ import google from '../images/google.svg';
 
 const styles = {
   root: {
-    paddingTop: '3em',
     minHeight: '100vh',
   },
   content: {
-    padding: '3em 2em',
-    maxWidth: 600,
+    padding: '6em 2em',
+    maxWidth: 660,
     margin: '0 auto',
     textAlign: 'center',
   },
@@ -44,7 +43,10 @@ function Signup(props) {
               *現在グーグルログインしかご利用いただけません。
             </Typography>
             <Typography variant="caption" gutterBottom>
-              *現在Beta版のためデータがクリアさせる可能性があります。
+              *現在Beta版のため一部の機能を除いてアプリをお試しできます。(データがクリアさせる可能性があります。)
+            </Typography>
+            <Typography variant="caption" gutterBottom>
+              *現在ログインしていただくと2018年7~8月の正式リリース時にお知らせメールを送信させていただきます。
             </Typography>
             <form style={{ marginTop: '2em' }}>
               <TextField
@@ -87,6 +89,9 @@ function Signup(props) {
               OR
             </Typography>
             <Button onClick={login} variant="raised" color="primary" className={classes.button}><img src={google} alt="google" height="20" />　グーグルアカウントでログインする</Button>
+            <div style={{ fontSize: 12, marginBottom: 10 }}>
+              <Link to="/top">Topに戻る</Link>
+            </div>
           </div>
         </Paper>
       </Grid>
