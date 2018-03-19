@@ -102,6 +102,9 @@ class Scripts extends Component {
   }
 
   backToApp() {
+    if (this.state.importScript !== this.state.importScriptBk || this.state.exportScript !== this.state.exportScriptBk) {
+      if (!window.confirm('保存していない内容がありますが、アプリに戻ってもよろしいですか？')) return;
+    }
     this.props.history.push('/');
   }
 
