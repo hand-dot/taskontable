@@ -44,7 +44,8 @@ class App extends Component {
   componentWillMount() {
     // 認証でfirebaseのdefaultのhosturl(https://myapp.firebaseapp.com)にリダイレクトされた場合にURLを書き換える処理
     // https://stackoverflow.com/questions/34212039/redirect-to-firebase-hosting-custom-domain
-    if (window.location.origin !== constants.URL && window.location.origin !== constants.DEVURL) window.location.href = constants.URL;
+    const url = process.env.NODE_ENV === 'production' ? constants.URL : constants.DEVURL;
+    if (window.location.origin !== url) window.location.href = constants.URL;
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -63,7 +64,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-
   }
 
   openHelpDialog() {
@@ -90,10 +90,8 @@ class App extends Component {
       this.setState({ user: { displayName: '', photoURL: '', uid: '' } });
       this.props.history.push('/top');
     }).catch((error) => {
-      // FIXME エラーをどこかのサービスに送信したい
-      // https://sentry.io/
-      console.error(error);
-      window.location.reload();
+      setTimeout(() => window.location.reload());
+      throw new Error(error);
     });
   }
 
@@ -156,7 +154,6 @@ class App extends Component {
           <CircularProgress className={classes.content} size={60} />
         </Dialog>
       </div>
-
     );
   }
 }
