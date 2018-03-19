@@ -1,5 +1,6 @@
 import * as firebase from 'firebase';
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import { Switch, Route, withRouter } from 'react-router-dom';
@@ -51,6 +52,8 @@ class App extends Component {
       if (user) {
         const currentUser = firebase.auth().currentUser;
         this.setState({ user: { displayName: currentUser.displayName, photoURL: currentUser.photoURL, uid: currentUser.uid } });
+        // dimension1はgaではuidとしている
+        ReactGA.set({ dimension1: currentUser.uid });
         setTimeout(() => {
           this.props.history.push('/');
           this.setState({ loginProggres: false });

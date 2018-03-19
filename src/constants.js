@@ -1,3 +1,6 @@
+import SENTRY_URL from './configs/sentry';
+import GA_ID from './configs/ga';
+
 const rgb = {
   RED: '255, 99, 132',
   YELLOW: '255, 205, 86',
@@ -12,7 +15,8 @@ export default {
   TITLE: 'Taskontable',
   URL: 'https://taskontable.com',
   DEVURL: 'http://localhost:3000',
-  SENTRY_URL: 'https://58e6a1e8a457423c87c410bbf4d724ac@sentry.io/306500',
+  GA_ID,
+  SENTRY_URL,
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
   ROADMAP_URL: 'https://trello.com/b/fFhYhlCu/taskontable-roadmap',
