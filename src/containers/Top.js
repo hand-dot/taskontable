@@ -9,7 +9,7 @@ import Button from 'material-ui/Button';
 
 import titleGr from '../images/title_gr.png';
 import titleWh from '../images/title_wh.png';
-import screencapture from '../images/screencapture.png';
+import screencapture from '../images/screencapture.gif';
 import plugins from '../images/plugins.png';
 import devices from '../images/devices.png';
 import collaboration from '../images/collaboration.png';
