@@ -187,7 +187,7 @@ class GlobalHeader extends Component {
               })()}
               <div style={{ display: 'inline-flex' }}>
                 <IconButton className={classes.iconButton}>
-                  <i style={{ position: 'absolute', left: 10, top: 15, fontSize: 20, color: constants.brandColor.base.NAVY }} className="fa fa-bell-o" />
+                  <i style={{ position: 'absolute', left: 10, top: 15, fontSize: 20 }} className="fa fa-bell-o" />
                   <span style={{ position: 'absolute', left: 10, top: 15 }} id="changelog" />
                 </IconButton>
               </div>
