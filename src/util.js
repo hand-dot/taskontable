@@ -2,6 +2,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 import fastclone from 'fast-clone';
 import { deepEqual } from 'fast-equals';
+import UAParser from 'ua-parser-js';
 import constants from './constants';
 
 export default {
@@ -118,5 +119,11 @@ export default {
       if (a.startTime < b.startTime) return -1;
       return 0;
     }).concat(hasNotStartTimeTasks);
+  },
+
+  isSupportBrowser() {
+    const parser = new UAParser();
+    const browserName = parser.getBrowser().name;
+    return constants.SUPPORTEDBROWSERS.includes(browserName);
   },
 };

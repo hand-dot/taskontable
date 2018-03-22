@@ -132,7 +132,7 @@ function Top(props) {
             Anytime, anywhere
             </Typography>
             <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
-                いつ、どこにいてもあらゆるデバイスで快適なタスク管理が可能です。
+                いつ、どこにいてもあらゆるデバイスのChromeで快適なタスク管理が可能です。
             </Typography>
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={devices} alt="taskontable" />
           </div>
