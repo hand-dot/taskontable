@@ -94,6 +94,11 @@ export default {
       failure(reason);
     });
   },
+
+  /**
+   * 引き数のオブジェクトにIDが存在しない場合、設定します。
+   * @param  {Object} obj オブジェクト
+   */
   setIdIfNotExist(obj) {
     return obj.id ? obj : Object.assign(obj, { id: uuid() });
   },
@@ -120,7 +125,9 @@ export default {
       return 0;
     }).concat(hasNotStartTimeTasks);
   },
-
+  /**
+   * サポートブラウザーならtrueを返します。
+   */
   isSupportBrowser() {
     const parser = new UAParser();
     const browserName = parser.getBrowser().name;
