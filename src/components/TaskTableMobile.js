@@ -218,7 +218,7 @@ class TaskTableMobile extends Component {
                 <CustomTableCell padding="none">
                   <TextField
                     type="time"
-                    className={classes.cellInput}
+                    className={classes.miniCellInput}
                     InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
                     onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.edit)}
                     value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
@@ -228,7 +228,7 @@ class TaskTableMobile extends Component {
                 <CustomTableCell padding="none">
                   <TextField
                     type="time"
-                    className={classes.cellInput}
+                    className={classes.miniCellInput}
                     InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
                     onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.edit)}
                     value={this.state.editingTaskIndex !== index ? task.endTime : this.state[constants.taskStateType.edit].endTime}
@@ -308,7 +308,7 @@ class TaskTableMobile extends Component {
               <CustomTableCell padding="none">
                 <TextField
                   type="time"
-                  className={classes.cellInput}
+                  className={classes.miniCellInput}
                   InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                   onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].startTime}
@@ -319,7 +319,7 @@ class TaskTableMobile extends Component {
               <CustomTableCell padding="none">
                 <TextField
                   type="time"
-                  className={classes.cellInput}
+                  className={classes.miniCellInput}
                   InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                   onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].endTime}

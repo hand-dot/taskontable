@@ -12,10 +12,6 @@ export default {
     actionIcons: {
       margin: '0 auto',
     },
-    tableHeader: {
-      backgroundColor: '#f3f3f3',
-      padding: 0,
-    },
     cellInput: {
       fontSize: 11,
     },

@@ -186,13 +186,13 @@ class TaskList extends Component {
         <Table>
           <TableHead>
             <TableRow>
-              <CustomTableCell padding="none">作業内容</CustomTableCell>
-              <CustomTableCell padding="none">備考</CustomTableCell>
-              <CustomTableCell padding="none">見積</CustomTableCell>
-              {(() => (isRegularTask ? <CustomTableCell padding="none">開始時刻</CustomTableCell> : null))()}
-              {(() => (isRegularTask ? <CustomTableCell padding="none">第何週</CustomTableCell> : null))()}
-              {(() => (isRegularTask ? <CustomTableCell padding="none">何曜日</CustomTableCell> : null))()}
-              <CustomTableCell padding="none">編集</CustomTableCell>
+              <CustomTableCell className={classes.cellInput} padding="none">作業内容</CustomTableCell>
+              <CustomTableCell className={classes.cellInput} padding="none">備考</CustomTableCell>
+              <CustomTableCell className={classes.miniCellInput} padding="none">見積</CustomTableCell>
+              {(() => (isRegularTask ? <CustomTableCell className={classes.miniCellInput} padding="none">開始時刻</CustomTableCell> : null))()}
+              {(() => (isRegularTask ? <CustomTableCell className={classes.miniCellInput} padding="none">第何週</CustomTableCell> : null))()}
+              {(() => (isRegularTask ? <CustomTableCell className={classes.miniCellInput} padding="none">何曜日</CustomTableCell> : null))()}
+              <CustomTableCell className={classes.miniCellInput} padding="none">編集</CustomTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -200,8 +200,8 @@ class TaskList extends Component {
               <TableRow className={classes.taskRow} key={task.id} >
                 <CustomTableCell padding="none">
                   <Input
-                    className={classes.cellInput}
                     fullWidth
+                    className={classes.cellInput}
                     onChange={this.changeTaskTitle.bind(this, constants.taskStateType.edit)}
                     value={this.state.editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
                     disabled={this.state.editingTaskIndex !== index}
@@ -210,8 +210,8 @@ class TaskList extends Component {
                 </CustomTableCell>
                 <CustomTableCell padding="none">
                   <Input
-                    className={classes.cellInput}
                     fullWidth
+                    className={classes.cellInput}
                     onChange={this.changeTaskMemo.bind(this, constants.taskStateType.edit)}
                     value={this.state.editingTaskIndex !== index ? task.memo : this.state[constants.taskStateType.edit].memo}
                     disabled={this.state.editingTaskIndex !== index}
@@ -234,7 +234,7 @@ class TaskList extends Component {
                       <CustomTableCell padding="none">
                         <TextField
                           type="time"
-                          className={classes.cellInput}
+                          className={classes.miniCellInput}
                           InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
                           onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.edit)}
                           value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
@@ -251,6 +251,7 @@ class TaskList extends Component {
                     return (
                       <CustomTableCell padding="none">
                         <MultipleSelect
+                          className={classes.miniCellInput}
                           label={'第何週'}
                           value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
                           options={[1, 2, 3, 4, 5]}
@@ -267,6 +268,7 @@ class TaskList extends Component {
                     return (
                       <CustomTableCell padding="none">
                         <MultipleSelect
+                          className={classes.miniCellInput}
                           label={'何曜日'}
                           value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
                           options={constants.DAY_OF_WEEK_STR}
@@ -324,8 +326,8 @@ class TaskList extends Component {
             <TableRow>
               <CustomTableCell padding="none">
                 <Input
-                  className={classes.cellInput}
                   fullWidth
+                  className={classes.cellInput}
                   onChange={this.changeTaskTitle.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].title}
                   placeholder="作業内容"
@@ -335,8 +337,8 @@ class TaskList extends Component {
               </CustomTableCell>
               <CustomTableCell padding="none">
                 <Input
-                  className={classes.cellInput}
                   fullWidth
+                  className={classes.cellInput}
                   onChange={this.changeTaskMemo.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].memo}
                   placeholder="備考"
@@ -361,7 +363,7 @@ class TaskList extends Component {
                     <CustomTableCell padding="none">
                       <TextField
                         type="time"
-                        className={classes.cellInput}
+                        className={classes.miniCellInput}
                         InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                         onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.add)}
                         value={this.state[constants.taskStateType.add].startTime}
@@ -378,6 +380,7 @@ class TaskList extends Component {
                   return (
                     <CustomTableCell padding="none">
                       <MultipleSelect
+                        className={classes.miniCellInput}
                         label={'第何週'}
                         value={this.state[constants.taskStateType.add].week}
                         options={[1, 2, 3, 4, 5]}
@@ -394,6 +397,7 @@ class TaskList extends Component {
                   return (
                     <CustomTableCell padding="none">
                       <MultipleSelect
+                        className={classes.miniCellInput}
                         label={'何曜日'}
                         value={this.state[constants.taskStateType.add].dayOfWeek}
                         options={constants.DAY_OF_WEEK_STR}
