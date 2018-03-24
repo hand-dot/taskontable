@@ -1,5 +1,9 @@
+import UAParser from 'ua-parser-js';
 import SENTRY_URL from './configs/sentry';
 import GA_ID from './configs/ga';
+
+const parser = new UAParser();
+const osName = parser.getOS().name;
 
 const rgb = {
   RED: '255, 99, 132',
@@ -13,6 +17,7 @@ export default {
   RELEASE: '0.0.0-beta',
   TITLE: 'Taskontable',
   SUPPORTEDBROWSERS: ['Chrome'],
+  METAKEY: osName === 'Mac OS' ? '⌘' : 'ctrl',
   URL: 'https://taskontable.com',
   DEVURL1: 'http://localhost:3000',
   DEVURL2: 'http://192.168.0.101:3000',
@@ -30,12 +35,12 @@ export default {
   RENDER_DELAY: 500,
   HOT_MINROW: 20,
   shortcuts: {
-    NEXTDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 190,
-    PREVDATE: e => e.ctrlKey && e.shiftKey && e.keyCode === 188,
-    SAVE: e => e.ctrlKey && !e.shiftKey && e.keyCode === 83,
-    TOGGLE_HELP: e => e.ctrlKey && e.shiftKey && e.keyCode === 191,
+    SAVE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && !e.shiftKey && e.keyCode === 83,
+    HOT_CURRENTTIME: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.key === ':',
+    NEXTDATE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 190,
+    PREVDATE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 188,
+    TOGGLE_HELP: e => e.shiftKey && e.keyCode === 191,
     TOGGLE_DASHBOAD: e => e.ctrlKey && !e.shiftKey && e.keyCode === 74,
-    HOT_CURRENTTIME: e => e.ctrlKey && e.shiftKey && e.keyCode === 186,
   },
   menuItemKey: {
     CONTACT: 'contact',

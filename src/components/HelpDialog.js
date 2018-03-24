@@ -50,28 +50,30 @@ function HelpDialog(props) {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <DialogTitle>テーブルの色</DialogTitle>
-      <DialogContent className={classes.content}>
-        <Grid container spacing={40}>
-          <Grid item xs={12}>
-            <Typography variant="caption">
+      <div>
+        <DialogTitle>テーブルの色</DialogTitle>
+        <DialogContent className={classes.content}>
+          <Grid container spacing={40}>
+            <Grid item xs={12}>
+              <Typography gutterBottom variant="caption">
                 見積を入力していないタスクは<span className={classes.block} style={{ color: constants.cellColor.WARNING }}>■</span>(黄色)になります。
-            </Typography>
-            <Typography variant="caption">
+              </Typography>
+              <Typography gutterBottom variant="caption">
                 開始時刻を予約したタスクは<span className={classes.block} style={{ color: constants.cellColor.RESERVATION }}>■</span>(緑色)になります。
-            </Typography>
-            <Typography variant="caption">
+              </Typography>
+              <Typography gutterBottom variant="caption">
                 実行中のタスクは<span className={classes.block} style={{ color: constants.cellColor.RUNNING }}>■</span>(青色)になります。
-            </Typography>
-            <Typography variant="caption">
+              </Typography>
+              <Typography gutterBottom variant="caption">
                 見積を過ぎたのタスクは<span className={classes.block} style={{ color: constants.cellColor.OUT }}>■</span>(赤色)になります。
-            </Typography>
-            <Typography variant="caption">
+              </Typography>
+              <Typography gutterBottom variant="caption">
                 完了したタスクは<span className={classes.block} style={{ color: constants.cellColor.DONE }}>■</span>(灰色)になります。
-            </Typography>
+              </Typography>
+            </Grid>
           </Grid>
-        </Grid>
-      </DialogContent>
+        </DialogContent>
+      </div>
       {(() => {
         if (theme.breakpoints.values.sm < constants.APPWIDTH) {
           return (
@@ -81,21 +83,21 @@ function HelpDialog(props) {
                 <Grid container spacing={40}>
                   <Grid className={classes.shotcut} item xs={6}>
                     <h5>アプリ</h5>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>S</kbd> – 保存</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>?</kbd> – ヘルプを表示</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>S</kbd> – 保存</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
                   </Grid>
                   <Grid className={classes.shotcut} item xs={6}>
                     <h5>テーブル編集</h5>
                     <Typography gutterBottom variant="caption"><kbd>右クリック</kbd> – コンテキストメニュー表示</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>C</kbd> – コピー</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>X</kbd> – 切り取り</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>V</kbd> – 貼り付け</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>Z</kbd> – 戻る</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>Y</kbd> – 進む</Typography>
-                    <Typography gutterBottom variant="caption"><kbd>Ctrl</kbd> + <kbd>:</kbd> – 現在時刻を入力</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>C</kbd> – コピー</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>X</kbd> – 切り取り</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>V</kbd> – 貼り付け</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>Z</kbd> – 戻る</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>Y</kbd> – 進む</Typography>
+                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>:</kbd> – 現在時刻を入力</Typography>
                   </Grid>
                 </Grid>
               </DialogContent>

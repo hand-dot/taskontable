@@ -222,10 +222,11 @@ const bindShortcut = (hotInstance) => {
   hotInstance.addHook('afterDocumentKeyDown', (e) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
     if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
-    const selected = hotInstance.getSelectedLast();
-    if (!selected) return;
-    const [startRow, startCol, endRow, endCol] = selected;
     if (constants.shortcuts.HOT_CURRENTTIME(e)) {
+      e.preventDefault();
+      const selected = hotInstance.getSelectedLast();
+      if (!selected) return;
+      const [startRow, startCol, endRow, endCol] = selected;
       // 現在時刻を入力
       const startProp = hotInstance.colToProp(startCol);
       const endProp = hotInstance.colToProp(endCol);

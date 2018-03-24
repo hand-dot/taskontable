@@ -5,6 +5,9 @@ import { deepEqual } from 'fast-equals';
 import UAParser from 'ua-parser-js';
 import constants from './constants';
 
+const parser = new UAParser();
+const browserName = parser.getBrowser().name;
+
 export default {
   /**
    * constants.DATEFMT形式の文字列が今日か判断します。
@@ -129,8 +132,6 @@ export default {
    * サポートブラウザーならtrueを返します。
    */
   isSupportBrowser() {
-    const parser = new UAParser();
-    const browserName = parser.getBrowser().name;
     return constants.SUPPORTEDBROWSERS.includes(browserName);
   },
 };

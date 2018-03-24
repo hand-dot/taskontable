@@ -70,6 +70,7 @@ class Taskontable extends Component {
         e.returnValue = dialogText;
         return dialogText;
       }
+      return null;
     };
   }
 
