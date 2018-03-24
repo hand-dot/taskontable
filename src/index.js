@@ -26,7 +26,8 @@ ReactDOM.render(
         <div style={{
           minHeight: '100vh',
           backgroundColor: constants.brandColor.base.BLUE,
-          backgroundImage: `linear-gradient(${constants.brandColor.light.BLUE}, ${constants.brandColor.base.BLUE})`,
+          transformOrigin: 0,
+          backgroundImage: `linear-gradient(150deg,${constants.brandColor.light.PURPLE} 15%,${constants.brandColor.light.BLUE} 70%,${constants.brandColor.base.GREEN} 94%)`,
           backgroundAttachment: 'fixed',
         }}
         >
