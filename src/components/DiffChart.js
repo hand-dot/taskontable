@@ -33,6 +33,7 @@ class DiffChart extends Component {
         }],
       },
       options: {
+        animation: null,
         title: {
           display: true,
           text: this.props.title || '',
@@ -64,7 +65,6 @@ class DiffChart extends Component {
       },
     };
     if (this.props.theme.breakpoints.values.sm > constants.APPWIDTH) {
-      conf.options.animation = null;
       conf.options.legend.display = false;
     }
     charts[this.state.ctxId] = new Chart(document.getElementById(this.state.ctxId).getContext('2d'), conf);
