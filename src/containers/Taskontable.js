@@ -379,17 +379,15 @@ class Taskontable extends Component {
       firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
         if (snapshot.exists() && snapshot.val() !== '') {
           const script = snapshot.val();
-          util.runWorker(script, data,
-            (result) => {
-              this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
-              resolve(result);
-            },
-            (reason) => {
-              const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
-              this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText });
-              reject();
-            },
-          );
+          util.runWorker(script, data).then((result) => {
+            this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
+            resolve(result);
+          },
+          (reason) => {
+            const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
+            this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText });
+            reject();
+          });
         } else {
           reject();
         }

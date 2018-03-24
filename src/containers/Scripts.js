@@ -136,17 +136,14 @@ class Scripts extends Component {
     if (!window.confirm(`${scriptType}を実行してもよろしいですか？`)) return;
     const data = getHotTasksIgnoreEmptyTask(this.exampleHot);
     const script = this.state[scriptType];
-    util.runWorker(script, data,
-      (result) => {
-        setDataForHot(this.exampleHot, result);
-        setTimeout(() => { this.exampleHot.render(); });
-        this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
-      },
-      (reason) => {
-        const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
-        this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText });
-      },
-    );
+    util.runWorker(script, data).then((result) => {
+      setDataForHot(this.exampleHot, result);
+      setTimeout(() => { this.exampleHot.render(); });
+      this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
+    }, (reason) => {
+      const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
+      this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText });
+    });
   }
 
   loadExampleScript(scriptType = 'exportScript') {

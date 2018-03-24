@@ -70,31 +70,20 @@ export default {
     return { day: date.getDay(), count: Math.floor((date.getDate() - 1) / 7) + 1 };
   },
   /**
-   * 文字列からワーカーを実行します。
+   * 文字列からワーカーを実行し、promiseを返します。
    * @param  {String} script スクリプト
    * @param  {Array} data ワーカーに処理させるデータ
-   * @param  {Function} success 成功処理
-   * @param  {Function} failure 失敗処理
    */
-  runWorker(script, data, success, failure) {
+  runWorker(script, data) {
     const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
-    const promise = new Promise((resolve, reject) => {
+    worker.postMessage(data);
+    return new Promise((resolve, reject) => {
       worker.onerror = (e) => {
         reject(e.message);
       };
       worker.onmessage = (e) => {
         resolve(e.data);
       };
-    });
-    worker.postMessage(data);
-    promise.then((result) => {
-      if (!Array.isArray(result)) {
-        failure();
-      } else {
-        success(result);
-      }
-    }, (reason) => {
-      failure(reason);
     });
   },
 
