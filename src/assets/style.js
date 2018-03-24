@@ -16,19 +16,12 @@ export default {
       backgroundColor: '#f3f3f3',
       padding: 0,
     },
-    cell: {
-      border: '1px solid #CCC',
-      padding: '0 5px',
-      fontSize: 11,
-    },
-    miniCell: {
-      border: '1px solid #CCC',
-      padding: '0 3px',
-      width: theme.breakpoints.values.sm < constants.APPWIDTH ? '6.4rem' : '3rem',
-      fontSize: 11,
-    },
     cellInput: {
       fontSize: 11,
+    },
+    miniCellInput: {
+      fontSize: 11,
+      width: theme.breakpoints.values.sm < constants.APPWIDTH ? '6.4rem' : '3rem',
     },
     taskRow: {
       animation: 'blink 0.5s',

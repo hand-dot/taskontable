@@ -15,6 +15,15 @@ import style from '../assets/style';
 
 const styles = style.table;
 
+const CustomTableCell = withStyles(theme => ({
+  root: {
+    border: '1px solid #CCC',
+  },
+  head: {
+    backgroundColor: '#f3f3f3',
+  },
+}))(TableCell);
+
 function getPoolTaskSchema() {
   return util.setIdIfNotExist(util.cloneDeep(poolTaskSchema));
 }
@@ -177,19 +186,19 @@ class TaskList extends Component {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell padding="none" className={`${classes.cell} ${classes.tableHeader}`}>作業内容</TableCell>
-              <TableCell padding="none" className={`${classes.cell} ${classes.tableHeader}`}>備考</TableCell>
-              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>見積</TableCell>
-              {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>開始時刻</TableCell> : null))()}
-              {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>第何週</TableCell> : null))()}
-              {(() => (isRegularTask ? <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>何曜日</TableCell> : null))()}
-              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>編集</TableCell>
+              <CustomTableCell padding="none">作業内容</CustomTableCell>
+              <CustomTableCell padding="none">備考</CustomTableCell>
+              <CustomTableCell padding="none">見積</CustomTableCell>
+              {(() => (isRegularTask ? <CustomTableCell padding="none">開始時刻</CustomTableCell> : null))()}
+              {(() => (isRegularTask ? <CustomTableCell padding="none">第何週</CustomTableCell> : null))()}
+              {(() => (isRegularTask ? <CustomTableCell padding="none">何曜日</CustomTableCell> : null))()}
+              <CustomTableCell padding="none">編集</CustomTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {tasks.map((task, index) => (
               <TableRow className={classes.taskRow} key={task.id} >
-                <TableCell padding="none" className={classes.cell}>
+                <CustomTableCell padding="none">
                   <Input
                     className={classes.cellInput}
                     fullWidth
@@ -198,8 +207,8 @@ class TaskList extends Component {
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
-                </TableCell>
-                <TableCell padding="none" className={classes.cell}>
+                </CustomTableCell>
+                <CustomTableCell padding="none">
                   <Input
                     className={classes.cellInput}
                     fullWidth
@@ -208,22 +217,21 @@ class TaskList extends Component {
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
-                </TableCell>
-                <TableCell padding="none" className={classes.miniCell}>
+                </CustomTableCell>
+                <CustomTableCell padding="none">
                   <Input
-                    className={classes.cellInput}
+                    className={classes.miniCellInput}
                     type="number"
-                    fullWidth
                     onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.edit)}
                     value={this.state.editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
-                </TableCell>
+                </CustomTableCell>
                 {(() => {
                   if (isRegularTask) {
                     return (
-                      <TableCell padding="none" className={classes.miniCell}>
+                      <CustomTableCell padding="none">
                         <TextField
                           type="time"
                           className={classes.cellInput}
@@ -233,7 +241,7 @@ class TaskList extends Component {
                           placeholder="開始時刻"
                           disabled={this.state.editingTaskIndex !== index}
                         />
-                      </TableCell>
+                      </CustomTableCell>
                     );
                   }
                   return null;
@@ -241,7 +249,7 @@ class TaskList extends Component {
                 {(() => {
                   if (isRegularTask) {
                     return (
-                      <TableCell padding="none" className={classes.miniCell}>
+                      <CustomTableCell padding="none">
                         <MultipleSelect
                           label={'第何週'}
                           value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
@@ -249,7 +257,7 @@ class TaskList extends Component {
                           onChange={this.changeWeek.bind(this, constants.taskStateType.edit)}
                           disabled={this.state.editingTaskIndex !== index}
                         />
-                      </TableCell>
+                      </CustomTableCell>
                     );
                   }
                   return null;
@@ -257,7 +265,7 @@ class TaskList extends Component {
                 {(() => {
                   if (isRegularTask) {
                     return (
-                      <TableCell padding="none" className={classes.miniCell}>
+                      <CustomTableCell padding="none">
                         <MultipleSelect
                           label={'何曜日'}
                           value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
@@ -265,12 +273,12 @@ class TaskList extends Component {
                           onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.edit)}
                           disabled={this.state.editingTaskIndex !== index}
                         />
-                      </TableCell>
+                      </CustomTableCell>
                     );
                   }
                   return null;
                 })()}
-                <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
+                <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                   <div className={classes.actionIcons}>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
                       <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
@@ -310,11 +318,11 @@ class TaskList extends Component {
                       </MenuItem>
                     </Menu>
                   </div>
-                </TableCell>
+                </CustomTableCell>
               </TableRow>
             ))}
             <TableRow>
-              <TableCell padding="none" className={classes.cell}>
+              <CustomTableCell padding="none">
                 <Input
                   className={classes.cellInput}
                   fullWidth
@@ -324,8 +332,8 @@ class TaskList extends Component {
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
-              </TableCell>
-              <TableCell padding="none" className={classes.cell}>
+              </CustomTableCell>
+              <CustomTableCell padding="none">
                 <Input
                   className={classes.cellInput}
                   fullWidth
@@ -335,23 +343,22 @@ class TaskList extends Component {
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
-              </TableCell>
-              <TableCell padding="none" className={classes.miniCell}>
+              </CustomTableCell>
+              <CustomTableCell padding="none">
                 <Input
-                  className={classes.cellInput}
+                  className={classes.miniCellInput}
                   type="number"
-                  fullWidth
                   onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].estimate}
                   placeholder="見積"
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
-              </TableCell>
+              </CustomTableCell>
               {(() => {
                 if (isRegularTask) {
                   return (
-                    <TableCell padding="none" className={classes.miniCell}>
+                    <CustomTableCell padding="none">
                       <TextField
                         type="time"
                         className={classes.cellInput}
@@ -361,7 +368,7 @@ class TaskList extends Component {
                         placeholder="開始時刻"
                         disabled={this.state.editingTaskIndex !== -1}
                       />
-                    </TableCell>
+                    </CustomTableCell>
                   );
                 }
                 return null;
@@ -369,7 +376,7 @@ class TaskList extends Component {
               {(() => {
                 if (isRegularTask) {
                   return (
-                    <TableCell padding="none" className={classes.miniCell}>
+                    <CustomTableCell padding="none">
                       <MultipleSelect
                         label={'第何週'}
                         value={this.state[constants.taskStateType.add].week}
@@ -377,7 +384,7 @@ class TaskList extends Component {
                         onChange={this.changeWeek.bind(this, constants.taskStateType.add)}
                         disabled={this.state.editingTaskIndex !== -1}
                       />
-                    </TableCell>
+                    </CustomTableCell>
                   );
                 }
                 return null;
@@ -385,7 +392,7 @@ class TaskList extends Component {
               {(() => {
                 if (isRegularTask) {
                   return (
-                    <TableCell padding="none" className={classes.miniCell}>
+                    <CustomTableCell padding="none">
                       <MultipleSelect
                         label={'何曜日'}
                         value={this.state[constants.taskStateType.add].dayOfWeek}
@@ -393,16 +400,16 @@ class TaskList extends Component {
                         onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.add)}
                         disabled={this.state.editingTaskIndex !== -1}
                       />
-                    </TableCell>
+                    </CustomTableCell>
                   );
                 }
                 return null;
               })()}
-              <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
+              <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                 <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={this.state.editingTaskIndex !== -1}>
                   <i className="fa fa-plus" />
                 </IconButton>
-              </TableCell>
+              </CustomTableCell>
             </TableRow>
           </TableBody>
         </Table>

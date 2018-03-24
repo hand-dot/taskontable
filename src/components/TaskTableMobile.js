@@ -15,6 +15,15 @@ import util from '../util';
 
 const styles = style.table;
 
+const CustomTableCell = withStyles(theme => ({
+  root: {
+    border: '1px solid #CCC',
+  },
+  head: {
+    backgroundColor: '#f3f3f3',
+  },
+}))(TableCell);
+
 function getTableTaskSchema() {
   return util.setIdIfNotExist(util.cloneDeep(tableTaskSchema));
 }
@@ -154,11 +163,11 @@ class TaskTableMobile extends Component {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell padding="none" className={`${classes.cell} ${classes.tableHeader}`}>作業内容</TableCell>
-              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>見積</TableCell>
-              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>開始</TableCell>
-              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>終了</TableCell>
-              <TableCell padding="none" className={`${classes.miniCell} ${classes.tableHeader}`}>編集</TableCell>
+              <CustomTableCell padding="none">作業内容</CustomTableCell>
+              <CustomTableCell padding="none">見積</CustomTableCell>
+              <CustomTableCell padding="none">開始</CustomTableCell>
+              <CustomTableCell padding="none">終了</CustomTableCell>
+              <CustomTableCell padding="none">編集</CustomTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -186,7 +195,7 @@ class TaskTableMobile extends Component {
                   return obj;
                 })()}
               >
-                <TableCell padding="none" className={classes.cell}>
+                <CustomTableCell padding="none">
                   <Input
                     className={classes.cellInput}
                     fullWidth
@@ -195,19 +204,18 @@ class TaskTableMobile extends Component {
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
-                </TableCell>
-                <TableCell padding="none" className={classes.miniCell}>
+                </CustomTableCell>
+                <CustomTableCell padding="none">
                   <Input
-                    className={classes.cellInput}
+                    className={classes.miniCellInput}
                     type="number"
-                    fullWidth
                     onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.edit)}
                     value={this.state.editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
-                </TableCell>
-                <TableCell padding="none" className={classes.miniCell}>
+                </CustomTableCell>
+                <CustomTableCell padding="none">
                   <TextField
                     type="time"
                     className={classes.cellInput}
@@ -216,8 +224,8 @@ class TaskTableMobile extends Component {
                     value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
                     disabled={this.state.editingTaskIndex !== index}
                   />
-                </TableCell>
-                <TableCell padding="none" className={classes.miniCell}>
+                </CustomTableCell>
+                <CustomTableCell padding="none">
                   <TextField
                     type="time"
                     className={classes.cellInput}
@@ -226,8 +234,8 @@ class TaskTableMobile extends Component {
                     value={this.state.editingTaskIndex !== index ? task.endTime : this.state[constants.taskStateType.edit].endTime}
                     disabled={this.state.editingTaskIndex !== index}
                   />
-                </TableCell>
-                <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
+                </CustomTableCell>
+                <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                   <div className={classes.actionIcons}>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
                       <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
@@ -271,11 +279,11 @@ class TaskTableMobile extends Component {
                       </MenuItem>
                     </Menu>
                   </div>
-                </TableCell>
+                </CustomTableCell>
               </TableRow>
             ))}
             <TableRow>
-              <TableCell padding="none" className={classes.cell}>
+              <CustomTableCell padding="none">
                 <Input
                   className={classes.cellInput}
                   fullWidth
@@ -285,20 +293,19 @@ class TaskTableMobile extends Component {
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
-              </TableCell>
-              <TableCell padding="none" className={classes.miniCell}>
+              </CustomTableCell>
+              <CustomTableCell padding="none">
                 <Input
-                  className={classes.cellInput}
+                  className={classes.miniCellInput}
                   type="number"
-                  fullWidth
                   onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.add)}
                   value={this.state[constants.taskStateType.add].estimate}
                   placeholder="見積"
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
-              </TableCell>
-              <TableCell padding="none" className={classes.miniCell}>
+              </CustomTableCell>
+              <CustomTableCell padding="none">
                 <TextField
                   type="time"
                   className={classes.cellInput}
@@ -308,8 +315,8 @@ class TaskTableMobile extends Component {
                   placeholder="開始時刻"
                   disabled={this.state.editingTaskIndex !== -1}
                 />
-              </TableCell>
-              <TableCell padding="none" className={classes.miniCell}>
+              </CustomTableCell>
+              <CustomTableCell padding="none">
                 <TextField
                   type="time"
                   className={classes.cellInput}
@@ -319,12 +326,12 @@ class TaskTableMobile extends Component {
                   placeholder="終了時刻"
                   disabled={this.state.editingTaskIndex !== -1}
                 />
-              </TableCell>
-              <TableCell style={{ textAlign: 'center' }} padding="none" className={classes.miniCell}>
+              </CustomTableCell>
+              <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                 <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={this.state.editingTaskIndex !== -1}>
                   <i className="fa fa-plus" />
                 </IconButton>
-              </TableCell>
+              </CustomTableCell>
             </TableRow>
           </TableBody>
         </Table>
