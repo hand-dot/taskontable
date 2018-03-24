@@ -20,9 +20,9 @@ Raven.config(constants.SENTRY_URL, {
 }).install();
 
 ReactDOM.render(
-  <ErrorBoundary>
-    <BrowserRouter>
-      <MuiThemeProvider theme={theme}>
+  <BrowserRouter>
+    <MuiThemeProvider theme={theme}>
+      <ErrorBoundary>
         <div style={{
           minHeight: '100vh',
           backgroundColor: constants.brandColor.base.BLUE,
@@ -34,8 +34,8 @@ ReactDOM.render(
           <CssBaselines />
           <Route component={WithTracker(App, { /* additional attributes */ })} />
         </div>
-      </MuiThemeProvider>
-    </BrowserRouter>
-  </ErrorBoundary>
+      </ErrorBoundary>
+    </MuiThemeProvider>
+  </BrowserRouter>
   , document.getElementById('root'));
 registerServiceWorker();
