@@ -132,6 +132,6 @@ export default {
    * サポートブラウザーならtrueを返します。
    */
   isSupportBrowser() {
-    return constants.SUPPORTEDBROWSERS.includes(browserName);
+    return constants.SUPPORTEDBROWSERS.indexOf(browserName) >= 0;
   },
 };

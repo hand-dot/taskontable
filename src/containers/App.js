@@ -52,9 +52,9 @@ class App extends Component {
 
   componentWillMount() {
     // 認証でfirebaseのdefaultのhosturl(https://myapp.firebaseapp.com)にリダイレクトされた場合にURLを書き換える処理
-    // https://stackoverflow.com/questions/34212039/redirect-to-firebase-hosting-custom-domain
+    // https:// stackoverflow.com/questions/34212039/redirect-to-firebase-hosting-custom-domain
     const url = process.env.NODE_ENV === 'production' ? [constants.URL] : [constants.DEVURL1, constants.DEVURL2];
-    if (!url.includes(window.location.origin)) window.location.href = constants.URL;
+    if (url.indexOf(window.location.origin) === -1) window.location.href = constants.URL;
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
