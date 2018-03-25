@@ -17,9 +17,9 @@ export default {
     return moment(date, constants.DATEFMT).isSame(new Date(), 'day');
   },
   /**
-   * constants.TIMEFMT形式の文字列の2つの差分を分で求めます。
-   * @param  {String} startTimeVal constants.TIMEFMT形式の文字列
-   * @param  {String} endTimeVal constants.TIMEFMT形式の文字列
+   * HH:mm形式の文字列の2つの差分を分で求めます。
+   * @param  {String} startTimeVal HH:mm形式の文字列
+   * @param  {String} endTimeVal HH:mm形式の文字列
    */
   getTimeDiffMinute(startTimeVal = '00:00', endTimeVal = '00:00') {
     const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
@@ -27,6 +27,20 @@ export default {
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) &&
     Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute)) {
       return moment(`${endTimeHour}:${endTimeMinute}`, constants.TIMEFMT).diff(moment(`${startTimeHour}:${startTimeMinute}`, constants.TIMEFMT), 'minutes');
+    }
+    return 0;
+  },
+  /**
+   * HH:mm:ss形式の文字列の2つの差分を秒で求めます。
+   * @param  {String} startTimeVal HH:mm:ss形式の文字列
+   * @param  {String} endTimeVal HH:mm:ss形式の文字列
+   */
+  getTimeDiffSec(startTimeVal = '00:00:00', endTimeVal = '00:00:00') {
+    const [startTimeHour, startTimeMinute, startTimeSec] = startTimeVal.split(':');
+    const [endTimeHour, endTimeMinute, endTimeSec] = endTimeVal.split(':');
+    if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSec) &&
+    Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSec)) {
+      return moment(`${endTimeHour}:${endTimeMinute}:${endTimeSec}`, 'HH:mm:ss').diff(moment(`${startTimeHour}:${startTimeMinute}:${startTimeSec}`, 'HH:mm:ss'), 'seconds');
     }
     return 0;
   },

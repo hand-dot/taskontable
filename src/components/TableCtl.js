@@ -6,9 +6,10 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import Hidden from 'material-ui/Hidden';
 import Typography from 'material-ui/Typography';
-import { LinearProgress } from 'material-ui/Progress';
+import { LinearProgress, CircularProgress } from 'material-ui/Progress';
 import { withStyles } from 'material-ui/styles';
 import DatePicker from '../components/DatePicker';
+import util from '../util';
 import constants from '../constants';
 
 const styles = theme => ({
@@ -17,6 +18,12 @@ const styles = theme => ({
   },
   blue: {
     background: constants.brandColor.base.BLUE,
+  },
+  yellow: {
+    background: constants.brandColor.base.YELLOW,
+  },
+  red: {
+    background: constants.brandColor.base.RED,
   },
   lightBlue: {
     background: constants.brandColor.light.BLUE,
@@ -55,15 +62,47 @@ class TableCtl extends Component {
   }
 
   render() {
-    const { tableTasks, hasOpenTask, date, isLoading, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
+    const { tableTasks, openTask, date, isLoading, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
     const progressPer = (tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length);
     return (
       <div>
         <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} variant={isLoading ? 'indeterminate' : 'determinate'} value={progressPer} />
-        <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container spacing={0}>
+        <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems={'center'} justify={'center'} spacing={0}>
           <Hidden xsDown>
-            <Grid style={{ textAlign: 'center' }} item xs={3}>
-              <Typography style={{ marginTop: 10, color: hasOpenTask ? constants.brandColor.base.RED : constants.brandColor.light.GREY, animation: hasOpenTask ? 'blink 1s infinite' : '' }} variant="caption">[●REC]</Typography>
+            <Grid item xs={3}>
+              {(() => {
+                if (!openTask.id) return (<Typography style={{ marginTop: 10, color: constants.brandColor.light.GREY }} variant="caption">[●REC]</Typography>);
+                const remainPercent = Math.floor(util.getTimeDiffSec(`${openTask.startTime}:00`, openTask.now) * (100 / (openTask.estimate * 60)));
+                let color = '';
+                if (remainPercent < 70) {
+                  color = 'blue';
+                } else if (remainPercent >= 70 && remainPercent < 95) {
+                  color = 'yellow';
+                } else {
+                  color = 'red';
+                }
+                const actuallyMinute = util.getTimeDiffMinute(openTask.startTime, openTask.now);
+                const title = `${(openTask.title.length < 22 ? openTask.title || '' : `${openTask.title.substring(0, 19)}...`) || '無名タスク'}`;
+                let detail = '';
+                if (openTask.estimate - actuallyMinute === 1 || actuallyMinute - openTask.estimate === 0) {
+                  detail = `${actuallyMinute < openTask.estimate ? `残${60 - moment(openTask.now, 'HH:mm:ss').format('ss')}秒` : `${moment(openTask.now, 'HH:mm:ss').format('ss')}秒オーバー`}`;
+                } else {
+                  detail = `${actuallyMinute < openTask.estimate ? `残${openTask.estimate - actuallyMinute}分` : `${actuallyMinute - openTask.estimate}分オーバー`}`;
+                }
+                return (
+                  <div key={openTask.id}>
+                    <LinearProgress
+                      classes={{ barColorPrimary: classes[color], colorPrimary: classes.grey }}
+                      variant="determinate"
+                      value={100 - remainPercent <= 0 ? 100 : 100 - remainPercent}
+                    />
+                    <Typography variant="caption">
+                      <span style={{ color: constants.brandColor.base.RED, animation: 'blink 1s infinite' }} variant="caption">[●REC]</span>
+                      {`${title} - ${detail}`}
+                    </Typography>
+                  </div>
+                );
+              })()}
             </Grid>
           </Hidden>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
@@ -130,7 +169,15 @@ TableCtl.propTypes = {
     startTime: PropTypes.string.isRequired,
     memo: PropTypes.string.isRequired,
   })).isRequired,
-  hasOpenTask: PropTypes.bool.isRequired,
+  openTask: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    estimate: PropTypes.any.isRequired,
+    endTime: PropTypes.string.isRequired,
+    startTime: PropTypes.string.isRequired,
+    memo: PropTypes.string.isRequired,
+    now: PropTypes.string.isRequired,
+  }).isRequired,
   date: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
   lastSaveTime: PropTypes.string.isRequired,

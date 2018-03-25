@@ -22,6 +22,7 @@ import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
 
 import constants from '../constants';
+import openTaskSchema from '../schemas/openTaskSchema';
 import util from '../util';
 
 const styles = theme => ({
@@ -30,6 +31,10 @@ const styles = theme => ({
     margin: '0 auto',
   },
 });
+
+function getOpenTaskSchema() {
+  return util.cloneDeep(openTaskSchema);
+}
 
 class Taskontable extends Component {
   constructor(props) {
@@ -47,7 +52,7 @@ class Taskontable extends Component {
       loading: true,
       saveable: false,
       tab: 0,
-      hasOpenTask: false,
+      openTask: getOpenTaskSchema(),
       isOpenDashboard: true,
       date: moment().format(constants.DATEFMT),
       lastSaveTime: moment().format(constants.TIMEFMT),
@@ -99,7 +104,7 @@ class Taskontable extends Component {
     const sortedTableTask = util.getSortedTasks(tableTasks);
     if (this.state.isHotMode) {
       this.taskTable.setDataForHot(sortedTableTask);
-      this.bindOpenTasksProcessing(sortedTableTask);
+      this.bindOpenTaskProcessing(sortedTableTask);
     }
     this.setState({ tableTasks: sortedTableTask });
     return sortedTableTask;
@@ -250,30 +255,31 @@ class Taskontable extends Component {
    * 開始しているタスクを見つけ、経過時間をタイトルに反映する
    * @param  {Array} tasks タスクの配列
    */
-  bindOpenTasksProcessing(tasks) {
+  bindOpenTaskProcessing(tasks) {
     if (!this.state.isHotMode) return;
-    const openTask = tasks.find(hotTask => hotTask.length !== 0 && hotTask.startTime && hotTask.endTime === '');
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
+    const openTask = util.cloneDeep(tasks.find(task => task.startTime && task.endTime === '' && task.estimate));
     if (util.isToday(this.state.date) && openTask) {
-      this.setState({ hasOpenTask: true });
       this.bindOpenTaskIntervalID = setInterval(() => {
-        const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, moment().format(constants.TIMEFMT));
+        const now = moment();
+        const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, now.format(constants.TIMEFMT));
         // 1分に一度タイトルが書き変わったタイミングでセルの色を書き換える必要があるので再描画する。
         if (newTimeDiffMinute !== this.oldTimeDiffMinute) this.taskTable.renderHot();
-        if (newTimeDiffMinute === -1) {
-          // 開始まで秒単位でカウントダウンする場合
-          document.title = `${(moment().format('ss') - 60) * -1}秒後 - ${openTask.title || '無名タスク'}`;
-        } else if (newTimeDiffMinute === 0) {
-          document.title = `${moment().format('ss')}秒 - ${openTask.title || '無名タスク'}`;
+        if (newTimeDiffMinute >= 0) {
+          openTask.now = now.format('HH:mm:ss');
+          util.setIdIfNotExist(openTask);
+          this.setState({ openTask });
+          document.title = `${newTimeDiffMinute === 0 ? `${now.format('ss')}秒` : `${newTimeDiffMinute}分経過`} - ${openTask.title || '無名タスク'}`;
         } else {
-          document.title = `${newTimeDiffMinute > 0 ? `${newTimeDiffMinute}分` : `${newTimeDiffMinute * -1}分後`} - ${openTask.title || '無名タスク'}`;
+          document.title = constants.TITLE;
+          if (!util.equal(this.state.openTask, openTaskSchema)) this.setState({ openTask: getOpenTaskSchema() });
         }
         this.oldTimeDiffMinute = newTimeDiffMinute;
       }, 1000);
     } else {
-      this.setState({ hasOpenTask: false });
       this.bindOpenTaskIntervalID = '';
       document.title = constants.TITLE;
+      if (!util.equal(this.state.openTask, openTaskSchema)) this.setState({ openTask: getOpenTaskSchema() });
     }
   }
   /**
@@ -438,7 +444,7 @@ class Taskontable extends Component {
           <Paper elevation={1}>
             <TableCtl
               tableTasks={this.state.tableTasks}
-              hasOpenTask={this.state.hasOpenTask}
+              openTask={this.state.openTask}
               date={this.state.date}
               isLoading={this.state.loading}
               lastSaveTime={this.state.lastSaveTime}
@@ -452,7 +458,7 @@ class Taskontable extends Component {
                     onRef={ref => (this.taskTable = ref)} // eslint-disable-line
                   tableTasks={this.state.tableTasks}
                   handleTableTasks={(newTableTasks) => {
-                    this.bindOpenTasksProcessing(newTableTasks);
+                    this.bindOpenTaskProcessing(newTableTasks);
                     this.setState({ tableTasks: newTableTasks });
                   }}
                   handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
