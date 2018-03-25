@@ -267,8 +267,7 @@ class Taskontable extends Component {
         if (newTimeDiffMinute !== this.oldTimeDiffMinute) this.taskTable.renderHot();
         if (newTimeDiffMinute >= 0) {
           openTask.now = now.format('HH:mm:ss');
-          util.setIdIfNotExist(openTask);
-          this.setState({ openTask });
+          this.setState({ openTask: util.setIdIfNotExist(openTask) });
           document.title = `${newTimeDiffMinute === 0 ? `${now.format('ss')}秒` : `${newTimeDiffMinute}分経過`} - ${openTask.title || '無名タスク'}`;
         } else {
           document.title = constants.TITLE;
