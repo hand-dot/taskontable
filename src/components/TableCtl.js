@@ -84,7 +84,7 @@ class TableCtl extends Component {
                 const actuallyMinute = util.getTimeDiffMinute(openTask.startTime, openTask.now);
                 const title = `${(openTask.title.length < 22 ? openTask.title || '' : `${openTask.title.substring(0, 19)}...`) || '無名タスク'}`;
                 let detail = '';
-                const isOver = actuallyMinute > openTask.estimate;
+                const isOver = actuallyMinute >= openTask.estimate;
                 if (openTask.estimate - actuallyMinute === 1 || actuallyMinute - openTask.estimate === 0) {
                   const sec = moment(openTask.now, 'HH:mm:ss').format('ss');
                   detail = `${isOver ? `${sec}秒オーバー` : `残${60 - sec}秒`}`;
