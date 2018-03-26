@@ -9,7 +9,6 @@ import Clock from './Clock';
 import DiffChart from './DiffChart';
 
 import util from '../util';
-import constants from '../constants';
 
 const totalEstimateMinute = datas => datas.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
 
@@ -98,10 +97,8 @@ class Dashboard extends Component {
             }}
           />
         </Grid>
-
-
         {(() => {
-          if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+          if (!util.isMobile()) {
             return (
               <Grid item xs={12} sm={6}>
                 <Typography gutterBottom variant="subheading">

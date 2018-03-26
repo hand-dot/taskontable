@@ -34,7 +34,7 @@ class TaskProcessing extends Component {
     this.bindOpenTaskIntervalID = '';
     this.oldTimeDiffMinute = '';
     this.state = {
-      isHotMode: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
+      isMobile: util.isMobile(),
       openTask: getOpenTaskSchema(),
     };
   }
@@ -53,7 +53,7 @@ class TaskProcessing extends Component {
    * @param  {Array} tasks タスクの配列
    */
   bindOpenTaskProcessing(tasks) {
-    if (!this.state.isHotMode) return;
+    if (this.state.isMobile) return;
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
     const openTask = util.cloneDeep(tasks.find(task => task.startTime && task.endTime === '' && task.estimate));
     if (util.isToday(this.props.date) && openTask) {

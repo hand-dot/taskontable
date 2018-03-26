@@ -13,6 +13,7 @@ import IconButton from 'material-ui/IconButton';
 
 import '../styles/helpdialog.css';
 import constants from '../constants';
+import util from '../util';
 
 const styles = {
   flex: {
@@ -32,10 +33,10 @@ const styles = {
 };
 
 function HelpDialog(props) {
-  const { open, onClose, classes, theme } = props;
+  const { open, onClose, classes } = props;
   return (
     <Dialog
-      fullScreen={theme.breakpoints.values.sm > constants.APPWIDTH}
+      fullScreen={util.isMobile()}
       open={open}
       onClose={onClose}
     >
@@ -75,7 +76,7 @@ function HelpDialog(props) {
         </DialogContent>
       </div>
       {(() => {
-        if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+        if (!util.isMobile()) {
           return (
             <div>
               <DialogTitle>キーボードショートカット</DialogTitle>
@@ -142,7 +143,6 @@ function HelpDialog(props) {
 HelpDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  theme: PropTypes.object.isRequired, // eslint-disable-line
   classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 

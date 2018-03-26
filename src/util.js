@@ -7,6 +7,7 @@ import constants from './constants';
 
 const parser = new UAParser();
 const browserName = parser.getBrowser().name;
+const deviceType = parser.getDevice().type;
 
 export default {
   /**
@@ -136,5 +137,11 @@ export default {
    */
   isSupportBrowser() {
     return constants.SUPPORTEDBROWSERS.indexOf(browserName) >= 0;
+  },
+  /**
+   * モバイルならtrueを返します。
+   */
+  isMobile() {
+    return deviceType === 'mobile';
   },
 };

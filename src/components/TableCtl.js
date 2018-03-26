@@ -11,6 +11,7 @@ import { withStyles } from 'material-ui/styles';
 import DatePicker from './DatePicker';
 import TaskProcessing from './TaskProcessing';
 import constants from '../constants';
+import util from '../util';
 
 const styles = theme => ({
   progress: {
@@ -96,7 +97,7 @@ class TableCtl extends Component {
               </div>
             </Tooltip>
             {(() => {
-              if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+              if (!util.isMobile()) {
                 return (
                   <Tooltip title={`最終保存時刻 : ${lastSaveTime}`} placement="top">
                     <div style={{ display: 'inline-block' }}>

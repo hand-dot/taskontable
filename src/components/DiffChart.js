@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import Chart from 'chart.js';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import constants from '../constants';
 import util from '../util';
 
-const styles = {
-};
 const backgroundColors = Object.values(constants.brandColor.light);
 const borderColors = Object.values(constants.brandColor.base);
 const charts = {};
@@ -64,7 +61,7 @@ class DiffChart extends Component {
         },
       },
     };
-    if (this.props.theme.breakpoints.values.sm > constants.APPWIDTH) {
+    if (util.isMobile()) {
       conf.options.legend.display = false;
     }
     charts[this.state.ctxId] = new Chart(document.getElementById(this.state.ctxId).getContext('2d'), conf);
@@ -106,7 +103,6 @@ DiffChart.propTypes = {
   })).isRequired,
   dataLabels: PropTypes.arrayOf(PropTypes.string).isRequired,
   unit: PropTypes.string.isRequired,
-  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles, { withTheme: true })(DiffChart);
+export default DiffChart;

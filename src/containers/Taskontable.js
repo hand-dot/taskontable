@@ -42,7 +42,7 @@ class Taskontable extends Component {
       isOpenSaveSnackbar: false,
       isOpenScriptSnackbar: false,
       scriptSnackbarText: '',
-      isHotMode: this.props.theme.breakpoints.values.sm < constants.APPWIDTH,
+      isMobile: util.isMobile(),
       loading: true,
       saveable: false,
       tab: 0,
@@ -59,9 +59,7 @@ class Taskontable extends Component {
   }
 
   componentWillMount() {
-    window.onkeydown = (e) => {
-      this.fireShortcut(e);
-    };
+    if (!util.isMobile) window.onkeydown = (e) => { this.fireShortcut(e); };
     window.onbeforeunload = (e) => {
       if (this.state.saveable) {
         const dialogText = '保存していない内容があります。';
@@ -93,7 +91,7 @@ class Taskontable extends Component {
    */
   setSortedTableTasks(tableTasks) {
     const sortedTableTask = util.getSortedTasks(tableTasks);
-    if (this.state.isHotMode) {
+    if (!this.state.isMobile) {
       this.taskTable.setDataForHot(sortedTableTask);
     }
     this.setState({ tableTasks: sortedTableTask });
@@ -194,7 +192,7 @@ class Taskontable extends Component {
       }
       // タスクプールからテーブルタスクに移動したら保存する
       this.setState({ tableTasks });
-      if (this.state.isHotMode) this.taskTable.setDataForHot(tableTasks);
+      if (!this.state.isMobile) this.taskTable.setDataForHot(tableTasks);
       setTimeout(() => { this.saveTableTasks(); });
     }
     this.setState({ poolTasks });
@@ -226,7 +224,7 @@ class Taskontable extends Component {
    */
   saveTableTasks() {
     // IDを生成し並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = (this.state.isHotMode ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => util.setIdIfNotExist(tableTask));
+    const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => util.setIdIfNotExist(tableTask));
     // 開始時刻順に並び替える
     const sortedTableTask = this.setSortedTableTasks(tableTasks);
     this.setState({ loading: true });
@@ -369,7 +367,7 @@ class Taskontable extends Component {
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       this.setState({ date: newDate });
-      if (this.state.isHotMode) this.taskTable.updateIsToday(util.isToday(newDate));
+      if (!this.state.isMobile) this.taskTable.updateIsToday(util.isToday(newDate));
       setTimeout(() => { this.attachTableTasks(); });
     }
   }
@@ -411,21 +409,22 @@ class Taskontable extends Component {
               saveTableTasks={this.saveTableTasks.bind(this)}
             />
             {(() => {
-              if (this.state.isHotMode) {
-                return (<TaskTable
-                    onRef={ref => (this.taskTable = ref)} // eslint-disable-line
+              if (this.state.isMobile) {
+                return (<TaskTableMobile
                   tableTasks={this.state.tableTasks}
-                  handleTableTasks={(newTableTasks) => {
-                    this.setState({ tableTasks: newTableTasks });
-                  }}
-                  handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
+                  changeTableTasks={this.changeTableTasksByMobile.bind(this)}
                   isToday={util.isToday(this.state.date)}
-                  moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
                 />);
-              } return (<TaskTableMobile
+              }
+              return (<TaskTable
+                onRef={ref => (this.taskTable = ref)} // eslint-disable-line
                 tableTasks={this.state.tableTasks}
-                changeTableTasks={this.changeTableTasksByMobile.bind(this)}
+                handleTableTasks={(newTableTasks) => {
+                  this.setState({ tableTasks: newTableTasks });
+                }}
+                handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
                 isToday={util.isToday(this.state.date)}
+                moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
               />);
             })()}
           </Paper>

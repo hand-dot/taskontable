@@ -13,6 +13,7 @@ import Avatar from 'material-ui/Avatar';
 import HelpDialog from '../components/HelpDialog';
 
 import constants from '../constants';
+import util from '../util';
 
 import title from '../images/title_gr.png';
 
@@ -108,7 +109,7 @@ class GlobalHeader extends Component {
   }
 
   render() {
-    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes, theme } = this.props;
+    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -141,7 +142,7 @@ class GlobalHeader extends Component {
                     >
                       <MenuItem>アカウント名: {user.displayName}</MenuItem>
                       {(() => {
-                        if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+                        if (!util.isMobile()) {
                           return (
                             <MenuItem onClick={this.goScripts.bind(this)}>
                               <i className="fa fa-code" aria-hidden="true" />　スクリプト設定

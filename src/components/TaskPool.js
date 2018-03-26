@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
 
 import constants from '../constants';
+import util from '../util';
 
 import TaskList from './TaskList';
-
-const styles = {};
 
 class TaskPool extends Component {
   constructor(props) {
@@ -54,12 +52,12 @@ class TaskPool extends Component {
   }
 
   render() {
-    const { theme, poolTasks } = this.props;
+    const { poolTasks } = this.props;
     return (
       <div>
         <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
           {(() => {
-            if (theme.breakpoints.values.sm < constants.APPWIDTH) {
+            if (!util.isMoble()) {
               return (
                 <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor={constants.brandColor.base.BLUE} textColor="inherit">
                   <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
@@ -110,8 +108,7 @@ TaskPool.propTypes = {
     regularTasks: PropTypes.array.isRequired,
   }).isRequired,
   changePoolTasks: PropTypes.func.isRequired,
-  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles, { withTheme: true })(TaskPool);
+export default TaskPool;
 

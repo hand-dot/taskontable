@@ -15,10 +15,11 @@ import devices from '../images/devices.png';
 import collaboration from '../images/collaboration.png';
 import bar from '../images/bar.png';
 import constants from '../constants';
+import util from '../util';
 
 const styles = theme => ({
   content: {
-    paddingTop: theme.breakpoints.values.sm < constants.APPWIDTH ? '7em' : '3em',
+    paddingTop: util.isMobile ? '7em' : '3em',
     paddingBottom: '3em',
     paddingLeft: 10,
     paddingRight: 10,
