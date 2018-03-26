@@ -53,7 +53,7 @@ class TableCtl extends Component {
   }
 
   render() {
-    const { tableTasks, openTask, date, isLoading, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
+    const { tableTasks, date, isLoading, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
     const progressPer = (tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length);
     return (
       <div>
@@ -61,7 +61,7 @@ class TableCtl extends Component {
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems={'center'} justify={'center'} spacing={0}>
           <Hidden xsDown>
             <Grid item xs={3}>
-              <TaskProcessing openTask={openTask} />
+              <TaskProcessing tableTasks={tableTasks} date={date} />
             </Grid>
           </Hidden>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
@@ -128,15 +128,6 @@ TableCtl.propTypes = {
     startTime: PropTypes.string.isRequired,
     memo: PropTypes.string.isRequired,
   })).isRequired,
-  openTask: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    estimate: PropTypes.any.isRequired,
-    endTime: PropTypes.string.isRequired,
-    startTime: PropTypes.string.isRequired,
-    memo: PropTypes.string.isRequired,
-    now: PropTypes.string.isRequired,
-  }).isRequired,
   date: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
   lastSaveTime: PropTypes.string.isRequired,

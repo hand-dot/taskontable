@@ -374,10 +374,13 @@ export const hotBaseConf = {
     Handsontable.hooks.register('clearAllNotifi');
   },
   afterInit() {
+    // 1分間に1回レンダーする
+    this.hotIntervalID = setInterval(() => { if (moment().format('s') === '0') this.render(); }, 1000);
     bindClearAllNotifi(this);
     bindShortcut(this);
   },
   afterDestroy() {
+    if (this.hotIntervalID) clearInterval(this.hotIntervalID);
     Handsontable.hooks.deregister('clearAllNotifi');
   },
 };
