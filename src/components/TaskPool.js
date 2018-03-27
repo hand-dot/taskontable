@@ -57,7 +57,7 @@ class TaskPool extends Component {
       <div>
         <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
           {(() => {
-            if (!util.isMoble()) {
+            if (!util.isMobile()) {
               return (
                 <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor={constants.brandColor.base.BLUE} textColor="inherit">
                   <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
