@@ -59,7 +59,7 @@ class Taskontable extends Component {
   }
 
   componentWillMount() {
-    if (!util.isMobile) window.onkeydown = (e) => { this.fireShortcut(e); };
+    if (!this.state.isMobile) window.onkeydown = (e) => { this.fireShortcut(e); };
     window.onbeforeunload = (e) => {
       if (this.state.saveable) {
         const dialogText = '保存していない内容があります。';
@@ -79,7 +79,7 @@ class Taskontable extends Component {
   }
 
   componentWillUnmount() {
-    window.onkeydown = '';
+    if (!this.state.isMobile) window.onkeydown = '';
     window.onbeforeunload = '';
     firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
@@ -104,37 +104,35 @@ class Taskontable extends Component {
    * @param  {any} value 値
    */
   changeTableTasksByMobile(taskActionType, value) {
-    const tableTasks = util.cloneDeep(this.state.tableTasks);
     if (taskActionType === constants.taskActionType.ADD) {
-      tableTasks.push(value);
+      this.state.tableTasks.push(value);
     } else if (taskActionType === constants.taskActionType.EDIT) {
-      tableTasks[value.index] = value.task;
+      this.state.tableTasks[value.index] = value.task;
     } else if (taskActionType === constants.taskActionType.REMOVE) {
-      tableTasks.splice(value, 1);
+      this.state.tableTasks.splice(value, 1);
     } else if (taskActionType === constants.taskActionType.DOWN) {
       if (this.state.tableTasks.length === value + 1) return;
-      const target = tableTasks;
+      const target = this.state.tableTasks;
       target.splice(value, 2, target[value + 1], target[value]);
     } else if (taskActionType === constants.taskActionType.UP) {
       if (value === 0) return;
-      const target = tableTasks;
+      const target = this.state.tableTasks;
       target.splice(value - 1, 2, target[value], target[value - 1]);
     } else if (taskActionType === constants.taskActionType.BOTTOM) {
       if (this.state.tableTasks.length === value + 1) return;
-      const target = tableTasks.splice(value, 1)[0];
-      tableTasks.push(target);
+      const target = this.state.tableTasks.splice(value, 1)[0];
+      this.state.tableTasks.push(target);
     } else if (taskActionType === constants.taskActionType.TOP) {
       if (value === 0) return;
-      const target = tableTasks.splice(value, 1)[0];
-      tableTasks.unshift(target);
+      const target = this.state.tableTasks.splice(value, 1)[0];
+      this.state.tableTasks.unshift(target);
     } else if (taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY || taskActionType === constants.taskActionType.MOVE_POOL_LOWPRIORITY) {
       const taskPoolType = taskActionType === constants.taskActionType.MOVE_POOL_HIGHPRIORITY ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
-      const removeTask = tableTasks.splice(value, 1)[0];
-      this.setState({ tableTasks });
+      const removeTask = this.state.tableTasks.splice(value, 1)[0];
       setTimeout(() => { this.moveTableTaskToPoolTask(taskPoolType, removeTask); });
       return;
     }
-    this.setState({ tableTasks, saveable: this.state.saveable ? true : !util.equal(tableTasks, this.state.tableTasks) });
+    this.setState({ saveable: this.state.saveable });
     setTimeout(() => { this.saveTableTasks(); });
   }
 
@@ -160,42 +158,40 @@ class Taskontable extends Component {
    * @param  {any} value 値
    */
   changePoolTasks(taskActionType, taskPoolType, value) {
-    const poolTasks = util.cloneDeep(this.state.poolTasks);
     if (taskActionType === constants.taskActionType.ADD) {
-      poolTasks[taskPoolType].push(util.setIdIfNotExist(value));
+      this.state.poolTasks[taskPoolType].push(util.setIdIfNotExist(value));
     } else if (taskActionType === constants.taskActionType.EDIT) {
-      poolTasks[taskPoolType][value.index] = value.task;
+      this.state.poolTasks[taskPoolType][value.index] = value.task;
     } else if (taskActionType === constants.taskActionType.REMOVE) {
-      poolTasks[taskPoolType].splice(value, 1);
+      this.state.poolTasks[taskPoolType].splice(value, 1);
     } else if (taskActionType === constants.taskActionType.DOWN) {
       if (this.state.poolTasks[taskPoolType].length === value + 1) return;
-      const target = poolTasks[taskPoolType];
+      const target = this.state.poolTasks[taskPoolType];
       target.splice(value, 2, target[value + 1], target[value]);
     } else if (taskActionType === constants.taskActionType.UP) {
       if (value === 0) return;
-      const target = poolTasks[taskPoolType];
+      const target = this.state.poolTasks[taskPoolType];
       target.splice(value - 1, 2, target[value], target[value - 1]);
     } else if (taskActionType === constants.taskActionType.BOTTOM) {
       if (this.state.poolTasks[taskPoolType].length === value + 1) return;
-      const target = poolTasks[taskPoolType].splice(value, 1)[0];
-      poolTasks[taskPoolType].push(target);
+      const target = this.state.poolTasks[taskPoolType].splice(value, 1)[0];
+      this.state.poolTasks[taskPoolType].push(target);
     } else if (taskActionType === constants.taskActionType.TOP) {
       if (value === 0) return;
-      const target = poolTasks[taskPoolType].splice(value, 1)[0];
-      poolTasks[taskPoolType].unshift(target);
+      const target = this.state.poolTasks[taskPoolType].splice(value, 1)[0];
+      this.state.poolTasks[taskPoolType].unshift(target);
     } else if (taskActionType === constants.taskActionType.MOVE_TABLE) {
       const tableTasks = this.state.tableTasks;
       tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
       if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
          taskPoolType === constants.taskPoolType.LOWPRIORITY) {
-        poolTasks[taskPoolType].splice(value, 1);
+        this.state.poolTasks[taskPoolType].splice(value, 1);
       }
       // タスクプールからテーブルタスクに移動したら保存する
       this.setState({ tableTasks });
       if (!this.state.isMobile) this.taskTable.setDataForHot(tableTasks);
       setTimeout(() => { this.saveTableTasks(); });
     }
-    this.setState({ poolTasks });
     setTimeout(() => this.savePoolTasks());
   }
 
@@ -203,13 +199,12 @@ class Taskontable extends Component {
    * stateのpoolTasksをサーバーに保存します。
    */
   savePoolTasks() {
-    const poolTasks = util.cloneDeep(this.state.poolTasks);
     // IDの生成処理
-    Object.keys(poolTasks).forEach((poolTaskKey) => { poolTasks[poolTaskKey] = poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask)); });
-    if (poolTasks.regularTasks) {
+    Object.keys(this.state.poolTasks).forEach((poolTaskKey) => { this.state.poolTasks[poolTaskKey] = this.state.poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask)); });
+    if (this.state.poolTasks.regularTasks) {
       // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
       // https://github.com/hand-dot/taskontable/issues/118
-      poolTasks.regularTasks = poolTasks.regularTasks.map((task) => {
+      this.state.poolTasks.regularTasks = this.state.poolTasks.regularTasks.map((task) => {
         const copyTask = Object.assign({}, task);
         if (copyTask.dayOfWeek) {
           copyTask.dayOfWeek = copyTask.dayOfWeek.map(day => util.convertDayOfWeekFromString(day));
@@ -217,7 +212,7 @@ class Taskontable extends Component {
         return copyTask;
       });
     }
-    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(poolTasks);
+    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(this.state.poolTasks);
   }
   /**
    * stateのtableTasksをサーバーに保存します。

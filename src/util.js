@@ -119,7 +119,7 @@ export default {
     const hasStartTimeTasks = [];
     const hasNotStartTimeTasks = [];
     for (let i = 0; i < tasks.length; i += 1) {
-      const task = this.cloneDeep(tasks[i]);
+      const task = tasks[i];
       if (task.startTime !== '') {
         hasStartTimeTasks.push(task);
       } else {

@@ -40,19 +40,22 @@ class TaskTableMobile extends Component {
   }
 
   componentWillReceiveProps() {
-    this.setState({
-      anchorEl: [],
-      editingTaskIndex: -1,
-    });
+    this.setState({ anchorEl: [], editingTaskIndex: -1 });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (!util.equal(this.state.anchorEl, nextState.anchorEl)) return true;
+    if (!util.equal(this.state[constants.taskStateType.add], nextState[constants.taskStateType.add])) return true;
+    if (!util.equal(this.state[constants.taskStateType.edit], nextState[constants.taskStateType.edit])) return true;
+    if (this.state.editingTaskIndex !== nextState.editingTaskIndex) return true;
+    if (util.equal(this.props.tableTasks, nextProps.tableTasks)) return false;
+    return true;
   }
 
   openTaskAction(index, e) {
     const anchorEl = Object.assign([], this.state.anchorEl);
     anchorEl[index] = e.currentTarget;
-    this.setState({
-      anchorEl,
-      editingTaskIndex: -1,
-    });
+    this.setState({ anchorEl, editingTaskIndex: -1 });
   }
 
   closeTaskAction(index) {
@@ -90,7 +93,7 @@ class TaskTableMobile extends Component {
       alert('作業内容が空の状態では保存できません。');
       return;
     }
-    this.props.changeTableTasks(constants.taskActionType.ADD, util.cloneDeep(this.state[constants.taskStateType.add]));
+    this.props.changeTableTasks(constants.taskActionType.ADD, this.state[constants.taskStateType.add]);
     this.setState({ [constants.taskStateType.add]: getTableTaskSchema() });
     setTimeout(() => { this.root.scrollTop = this.root.scrollHeight; });
   }
@@ -103,14 +106,14 @@ class TaskTableMobile extends Component {
         return;
       }
       if (!util.equal(this.props.tableTasks[index], this.state[constants.taskStateType.edit])) {
-        this.props.changeTableTasks(constants.taskActionType.EDIT, { task: util.cloneDeep(this.state[constants.taskStateType.edit]), index });
+        this.props.changeTableTasks(constants.taskActionType.EDIT, { task: this.state[constants.taskStateType.edit], index });
       }
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getTableTaskSchema() });
     } else {
       // 編集スタート
       this.setState({
         editingTaskIndex: index,
-        [constants.taskStateType.edit]: util.cloneDeep(this.props.tableTasks[index]),
+        [constants.taskStateType.edit]: this.props.tableTasks[index],
         [constants.taskStateType.add]: getTableTaskSchema(),
       });
     }

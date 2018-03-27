@@ -40,18 +40,22 @@ class TaskList extends Component {
   }
 
   componentWillReceiveProps() {
-    this.setState({
-      editingTaskIndex: -1,
-    });
+    this.setState({ editingTaskIndex: -1 });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (!util.equal(this.state.anchorEl, nextState.anchorEl)) return true;
+    if (!util.equal(this.state[constants.taskStateType.add], nextState[constants.taskStateType.add])) return true;
+    if (!util.equal(this.state[constants.taskStateType.edit], nextState[constants.taskStateType.edit])) return true;
+    if (this.state.editingTaskIndex !== nextState.editingTaskIndex) return true;
+    if (util.equal(this.props.tasks, nextProps.tasks)) return false;
+    return true;
   }
 
   openTaskAction(index, e) {
     const anchorEl = Object.assign([], this.state.anchorEl);
     anchorEl[index] = e.currentTarget;
-    this.setState({
-      anchorEl,
-      editingTaskIndex: -1,
-    });
+    this.setState({ anchorEl, editingTaskIndex: -1 });
   }
 
   closeTaskAction(index) {
@@ -118,13 +122,13 @@ class TaskList extends Component {
           return;
         }
       }
-      this.props.editTask(util.cloneDeep(this.state[constants.taskStateType.edit]), index);
+      this.props.editTask(this.state[constants.taskStateType.edit], index);
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getPoolTaskSchema() });
     } else {
       // 編集スタート
       this.setState({
         editingTaskIndex: index,
-        [constants.taskStateType.edit]: util.cloneDeep(this.props.tasks[index]),
+        [constants.taskStateType.edit]: this.props.tasks[index],
         [constants.taskStateType.add]: getPoolTaskSchema(),
       });
     }
@@ -174,7 +178,7 @@ class TaskList extends Component {
         return;
       }
     }
-    this.props.addTask(util.cloneDeep(this.state[constants.taskStateType.add]));
+    this.props.addTask(this.state[constants.taskStateType.add]);
     this.setState({ [constants.taskStateType.add]: getPoolTaskSchema() });
     setTimeout(() => { this.root.scrollTop = this.root.scrollHeight; });
   }
