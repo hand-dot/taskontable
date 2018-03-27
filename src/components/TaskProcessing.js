@@ -9,7 +9,10 @@ import constants from '../constants';
 import openTaskSchema from '../schemas/openTaskSchema';
 
 
-const styles = {
+const styles = theme => ({
+  progress: {
+    height: theme.spacing.unit * 2,
+  },
   blue: {
     background: constants.brandColor.base.BLUE,
   },
@@ -22,7 +25,7 @@ const styles = {
   grey: {
     background: constants.brandColor.base.GREY,
   },
-};
+});
 
 function getOpenTaskSchema() {
   return util.cloneDeep(openTaskSchema);
@@ -85,7 +88,7 @@ class TaskProcessing extends Component {
       remainPercent = Math.floor(util.getTimeDiffSec(`${this.state.openTask.startTime}:00`, this.state.openTask.now) * (100 / (this.state.openTask.estimate * 60)));
       if (remainPercent < 70) {
         color = 'blue';
-      } else if (remainPercent >= 70 && remainPercent < 95) {
+      } else if (remainPercent >= 70 && remainPercent < 90) {
         color = 'yellow';
       } else {
         color = 'red';
@@ -97,7 +100,7 @@ class TaskProcessing extends Component {
     let title = '';
     let detail = '';
     if (this.state.openTask.id) {
-      title = `${(this.state.openTask.title.length < 20 ? this.state.openTask.title || '' : `${this.state.openTask.title.substring(0, 17)}...`) || '無名タスク'}`;
+      title = `${(this.state.openTask.title.length < 18 ? this.state.openTask.title || '' : `${this.state.openTask.title.substring(0, 15)}...`) || '無名タスク'}`;
       const isOver = actuallyMinute >= this.state.openTask.estimate;
       if (this.state.openTask.estimate - actuallyMinute === 1 || actuallyMinute - this.state.openTask.estimate === 0) {
         const sec = moment(this.state.openTask.now, 'HH:mm:ss').format('ss');
@@ -109,10 +112,10 @@ class TaskProcessing extends Component {
       title = '開始しているタスクはありません。';
     }
     return (
-      <div style={{ paddingLeft: theme.spacing.unit, paddingRight: theme.spacing.unit }}>
+      <div style={{ paddingLeft: theme.spacing.unit * 2, paddingRight: theme.spacing.unit * 2 }}>
         <LinearProgress
           style={{ marginBottom: theme.spacing.unit }}
-          classes={{ barColorPrimary: classes[color], colorPrimary: classes.grey }}
+          classes={{ root: classes.progress, barColorPrimary: classes[color], colorPrimary: classes.grey }}
           variant="determinate"
           value={100 - remainPercent <= 0 ? 100 : 100 - remainPercent}
         />
@@ -147,4 +150,3 @@ TaskProcessing.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(TaskProcessing);
-

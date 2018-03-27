@@ -15,7 +15,6 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
-import { withRouter } from 'react-router-dom';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
 import { hotBaseConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
@@ -261,5 +260,5 @@ Scripts.propTypes = {
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withRouter(withStyles(styles, { withTheme: true })(Scripts));
+export default withStyles(styles, { withTheme: true })(Scripts);
 
