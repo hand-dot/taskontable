@@ -1,6 +1,7 @@
 // https://docs.sentry.io/clients/javascript/integrations/react/#expanded-usage
 // https://reactjs.org/blog/2017/07/26/error-handling-in-react-16.html
 import Raven from 'raven-js';
+import * as firebase from 'firebase';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';
@@ -37,7 +38,7 @@ class ErrorBoundary extends Component {
     this.setState({ hasError: true });
     Raven.captureException(error, { extra: info });
   }
-  // TODO デザインを考える
+
   render() {
     const { classes } = this.props;
     if (this.state.hasError) {
@@ -55,6 +56,9 @@ class ErrorBoundary extends Component {
                 エラーが発生した手順、状態を詳しく報告してくださるとなるべくはやく頑張って対応します。
                 </Typography>
                 <Button onClick={() => Raven.lastEventId() && Raven.showReportDialog()} variant="raised" color="primary" className={classes.button}>エラーを報告する</Button>
+                <div style={{ fontSize: 12, marginBottom: 10 }}>
+                  <a href="" onClick={() => { firebase.auth().signOut().then(() => { window.location.reload(); }); return false; }}>Topに戻る</a>
+                </div>
               </div>
             </Paper>
           </Grid>

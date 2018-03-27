@@ -105,7 +105,6 @@ class App extends Component {
       this.setState({ user: { displayName: '', photoURL: '', uid: '' } });
       this.props.history.push('/top');
     }).catch((error) => {
-      setTimeout(() => window.location.reload());
       throw new Error(error);
     });
   }
