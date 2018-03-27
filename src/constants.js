@@ -39,7 +39,7 @@ export default {
     HOT_CURRENTTIME: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.key === ':',
     NEXTDATE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 190,
     PREVDATE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 188,
-    TOGGLE_HELP: e => e.shiftKey && e.keyCode === 191,
+    TOGGLE_HELP: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.shiftKey && e.keyCode === 191,
     TOGGLE_DASHBOAD: e => e.ctrlKey && !e.shiftKey && e.keyCode === 74,
   },
   menuItemKey: {
