@@ -6,7 +6,7 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import constants from '../constants';
 import util from '../util';
 
-import TaskList from './TaskList';
+import PoolTaskList from './PoolTaskList';
 
 class TaskPool extends Component {
   constructor(props) {
@@ -83,7 +83,7 @@ class TaskPool extends Component {
           } else if (this.state.tab === constants.taskPoolType.REGULAR) {
             tasks = poolTasks.regularTasks;
           }
-          return (<TaskList
+          return (<PoolTaskList
             addTask={this.addTask.bind(this)}
             editTask={this.editTask.bind(this)}
             moveTable={this.moveTable.bind(this)}
