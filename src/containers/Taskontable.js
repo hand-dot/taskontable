@@ -107,7 +107,8 @@ class Taskontable extends Component {
     if (taskActionType === constants.taskActionType.ADD) {
       this.state.tableTasks.push(value);
     } else if (taskActionType === constants.taskActionType.EDIT) {
-      this.state.tableTasks[value.index] = value.task;
+      const target = this.state.tableTasks;
+      target[value.index] = value.task;
     } else if (taskActionType === constants.taskActionType.REMOVE) {
       this.state.tableTasks.splice(value, 1);
     } else if (taskActionType === constants.taskActionType.DOWN) {
@@ -161,7 +162,8 @@ class Taskontable extends Component {
     if (taskActionType === constants.taskActionType.ADD) {
       this.state.poolTasks[taskPoolType].push(util.setIdIfNotExist(value));
     } else if (taskActionType === constants.taskActionType.EDIT) {
-      this.state.poolTasks[taskPoolType][value.index] = value.task;
+      const target = this.state.poolTasks[taskPoolType];
+      target[value.index] = value.task;
     } else if (taskActionType === constants.taskActionType.REMOVE) {
       this.state.poolTasks[taskPoolType].splice(value, 1);
     } else if (taskActionType === constants.taskActionType.DOWN) {
@@ -200,11 +202,15 @@ class Taskontable extends Component {
    */
   savePoolTasks() {
     // IDの生成処理
-    Object.keys(this.state.poolTasks).forEach((poolTaskKey) => { this.state.poolTasks[poolTaskKey] = this.state.poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask)); });
+    Object.keys(this.state.poolTasks).forEach((poolTaskKey) => {
+      const poolTasks = this.state.poolTasks;
+      poolTasks[poolTaskKey] = this.state.poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask));
+    });
     if (this.state.poolTasks.regularTasks) {
       // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
       // https://github.com/hand-dot/taskontable/issues/118
-      this.state.poolTasks.regularTasks = this.state.poolTasks.regularTasks.map((task) => {
+      const poolTasks = this.state.poolTasks;
+      poolTasks.regularTasks = this.state.poolTasks.regularTasks.map((task) => {
         const copyTask = Object.assign({}, task);
         if (copyTask.dayOfWeek) {
           copyTask.dayOfWeek = copyTask.dayOfWeek.map(day => util.convertDayOfWeekFromString(day));

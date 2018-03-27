@@ -122,7 +122,9 @@ class TaskList extends Component {
           return;
         }
       }
-      this.props.editTask(this.state[constants.taskStateType.edit], index);
+      if (!util.equal(this.props.tasks[index], this.state[constants.taskStateType.edit])) {
+        this.props.editTask(this.state[constants.taskStateType.edit], index);
+      }
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getPoolTaskSchema() });
     } else {
       // 編集スタート
