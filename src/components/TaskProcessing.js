@@ -16,6 +16,9 @@ const styles = theme => ({
   blue: {
     background: constants.brandColor.base.BLUE,
   },
+  green: {
+    background: constants.brandColor.base.GREEN,
+  },
   yellow: {
     background: constants.brandColor.base.YELLOW,
   },
@@ -86,9 +89,9 @@ class TaskProcessing extends Component {
     let color = '';
     if (this.state.openTask.id) {
       remainPercent = Math.floor(util.getTimeDiffSec(`${this.state.openTask.startTime}:00`, this.state.openTask.now) * (100 / (this.state.openTask.estimate * 60)));
-      if (remainPercent < 70) {
-        color = 'blue';
-      } else if (remainPercent >= 70 && remainPercent < 90) {
+      if (remainPercent < 50) {
+        color = 'green';
+      } else if (remainPercent >= 50 && remainPercent < 75) {
         color = 'yellow';
       } else {
         color = 'red';

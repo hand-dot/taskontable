@@ -83,7 +83,8 @@ const columns = [
       const endTimeVal = instance.getDataAtRowProp(row, 'endTime');
       if (startTimeVal && endTimeVal) {
         const timeDiffMinute = util.getTimeDiffMinute(startTimeVal, endTimeVal);
-        const overdue = timeDiffMinute - instance.getDataAtRowProp(row, 'estimate') || 0;
+        const estimate = instance.getDataAtRowProp(row, 'estimate');
+        const overdue = estimate ? timeDiffMinute - instance.getDataAtRowProp(row, 'estimate') : 0;
         if (overdue >= 1) {
           // 見積をオーバー
           value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
