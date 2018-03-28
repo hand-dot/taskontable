@@ -66,10 +66,10 @@ class GlobalHeader extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.user.uid !== '') {
       this.setState({ login: true });
-      setTimeout(() => this.forceUpdate());
     } else {
       this.setState({ login: false });
     }
+    setTimeout(() => this.forceUpdate());
   }
 
   closeMenu() {

@@ -33,10 +33,10 @@ function Login(props) {
       <Grid item xs={12}>
         <Paper style={{ minHeight: '100vh' }} square elevation={0}>
           <div className={classes.content}>
-            <Typography variant="title">
+            <Typography variant="headline" gutterBottom>
               Taskontableにログイン
             </Typography>
-            <div style={{ fontSize: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 12, marginBottom: 20 }}>
               OR<Link to="/signup">アカウント作成</Link>
             </div>
             <Typography variant="caption" gutterBottom>

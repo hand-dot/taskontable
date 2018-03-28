@@ -33,10 +33,10 @@ function Signup(props) {
       <Grid item xs={12}>
         <Paper style={{ minHeight: '100vh' }} square elevation={0}>
           <div className={classes.content}>
-            <Typography variant="title">
+            <Typography variant="headline" gutterBottom>
               アカウントを新規作成
             </Typography>
-            <div style={{ fontSize: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 12, marginBottom: 20 }}>
               OR<Link to="/login">アカウントにサインイン</Link>
             </div>
             <Typography variant="caption" gutterBottom>

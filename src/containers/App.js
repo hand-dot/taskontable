@@ -22,6 +22,7 @@ import constants from '../constants';
 const GlobalHeader = AsyncContainer(() => import('./GlobalHeader').then(module => module.default), {});
 const Top = AsyncContainer(() => import('./Top').then(module => module.default), {});
 const Login = AsyncContainer(() => import('./Login').then(module => module.default), {});
+const Logout = AsyncContainer(() => import('./Logout').then(module => module.default), {});
 const Signup = AsyncContainer(() => import('./Signup').then(module => module.default), {});
 const Scripts = AsyncContainer(() => import('./Scripts').then(module => module.default), {});
 const Taskontable = AsyncContainer(() => import('./Taskontable').then(module => module.default), {});
@@ -70,8 +71,6 @@ class App extends Component {
         this.setState({ loginProggres: false });
       }
     });
-
-    this.props.history.push('/top');
   }
 
   componentDidMount() {
@@ -103,7 +102,7 @@ class App extends Component {
     firebase.auth().signOut().then(() => {
       // userの初期化
       this.setState({ user: { displayName: '', photoURL: '', uid: '' } });
-      this.props.history.push('/top');
+      this.props.history.push('/logout');
     }).catch((error) => {
       throw new Error(error);
     });
@@ -135,6 +134,10 @@ class App extends Component {
             render={props => <Login login={this.login.bind(this)} {...props} />}
           />
           <Route
+            path="/logout"
+            render={props => <Logout {...props} />}
+          />
+          <Route
             path="/scripts"
             render={(props) => {
               if (this.state.user.uid !== '') {
@@ -142,10 +145,6 @@ class App extends Component {
               }
               return null;
             }}
-          />
-          <Route
-            path="/top"
-            render={props => <Top {...props} />}
           />
           <Route
             exact
@@ -160,7 +159,7 @@ class App extends Component {
                     {...props}
                   />);
               }
-              return (<Login login={this.login.bind(this)} />);
+              return (<Top {...props} />);
             }}
           />
         </Switch>

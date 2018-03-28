@@ -8,7 +8,7 @@ import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 
 import titleGr from '../images/title_gr.png';
-import titleWh from '../images/title_wh.png';
+import Footer from '../components/Footer';
 import screencapture from '../images/screencapture.gif';
 import plugins from '../images/plugins.png';
 import devices from '../images/devices.png';
@@ -19,7 +19,7 @@ import util from '../util';
 
 const styles = theme => ({
   content: {
-    paddingTop: util.isMobile ? '7em' : '3em',
+    paddingTop: util.isMobile ? '6em' : '3em',
     paddingBottom: '3em',
     paddingLeft: 10,
     paddingRight: 10,
@@ -59,17 +59,19 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
+            <Typography className={classes.stroke} variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
               Build Your WorkFlow
             </Typography>
             <img style={{ margin: '2em 2em 2em 1.7em' }} src={titleGr} alt="taskontable" height="40" />
-            <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
+            <Typography align="center" style={{ marginBottom: '2em' }}>
             毎日のワークフローを簡単に構築できるタスクマネージャー。
             </Typography>
-            <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
+            <Typography align="center" style={{ marginBottom: '2em' }}>
             タスクをシーケンシャルにすることで生産性を向上させ一日をスムーズに進行することができます。<br />
             </Typography>
-            <Link style={{ marginBottom: '1em', display: 'inline-block' }} className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >無料登録して始める</Button></Link>
+            <Link style={{ marginBottom: '1em', display: 'inline-block' }} className={classes.link} to="/signup">
+              <Button variant="raised" className={classes.button} color="primary" >無料登録して始める</Button>
+            </Link>
           </div>
         </Paper>
       </Grid>
@@ -89,7 +91,7 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display3" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
               Plugin
             </Typography>
             <Grid spacing={0} container alignItems="stretch" justify="center">
@@ -97,7 +99,7 @@ function Top(props) {
                 <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={plugins} alt="taskontable" />
               </Grid>
               <Grid item xs={12} md={7}>
-                <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
+                <Typography align="center" style={{ marginBottom: '2em' }}>
                 プラグインをインストールしてさまざまなサービスと連携できます。<br />
               また誰でもプラグインを公開することが可能です。
                 </Typography>
@@ -109,12 +111,12 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display3" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
               Collaboration
             </Typography>
             <Grid spacing={0} container alignItems="stretch" justify="center">
               <Grid item xs={12} md={7}>
-                <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
+                <Typography align="center" style={{ marginBottom: '2em' }}>
             ワークフローをチームで共有することが可能です。<br />
               リアルタイムに進捗状況・予定を把握することができます。
                 </Typography>
@@ -129,10 +131,10 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper square className={classes.center} elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display3" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
             Anytime, anywhere
             </Typography>
-            <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
+            <Typography align="center" style={{ marginBottom: '2em' }}>
                 いつ、どこにいてもあらゆるデバイスのChromeで快適なタスク管理が可能です。
             </Typography>
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={devices} alt="taskontable" />
@@ -142,40 +144,17 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} color="textSecondary" variant="display3" align="center" style={{ marginBottom: '2em' }}>
+            <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
               Open Source
             </Typography>
-            <Typography color="textSecondary" align="center" style={{ marginBottom: '2em' }}>
+            <Typography align="center" style={{ marginBottom: '2em' }}>
               ソースコードを<a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">github</a>で公開・配布しています。<br />全てが無料です。
             </Typography>
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={bar} alt="taskontable" />
           </div>
         </Paper>
       </Grid>
-      <Grid item xs={12}>
-        <Paper square className={classes.bgTransparent} elevation={0}>
-          <div className={classes.content}>
-            <Typography color="textSecondary" variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
-              Build Your WorkFlow
-            </Typography>
-            <img style={{ margin: '2em auto', display: 'block' }} src={titleWh} alt="taskontable" height="40" />
-            <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '4em' }}>
-              <Grid item xs={4} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.CONTACT_URL} target="_blank">お問い合わせ</a>
-              </Grid>
-              <Grid item xs={4} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.ROADMAP_URL} target="_blank">ロードマップ</a>
-              </Grid>
-              <Grid item xs={4} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.REPOSITORY_URL} target="_blank">Github</a>
-              </Grid>
-              <Grid item xs={12} style={{ marginTop: '2em' }} className={classes.center}>
-                hand-dot © Copyright 2018. All rights reserved.
-              </Grid>
-            </Grid>
-          </div>
-        </Paper>
-      </Grid>
+      <Footer />
     </Grid>
   );
 }
