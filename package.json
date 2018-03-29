@@ -18,7 +18,7 @@
     "font-awesome": "^4.7.0",
     "handsontable": "^0.38.1",
     "lodash.debounce": "^4.0.8",
-    "material-ui": "^1.0.0-beta.38",
+    "material-ui": "^1.0.0-beta.39",
     "moment": "^2.21.0",
     "prop-types": "^15.6.1",
     "raven-js": "^3.24.0",
