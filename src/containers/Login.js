@@ -79,7 +79,7 @@ function Login(props) {
             </Typography>
             <Button onClick={login} variant="raised" color="primary" className={classes.button}><img src={google} alt="google" height="20" />　グーグルアカウントでログインする</Button>
             <div style={{ fontSize: 12, marginBottom: 10 }}>
-              <Link to="/top">Topに戻る</Link>
+              <Link to="/">Topに戻る</Link>
             </div>
           </div>
         </Paper>

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
@@ -73,6 +74,9 @@ function Logout(props) {
             <a style={{ textDecoration: 'none' }} href={`http://line.me/R/msg/text/?${constants.URL}`} target="_blank">
               <Button style={{ color: '#fff', backgroundColor: '#1dcd00', textDecoration: 'none' }} variant="raised" className={classes.button}>LINE</Button>
             </a>
+            <div style={{ fontSize: 12, marginTop: 20 }}>
+              <Link to="/">Topに戻る</Link>
+            </div>
           </div>
         </Paper>
       </Grid>
