@@ -188,7 +188,6 @@ class TaskList extends Component {
 
   render() {
     const { tasks, isRegularTask, classes } = this.props;
-    console.log(isRegularTask);
     return (
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
@@ -260,7 +259,6 @@ class TaskList extends Component {
                       <CustomTableCell padding="none">
                         <MultipleSelect
                           className={classes.miniCellInput}
-                          label={'第何週'}
                           value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
                           options={[1, 2, 3, 4, 5]}
                           onChange={this.changeWeek.bind(this, constants.taskStateType.edit)}
@@ -277,7 +275,6 @@ class TaskList extends Component {
                       <CustomTableCell padding="none">
                         <MultipleSelect
                           className={classes.miniCellInput}
-                          label={'何曜日'}
                           value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
                           options={constants.DAY_OF_WEEK_STR}
                           onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.edit)}
@@ -389,7 +386,6 @@ class TaskList extends Component {
                     <CustomTableCell padding="none">
                       <MultipleSelect
                         className={classes.miniCellInput}
-                        label={'第何週'}
                         value={this.state[constants.taskStateType.add].week}
                         options={[1, 2, 3, 4, 5]}
                         onChange={this.changeWeek.bind(this, constants.taskStateType.add)}
@@ -406,7 +402,6 @@ class TaskList extends Component {
                     <CustomTableCell padding="none">
                       <MultipleSelect
                         className={classes.miniCellInput}
-                        label={'何曜日'}
                         value={this.state[constants.taskStateType.add].dayOfWeek}
                         options={constants.DAY_OF_WEEK_STR}
                         onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.add)}

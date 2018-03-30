@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Input, { InputLabel } from 'material-ui/Input';
+import Input from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
@@ -18,11 +18,10 @@ const ITEM_PADDING_TOP = 8;
 
 // FIXME keyとvalueで値をやりとりしたい
 function MultipleSelect(props) {
-  const { label, value, options, onChange, disabled, classes } = props;
+  const { value, options, onChange, disabled, classes } = props;
   return (
     <div className={classes.container}>
       <FormControl>
-        <InputLabel style={{ fontSize: 12 }} htmlFor={label}>{label}</InputLabel>
         <Select
           disabled={disabled}
           disableUnderline={disabled}
@@ -30,7 +29,7 @@ function MultipleSelect(props) {
           multiple
           value={value}
           onChange={onChange}
-          input={<Input id={label} />}
+          input={<Input />}
           MenuProps={{
             PaperProps: {
               style: {
@@ -59,7 +58,6 @@ function MultipleSelect(props) {
 
 
 MultipleSelect.propTypes = {
-  label: PropTypes.string.isRequired,
   value: PropTypes.array.isRequired,
   options: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
