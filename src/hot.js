@@ -127,7 +127,7 @@ const removeNotifiCell = (hotInstance, row, props) => {
   });
 };
 
-const setNotifiCell = (hotInstance, row, prop, timeout) => {
+const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
   // 権限を取得し通知を登録
   const permission = Notification.permission;
   const targetNotifiId = `${prop}NotifiId`;
@@ -140,8 +140,15 @@ const setNotifiCell = (hotInstance, row, prop, timeout) => {
     if (!hotInstance.getCellMeta(row, col)[targetNotifiId]) return;
     removeNotifiCell(hotInstance, row, [prop]);
     let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
-    const taskTitleLabel = `[${prop === 'startTime' ? '開始' : '終了'}] - `;
-    taskTitle = taskTitle ? `${taskTitleLabel}${taskTitle}` : `${taskTitleLabel}無名タスク`;
+    let taskTitleLabel;
+    if (snooz) {
+      taskTitleLabel = 'スヌーズ';
+    } else if (prop === 'startTime') {
+      taskTitleLabel = '開始';
+    } else {
+      taskTitleLabel = '終了';
+    }
+    taskTitle = taskTitle ? `[${taskTitleLabel}] - ${taskTitle}` : `[${taskTitleLabel}] - 無名タスク`;
     if (permission !== 'granted') {
       alert(taskTitle);
       window.focus();
@@ -152,6 +159,10 @@ const setNotifiCell = (hotInstance, row, prop, timeout) => {
         notifi.close();
         window.focus();
         hotInstance.selectCell(row, hotInstance.propToCol(prop));
+      };
+      notifi.onclose = () => {
+        // 通知が放置されないように通知を5分後に再設定
+        setNotifiCell(hotInstance, row, prop, 300000, true);
       };
     }
   }, timeout);
