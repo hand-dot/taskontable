@@ -13,7 +13,7 @@ import screencapture from '../images/screencapture.gif';
 import plugins from '../images/plugins.png';
 import devices from '../images/devices.png';
 import collaboration from '../images/collaboration.png';
-import bar from '../images/bar.png';
+import GPL from '../images/GPL.png';
 import constants from '../constants';
 import util from '../util';
 
@@ -64,7 +64,7 @@ function Top(props) {
             </Typography>
             <img style={{ margin: '2em 2em 2em 1.7em' }} src={titleGr} alt="taskontable" height="40" />
             <Typography align="center" style={{ marginBottom: '2em' }}>
-            毎日のワークフローを簡単に構築できるタスクマネージャー。
+            David Allenの<a href="https://ja.m.wikipedia.org/wiki/Getting_Things_Done">Getting Things Done</a>を独自解釈し作成された個人用のワークフローの構築のためのLifeHackツールです。
             </Typography>
             <Typography align="center" style={{ marginBottom: '2em' }}>
             タスクをシーケンシャルにすることで生産性を向上させ一日をスムーズに進行することができます。<br />
@@ -145,12 +145,12 @@ function Top(props) {
         <Paper className={classes.center} square elevation={0}>
           <div className={classes.content}>
             <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
-              Open Source
+              General Public License
             </Typography>
             <Typography align="center" style={{ marginBottom: '2em' }}>
-              ソースコードを<a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">github</a>で公開・配布しています。<br />全てが無料です。
+              ソースコードをGNU General Public License (GPL) の下、<a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">github</a>で公開・配布しています。
             </Typography>
-            <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={bar} alt="taskontable" />
+            <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={GPL} alt="taskontable" />
           </div>
         </Paper>
       </Grid>

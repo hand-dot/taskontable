@@ -65,9 +65,6 @@ function Footer(props) {
               <Grid item xs={4} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.REPOSITORY_URL} target="_blank">Github</a>
               </Grid>
-              <Grid item xs={12} style={{ marginTop: '2em' }} className={classes.center}>
-                hand-dot © Copyright 2018. All rights reserved.
-              </Grid>
             </Grid>
           </div>
         </Paper>
