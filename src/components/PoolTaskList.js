@@ -48,6 +48,7 @@ class TaskList extends Component {
     if (!util.equal(this.state[constants.taskStateType.add], nextState[constants.taskStateType.add])) return true;
     if (!util.equal(this.state[constants.taskStateType.edit], nextState[constants.taskStateType.edit])) return true;
     if (this.state.editingTaskIndex !== nextState.editingTaskIndex) return true;
+    if (this.props.isRegularTask !== nextProps.isRegularTask) return true;
     if (util.equal(this.props.tasks, nextProps.tasks)) return false;
     return true;
   }
@@ -187,6 +188,7 @@ class TaskList extends Component {
 
   render() {
     const { tasks, isRegularTask, classes } = this.props;
+    console.log(isRegularTask);
     return (
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
