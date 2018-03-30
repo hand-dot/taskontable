@@ -97,7 +97,7 @@ function ScriptsEditor(props) {
       </Grid>
       <Grid item xs={6}>
         <CodeMirror
-          value={script}
+          value={script || '// not set scripts. please load sample scripts!'}
           options={editorOptions}
           onBeforeChange={(editor, data, newScript) => handleScript(scriptType, newScript)}
         />
