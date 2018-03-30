@@ -6,6 +6,8 @@ import moment from 'moment';
 import debounce from 'lodash.debounce';
 
 import Tabs, { Tab } from 'material-ui/Tabs';
+import TextField from 'material-ui/TextField';
+import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
@@ -37,7 +39,9 @@ class Taskontable extends Component {
     super(props);
     this.saveTableTasks = debounce(this.saveTableTasks, constants.REQEST_DELAY);
     this.savePoolTasks = debounce(this.savePoolTasks, constants.REQEST_DELAY);
+    this.saveMemo = debounce(this.saveMemo, constants.REQEST_DELAY);
     this.attachTableTasks = debounce(this.attachTableTasks, constants.REQEST_DELAY);
+    this.attachMemo = debounce(this.attachMemo, constants.REQEST_DELAY);
     this.state = {
       isOpenSaveSnackbar: false,
       isOpenScriptSnackbar: false,
@@ -55,6 +59,7 @@ class Taskontable extends Component {
         lowPriorityTasks: [],
         regularTasks: [],
       },
+      memo: '',
     };
   }
 
@@ -76,6 +81,8 @@ class Taskontable extends Component {
     this.attachPoolTasks();
     // テーブルを同期開始&初期化
     this.attachTableTasks();
+    // メモを同期開始
+    this.attachMemo();
   }
 
   componentWillUnmount() {
@@ -83,6 +90,7 @@ class Taskontable extends Component {
     window.onbeforeunload = '';
     firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).off();
     firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+    firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).off();
   }
   /**
    * テーブルタスクを開始時刻順にソートしstateに設定します。
@@ -239,6 +247,12 @@ class Taskontable extends Component {
       });
     });
   }
+  /**
+   * stateのmemoをサーバーに保存します。
+   */
+  saveMemo() {
+    firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).set(this.state.memo);
+  }
 
   /**
    * テーブルタスクを同期します。
@@ -304,7 +318,19 @@ class Taskontable extends Component {
       }
     });
   }
-
+  /**
+   * プールタスクを同期します。
+   */
+  attachMemo() {
+    firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).on('value', (snapshot) => {
+      const memo = snapshot.val();
+      if (snapshot.exists() && memo) {
+        if (this.state.memo !== memo) this.setState({ memo });
+      } else {
+        this.setState({ memo: '' });
+      }
+    });
+  }
   /**
    * ショートカットを実行します。
    * @param  {} e イベント
@@ -367,9 +393,10 @@ class Taskontable extends Component {
   changeDate(newDate) {
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+      firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).off();
       this.setState({ date: newDate });
       if (!this.state.isMobile) this.taskTable.updateIsToday(util.isToday(newDate));
-      setTimeout(() => { this.attachTableTasks(); });
+      setTimeout(() => { this.attachTableTasks(); this.attachMemo(); });
     }
   }
 
@@ -428,6 +455,15 @@ class Taskontable extends Component {
                 moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
               />);
             })()}
+            <Divider />
+            <TextField
+              fullWidth
+              onChange={(e) => { this.setState({ memo: e.target.value }); setTimeout(() => { this.saveMemo(); }); }}
+              value={this.state.memo}
+              label={`${this.state.date}のメモ`}
+              multiline
+              margin="normal"
+            />
           </Paper>
         </Grid>
         <Snackbar
