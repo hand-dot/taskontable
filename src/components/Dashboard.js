@@ -6,12 +6,11 @@ import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import TodaySummary from './TodaySummary';
 import Clock from './Clock';
-import DiffChart from './DiffChart';
-
+import TimelineChart from './TimelineChart';
 import util from '../util';
+import constants from '../constants';
 
 const totalEstimateMinute = datas => datas.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
-
 const totalActuallyMinute = datas => datas.map(data => util.getTimeDiffMinute(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
 
 const styles = {};
@@ -68,18 +67,6 @@ class Dashboard extends Component {
     });
   }
 
-  getDiffChartData() {
-    return this.filterForDiffChart().map(tableTask => ({ estimate: +(+tableTask.estimate / 60).toFixed(2) || 0, actually: +(util.getTimeDiffMinute(tableTask.startTime, tableTask.endTime) / 60).toFixed(2) || 0 }));
-  }
-
-  getDiffChartLabel() {
-    return this.filterForDiffChart().map(tableTask => tableTask.title || '');
-  }
-
-  filterForDiffChart() {
-    return this.props.tableTasks.filter(tableTask => (tableTask.estimate !== 0 && tableTask.estimate !== '') || util.getTimeDiffMinute(tableTask.startTime, tableTask.endTime) !== 0);
-  }
-
   render() {
     const { theme } = this.props;
     return (
@@ -118,12 +105,25 @@ class Dashboard extends Component {
           return null;
         })()}
         <Grid item xs={12}>
-          <Typography gutterBottom variant="subheading">
-          見積と実績の乖離
-          </Typography>
+          <Typography gutterBottom variant="subheading">タイムライン</Typography>
           <Grid container>
             <Grid item xs={12}>
-              <DiffChart title={''} chartLabels={['見積', '実績']} data={this.getDiffChartData()} dataLabels={this.getDiffChartLabel()} unit={'h'} />
+              <TimelineChart tableTasks={this.props.tableTasks.filter(tableTask => tableTask.startTime).map((tableTask) => {
+                const task = { key: '見積' };
+                task.start = moment(tableTask.startTime, constants.TIMEFMT).toDate();
+                task.end = moment(tableTask.startTime, constants.TIMEFMT).add(tableTask.estimate || 0, 'minutes').toDate();
+                task.title = tableTask.title || '無名タスク';
+                return task;
+              })}
+              />
+              <TimelineChart tableTasks={this.props.tableTasks.filter(tableTask => tableTask.startTime && tableTask.endTime).map((tableTask) => {
+                const task = { key: '実績' };
+                task.start = moment(tableTask.startTime, constants.TIMEFMT).toDate();
+                task.end = moment(tableTask.endTime, constants.TIMEFMT).toDate();
+                task.title = tableTask.title || '無名タスク';
+                return task;
+              })}
+              />
             </Grid>
           </Grid>
         </Grid>

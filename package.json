@@ -11,8 +11,8 @@
     "analyze": "source-map-explorer build/static/js/main.*"
   },
   "dependencies": {
-    "chart.js": "^2.7.2",
     "codemirror": "^5.35.0",
+    "d3": "^5.0.0",
     "fast-clone": "^1.5.2",
     "fast-equals": "^1.2.1",
     "firebase": "^4.12.1",
