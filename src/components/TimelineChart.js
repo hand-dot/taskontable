@@ -96,8 +96,8 @@ class TimelineChart extends Component {
       .on('mouseover', () => { tooltip.style('display', 'block'); })
       .on('mouseout', () => { tooltip.style('display', 'none'); })
       .on('mousemove', (d) => {
-        const xPosition = d3.mouse(svg.node())[0] - 5;
-        const yPosition = d3.mouse(svg.node())[1] - 5;
+        const xPosition = d3.mouse(svg.node())[0];
+        const yPosition = d3.mouse(svg.node())[1];
         tooltip.attr('transform', `translate(${xPosition},${yPosition})`);
         tooltip.select('text').text(d.title);
       });
