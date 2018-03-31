@@ -192,7 +192,7 @@ class TaskList extends Component {
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
           <TableHead>
-            <TableRow>
+            <TableRow className={classes.taskRow}>
               <CustomTableCell className={classes.cellInput} padding="none">作業内容</CustomTableCell>
               <CustomTableCell className={classes.cellInput} padding="none">備考</CustomTableCell>
               <CustomTableCell className={classes.miniCellInput} padding="none">見積</CustomTableCell>

@@ -165,7 +165,7 @@ class TaskTableMobile extends Component {
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
           <TableHead>
-            <TableRow>
+            <TableRow className={classes.taskRow}>
               <CustomTableCell padding="none">作業内容</CustomTableCell>
               <CustomTableCell padding="none">見積</CustomTableCell>
               <CustomTableCell padding="none">開始</CustomTableCell>
