@@ -328,7 +328,7 @@ class TaskList extends Component {
                 </CustomTableCell>
               </TableRow>
             ))}
-            <TableRow>
+            <TableRow className={classes.taskRow}>
               <CustomTableCell padding="none">
                 <Input
                   fullWidth

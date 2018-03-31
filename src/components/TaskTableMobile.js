@@ -167,7 +167,7 @@ class TaskTableMobile extends Component {
           <TableHead>
             <TableRow className={classes.taskRow}>
               <CustomTableCell padding="none">作業内容</CustomTableCell>
-              <CustomTableCell padding="none">見積</CustomTableCell>
+              <CustomTableCell padding="none">見積(分)</CustomTableCell>
               <CustomTableCell padding="none">開始</CustomTableCell>
               <CustomTableCell padding="none">終了</CustomTableCell>
               <CustomTableCell padding="none">編集</CustomTableCell>
@@ -285,7 +285,7 @@ class TaskTableMobile extends Component {
                 </CustomTableCell>
               </TableRow>
             ))}
-            <TableRow>
+            <TableRow className={classes.taskRow}>
               <CustomTableCell padding="none">
                 <Input
                   className={classes.cellInput}
