@@ -158,7 +158,7 @@ export default {
     } else if (soundType === constants.soundType.end) {
       polySynth.triggerAttackRelease(['C1', 'E1', 'G1', 'B1'], '8n');
     } else if (soundType === constants.soundType.snooz) {
-      metalSynth.triggerAttackRelease(['C5', 'C5', 'C5', 'C5'], '16n');
+      metalSynth.triggerAttackRelease(['C5', 'C5', 'C5', 'C5'], '8n');
     }
     return false;
   },
