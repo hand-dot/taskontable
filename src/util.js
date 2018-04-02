@@ -1,9 +1,13 @@
 import moment from 'moment';
 import uuid from 'uuid';
 import fastclone from 'fast-clone';
+import Tone from 'tone';
 import { deepEqual } from 'fast-equals';
 import UAParser from 'ua-parser-js';
 import constants from './constants';
+
+const polySynth = new Tone.PolySynth(4, Tone.Synth).toMaster();
+const metalSynth = new Tone.MetalSynth().toMaster();
 
 const parser = new UAParser();
 const browserName = parser.getBrowser().name;
@@ -143,5 +147,19 @@ export default {
    */
   isMobile() {
     return deviceType === 'mobile';
+  },
+  /**
+   * constants.soundTypeの種類に従って音を鳴らします。
+   * @param  {String} soundType
+   */
+  PlaySound(soundType) {
+    if (soundType === constants.soundType.start) {
+      polySynth.triggerAttackRelease(['C4', 'E4', 'G4', 'B4'], '8n');
+    } else if (soundType === constants.soundType.end) {
+      polySynth.triggerAttackRelease(['C1', 'E1', 'G1', 'B1'], '8n');
+    } else if (soundType === constants.soundType.snooz) {
+      metalSynth.triggerAttackRelease(['C5', 'C5', 'C5', 'C5'], '16n');
+    }
+    return false;
   },
 };

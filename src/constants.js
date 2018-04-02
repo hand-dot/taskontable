@@ -68,6 +68,11 @@ export default {
     BOTTOM: 'bottom',
     TOP: 'top',
   },
+  soundType: {
+    start: 'START',
+    end: 'END',
+    snooz: 'SNOOZ',
+  },
   scriptType: {
     IMPORTSCRIPT: 'importScript',
     EXPORTSCRIPT: 'exportScript',
