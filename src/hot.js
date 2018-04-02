@@ -3,7 +3,7 @@ import Handsontable from 'handsontable';
 import tableTaskSchema from './schemas/tableTaskSchema';
 import constants from './constants';
 import util from './util';
-import logo from './images/logo.png';
+import notifiIcon from './images/notifiIcon.png';
 
 let notifiIds = [];
 
@@ -154,7 +154,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
       window.focus();
       hotInstance.selectCell(row, hotInstance.propToCol(prop));
     } else {
-      const notifi = new Notification(taskTitle, { icon: logo });
+      const notifi = new Notification(taskTitle, { icon: notifiIcon });
       notifi.onclick = () => {
         notifi.close();
         window.focus();
