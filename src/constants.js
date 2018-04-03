@@ -27,6 +27,7 @@ export default {
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
   ROADMAP_URL: 'https://trello.com/b/fFhYhlCu/taskontable-roadmap',
+  COMMUNITY_URL: 'https://join.slack.com/t/taskontable/shared_invite/enQtMzQwMDQ0MjcwOTE1LTZiODZjYmY4OTczNzJjZTU2NDM1NTlmODIyNDdlNTY3MGIzYzE0YTNjZjU0NmM2MzRhOGQ1ZTIyYTA3NmNiODE',
   HEADWAY_ACCOUNT: '7zwPXJ',
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   APPWIDTH: window.innerWidth < 1280 ? window.innerWidth : 1280,
@@ -46,6 +47,7 @@ export default {
     CONTACT: 'contact',
     GIT: 'git',
     ROADMAP: 'roadmap',
+    COMMUNITY: 'community',
   },
   taskPoolType: {
     HIGHPRIORITY: 'highPriorityTasks',

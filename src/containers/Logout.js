@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Footer from '../components/Footer';
@@ -58,22 +57,6 @@ function Logout(props) {
             <Typography variant="headline" align="center" style={{ marginBottom: '2em' }}>
             お使いいただきありがとうございました。<br />Taskontableからログアウトしました。
             </Typography>
-            <Typography align="center" style={{ marginBottom: '2em' }}>
-            お友達にシェアしてみませんか？
-            </Typography>
-            {/* カラーコード参考 https://qiita.com/AcaiBowl/items/8ee0a5a6c994685fb1cd */}
-            <a style={{ textDecoration: 'none' }} href={`https://plus.google.com/share?url=${constants.URL}`} target="_blank">
-              <Button style={{ color: '#fff', backgroundColor: '#dd4b39', textDecoration: 'none' }} variant="raised" className={classes.button}>Google+</Button>
-            </a>
-            <a style={{ textDecoration: 'none' }} href={`http://twitter.com/share?url=${constants.URL}`} target="_blank">
-              <Button style={{ color: '#fff', backgroundColor: '#55acee', textDecoration: 'none' }} variant="raised" className={classes.button}>Twitter</Button>
-            </a>
-            <a style={{ textDecoration: 'none' }} href={`https://www.facebook.com/sharer/sharer.php?u=${constants.URL}`} target="_blank">
-              <Button style={{ color: '#fff', backgroundColor: '#3B5998', textDecoration: 'none' }} variant="raised" className={classes.button}>Facebook</Button>
-            </a>
-            <a style={{ textDecoration: 'none' }} href={`http://line.me/R/msg/text/?${constants.URL}`} target="_blank">
-              <Button style={{ color: '#fff', backgroundColor: '#1dcd00', textDecoration: 'none' }} variant="raised" className={classes.button}>LINE</Button>
-            </a>
             <div style={{ fontSize: 12, marginTop: 20 }}>
               <Link to="/">Topに戻る</Link>
             </div>
