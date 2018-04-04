@@ -93,10 +93,10 @@ class Dashboard extends Component {
                 </Typography>
                 <Grid container>
                   <Grid item xs={6}>
-                    <Clock title={'現在時刻'} caption="" time={this.state.currentTime} />
+                    <Clock title={'現在時刻'} time={this.state.currentTime} />
                   </Grid>
                   <Grid item xs={6}>
-                    <Clock title={'終了時刻'} caption="" time={this.state.endTime} />
+                    <Clock title={'終了時刻'} time={this.state.endTime} />
                   </Grid>
                 </Grid>
               </Grid>

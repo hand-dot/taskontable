@@ -120,10 +120,10 @@ class Clock extends Component {
   }
 
   render() {
-    const { classes, caption, title } = this.props;
+    const { classes, title } = this.props;
     return (
       <div>
-        <Typography variant="caption" align="center" title={caption}>
+        <Typography variant="caption" align="center">
           {title}
         </Typography>
         <div className={classes.circle}>
@@ -141,7 +141,6 @@ class Clock extends Component {
 
 Clock.propTypes = {
   title: PropTypes.string.isRequired,
-  caption: PropTypes.string.isRequired,
   time: PropTypes.shape({
     hour: PropTypes.number.isRequired,
     minute: PropTypes.number.isRequired,
