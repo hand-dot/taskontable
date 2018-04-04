@@ -40,6 +40,8 @@ class TimelineChart extends Component {
   }
 
   componentDidMount() {
+    if (!this.timeline) return;
+    this.draw(this.props.tableTasks);
   }
 
   componentDidUpdate() {

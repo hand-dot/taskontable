@@ -76,13 +76,6 @@ class Clock extends Component {
   }
 
   componentWillMount() {
-    const currentMoment = moment();
-    this.setState({
-      currentTime: {
-        hour: currentMoment.hour(),
-        minute: currentMoment.minute(),
-        second: currentMoment.second() },
-    });
   }
 
   componentDidMount() {
