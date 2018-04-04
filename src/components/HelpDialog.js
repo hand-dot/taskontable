@@ -84,7 +84,8 @@ function HelpDialog(props) {
                 <Grid container spacing={40}>
                   <Grid className={classes.shotcut} item xs={6}>
                     <h5>アプリ</h5>
-                    <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography>
+                    {/* ヘルプだけはmacOSでクロームのヘルプがアプリのレベルで割り当てられていてctrlにしなければいけない */}
+                    <Typography gutterBottom variant="caption"><kbd>ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography> 
                     <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>S</kbd> – 保存</Typography>
                     <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
                     <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>

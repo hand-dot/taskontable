@@ -365,6 +365,7 @@ class Taskontable extends Component {
       e.preventDefault();
       this.saveTableTasks();
     } else if (constants.shortcuts.TOGGLE_HELP(e)) {
+      e.preventDefault();
       this.props.toggleHelpDialog();
     } else if (constants.shortcuts.TOGGLE_DASHBOAD(e)) {
       e.preventDefault();
