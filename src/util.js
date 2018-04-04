@@ -6,7 +6,8 @@ import { deepEqual } from 'fast-equals';
 import UAParser from 'ua-parser-js';
 import constants from './constants';
 
-const polySynth = new Tone.PolySynth(4, Tone.Synth).toMaster();
+const synth = new Tone.Synth().toMaster();
+const pluckSynth = new Tone.PluckSynth().toMaster();
 const metalSynth = new Tone.MetalSynth().toMaster();
 
 const parser = new UAParser();
@@ -154,11 +155,11 @@ export default {
    */
   PlaySound(soundType) {
     if (soundType === constants.soundType.start) {
-      polySynth.triggerAttackRelease(['C4', 'E4', 'G4', 'B4'], '8n');
+      synth.triggerAttackRelease('C4', '8n');
     } else if (soundType === constants.soundType.end) {
-      polySynth.triggerAttackRelease(['C1', 'E1', 'G1', 'B1'], '8n');
+      pluckSynth.triggerAttackRelease('C3', '8n');
     } else if (soundType === constants.soundType.snooz) {
-      metalSynth.triggerAttackRelease(['C5', 'C5', 'C5', 'C5'], '8n');
+      metalSynth.triggerAttackRelease('16n', 0);
     }
     return false;
   },
