@@ -123,14 +123,15 @@ class TaskProcessing extends Component {
           value={100 - remainPercent <= 0 ? 100 : 100 - remainPercent}
         />
         <Typography variant="caption" align="center">
-          <span
+          <i
             style={{
               marginRight: theme.spacing.unit,
               color: this.state.openTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
               animation: this.state.openTask.id ? 'blink 1s infinite' : '',
             }}
-            variant="caption"
-          >[●REC]</span>
+            className="fa fa-heartbeat"
+            aria-hidden="true"
+          />
           {`${title}${detail}`}
         </Typography>
       </div>
