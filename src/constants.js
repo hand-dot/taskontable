@@ -20,7 +20,7 @@ export default {
   METAKEY: osName === 'Mac OS' ? '⌘' : 'ctrl',
   URL: 'https://taskontable.com',
   DEVURL1: 'http://localhost:3000',
-  DEVURL2: 'http://192.168.0.101:3000',
+  DEVURL2: 'http://192.168.0.104:3000', // lanの別端末で検証を行う場合に必要。
   GA_ID,
   SENTRY_URL,
   CHROME_DL_URL: 'https://www.google.co.jp/chrome/',
@@ -32,7 +32,7 @@ export default {
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   APPWIDTH: window.innerWidth < 1280 ? window.innerWidth : 1280,
   APPHEIGHT: window.innerHeight,
-  REQEST_DELAY: 250,
+  REQEST_DELAY: 500,
   RENDER_DELAY: 500,
   HOT_MINROW: 20,
   shortcuts: {
