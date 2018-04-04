@@ -116,6 +116,17 @@ export default {
   },
 
   /**
+   * 引き数のオブジェクトから定期タスクとしての値を削除します。
+   * 参考: poolTaskSchema
+   * @param  {Object} obj オブジェクト
+   */
+  deleteRegularTaskProp(obj) {
+    delete obj.dayOfWeek; // eslint-disable-line
+    delete obj.week;  // eslint-disable-line
+    return obj;
+  },
+
+  /**
    * タスクを開始時刻順に並び替えます。
    * 開始時刻が空の場合は後ろに行きます。
    * @param  {Array} tasks タスク
