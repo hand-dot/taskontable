@@ -26,9 +26,10 @@ class TaskTable extends Component {
   componentDidMount() {
     this.props.onRef(this);
     const self = this;
+    const isActiveNotifi = this.props.isActive;
     this.hot = new Handsontable(this.hotDom, Object.assign(hotConf, {
       data: [],
-      isToday: self.props.isToday,
+      isActiveNotifi,
       contextMenu: {
         callback(key, selections) {
           if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
@@ -89,8 +90,8 @@ class TaskTable extends Component {
     this.props.handleTableTasks(getHotTasksIgnoreEmptyTask(this.hot));
   }
 
-  updateIsToday(isToday) {
-    if (this.hot) this.hot.updateSettings({ isToday });
+  updateIsActive(isActive) {
+    if (this.hot) this.hot.updateSettings({ isActiveNotifi: isActive });
   }
 
   renderHot() {
@@ -115,7 +116,7 @@ TaskTable.propTypes = {
   handleSaveable: PropTypes.func.isRequired,
   onRef: PropTypes.func.isRequired,
   moveTableTaskToPoolTask: PropTypes.func.isRequired,
-  isToday: PropTypes.bool.isRequired,
+  isActive: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 

@@ -184,7 +184,7 @@ class TaskTableMobile extends Component {
                     obj.backgroundColor = constants.cellColor.DONE;
                   } else if (task.estimate === '') {
                     obj.backgroundColor = constants.cellColor.WARNING;
-                  } else if (this.props.isToday && task.startTime) {
+                  } else if (this.props.isActive && task.startTime) {
                     // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
                     const nowTimeVal = moment().format(constants.TIMEFMT);
                     const expectedEndTimeVal = moment(task.startTime, constants.TIMEFMT).add(task.estimate, 'minutes').format(constants.TIMEFMT);
@@ -353,7 +353,7 @@ TaskTableMobile.propTypes = {
     memo: PropTypes.string.isRequired,
   })).isRequired,
   changeTableTasks: PropTypes.func.isRequired,
-  isToday: PropTypes.bool.isRequired,
+  isActive: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

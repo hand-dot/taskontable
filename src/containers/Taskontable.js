@@ -411,7 +411,7 @@ class Taskontable extends Component {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).off();
       this.setState({ date: newDate });
-      if (!this.state.isMobile) this.taskTable.updateIsToday(util.isToday(newDate));
+      if (!this.state.isMobile) this.taskTable.updateIsActive(util.isToday(newDate));
       setTimeout(() => { this.attachTableTasks(); this.attachMemo(); });
     }
   }
@@ -457,7 +457,7 @@ class Taskontable extends Component {
                 return (<TaskTableMobile
                   tableTasks={this.state.tableTasks}
                   changeTableTasks={this.changeTableTasksByMobile.bind(this)}
-                  isToday={util.isToday(this.state.date)}
+                  isActive={util.isToday(this.state.date)}
                 />);
               }
               return (<TaskTable
@@ -467,7 +467,7 @@ class Taskontable extends Component {
                   this.setState({ tableTasks: newTableTasks });
                 }}
                 handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
-                isToday={util.isToday(this.state.date)}
+                isActive={util.isToday(this.state.date)}
                 moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
               />);
             })()}

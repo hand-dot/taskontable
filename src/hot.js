@@ -29,8 +29,8 @@ const columns = [
     allowInvalid: false,
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
-      const isToday = instance.getSettings().isToday;
-      td.innerHTML = `${value} ${isToday && cellProperties.startTimeNotifiId ? '<i class="fa fa-clock-o"></i>' : ''}`; // eslint-disable-line no-param-reassign
+      const isActiveNotifi = instance.getSettings().isActiveNotifi;
+      td.innerHTML = `${value} ${isActiveNotifi && cellProperties.startTimeNotifiId ? '<i class="fa fa-clock-o"></i>' : ''}`; // eslint-disable-line no-param-reassign
     },
   },
   {
@@ -47,14 +47,14 @@ const columns = [
       const endTimeVal = value;
       const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
       const estimateVal = instance.getDataAtRowProp(row, 'estimate');
-      const isToday = instance.getSettings().isToday;
+      const isActiveNotifi = instance.getSettings().isActiveNotifi;
       if (endTimeVal !== '' && startTimeVal !== '') {
         // 完了しているタスク
         td.parentNode.style.backgroundColor = constants.cellColor.DONE;
       } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
         // 見積もりが空なので警告にする
         td.parentNode.style.backgroundColor = constants.cellColor.WARNING;
-      } else if (isToday && startTimeVal !== '' && estimateVal !== '') {
+      } else if (isActiveNotifi && startTimeVal !== '' && estimateVal !== '') {
       // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
         const nowTimeVal = moment().format(constants.TIMEFMT);
         const expectedEndTimeVal = moment(startTimeVal, constants.TIMEFMT).add(estimateVal, 'minutes').format(constants.TIMEFMT);
@@ -64,7 +64,7 @@ const columns = [
         } else {
           td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
         }
-        td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${isToday && cellProperties.endTimeNotifiId ? '<i class="fa fa-clock-o"></i>' : ''}</span>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${isActiveNotifi && cellProperties.endTimeNotifiId ? '<i class="fa fa-clock-o"></i>' : ''}</span>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },
@@ -412,7 +412,7 @@ export const hotConf = Object.assign({}, hotBaseConf, {
   },
   afterChange(changes) {
     if (!changes) return;
-    if (!this.getSettings().isToday) return;
+    if (!this.getSettings().isActiveNotifi) return;
     const changesLength = changes.length;
     for (let i = 0; i < changesLength; i += 1) {
       const [row, prop, oldVal, newVal] = changes[i];

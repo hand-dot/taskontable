@@ -75,7 +75,7 @@ class Scripts extends Component {
     this.resetScript('exportScript', noConfirm);
     const self = this;
     this.exampleHot = new Handsontable(this.exampleHotDom, Object.assign({}, hotBaseConf, {
-      isToday: true,
+      isActiveNotifi: true,
       renderAllRows: true,
       height: 300,
       colWidths: 'auto',
