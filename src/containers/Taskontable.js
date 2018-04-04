@@ -43,9 +43,8 @@ class Taskontable extends Component {
     this.attachTableTasks = debounce(this.attachTableTasks, constants.REQEST_DELAY);
     this.attachMemo = debounce(this.attachMemo, constants.REQEST_DELAY);
     this.state = {
-      isOpenSaveSnackbar: false,
-      isOpenScriptSnackbar: false,
-      scriptSnackbarText: '',
+      isOpenSnackbar: false,
+      snackbarText: '',
       isMobile: util.isMobile(),
       loading: true,
       saveable: false,
@@ -239,11 +238,17 @@ class Taskontable extends Component {
     this.setState({ loading: true });
     this.fireScript(sortedTableTask, 'exportScript').then((data) => {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data).then(() => {
-        this.setState({ isOpenSaveSnackbar: true, loading: false, lastSaveTime: moment().format(constants.TIMEFMT), saveable: false });
+        this.setState({
+          isOpenSnackbar: true,
+          snackbarText: 'エクスポートスクリプトを実行し、保存しました。',
+          loading: false,
+          lastSaveTime: moment().format(constants.TIMEFMT),
+          saveable: false,
+        });
       });
     }, () => {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(sortedTableTask).then(() => {
-        this.setState({ isOpenSaveSnackbar: true, loading: false, lastSaveTime: moment().format(constants.TIMEFMT), saveable: false });
+        this.setState({ isOpenSnackbar: true, snackbarText: '保存しました。', loading: false, lastSaveTime: moment().format(constants.TIMEFMT), saveable: false });
       });
     });
   }
@@ -265,10 +270,17 @@ class Taskontable extends Component {
         this.setState({ saveable: false, loading: false });
         return;
       }
+      const snackbarText = 'インポートスクリプトを実行しました。';
+      const isOpenSnackbar = true;
       // 下記初期化もしくは自分のテーブル以外の更新
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
-        this.fireScript(snapshot.val(), 'importScript').then((data) => { this.setSortedTableTasks(data); }, () => { this.setSortedTableTasks(snapshot.val()); });
+        this.fireScript(snapshot.val(), 'importScript').then(
+          (data) => {
+            this.setSortedTableTasks(data);
+            this.setState({ isOpenSnackbar, snackbarText });
+          },
+          () => { this.setSortedTableTasks(snapshot.val()); });
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合(定期タスクをテーブルに設定する処理。本日以降しか動作しない)
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
@@ -276,10 +288,20 @@ class Taskontable extends Component {
         // util.convertDayOfWeekToString(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
         // https://github.com/hand-dot/taskontable/issues/118
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.convertDayOfWeekToString(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-        this.fireScript(regularTasks, 'importScript').then((data) => { this.setSortedTableTasks(data); }, () => { this.setSortedTableTasks(regularTasks); });
+        this.fireScript(regularTasks, 'importScript').then(
+          (data) => {
+            this.setSortedTableTasks(data);
+            this.setState({ isOpenSnackbar, snackbarText });
+          },
+          () => { this.setSortedTableTasks(regularTasks); });
       } else {
         // サーバーにデータが無く、定期タスクも登録されていない場合
-        this.fireScript([], 'importScript').then((data) => { this.setSortedTableTasks(data); }, () => { this.setSortedTableTasks([]); });
+        this.fireScript([], 'importScript').then(
+          (data) => {
+            this.setSortedTableTasks(data);
+            this.setState({ isOpenSnackbar, snackbarText });
+          },
+          () => { this.setSortedTableTasks([]); });
       }
       this.setState({ saveable: false, loading: false });
     });
@@ -365,19 +387,13 @@ class Taskontable extends Component {
         reject();
         return;
       }
-      this.setState({ isOpenScriptSnackbar: false });
       firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
         if (snapshot.exists() && snapshot.val() !== '') {
           const script = snapshot.val();
-          util.runWorker(script, data).then((result) => {
-            this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
-            resolve(result);
-          },
-          (reason) => {
-            const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
-            this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText });
-            reject();
-          });
+          util.runWorker(script, data).then(
+            (result) => { resolve(result); },
+            () => { reject(); },
+          );
         } else {
           reject();
         }
@@ -469,15 +485,9 @@ class Taskontable extends Component {
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSaveSnackbar}
-          onClose={() => { this.setState({ isOpenSaveSnackbar: false, isOpenScriptSnackbar: false }); }}
-          message={'保存しました。'}
-        />
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          open={this.state.isOpenScriptSnackbar}
-          onClose={() => { this.setState({ isOpenSaveSnackbar: false, isOpenScriptSnackbar: false }); }}
-          message={this.state.scriptSnackbarText}
+          open={this.state.isOpenSnackbar}
+          onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
+          message={this.state.snackbarText}
         />
       </Grid>
     );
