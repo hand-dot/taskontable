@@ -6,9 +6,14 @@ import { deepEqual } from 'fast-equals';
 import UAParser from 'ua-parser-js';
 import constants from './constants';
 
-const synth = new Tone.Synth().toMaster();
-const pluckSynth = new Tone.PluckSynth().toMaster();
-const metalSynth = new Tone.MetalSynth().toMaster();
+let synth;
+let pluckSynth;
+let metalSynth;
+if (window.AudioContext || window.webkitAudioContext) {
+  synth = new Tone.Synth().toMaster();
+  pluckSynth = new Tone.PluckSynth().toMaster();
+  metalSynth = new Tone.MetalSynth().toMaster();
+}
 
 const parser = new UAParser();
 const browserName = parser.getBrowser().name;
@@ -165,6 +170,7 @@ export default {
    * @param  {String} soundType
    */
   PlaySound(soundType) {
+    if (!window.AudioContext || !window.webkitAudioContext) return;
     if (soundType === constants.soundType.start) {
       synth.triggerAttackRelease('C4', '8n');
     } else if (soundType === constants.soundType.end) {

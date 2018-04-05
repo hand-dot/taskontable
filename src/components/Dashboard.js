@@ -8,10 +8,7 @@ import TodaySummary from './TodaySummary';
 import Clock from './Clock';
 import TimelineChart from './TimelineChart';
 import util from '../util';
-import constants from '../constants';
-
-const totalEstimateMinute = datas => datas.map(data => (typeof data.estimate === 'number' ? data.estimate : 0)).reduce((p, c) => p + c, 0);
-const totalActuallyMinute = datas => datas.map(data => util.getTimeDiffMinute(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
+import tasksUtil from '../tasksUtil';
 
 const styles = {};
 class Dashboard extends Component {
@@ -46,15 +43,15 @@ class Dashboard extends Component {
 
   componentWillReceiveProps(nextProps) {
     const remainingData = nextProps.tableTasks.filter(data => !data.startTime || !data.endTime);
-    const remainingMinute = totalEstimateMinute(remainingData);
+    const remainingMinute = tasksUtil.totalEstimateMinute(remainingData);
     const doneData = nextProps.tableTasks.filter(data => data.startTime && data.endTime);
     const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState({
-      estimateTasks: { minute: totalEstimateMinute(nextProps.tableTasks), taskNum: nextProps.tableTasks.length },
+      estimateTasks: { minute: tasksUtil.totalEstimateMinute(nextProps.tableTasks), taskNum: nextProps.tableTasks.length },
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
-      doneTasks: { minute: totalEstimateMinute(doneData), taskNum: doneData.length },
-      actuallyTasks: { minute: totalActuallyMinute(doneData), taskNum: doneData.length },
+      doneTasks: { minute: tasksUtil.totalEstimateMinute(doneData), taskNum: doneData.length },
+      actuallyTasks: { minute: tasksUtil.totalActuallyMinute(doneData), taskNum: doneData.length },
       currentTime: {
         hour: currentMoment.hour(),
         minute: currentMoment.minute(),
@@ -109,22 +106,8 @@ class Dashboard extends Component {
           <Grid container>
             <Grid item xs={12}>
               {/* TODO ramda.jsで書き直す */}
-              <TimelineChart tableTasks={this.props.tableTasks.filter(tableTask => tableTask.startTime).map((tableTask) => {
-                const task = { key: '見積' };
-                task.start = moment(tableTask.startTime, constants.TIMEFMT).toDate();
-                task.end = moment(tableTask.startTime, constants.TIMEFMT).add(tableTask.estimate || 0, 'minutes').toDate();
-                task.title = tableTask.title || '無名タスク';
-                return task;
-              })}
-              />
-              <TimelineChart tableTasks={this.props.tableTasks.filter(tableTask => tableTask.startTime && tableTask.endTime).map((tableTask) => {
-                const task = { key: '実績' };
-                task.start = moment(tableTask.startTime, constants.TIMEFMT).toDate();
-                task.end = moment(tableTask.endTime, constants.TIMEFMT).toDate();
-                task.title = tableTask.title || '無名タスク';
-                return task;
-              })}
-              />
+              <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(this.props.tableTasks)} />
+              <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(this.props.tableTasks)} />
             </Grid>
           </Grid>
         </Grid>
