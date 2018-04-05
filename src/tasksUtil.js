@@ -1,12 +1,12 @@
 import moment from 'moment';
-import R from 'ramda';
+import * as R from 'ramda';
 import constants from './constants';
 import util from './util';
 
 export default {
 
   totalEstimateMinute(datas) {
-    return R.compose(R.sum, R.map(R.prop('estimate'), R.__))(datas);
+    return R.compose(R.sum, R.map(R.prop('estimate'), R))(datas);
   },
   totalActuallyMinute(datas) {
     return datas.map(data => util.getTimeDiffMinute(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
