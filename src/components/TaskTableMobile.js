@@ -64,27 +64,19 @@ class TaskTableMobile extends Component {
     this.setState({ anchorEl });
   }
 
-  changeTaskTitle(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.title = e.target.value;
-    this.setState({ [type]: task });
+  doTaskAction(index, taskActionType) {
+    this.closeTaskAction(index);
+    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${this.props.tableTasks[index].title} を本当に削除しますか？`)) {
+      this.closeTaskAction(index);
+      this.props.changeTableTasks(constants.taskActionType.REMOVE, index);
+    } else {
+      this.props.changeTableTasks(taskActionType, index);
+    }
   }
 
-  changeTaskStartTime(type, e) {
+  changeTask(type, prop, e) {
     const task = Object.assign({}, this.state[type]);
-    task.startTime = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeTaskEndTime(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.endTime = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeTaskEstimate(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.estimate = e.target.value;
+    task[prop] = e.target.value;
     this.setState({ [type]: task });
   }
 
@@ -118,46 +110,6 @@ class TaskTableMobile extends Component {
       });
     }
   }
-
-  removeTask(index) {
-    if (window.confirm(`${this.props.tableTasks[index].title} を本当に削除しますか？`)) {
-      this.closeTaskAction(index);
-      this.props.changeTableTasks(constants.taskActionType.REMOVE, index);
-    }
-  }
-
-
-  downTask(index) {
-    this.closeTaskAction(index);
-    this.props.changeTableTasks(constants.taskActionType.DOWN, index);
-  }
-
-  upTask(index) {
-    this.closeTaskAction(index);
-    this.props.changeTableTasks(constants.taskActionType.UP, index);
-  }
-
-  bottomToTask(index) {
-    this.closeTaskAction(index);
-    this.props.changeTableTasks(constants.taskActionType.BOTTOM, index);
-  }
-
-  topToTask(index) {
-    this.closeTaskAction(index);
-    this.props.changeTableTasks(constants.taskActionType.TOP, index);
-  }
-
-  movePoolHighPriority(index) {
-    this.closeTaskAction(index);
-    this.props.changeTableTasks(constants.taskActionType.MOVE_POOL_HIGHPRIORITY, index);
-  }
-
-
-  movePoolLowPriority(index) {
-    this.closeTaskAction(index);
-    this.props.changeTableTasks(constants.taskActionType.MOVE_POOL_LOWPRIORITY, index);
-  }
-
 
   render() {
     const { tableTasks, classes } = this.props;
@@ -202,7 +154,7 @@ class TaskTableMobile extends Component {
                   <Input
                     className={classes.cellInput}
                     fullWidth
-                    onChange={this.changeTaskTitle.bind(this, constants.taskStateType.edit)}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'title')}
                     value={this.state.editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
@@ -212,7 +164,7 @@ class TaskTableMobile extends Component {
                   <Input
                     className={classes.miniCellInput}
                     type="number"
-                    onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.edit)}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'estimate')}
                     value={this.state.editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
@@ -223,7 +175,7 @@ class TaskTableMobile extends Component {
                     type="time"
                     className={classes.miniCellInput}
                     InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
-                    onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.edit)}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'startTime')}
                     value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
                     disabled={this.state.editingTaskIndex !== index}
                   />
@@ -233,7 +185,7 @@ class TaskTableMobile extends Component {
                     type="time"
                     className={classes.miniCellInput}
                     InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
-                    onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.edit)}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'endTime')}
                     value={this.state.editingTaskIndex !== index ? task.endTime : this.state[constants.taskStateType.edit].endTime}
                     disabled={this.state.editingTaskIndex !== index}
                   />
@@ -252,31 +204,31 @@ class TaskTableMobile extends Component {
                       open={Boolean(this.state.anchorEl[index] || false)}
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
-                      <MenuItem key={'movePoolHighPriority'} disabled={task.endTime !== ''} onClick={this.movePoolHighPriority.bind(this, index)}>
+                      <MenuItem key={'movePoolHighPriority'} disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_HIGHPRIORITY)}>
                         <i className="fa fa-upload" />
                         <Typography variant="caption">[すぐにやる]に戻す</Typography>
                       </MenuItem>
-                      <MenuItem key={'movePoolLowPriority'} disabled={task.endTime !== ''} onClick={this.movePoolLowPriority.bind(this, index)}>
+                      <MenuItem key={'movePoolLowPriority'} disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_LOWPRIORITY)}>
                         <i className="fa fa-upload" />
                         <Typography variant="caption">[いつかやる]に戻す</Typography>
                       </MenuItem>
-                      <MenuItem key={'topToTask'} onClick={this.topToTask.bind(this, index)}>
+                      <MenuItem key={'topToTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
                         <i className="fa fa-angle-double-up" />
                         <Typography variant="caption">先頭に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'upTask'} onClick={this.upTask.bind(this, index)}>
+                      <MenuItem key={'upTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
                         <i className="fa fa-angle-up" />
                         <Typography variant="caption">1つ上に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
+                      <MenuItem key={'downTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
                         <i className="fa fa-angle-down" />
                         <Typography variant="caption">1つ下に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
+                      <MenuItem key={'bottomToTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
                         <i className="fa fa-angle-double-down" />
                         <Typography variant="caption">末尾に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'removeTask'} onClick={this.removeTask.bind(this, index)}>
+                      <MenuItem key={'removeTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
                         <i className="fa fa-trash-o" />
                         <Typography variant="caption">削除</Typography>
                       </MenuItem>
@@ -290,7 +242,7 @@ class TaskTableMobile extends Component {
                 <Input
                   className={classes.cellInput}
                   fullWidth
-                  onChange={this.changeTaskTitle.bind(this, constants.taskStateType.add)}
+                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'title')}
                   value={this.state[constants.taskStateType.add].title}
                   placeholder="作業内容"
                   disabled={this.state.editingTaskIndex !== -1}
@@ -301,7 +253,7 @@ class TaskTableMobile extends Component {
                 <Input
                   className={classes.miniCellInput}
                   type="number"
-                  onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.add)}
+                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'estimate')}
                   value={this.state[constants.taskStateType.add].estimate}
                   placeholder="見積"
                   disabled={this.state.editingTaskIndex !== -1}
@@ -313,7 +265,7 @@ class TaskTableMobile extends Component {
                   type="time"
                   className={classes.miniCellInput}
                   InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
-                  onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.add)}
+                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'startTime')}
                   value={this.state[constants.taskStateType.add].startTime}
                   placeholder="開始時刻"
                   disabled={this.state.editingTaskIndex !== -1}
@@ -324,7 +276,7 @@ class TaskTableMobile extends Component {
                   type="time"
                   className={classes.miniCellInput}
                   InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
-                  onChange={this.changeTaskEndTime.bind(this, constants.taskStateType.add)}
+                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'endTime')}
                   value={this.state[constants.taskStateType.add].endTime}
                   placeholder="終了時刻"
                   disabled={this.state.editingTaskIndex !== -1}

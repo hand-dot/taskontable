@@ -108,6 +108,7 @@ class Dashboard extends Component {
           <Typography gutterBottom variant="subheading">タイムライン</Typography>
           <Grid container>
             <Grid item xs={12}>
+              {/* TODO ramda.jsで書き直す */}
               <TimelineChart tableTasks={this.props.tableTasks.filter(tableTask => tableTask.startTime).map((tableTask) => {
                 const task = { key: '見積' };
                 task.start = moment(tableTask.startTime, constants.TIMEFMT).toDate();

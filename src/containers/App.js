@@ -125,27 +125,10 @@ class App extends Component {
           goScripts={this.goScripts.bind(this)}
         />
         <Switch>
-          <Route
-            path="/signup"
-            render={props => <Signup login={this.login.bind(this)} {...props} />}
-          />
-          <Route
-            path="/login"
-            render={props => <Login login={this.login.bind(this)} {...props} />}
-          />
-          <Route
-            path="/logout"
-            render={props => <Logout {...props} />}
-          />
-          <Route
-            path="/scripts"
-            render={(props) => {
-              if (this.state.user.uid !== '') {
-                return <Scripts user={this.state.user} {...props} />;
-              }
-              return null;
-            }}
-          />
+          <Route path="/signup" render={props => <Signup login={this.login.bind(this)} {...props} />} />
+          <Route path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
+          <Route path="/logout" render={props => <Logout {...props} />} />
+          <Route path="/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts user={this.state.user} {...props} />; } return null; }} />
           <Route
             exact
             path="/"

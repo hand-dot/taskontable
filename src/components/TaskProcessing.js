@@ -10,24 +10,12 @@ import openTaskSchema from '../schemas/openTaskSchema';
 
 
 const styles = theme => ({
-  progress: {
-    height: theme.spacing.unit * 2,
-  },
-  blue: {
-    background: constants.brandColor.base.BLUE,
-  },
-  green: {
-    background: constants.brandColor.base.GREEN,
-  },
-  yellow: {
-    background: constants.brandColor.base.YELLOW,
-  },
-  red: {
-    background: constants.brandColor.base.RED,
-  },
-  grey: {
-    background: constants.brandColor.base.GREY,
-  },
+  progress: { height: theme.spacing.unit * 2 },
+  blue: { background: constants.brandColor.base.BLUE },
+  green: { background: constants.brandColor.base.GREEN },
+  yellow: { background: constants.brandColor.base.YELLOW },
+  red: { background: constants.brandColor.base.RED },
+  grey: { background: constants.brandColor.base.GREY },
 });
 
 function getOpenTaskSchema() {

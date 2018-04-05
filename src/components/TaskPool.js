@@ -24,29 +24,14 @@ class TaskPool extends Component {
     this.props.changePoolTasks(constants.taskActionType.EDIT, this.state.tab, { task, index });
   }
 
-  moveTable(index) {
-    this.props.changePoolTasks(constants.taskActionType.MOVE_TABLE, this.state.tab, index);
-  }
-
-  removeTask(index) {
-    if (window.confirm(`${this.props.poolTasks[this.state.tab][index].title} を本当に削除しますか？`)) {
+  doTaskAction(index, taskActionType) {
+    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${this.props.poolTasks[this.state.tab][index].title} を本当に削除しますか？`)) {
       this.props.changePoolTasks(constants.taskActionType.REMOVE, this.state.tab, index);
+    } else {
+      this.props.changePoolTasks(taskActionType, this.state.tab, index);
     }
   }
-  downTask(index) {
-    this.props.changePoolTasks(constants.taskActionType.DOWN, this.state.tab, index);
-  }
 
-  upTask(index) {
-    this.props.changePoolTasks(constants.taskActionType.UP, this.state.tab, index);
-  }
-  bottomToTask(index) {
-    this.props.changePoolTasks(constants.taskActionType.BOTTOM, this.state.tab, index);
-  }
-
-  topToTask(index) {
-    this.props.changePoolTasks(constants.taskActionType.TOP, this.state.tab, index);
-  }
   handleTabChange(event, tab) {
     this.setState({ tab });
   }
@@ -86,12 +71,7 @@ class TaskPool extends Component {
           return (<PoolTaskList
             addTask={this.addTask.bind(this)}
             editTask={this.editTask.bind(this)}
-            moveTable={this.moveTable.bind(this)}
-            removeTask={this.removeTask.bind(this)}
-            downTask={this.downTask.bind(this)}
-            upTask={this.upTask.bind(this)}
-            bottomToTask={this.bottomToTask.bind(this)}
-            topToTask={this.topToTask.bind(this)}
+            doTaskAction={this.doTaskAction.bind(this)}
             tasks={tasks}
             isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
           />);

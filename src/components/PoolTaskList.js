@@ -65,45 +65,14 @@ class TaskList extends Component {
     this.setState({ anchorEl });
   }
 
-  changeTaskTitle(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.title = e.target.value;
-    this.setState({ [type]: task });
+  doTaskAction(index, taskActionType) {
+    this.closeTaskAction(index);
+    this.props.doTaskAction(index, taskActionType);
   }
 
-  changeTaskMemo(type, e) {
+  changeTask(type, prop, e) {
     const task = Object.assign({}, this.state[type]);
-    task.memo = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeTaskEstimate(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.estimate = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeTaskStartTime(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.startTime = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeTaskEndTime(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.endTime = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeDayOfWeek(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.dayOfWeek = e.target.value;
-    this.setState({ [type]: task });
-  }
-
-  changeWeek(type, e) {
-    const task = Object.assign({}, this.state[type]);
-    task.week = e.target.value;
+    task[prop] = e.target.value;
     this.setState({ [type]: task });
   }
 
@@ -135,36 +104,6 @@ class TaskList extends Component {
         [constants.taskStateType.add]: getPoolTaskSchema(),
       });
     }
-  }
-
-  moveTable(index) {
-    this.closeTaskAction(index);
-    this.props.moveTable(index);
-  }
-
-  removeTask(index) {
-    this.closeTaskAction(index);
-    this.props.removeTask(index);
-  }
-
-  downTask(index) {
-    this.closeTaskAction(index);
-    this.props.downTask(index);
-  }
-
-  upTask(index) {
-    this.closeTaskAction(index);
-    this.props.upTask(index);
-  }
-
-  bottomToTask(index) {
-    this.closeTaskAction(index);
-    this.props.bottomToTask(index);
-  }
-
-  topToTask(index) {
-    this.closeTaskAction(index);
-    this.props.topToTask(index);
   }
 
   addTask() {
@@ -209,7 +148,7 @@ class TaskList extends Component {
                   <Input
                     fullWidth
                     className={classes.cellInput}
-                    onChange={this.changeTaskTitle.bind(this, constants.taskStateType.edit)}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'title')}
                     value={this.state.editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
@@ -219,7 +158,7 @@ class TaskList extends Component {
                   <Input
                     fullWidth
                     className={classes.cellInput}
-                    onChange={this.changeTaskMemo.bind(this, constants.taskStateType.edit)}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'memo')}
                     value={this.state.editingTaskIndex !== index ? task.memo : this.state[constants.taskStateType.edit].memo}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
@@ -229,7 +168,7 @@ class TaskList extends Component {
                   <Input
                     className={classes.miniCellInput}
                     type="number"
-                    onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.edit)}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'estimate')}
                     value={this.state.editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
                     disabled={this.state.editingTaskIndex !== index}
                     disableUnderline={this.state.editingTaskIndex !== index}
@@ -243,7 +182,7 @@ class TaskList extends Component {
                           type="time"
                           className={classes.miniCellInput}
                           InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
-                          onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.edit)}
+                          onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'startTime')}
                           value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
                           placeholder="開始時刻"
                           disabled={this.state.editingTaskIndex !== index}
@@ -261,7 +200,7 @@ class TaskList extends Component {
                           className={classes.miniCellInput}
                           value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
                           options={[1, 2, 3, 4, 5]}
-                          onChange={this.changeWeek.bind(this, constants.taskStateType.edit)}
+                          onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'week')}
                           disabled={this.state.editingTaskIndex !== index}
                         />
                       </CustomTableCell>
@@ -277,7 +216,7 @@ class TaskList extends Component {
                           className={classes.miniCellInput}
                           value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
                           options={constants.DAY_OF_WEEK_STR}
-                          onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.edit)}
+                          onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'dayOfWeek')}
                           disabled={this.state.editingTaskIndex !== index}
                         />
                       </CustomTableCell>
@@ -299,27 +238,27 @@ class TaskList extends Component {
                       open={Boolean(this.state.anchorEl[index] || false)}
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
-                      <MenuItem key={'moveTable'} onClick={this.moveTable.bind(this, index)}>
+                      <MenuItem key={'moveTable'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_TABLE)}>
                         <i className="fa fa-download" />
                         <Typography variant="caption">テーブルに移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'topToTask'} onClick={this.topToTask.bind(this, index)}>
+                      <MenuItem key={'topToTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
                         <i className="fa fa-angle-double-up" />
                         <Typography variant="caption">先頭に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'upTask'} onClick={this.upTask.bind(this, index)}>
+                      <MenuItem key={'upTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
                         <i className="fa fa-angle-up" />
                         <Typography variant="caption">1つ上に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'downTask'} onClick={this.downTask.bind(this, index)}>
+                      <MenuItem key={'downTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
                         <i className="fa fa-angle-down" />
                         <Typography variant="caption">1つ下に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'bottomToTask'} onClick={this.bottomToTask.bind(this, index)}>
+                      <MenuItem key={'bottomToTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
                         <i className="fa fa-angle-double-down" />
                         <Typography variant="caption">末尾に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'removeTask'} onClick={this.removeTask.bind(this, index)}>
+                      <MenuItem key={'removeTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
                         <i className="fa fa-trash-o" />
                         <Typography variant="caption">削除</Typography>
                       </MenuItem>
@@ -333,7 +272,7 @@ class TaskList extends Component {
                 <Input
                   fullWidth
                   className={classes.cellInput}
-                  onChange={this.changeTaskTitle.bind(this, constants.taskStateType.add)}
+                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'title')}
                   value={this.state[constants.taskStateType.add].title}
                   placeholder="作業内容"
                   disabled={this.state.editingTaskIndex !== -1}
@@ -344,7 +283,7 @@ class TaskList extends Component {
                 <Input
                   fullWidth
                   className={classes.cellInput}
-                  onChange={this.changeTaskMemo.bind(this, constants.taskStateType.add)}
+                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'memo')}
                   value={this.state[constants.taskStateType.add].memo}
                   placeholder="備考"
                   disabled={this.state.editingTaskIndex !== -1}
@@ -355,7 +294,7 @@ class TaskList extends Component {
                 <Input
                   className={classes.miniCellInput}
                   type="number"
-                  onChange={this.changeTaskEstimate.bind(this, constants.taskStateType.add)}
+                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'estimate')}
                   value={this.state[constants.taskStateType.add].estimate}
                   placeholder="見積"
                   disabled={this.state.editingTaskIndex !== -1}
@@ -370,7 +309,7 @@ class TaskList extends Component {
                         type="time"
                         className={classes.miniCellInput}
                         InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
-                        onChange={this.changeTaskStartTime.bind(this, constants.taskStateType.add)}
+                        onChange={this.changeTask.bind(this, constants.taskStateType.add, 'startTime')}
                         value={this.state[constants.taskStateType.add].startTime}
                         placeholder="開始時刻"
                         disabled={this.state.editingTaskIndex !== -1}
@@ -388,7 +327,7 @@ class TaskList extends Component {
                         className={classes.miniCellInput}
                         value={this.state[constants.taskStateType.add].week}
                         options={[1, 2, 3, 4, 5]}
-                        onChange={this.changeWeek.bind(this, constants.taskStateType.add)}
+                        onChange={this.changeTask.bind(this, constants.taskStateType.add, 'week')}
                         disabled={this.state.editingTaskIndex !== -1}
                       />
                     </CustomTableCell>
@@ -404,7 +343,7 @@ class TaskList extends Component {
                         className={classes.miniCellInput}
                         value={this.state[constants.taskStateType.add].dayOfWeek}
                         options={constants.DAY_OF_WEEK_STR}
-                        onChange={this.changeDayOfWeek.bind(this, constants.taskStateType.add)}
+                        onChange={this.changeTask.bind(this, constants.taskStateType.add, 'dayOfWeek')}
                         disabled={this.state.editingTaskIndex !== -1}
                       />
                     </CustomTableCell>
@@ -436,12 +375,7 @@ TaskList.propTypes = {
   })).isRequired,
   addTask: PropTypes.func.isRequired,
   editTask: PropTypes.func.isRequired,
-  moveTable: PropTypes.func.isRequired,
-  removeTask: PropTypes.func.isRequired,
-  downTask: PropTypes.func.isRequired,
-  upTask: PropTypes.func.isRequired,
-  bottomToTask: PropTypes.func.isRequired,
-  topToTask: PropTypes.func.isRequired,
+  doTaskAction: PropTypes.func.isRequired,
   isRegularTask: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
