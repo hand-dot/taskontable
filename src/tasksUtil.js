@@ -5,10 +5,10 @@ import util from './util';
 
 export default {
 
-  totalEstimateMinute(datas) {
+  getTotalEstimateMinute(datas) {
     return R.compose(R.sum, R.map(R.prop('estimate'), R))(datas);
   },
-  totalActuallyMinute(datas) {
+  getTotalActuallyMinute(datas) {
     return datas.map(data => util.getTimeDiffMinute(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
   },
   getEstimateTimelineChartTasks(tableTasks) {

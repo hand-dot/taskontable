@@ -43,15 +43,15 @@ class Dashboard extends Component {
 
   componentWillReceiveProps(nextProps) {
     const remainingData = nextProps.tableTasks.filter(data => !data.startTime || !data.endTime);
-    const remainingMinute = tasksUtil.totalEstimateMinute(remainingData);
+    const remainingMinute = tasksUtil.getTotalEstimateMinute(remainingData);
     const doneData = nextProps.tableTasks.filter(data => data.startTime && data.endTime);
     const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState({
-      estimateTasks: { minute: tasksUtil.totalEstimateMinute(nextProps.tableTasks), taskNum: nextProps.tableTasks.length },
+      estimateTasks: { minute: tasksUtil.getTotalEstimateMinute(nextProps.tableTasks), taskNum: nextProps.tableTasks.length },
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
-      doneTasks: { minute: tasksUtil.totalEstimateMinute(doneData), taskNum: doneData.length },
-      actuallyTasks: { minute: tasksUtil.totalActuallyMinute(doneData), taskNum: doneData.length },
+      doneTasks: { minute: tasksUtil.getTotalEstimateMinute(doneData), taskNum: doneData.length },
+      actuallyTasks: { minute: tasksUtil.getTotalActuallyMinute(doneData), taskNum: doneData.length },
       currentTime: {
         hour: currentMoment.hour(),
         minute: currentMoment.minute(),

@@ -4,5 +4,5 @@ import tasksUtil from '../tasksUtil';
 
 const assert = chai.assert;
 it('exampleTaskDataのタスクの見積の合計は223分であること', () => {
-  assert.equal(tasksUtil.totalEstimateMinute(exampleTaskData), 223);
+  assert.equal(tasksUtil.getTotalEstimateMinute(exampleTaskData), 223);
 });
