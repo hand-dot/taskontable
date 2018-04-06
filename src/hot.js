@@ -166,8 +166,10 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
         hotInstance.selectCell(row, hotInstance.propToCol(prop));
       };
       notifi.onclose = () => {
-        // 通知が放置されないように通知を5分後に再設定
-        setNotifiCell(hotInstance, row, prop, 300000, true);
+        // 終了時刻が設定されていた場合には何もしない
+        if (hotInstance.getDataAtRowProp(row, 'endTime')) return;
+        // 終了の通知が放置されないように通知を5分後に再設定
+        if (prop === 'endTime') setNotifiCell(hotInstance, row, 'endTime', 300000, true);
       };
     }
   }, timeout);
