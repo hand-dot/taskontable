@@ -16,7 +16,7 @@ export default {
    * @param  {Array} tasks
    */
   getTotalActuallyMinute(tasks) {
-    return tasks.map(data => util.getTimeDiffMinute(data.startTime, data.endTime)).reduce((p, c) => p + c, 0);
+    return R.compose(R.sum, R.map(r => util.getTimeDiffMinute(r.startTime, r.endTime), R))(tasks);
   },
   /**
    * タスクの配列を受け取り見積のタイムラインチャートの生成に必要な配列にして返します。

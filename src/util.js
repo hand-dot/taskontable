@@ -33,6 +33,7 @@ export default {
    * @param  {String} endTimeVal HH:mm形式の文字列
    */
   getTimeDiffMinute(startTimeVal = '00:00', endTimeVal = '00:00') {
+    if (startTimeVal === '' || endTimeVal === '') return 0;
     const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) &&
