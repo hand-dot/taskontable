@@ -170,7 +170,7 @@ export default {
    * @param  {String} soundType
    */
   PlaySound(soundType) {
-    if (!window.AudioContext || !window.webkitAudioContext) return;
+    if (!window.AudioContext && !window.webkitAudioContext) return;
     if (soundType === constants.soundType.start) {
       synth.triggerAttackRelease('C4', '8n');
     } else if (soundType === constants.soundType.end) {
@@ -178,6 +178,5 @@ export default {
     } else if (soundType === constants.soundType.snooz) {
       metalSynth.triggerAttackRelease('16n', 0);
     }
-    return false;
   },
 };
