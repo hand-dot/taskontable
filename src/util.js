@@ -48,6 +48,7 @@ export default {
    * @param  {String} endTimeVal HH:mm:ss形式の文字列
    */
   getTimeDiffSec(startTimeVal = '00:00:00', endTimeVal = '00:00:00') {
+    if (startTimeVal === '' || endTimeVal === '') return 0;
     const [startTimeHour, startTimeMinute, startTimeSec] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute, endTimeSec] = endTimeVal.split(':');
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSec) &&
@@ -119,40 +120,6 @@ export default {
    */
   setIdIfNotExist(obj) {
     return obj.id ? obj : Object.assign(obj, { id: uuid() });
-  },
-
-  /**
-   * 引き数のオブジェクトから定期タスクとしての値を削除します。
-   * 参考: poolTaskSchema
-   * @param  {Object} obj オブジェクト
-   */
-  deleteRegularTaskProp(obj) {
-    delete obj.dayOfWeek; // eslint-disable-line
-    delete obj.week;  // eslint-disable-line
-    return obj;
-  },
-
-  /**
-   * タスクを開始時刻順に並び替えます。
-   * 開始時刻が空の場合は後ろに行きます。
-   * @param  {Array} tasks タスク
-   */
-  getSortedTasks(tasks) {
-    const hasStartTimeTasks = [];
-    const hasNotStartTimeTasks = [];
-    for (let i = 0; i < tasks.length; i += 1) {
-      const task = tasks[i];
-      if (task.startTime !== '') {
-        hasStartTimeTasks.push(task);
-      } else {
-        hasNotStartTimeTasks.push(task);
-      }
-    }
-    return hasStartTimeTasks.sort((a, b) => {
-      if (a.startTime > b.startTime) return 1;
-      if (a.startTime < b.startTime) return -1;
-      return 0;
-    }).concat(hasNotStartTimeTasks);
   },
   /**
    * サポートブラウザーならtrueを返します。

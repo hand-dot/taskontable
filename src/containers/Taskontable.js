@@ -24,6 +24,7 @@ import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
 
 import constants from '../constants';
+import tasksUtil from '../tasksUtil';
 import util from '../util';
 
 const styles = {
@@ -97,7 +98,7 @@ class Taskontable extends Component {
    * @param  {Array} tableTasks テーブルタスク
    */
   setSortedTableTasks(tableTasks) {
-    const sortedTableTask = util.getSortedTasks(tableTasks);
+    const sortedTableTask = tasksUtil.getSortedTasks(tableTasks);
     if (!this.state.isMobile) this.taskTable.setDataForHot(sortedTableTask);
     this.setState({ tableTasks: sortedTableTask });
     return sortedTableTask;
@@ -230,7 +231,7 @@ class Taskontable extends Component {
    */
   saveTableTasks() {
     // IDを生成し並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => util.deleteRegularTaskProp(util.setIdIfNotExist(tableTask)));
+    const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteRegularTaskProp(util.setIdIfNotExist(tableTask)));
     // 開始時刻順に並び替える
     const sortedTableTask = this.setSortedTableTasks(tableTasks);
     this.setState({ loading: true });
