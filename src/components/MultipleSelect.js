@@ -58,8 +58,8 @@ function MultipleSelect(props) {
 
 
 MultipleSelect.propTypes = {
-  value: PropTypes.array.isRequired,
-  options: PropTypes.array.isRequired,
+  value: PropTypes.arrayOf(PropTypes.string).isRequired,
+  options: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line

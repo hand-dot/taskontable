@@ -12,6 +12,7 @@ import DatePicker from './DatePicker';
 import TaskProcessing from './TaskProcessing';
 import constants from '../constants';
 import util from '../util';
+import tasksUtil from '../tasksUtil';
 
 const styles = theme => ({
   progress: {
@@ -55,7 +56,7 @@ class TableCtl extends Component {
 
   render() {
     const { tableTasks, date, isLoading, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
-    const progressPer = (tableTasks.filter(data => data.startTime && data.endTime).length) * (100 / tableTasks.length);
+    const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
       <div>
         <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} variant={isLoading ? 'indeterminate' : 'determinate'} value={progressPer} />
@@ -74,7 +75,7 @@ class TableCtl extends Component {
                 return (
                   <Typography style={{ marginTop: 10 }} variant="caption"><i className="fa fa-asterisk" />タスクがありません</Typography>
                 );
-              } else if (tableTasks.length === tableTasks.filter(data => data.startTime && data.endTime).length) {
+              } else if (tableTasks.length === tasksUtil.getDoneTasks(tableTasks).length) {
                 return (
                   <Typography style={{ animation: 'good 1s linear 0s 1', marginTop: 10, color: constants.brandColor.base.BLUE }} variant="caption"><i className="fa fa-thumbs-up" />Complete!</Typography>
                 );
@@ -82,10 +83,10 @@ class TableCtl extends Component {
               return (
                 <Typography style={{ marginTop: 10 }} variant="caption">
                   <i className="fa fa-exclamation-circle" />
-                  {tableTasks.filter(data => !data.startTime || !data.endTime).length}Open
+                  {tasksUtil.getOpenTasks(tableTasks).length}Open
                   <span>&nbsp;</span>
                   <i className="fa fa-check" />
-                  {tableTasks.filter(data => data.startTime && data.endTime).length}Close
+                  {tasksUtil.getDoneTasks(tableTasks).length}Close
                 </Typography>
               );
             })()}

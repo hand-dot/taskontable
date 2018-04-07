@@ -230,8 +230,8 @@ class Taskontable extends Component {
    * stateのtableTasksをサーバーに保存します。
    */
   saveTableTasks() {
-    // IDを生成し並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteRegularTaskProp(util.setIdIfNotExist(tableTask)));
+    // IDを生成し無駄なプロパティを削除する。また、hotで並び変えられたデータを取得するために処理が入っている。
+    const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(util.setIdIfNotExist(tableTask)));
     // 開始時刻順に並び替える
     const sortedTableTask = this.setSortedTableTasks(tableTasks);
     this.setState({ loading: true });

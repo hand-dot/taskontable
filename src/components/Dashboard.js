@@ -105,7 +105,6 @@ class Dashboard extends Component {
           <Typography gutterBottom variant="subheading">タイムライン</Typography>
           <Grid container>
             <Grid item xs={12}>
-              {/* TODO ramda.jsで書き直す */}
               <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(this.props.tableTasks)} />
               <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(this.props.tableTasks)} />
             </Grid>

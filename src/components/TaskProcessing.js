@@ -49,7 +49,7 @@ class TaskProcessing extends Component {
   bindOpenTaskProcessing(tasks) {
     if (this.state.isMobile) return;
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
-    const openTask = util.cloneDeep(tasks.find(task => task.startTime && task.endTime === '' && task.estimate));
+    const openTask = tasks.find(task => task.startTime && task.endTime === '' && task.estimate);
     if (util.isToday(this.props.date) && openTask) {
       this.bindOpenTaskIntervalID = setInterval(() => {
         const now = moment();

@@ -2,8 +2,25 @@ import moment from 'moment';
 import * as R from 'ramda';
 import constants from './constants';
 import util from './util';
+import tableTaskSchema from './schemas/tableTaskSchema';
 
 export default {
+  /**
+   * 開始時刻と終了時刻の入力された終了したタスクを取得します。
+   * @param  {Array} tasks
+   */
+  getDoneTasks(tasks) {
+    const doneTask = t => t.startTime && t.endTime;
+    return R.compose(R.filter(doneTask, R))(tasks);
+  },
+  /**
+   * 開始時刻or終了時刻の入力されていないタスクを取得します。
+   * @param  {Array} tasks
+   */
+  getOpenTasks(tasks) {
+    const doneTask = t => !t.startTime || !t.endTime;
+    return R.compose(R.filter(doneTask, R))(tasks);
+  },
   /**
    * タスクの配列を受け取り見積時間の合計を取得します。
    * @param  {Array} tasks
@@ -23,27 +40,17 @@ export default {
    * @param  {Array} tasks
    */
   getEstimateTimelineChartTasks(tasks) {
-    return tasks.filter(tableTask => tableTask.startTime).map((tableTask) => {
-      const task = { key: '見積' };
-      task.start = moment(tableTask.startTime, constants.TIMEFMT).toDate();
-      task.end = moment(tableTask.startTime, constants.TIMEFMT).add(tableTask.estimate || 0, 'minutes').toDate();
-      task.title = tableTask.title || '無名タスク';
-      return task;
-    })
-    ;
+    const hasStartTime = t => t.startTime;
+    const getTimelineChartTask = t => ({ key: '見積', start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.startTime, constants.TIMEFMT).add(t.estimate || 0, 'minutes').toDate(), title: t.title || '無名タスク' });
+    return R.compose(R.map(r => getTimelineChartTask(r)), R.filter(hasStartTime, R))(tasks);
   },
   /**
    * タスクの配列を受け取り実績のタイムラインチャートの生成に必要な配列にして返します。
    * @param  {Array} tasks
    */
   getActuallyTimelineChartTasks(tasks) {
-    return tasks.filter(tableTask => tableTask.startTime && tableTask.endTime).map((tableTask) => {
-      const task = { key: '実績' };
-      task.start = moment(tableTask.startTime, constants.TIMEFMT).toDate();
-      task.end = moment(tableTask.endTime, constants.TIMEFMT).toDate();
-      task.title = tableTask.title || '無名タスク';
-      return task;
-    });
+    const getTimelineChartTask = t => ({ key: '実績', start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.endTime, constants.TIMEFMT).toDate(), title: t.title || '無名タスク' });
+    return R.compose(R.map(r => getTimelineChartTask(r)), this.getDoneTasks(R))(tasks);
   },
   /**
    * タスクを開始時刻順に並び替えます。
@@ -68,13 +75,15 @@ export default {
     }).concat(hasNotStartTimeTasks);
   },
   /**
-   * 引き数のオブジェクトから定期タスクとしての値を削除します。
+   * 引き数のオブジェクトからtableTaskSchemaのプロパティのみにして返します。
    * 参考: poolTaskSchema
-   * @param  {Object} obj オブジェクト
+   * @param  {Object} task タスク
    */
-  deleteRegularTaskProp(obj) {
-    delete obj.dayOfWeek; // eslint-disable-line
-    delete obj.week;  // eslint-disable-line
+  deleteUselessTaskProp(task) {
+    const obj = {};
+    Object.keys(tableTaskSchema).forEach((prop) => {
+      obj[prop] = task[prop];
+    });
     return obj;
   },
 };
