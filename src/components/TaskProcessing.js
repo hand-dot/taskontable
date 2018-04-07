@@ -22,6 +22,24 @@ function getOpenTaskSchema() {
   return util.cloneDeep(openTaskSchema);
 }
 
+function getTitle(openTask, defaultTitle, isShortTitle) {
+  const actuallyMinute = util.getTimeDiffMinute(openTask.startTime, openTask.now);
+  let title = '';
+  if (openTask.id) {
+    title = isShortTitle ? `${(openTask.title.length < 18 ? openTask.title || '' : `${openTask.title.substring(0, 15)}...`) || '無名タスク'}` : openTask.title || '無名タスク';
+    const isOver = actuallyMinute >= openTask.estimate;
+    if (openTask.estimate - actuallyMinute === 1 || actuallyMinute - openTask.estimate === 0) {
+      const sec = moment(openTask.now, 'HH:mm:ss').format('s');
+      title = `${isOver ? `${sec}秒オーバー` : `残${60 - sec}秒`} - ${title}`;
+    } else {
+      title = `${isOver ? `${actuallyMinute - openTask.estimate}分オーバー` : `残${openTask.estimate - actuallyMinute}分`} - ${title}`;
+    }
+  } else {
+    title = defaultTitle;
+  }
+  return title;
+}
+
 class TaskProcessing extends Component {
   constructor(props) {
     super(props);
@@ -57,11 +75,8 @@ class TaskProcessing extends Component {
         if (newTimeDiffMinute >= 0) {
           openTask.now = now.format('HH:mm:ss');
           this.setState({ openTask: util.setIdIfNotExist(openTask) });
-          document.title = `${newTimeDiffMinute === 0 ? `${now.format('ss')}秒` : `${newTimeDiffMinute}分経過`} - ${openTask.title || '無名タスク'}`;
-        } else {
-          document.title = constants.TITLE;
-          if (!util.equal(this.state.openTask, openTaskSchema)) this.setState({ openTask: getOpenTaskSchema() });
-        }
+        } else if (!util.equal(this.state.openTask, openTaskSchema)) this.setState({ openTask: getOpenTaskSchema() });
+        document.title = getTitle(openTask, constants.TITLE, false);
         this.oldTimeDiffMinute = newTimeDiffMinute;
       }, 1000);
     } else {
@@ -87,21 +102,6 @@ class TaskProcessing extends Component {
     } else {
       color = 'grey';
     }
-    const actuallyMinute = util.getTimeDiffMinute(this.state.openTask.startTime, this.state.openTask.now);
-    let title = '';
-    let detail = '';
-    if (this.state.openTask.id) {
-      title = `${(this.state.openTask.title.length < 18 ? this.state.openTask.title || '' : `${this.state.openTask.title.substring(0, 15)}...`) || '無名タスク'}`;
-      const isOver = actuallyMinute >= this.state.openTask.estimate;
-      if (this.state.openTask.estimate - actuallyMinute === 1 || actuallyMinute - this.state.openTask.estimate === 0) {
-        const sec = moment(this.state.openTask.now, 'HH:mm:ss').format('ss');
-        detail = ` - ${isOver ? `${sec}秒オーバー` : `残${60 - sec}秒`}`;
-      } else {
-        detail = ` - ${isOver ? `${actuallyMinute - this.state.openTask.estimate}分オーバー` : `残${this.state.openTask.estimate - actuallyMinute}分`}`;
-      }
-    } else {
-      title = '開始しているタスクはありません。';
-    }
     return (
       <div style={{ paddingLeft: theme.spacing.unit * 2, paddingRight: theme.spacing.unit * 2 }}>
         <LinearProgress
@@ -120,7 +120,7 @@ class TaskProcessing extends Component {
             className="fa fa-heartbeat"
             aria-hidden="true"
           />
-          {`${title}${detail}`}
+          {getTitle(this.state.openTask, '開始しているタスクはありません。', true)}
         </Typography>
       </div>
     );
