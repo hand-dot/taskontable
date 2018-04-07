@@ -20,7 +20,7 @@
     "font-awesome": "^4.7.0",
     "handsontable": "^0.38.1",
     "lodash.debounce": "^4.0.8",
-    "material-ui": "^1.0.0-beta.40",
+    "material-ui": "^1.0.0-beta.41",
     "moment": "^2.22.0",
     "prop-types": "^15.6.1",
     "ramda": "^0.25.0",
