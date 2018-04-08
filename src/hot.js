@@ -169,7 +169,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
       notifi.onclose = () => {
         // FIXME このrowが通知を発行した瞬間の行番号なので、通知が来る頃にはずれている可能性がある。結果的にスヌーズがずっと来る可能性がある。
         if (hotInstance.getDataAtRowProp(row, 'endTime')) return;// 終了時刻が設定されていた場合には何もしない
-        if (prop === 'endTime') setNotifiCell(hotInstance, row, 'endTime', 1000, true); // 終了の通知が放置されないように通知を5分後に再設定
+        if (prop === 'endTime') setNotifiCell(hotInstance, row, 'endTime', 300000, true); // 終了の通知が放置されないように通知を5分後に再設定
       };
     }
   }, timeout);
