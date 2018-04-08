@@ -1,5 +1,6 @@
 import moment from 'moment';
 import Handsontable from 'handsontable';
+import debounce from 'lodash.debounce';
 import tableTaskSchema from './schemas/tableTaskSchema';
 import constants from './constants';
 import util from './util';
@@ -166,10 +167,9 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
         hotInstance.selectCell(row, hotInstance.propToCol(prop));
       };
       notifi.onclose = () => {
-        // 終了時刻が設定されていた場合には何もしない
-        if (hotInstance.getDataAtRowProp(row, 'endTime')) return;
-        // 終了の通知が放置されないように通知を5分後に再設定
-        if (prop === 'endTime') setNotifiCell(hotInstance, row, 'endTime', 300000, true);
+        // FIXME このrowが通知を発行した瞬間の行番号なので、通知が来る頃にはずれている可能性がある。結果的にスヌーズがずっと来る可能性がある。
+        if (hotInstance.getDataAtRowProp(row, 'endTime')) return;// 終了時刻が設定されていた場合には何もしない
+        if (prop === 'endTime') setNotifiCell(hotInstance, row, 'endTime', 1000, true); // 終了の通知が放置されないように通知を5分後に再設定
       };
     }
   }, timeout);
@@ -403,14 +403,29 @@ export const hotBaseConf = {
     Handsontable.hooks.deregister('clearAllNotifi');
   },
 };
-
+const resetNotifi = debounce((hotInstance) => {
+  // 通知をすべてクリアし、再設定(estimateで)
+  hotInstance.runHooks('clearAllNotifi');
+  const rowCount = hotInstance.countSourceRows();
+  for (let index = 0; index < rowCount; index += 1) {
+    if (!hotInstance.isEmptyRow(index)) {
+      const estimate = hotInstance.getDataAtRowProp(index, 'estimate');
+      if (estimate) manageNotifi(hotInstance, index, 'estimate', estimate);
+    }
+  }
+}, 1000);
 export const hotConf = Object.assign({}, hotBaseConf, {
   afterRowMove() {
-    // 通知をすべてクリアし、再設定
-    this.runHooks('clearAllNotifi');
-    this.getDataAtCol(columns.findIndex(colmun => colmun.data === 'estimate')).forEach((estimate, index) => {
-      if (estimate) manageNotifi(this, index, 'estimate', estimate);
-    });
+    // 行がずれるので通知を再設定
+    resetNotifi(this);
+  },
+  afterRemoveRow() {
+    // 行がずれるので通知を再設定
+    resetNotifi(this);
+  },
+  afterCreateRow() {
+    // 行がずれるので通知を再設定
+    resetNotifi(this);
   },
   afterChange(changes) {
     if (!changes) return;
