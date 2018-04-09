@@ -38,7 +38,9 @@ export default {
     const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) &&
     Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute)) {
-      return moment(`${endTimeHour}:${endTimeMinute}`, constants.TIMEFMT).diff(moment(`${startTimeHour}:${startTimeMinute}`, constants.TIMEFMT), 'minutes');
+      const end = `${endTimeHour}:${endTimeMinute}`;
+      const start = `${startTimeHour}:${startTimeMinute}`;
+      return moment(end, constants.TIMEFMT).diff(moment(start, constants.TIMEFMT), 'minutes');
     }
     return 0;
   },
@@ -53,7 +55,9 @@ export default {
     const [endTimeHour, endTimeMinute, endTimeSec] = endTimeVal.split(':');
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSec) &&
     Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSec)) {
-      return moment(`${endTimeHour}:${endTimeMinute}:${endTimeSec}`, 'HH:mm:ss').diff(moment(`${startTimeHour}:${startTimeMinute}:${startTimeSec}`, 'HH:mm:ss'), 'seconds');
+      const end = `${endTimeHour}:${endTimeMinute}:${endTimeSec}`;
+      const start = `${startTimeHour}:${startTimeMinute}:${startTimeSec}`;
+      return moment(end, 'HH:mm:ss').diff(moment(start, 'HH:mm:ss'), 'seconds');
     }
     return 0;
   },
