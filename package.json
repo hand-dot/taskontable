@@ -7,6 +7,7 @@
     "build": "react-scripts build",
     "deploy": "react-scripts build && firebase deploy",
     "test": "react-scripts test --env=jsdom",
+    "test_ci": "react-scripts test --env=jsdom --coverage",
     "eject": "react-scripts eject",
     "analyze": "source-map-explorer build/static/js/main.*",
     "storybook": "start-storybook -p 9001 -c .storybook"
