@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/hand-dot/taskontable.svg?branch=master)](https://travis-ci.org/hand-dot/taskontable)  
 # Taskontable
 
 Taskontableとは？
