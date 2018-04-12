@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/hand-dot/taskontable.svg?branch=master)](https://travis-ci.org/hand-dot/taskontable)  
-![38694873-bc8f017e-3ec5-11e8-8df4-cc6966bc9096](https://user-images.githubusercontent.com/24843808/38695796-46aadd18-3ec8-11e8-80ad-b915d92f1500.png)
+![head](https://user-images.githubusercontent.com/24843808/38695957-c07a2db0-3ec8-11e8-88b0-ce060cfdf5ef.png)  
+
 ## Problem  
 
 ### ”開発者のタスク・時間管理による心理的な負担”  
