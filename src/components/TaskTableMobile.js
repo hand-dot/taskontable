@@ -255,7 +255,7 @@ class TaskTableMobile extends Component {
                   type="number"
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'estimate')}
                   value={this.state[constants.taskStateType.add].estimate}
-                  placeholder="見積"
+                  placeholder="見積(分)"
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />

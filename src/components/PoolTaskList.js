@@ -134,7 +134,7 @@ class TaskList extends Component {
             <TableRow className={classes.taskRow}>
               <CustomTableCell className={classes.cellInput} padding="none">作業内容</CustomTableCell>
               <CustomTableCell className={classes.cellInput} padding="none">備考</CustomTableCell>
-              <CustomTableCell className={classes.miniCellInput} padding="none">見積</CustomTableCell>
+              <CustomTableCell className={classes.miniCellInput} padding="none">見積(分)</CustomTableCell>
               {(() => (isRegularTask ? <CustomTableCell className={classes.miniCellInput} padding="none">開始時刻</CustomTableCell> : null))()}
               {(() => (isRegularTask ? <CustomTableCell className={classes.miniCellInput} padding="none">第何週</CustomTableCell> : null))()}
               {(() => (isRegularTask ? <CustomTableCell className={classes.miniCellInput} padding="none">何曜日</CustomTableCell> : null))()}
@@ -296,7 +296,7 @@ class TaskList extends Component {
                   type="number"
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'estimate')}
                   value={this.state[constants.taskStateType.add].estimate}
-                  placeholder="見積"
+                  placeholder="見積(分)"
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
