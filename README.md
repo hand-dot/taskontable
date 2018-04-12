@@ -23,8 +23,8 @@
 ![1](https://user-images.githubusercontent.com/24843808/38694790-8a48efcc-3ec5-11e8-9f2c-91e281aed644.png)
   
 ### プラグイン&カスタムスクリプト 
-![1](https://user-images.githubusercontent.com/24843808/38694790-8a48efcc-3ec5-11e8-9f2c-91e281aed644.png)
-  
+![2](https://user-images.githubusercontent.com/24843808/38694789-8a224908-3ec5-11e8-918e-bae981e328f9.png)  
+
 ### コラボレーション(開発予定)  
   チームや仲間と1つのワークシートを共有することができます。
   
