@@ -5,6 +5,7 @@ import Typography from 'material-ui/Typography';
 import { LinearProgress } from 'material-ui/Progress';
 import { withStyles } from 'material-ui/styles';
 import util from '../util';
+import tasksUtil from '../tasksUtil';
 import constants from '../constants';
 import openTaskSchema from '../schemas/openTaskSchema';
 
@@ -31,8 +32,10 @@ function getTitle(openTask, defaultTitle, isShortTitle) {
     if (openTask.estimate - actuallyMinute === 1 || actuallyMinute - openTask.estimate === 0) {
       const sec = moment(openTask.now, 'HH:mm:ss').format('s');
       title = `${isOver ? `${sec}秒オーバー` : `残${60 - sec}秒`} - ${title}`;
+    } else if (isOver) {
+      title = `${`${actuallyMinute - openTask.estimate}分オーバー`} - ${title}`;
     } else {
-      title = `${isOver ? `${actuallyMinute - openTask.estimate}分オーバー` : `残${openTask.estimate - actuallyMinute}分`} - ${title}`;
+      title = actuallyMinute < 0 ? defaultTitle : `残${openTask.estimate - actuallyMinute}分- ${title}`;
     }
   } else {
     title = defaultTitle;
@@ -67,7 +70,7 @@ class TaskProcessing extends Component {
   bindOpenTaskProcessing(tasks) {
     if (this.state.isMobile) return;
     if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
-    const openTask = tasks.find(task => task.startTime && task.endTime === '' && task.estimate);
+    const openTask = tasksUtil.getSortedTasks(tasks).find(task => task.startTime && task.endTime === '' && task.estimate);
     if (util.isToday(this.props.date) && openTask) {
       this.bindOpenTaskIntervalID = setInterval(() => {
         const now = moment();
