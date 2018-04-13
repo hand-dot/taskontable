@@ -47,10 +47,10 @@ class Taskontable extends Component {
       isOpenSnackbar: false,
       snackbarText: '',
       isMobile: util.isMobile(),
-      loading: true,
+      loading: false,
       saveable: false,
       tab: 0,
-      isOpenDashboard: true,
+      isOpenDashboard: false,
       date: moment().format(constants.DATEFMT),
       lastSaveTime: moment().format(constants.TIMEFMT),
       tableTasks: [],
@@ -425,7 +425,11 @@ class Taskontable extends Component {
               <Tabs
                 value={this.state.tab}
                 onChange={(e, tab) => {
-                  this.setState({ tab, isOpenDashboard: true });
+                  if (this.state.isOpenDashboard && this.state.tab === tab) {
+                    this.setState({ tab, isOpenDashboard: false });
+                  } else {
+                    this.setState({ tab, isOpenDashboard: true });
+                  }
                   setTimeout(() => this.forceUpdate());
                 }}
                 scrollable={false}
