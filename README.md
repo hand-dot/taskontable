@@ -53,7 +53,7 @@ $ npm install
 2.設定ファイルの作成と記入
 
 [`src/`](https://github.com/hand-dot/taskontable/tree/master/src) 配下に `configs`ディレクトリがあります。  
-このディレクトリに存在する firebase.js(firebse), ga.js(google analytics), sentry.js(sentry)のアカウント情報を記入してください。  
+このディレクトリに存在する firebase.js([Firebase](https://firebase.google.com/)), ga.js([GoogleAnalytics](https://developers.google.com/analytics/)), sentry.js([Sentry](https://sentry.io/welcome/))のアカウント情報を記入してください。  
 その他の利用しているサービスについては[こちら](https://github.com/hand-dot/taskontable/wiki/3.%E5%88%A9%E7%94%A8%E3%81%97%E3%81%A6%E3%81%84%E3%82%8B%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9)を参照してください。
 
 3.taskontableディレクトリ上でアプリを起動
