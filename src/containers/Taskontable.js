@@ -139,7 +139,6 @@ class Taskontable extends Component {
       setTimeout(() => { this.moveTableTaskToPoolTask(taskPoolType, removeTask); });
       return;
     }
-    this.setState({ saveable: this.state.saveable });
     setTimeout(() => { this.saveTableTasks(); });
   }
 

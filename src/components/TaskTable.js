@@ -10,6 +10,7 @@ import constants from '../constants';
 import util from '../util';
 
 import '../styles/handsontable-custom.css';
+import tasksUtil from '../tasksUtil';
 
 const styles = {
 };
@@ -78,7 +79,7 @@ class TaskTable extends Component {
   syncPropByRender() {
     if (!this.hot) return;
     const hotTasks = getHotTasksIgnoreEmptyTask(this.hot);
-    if (!util.equal(hotTasks, this.props.tableTasks)) {
+    if (!util.equal(hotTasks.map(task => tasksUtil.deleteUselessTaskProp(task)), this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)))) {
       this.props.handleSaveable(true);
       this.props.handleTableTasks(hotTasks);
       this.hot.render();
