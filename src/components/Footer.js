@@ -78,10 +78,13 @@ function Footer(props) {
               <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.CONTACT_URL} target="_blank">お問い合わせ</a>
               </Grid>
-              <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.COMMUNITY_URL} target="_blank">コミュニティー</a>
               </Grid>
-              <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
+                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.BLOG_URL} target="_blank">ブログ</a>
+              </Grid>
+              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.ROADMAP_URL} target="_blank">ロードマップ</a>
               </Grid>
               <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>

@@ -93,6 +93,8 @@ class GlobalHeader extends Component {
       window.open(constants.ROADMAP_URL);
     } else if (constants.menuItemKey.COMMUNITY === menuItemKey) {
       window.open(constants.COMMUNITY_URL);
+    } else if (constants.menuItemKey.BLOG === menuItemKey) {
+      window.open(constants.BLOG_URL);
     }
   }
 
@@ -179,6 +181,10 @@ class GlobalHeader extends Component {
                       <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.ROADMAP}>
                         <i className="fa fa-trello" aria-hidden="true" />
                     　ロードマップ
+                      </MenuItem>
+                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.BLOG}>
+                        <i className="fa fa-medium" aria-hidden="true" />
+                      　ブログ
                       </MenuItem>
                       <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.COMMUNITY}>
                         <i className="fa fa-slack" aria-hidden="true" />
