@@ -188,7 +188,7 @@ class Taskontable extends Component {
       const target = this.state.poolTasks[taskPoolType].splice(value, 1)[0];
       this.state.poolTasks[taskPoolType].unshift(target);
     } else if (taskActionType === constants.taskActionType.MOVE_TABLE) {
-      const tableTasks = this.state.tableTasks;
+      const tableTasks = util.cloneDeep(this.state.tableTasks);
       tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
       if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
          taskPoolType === constants.taskPoolType.LOWPRIORITY) {
@@ -410,7 +410,10 @@ class Taskontable extends Component {
       firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
       firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).off();
       this.setState({ date: newDate });
-      if (!this.state.isMobile) this.taskTable.updateIsActive(util.isToday(newDate));
+      if (!this.state.isMobile) {
+        this.taskTable.updateIsActive(util.isToday(newDate));
+        this.taskTable.setDataForHot([{ id: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...' }]);
+      }
       setTimeout(() => { this.attachTableTasks(); this.attachMemo(); });
     }
   }
