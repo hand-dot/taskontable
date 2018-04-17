@@ -67,9 +67,8 @@ class TaskTableMobile extends Component {
   doTaskAction(index, taskActionType) {
     this.closeTaskAction(index);
     if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${this.props.tableTasks[index].title} を本当に削除しますか？`)) {
-      this.closeTaskAction(index);
       this.props.changeTableTasks(constants.taskActionType.REMOVE, index);
-    } else {
+    } else if (taskActionType !== constants.taskActionType.REMOVE) {
       this.props.changeTableTasks(taskActionType, index);
     }
   }

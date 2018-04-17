@@ -434,7 +434,7 @@ class Taskontable extends Component {
                 }}
                 scrollable={false}
                 scrollButtons="off"
-                indicatorColor={constants.brandColor.light.BLUE}
+                indicatorColor="primary"
               >
                 <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
                 <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-tasks fa-lg" />タスクプール</span>} />

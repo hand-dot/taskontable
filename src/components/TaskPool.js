@@ -27,7 +27,7 @@ class TaskPool extends Component {
   doTaskAction(index, taskActionType) {
     if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${this.props.poolTasks[this.state.tab][index].title} を本当に削除しますか？`)) {
       this.props.changePoolTasks(constants.taskActionType.REMOVE, this.state.tab, index);
-    } else {
+    } else if (taskActionType !== constants.taskActionType.REMOVE) {
       this.props.changePoolTasks(taskActionType, this.state.tab, index);
     }
   }
@@ -44,7 +44,7 @@ class TaskPool extends Component {
           {(() => {
             if (!util.isMobile()) {
               return (
-                <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor={constants.brandColor.base.BLUE} textColor="inherit">
+                <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="primary" textColor="inherit">
                   <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
                   <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
                   <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="定期的" />
@@ -52,7 +52,7 @@ class TaskPool extends Component {
               );
             }
             return (
-              <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor={constants.brandColor.base.BLUE} textColor="inherit">
+              <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="primary" textColor="inherit">
                 <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
                 <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
               </Tabs>
