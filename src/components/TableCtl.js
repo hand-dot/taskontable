@@ -55,11 +55,11 @@ class TableCtl extends Component {
   }
 
   render() {
-    const { tableTasks, date, isLoading, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
+    const { tableTasks, date, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
       <div>
-        <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} variant={isLoading ? 'indeterminate' : 'determinate'} value={progressPer} />
+        <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} value={progressPer} />
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems={'center'} justify={'center'} spacing={0}>
           <Hidden xsDown>
             <Grid item xs={3}>
@@ -131,7 +131,6 @@ TableCtl.propTypes = {
     memo: PropTypes.string.isRequired,
   })).isRequired,
   date: PropTypes.string.isRequired,
-  isLoading: PropTypes.bool.isRequired,
   lastSaveTime: PropTypes.string.isRequired,
   saveable: PropTypes.bool.isRequired,
   changeDate: PropTypes.func.isRequired,

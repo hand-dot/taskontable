@@ -34,6 +34,7 @@ const styles = {
   },
 };
 
+const database = firebase.database();
 
 class Taskontable extends Component {
   constructor(props) {
@@ -47,7 +48,6 @@ class Taskontable extends Component {
       isOpenSnackbar: false,
       snackbarText: '',
       isMobile: util.isMobile(),
-      loading: false,
       saveable: false,
       tab: 0,
       isOpenDashboard: false,
@@ -60,6 +60,8 @@ class Taskontable extends Component {
         regularTasks: [],
       },
       memo: '',
+      importScript: '',
+      exportScript: '',
     };
   }
 
@@ -77,10 +79,12 @@ class Taskontable extends Component {
 
   componentDidMount() {
     if ('Notification' in window && Notification.permission !== 'granted') Notification.requestPermission();
+    this.fetchScripts().then(() => {
+      // テーブルを同期開始&初期化
+      this.attachTableTasks();
+    });
     // タスクプールをサーバーと同期開始
     this.attachPoolTasks();
-    // テーブルを同期開始&初期化
-    this.attachTableTasks();
     // メモを同期開始
     this.attachMemo();
   }
@@ -88,9 +92,9 @@ class Taskontable extends Component {
   componentWillUnmount() {
     if (!this.state.isMobile) window.onkeydown = '';
     window.onbeforeunload = '';
-    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).off();
-    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
-    firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).off();
+    database.ref(`/users/${this.props.user.uid}/poolTasks`).off();
+    database.ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+    database.ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).off();
   }
   /**
    * テーブルタスクを開始時刻順にソートしstateに設定します。
@@ -223,7 +227,7 @@ class Taskontable extends Component {
         return copyTask;
       });
     }
-    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).set(this.state.poolTasks);
+    database.ref(`/users/${this.props.user.uid}/poolTasks`).set(this.state.poolTasks);
   }
   /**
    * stateのtableTasksをサーバーに保存します。
@@ -233,20 +237,18 @@ class Taskontable extends Component {
     const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(util.setIdIfNotExist(tableTask)));
     // 開始時刻順に並び替える
     const sortedTableTask = this.setSortedTableTasks(tableTasks);
-    this.setState({ loading: true });
     this.fireScript(sortedTableTask, 'exportScript').then((data) => {
-      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data).then(() => {
+      database.ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(data).then(() => {
         this.setState({
           isOpenSnackbar: true,
           snackbarText: 'エクスポートスクリプトを実行し、保存しました。',
-          loading: false,
           lastSaveTime: moment().format(constants.TIMEFMT),
           saveable: false,
         });
       });
     }, () => {
-      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(sortedTableTask).then(() => {
-        this.setState({ isOpenSnackbar: true, snackbarText: '保存しました。', loading: false, lastSaveTime: moment().format(constants.TIMEFMT), saveable: false });
+      database.ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).set(sortedTableTask).then(() => {
+        this.setState({ isOpenSnackbar: true, snackbarText: '保存しました。', lastSaveTime: moment().format(constants.TIMEFMT), saveable: false });
       });
     });
   }
@@ -254,31 +256,24 @@ class Taskontable extends Component {
    * stateのmemoをサーバーに保存します。
    */
   saveMemo() {
-    firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).set(this.state.memo);
+    database.ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).set(this.state.memo);
   }
 
   /**
    * テーブルタスクを同期します。
    */
   attachTableTasks() {
-    firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
-      this.setState({ loading: true });
+    database.ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       if (snapshot.exists() && util.equal(this.state.tableTasks, snapshot.val())) {
         // 同期したがテーブルのデータと差分がなかった場合(自分の更新)
-        this.setState({ saveable: false, loading: false });
+        this.setState({ saveable: false });
         return;
       }
-      const snackbarText = 'インポートスクリプトを実行しました。';
-      const isOpenSnackbar = true;
-      // 下記初期化もしくは自分のテーブル以外の更新
+      let tableTasks = [];
+      // 初期化もしくは自分のテーブル以外の更新
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
-        this.fireScript(snapshot.val(), 'importScript').then(
-          (data) => {
-            this.setSortedTableTasks(data);
-            this.setState({ isOpenSnackbar, snackbarText });
-          },
-          () => { this.setSortedTableTasks(snapshot.val()); });
+        tableTasks = snapshot.val();
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合(定期タスクをテーブルに設定する処理。本日以降しか動作しない)
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
@@ -286,29 +281,22 @@ class Taskontable extends Component {
         // util.convertDayOfWeekToString(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
         // https://github.com/hand-dot/taskontable/issues/118
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.convertDayOfWeekToString(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-        this.fireScript(regularTasks, 'importScript').then(
-          (data) => {
-            this.setSortedTableTasks(data);
-            this.setState({ isOpenSnackbar, snackbarText });
-          },
-          () => { this.setSortedTableTasks(regularTasks); });
-      } else {
-        // サーバーにデータが無く、定期タスクも登録されていない場合
-        this.fireScript([], 'importScript').then(
-          (data) => {
-            this.setSortedTableTasks(data);
-            this.setState({ isOpenSnackbar, snackbarText });
-          },
-          () => { this.setSortedTableTasks([]); });
+        tableTasks = regularTasks;
       }
-      this.setState({ saveable: false, loading: false });
+      this.fireScript(tableTasks, 'importScript').then(
+        (data) => {
+          this.setSortedTableTasks(data);
+          this.setState({ isOpenSnackbar: true, snackbarText: 'インポートスクリプトを実行しました。' });
+        },
+        () => { this.setSortedTableTasks(tableTasks); });
+      this.setState({ saveable: false });
     });
   }
   /**
    * プールタスクを同期します。
    */
   attachPoolTasks() {
-    firebase.database().ref(`/users/${this.props.user.uid}/poolTasks`).on('value', (snapshot) => {
+    database.ref(`/users/${this.props.user.uid}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
         const poolTasks = snapshot.val();
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
@@ -342,7 +330,7 @@ class Taskontable extends Component {
    * プールタスクを同期します。
    */
   attachMemo() {
-    firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).on('value', (snapshot) => {
+    database.ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).on('value', (snapshot) => {
       const memo = snapshot.val();
       if (snapshot.exists() && memo) {
         if (this.state.memo !== memo) this.setState({ memo });
@@ -375,28 +363,36 @@ class Taskontable extends Component {
   }
 
   /**
-   * スクリプトを取得し、処理データに対してwokerで処理を実行します。
+   * スクリプトを取得します。
+   */
+  fetchScripts() {
+    const scriptsPath = `/users/${this.props.user.uid}/scripts/`;
+    const promises = [database.ref(`${scriptsPath}importScript`).once('value'), database.ref(`${scriptsPath}exportScript`).once('value')];
+    return Promise.all(promises).then((snapshots) => {
+      const [importScriptSnapshot, exportScriptSnapshot] = snapshots;
+      if (importScriptSnapshot.exists() && importScriptSnapshot.val() !== '') {
+        this.setState({ importScript: importScriptSnapshot.val() });
+      }
+      if (exportScriptSnapshot.exists() && exportScriptSnapshot.val() !== '') {
+        this.setState({ exportScript: exportScriptSnapshot.val() });
+      }
+    });
+  }
+
+  /**
+   * 処理データに対してstateのインポートスクリプトorエクスポートスクリプトで処理を実行します。
    * @param  {} data 処理データ
    * @param  {} scriptType='exportScript' スクリプト種別(インポートスクリプトorエクスポートスクリプト)
    */
   fireScript(data, scriptType = 'exportScript') {
+    const script = scriptType === 'exportScript' ? this.state.exportScript : this.state.importScript;
     return new Promise((resolve, reject) => {
-      // スクリプトを発火するのは本日のタスクテーブルのみ
-      if (!util.isToday(this.state.date)) {
+      if (script === '' || !util.isToday(this.state.date)) {
         reject();
         return;
       }
-      firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
-        if (snapshot.exists() && snapshot.val() !== '') {
-          const script = snapshot.val();
-          util.runWorker(script, data).then(
-            (result) => { resolve(result); },
-            () => { reject(); },
-          );
-        } else {
-          reject();
-        }
-      });
+      // スクリプトを発火するのはスクリプトが存在する かつ 本日のタスクテーブルのみ
+      util.runWorker(script, data).then((result) => { resolve(result); }, () => { reject(); });
     });
   }
 
@@ -407,8 +403,8 @@ class Taskontable extends Component {
    */
   changeDate(newDate) {
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
-      firebase.database().ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
-      firebase.database().ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).off();
+      database.ref(`/users/${this.props.user.uid}/tableTasks/${this.state.date}`).off();
+      database.ref(`/users/${this.props.user.uid}/memos/${this.state.date}`).off();
       this.setState({ date: newDate });
       if (!this.state.isMobile) {
         this.taskTable.updateIsActive(util.isToday(newDate));
@@ -452,7 +448,6 @@ class Taskontable extends Component {
             <TableCtl
               tableTasks={this.state.tableTasks}
               date={this.state.date}
-              isLoading={this.state.loading}
               lastSaveTime={this.state.lastSaveTime}
               saveable={this.state.saveable}
               changeDate={this.changeDate.bind(this)}
