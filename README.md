@@ -1,9 +1,9 @@
 [![Build Status](https://travis-ci.org/hand-dot/taskontable.svg?branch=master)](https://travis-ci.org/hand-dot/taskontable)  
+[![Greenkeeper badge](https://badges.greenkeeper.io/hand-dot/taskontable.svg)](https://greenkeeper.io/)  
 ![head](https://user-images.githubusercontent.com/24843808/38695957-c07a2db0-3ec8-11e8-88b0-ce060cfdf5ef.png)  
 
 ## Problem  
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/hand-dot/taskontable.svg)](https://greenkeeper.io/)
 
 ### ”開発者のタスク・時間管理による心理的な負担”  
 
