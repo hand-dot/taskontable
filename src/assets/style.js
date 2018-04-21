@@ -15,10 +15,10 @@ export default {
     },
     cellInput: {
       padding: 0,
-      fontSize: 11,
+      fontSize: 12,
     },
     miniCellInput: {
-      fontSize: 11,
+      fontSize: 12,
       width: util.isMobile() ? '3rem' : '6.4rem',
     },
     taskRow: {
