@@ -55,7 +55,7 @@ class TableCtl extends Component {
   }
 
   render() {
-    const { tableTasks, date, lastSaveTime, saveable, saveTableTasks, classes, theme } = this.props;
+    const { tableTasks, date, lastSaveTime, saveable, saveWorkSheet, classes, theme } = this.props;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
       <div>
@@ -102,7 +102,7 @@ class TableCtl extends Component {
                 return (
                   <Tooltip title={`最終保存時刻 : ${lastSaveTime}`} placement="top">
                     <div style={{ display: 'inline-block' }}>
-                      <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveTableTasks} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
+                      <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
                     </div>
                   </Tooltip>
                 );
@@ -134,7 +134,7 @@ TableCtl.propTypes = {
   lastSaveTime: PropTypes.string.isRequired,
   saveable: PropTypes.bool.isRequired,
   changeDate: PropTypes.func.isRequired,
-  saveTableTasks: PropTypes.func.isRequired,
+  saveWorkSheet: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

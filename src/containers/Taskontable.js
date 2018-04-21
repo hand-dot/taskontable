@@ -230,6 +230,14 @@ class Taskontable extends Component {
     database.ref(`/users/${this.props.user.uid}/poolTasks`).set(this.state.poolTasks);
   }
   /**
+   * stateのtableTasksとmemoをサーバーに保存します。
+   */
+  saveWorkSheet() {
+    this.saveTableTasks();
+    this.saveMemo();
+  }
+
+  /**
    * stateのtableTasksをサーバーに保存します。
    */
   saveTableTasks() {
@@ -351,7 +359,7 @@ class Taskontable extends Component {
       setTimeout(() => this.changeDate(newDate));
     } else if (constants.shortcuts.SAVE(e)) {
       e.preventDefault();
-      this.saveTableTasks();
+      this.saveWorkSheet();
     } else if (constants.shortcuts.TOGGLE_HELP(e)) {
       e.preventDefault();
       this.props.toggleHelpDialog();
@@ -451,7 +459,7 @@ class Taskontable extends Component {
               lastSaveTime={this.state.lastSaveTime}
               saveable={this.state.saveable}
               changeDate={this.changeDate.bind(this)}
-              saveTableTasks={this.saveTableTasks.bind(this)}
+              saveWorkSheet={this.saveWorkSheet.bind(this)}
             />
             {(() => {
               if (this.state.isMobile) {
@@ -476,7 +484,7 @@ class Taskontable extends Component {
             <TextField
               fullWidth
               InputProps={{ style: { fontSize: 13 } }}
-              onChange={(e) => { this.setState({ memo: e.target.value }); this.saveMemo(); }}
+              onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
               value={this.state.memo}
               label={`${this.state.date}のメモ`}
               multiline
