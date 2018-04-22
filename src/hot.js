@@ -405,6 +405,7 @@ export const hotBaseConf = {
 };
 const resetNotifi = debounce((hotInstance) => {
   // 通知をすべてクリアし、再設定(estimateで)
+  if (!hotInstance.container) return;
   hotInstance.runHooks('clearAllNotifi');
   const rowCount = hotInstance.countSourceRows();
   for (let index = 0; index < rowCount; index += 1) {

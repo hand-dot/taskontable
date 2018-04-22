@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Dialog, {
-  DialogContent,
-  DialogTitle,
-} from 'material-ui/Dialog';
+import Dialog, { DialogContent, DialogTitle } from 'material-ui/Dialog';
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import AppBar from 'material-ui/AppBar';
@@ -85,7 +82,7 @@ function HelpDialog(props) {
                   <Grid className={classes.shotcut} item xs={6}>
                     <h5>アプリ</h5>
                     {/* ヘルプだけはmacOSでクロームのヘルプがアプリのレベルで割り当てられていてctrlにしなければいけない */}
-                    <Typography gutterBottom variant="caption"><kbd>ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography> 
+                    <Typography gutterBottom variant="caption"><kbd>ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography>
                     <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>S</kbd> – 保存</Typography>
                     <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
                     <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>

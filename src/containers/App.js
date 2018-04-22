@@ -26,6 +26,7 @@ const Logout = AsyncContainer(() => import('./Logout').then(module => module.def
 const Signup = AsyncContainer(() => import('./Signup').then(module => module.default), {});
 const Scripts = AsyncContainer(() => import('./Scripts').then(module => module.default), {});
 const Taskontable = AsyncContainer(() => import('./Taskontable').then(module => module.default), {});
+const WorkSheets = AsyncContainer(() => import('./WorkSheets').then(module => module.default), {});
 
 firebase.initializeApp(firebaseConf);
 
@@ -109,7 +110,7 @@ class App extends Component {
   }
 
   goScripts() {
-    this.props.history.push('scripts');
+    this.props.history.push(`/${this.state.user.uid}/scripts`);
   }
 
   render() {
@@ -125,26 +126,12 @@ class App extends Component {
           goScripts={this.goScripts.bind(this)}
         />
         <Switch>
-          <Route path="/signup" render={props => <Signup login={this.login.bind(this)} {...props} />} />
-          <Route path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
-          <Route path="/logout" render={props => <Logout {...props} />} />
-          <Route path="/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts user={this.state.user} {...props} />; } return null; }} />
-          <Route
-            exact
-            path="/"
-            render={(props) => {
-              if (this.state.user.uid !== '') {
-                // 認証が初期値から変更されたらアプリをスタート
-                return (
-                  <Taskontable
-                    user={this.state.user}
-                    toggleHelpDialog={this.toggleHelpDialog.bind(this)}
-                    {...props}
-                  />);
-              }
-              return (<Top {...props} />);
-            }}
-          />
+          <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <WorkSheets displayName={this.state.user.displayName} id={this.state.user.uid} {...props} />; } return (<Top {...props} />); }} />
+          <Route exact strict path="/signup" render={props => <Signup login={this.login.bind(this)} {...props} />} />
+          <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
+          <Route exact strict path="/logout" render={props => <Logout {...props} />} />
+          <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable id={this.state.user.uid} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
+          <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts user={this.state.user} {...props} />; } return null; }} />
         </Switch>
         <Dialog open={this.state.loginProggres}>
           <CircularProgress className={classes.content} size={60} />
