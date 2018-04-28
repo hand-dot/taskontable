@@ -104,7 +104,7 @@ class Scripts extends Component {
     if (this.state.importScript !== this.state.importScriptBk || this.state.exportScript !== this.state.exportScriptBk) {
       if (!window.confirm('保存していない内容がありますが、アプリに戻ってもよろしいですか？')) return;
     }
-    this.props.history.push('/');
+    this.props.history.push(`/${this.props.id}`);
   }
 
   resetExampleHot() {
@@ -116,7 +116,7 @@ class Scripts extends Component {
   resetScript(scriptType = 'exportScript', noConfirm) {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!noConfirm && !window.confirm(`${scriptType}を保存前に戻してもよろしいですか？`)) return;
-    firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).once('value').then((snapshot) => {
+    firebase.database().ref(`/users/${this.props.id}/scripts/${scriptType}`).once('value').then((snapshot) => {
       const script = snapshot.exists() && snapshot.val() ? snapshot.val() : '';
       this.setState({ [scriptType]: script, [`${scriptType}Bk`]: script });
     });
@@ -125,7 +125,7 @@ class Scripts extends Component {
   saveScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!window.confirm(`${scriptType}を保存してもよろしいですか？`)) return;
-    firebase.database().ref(`/users/${this.props.user.uid}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
+    firebase.database().ref(`/users/${this.props.id}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
       this.setState({ isOpenSaveSnackbar: true, [`${scriptType}Bk`]: this.state[scriptType] });
     });
   }
@@ -250,11 +250,7 @@ class Scripts extends Component {
   }
 }
 Scripts.propTypes = {
-  user: PropTypes.shape({
-    displayName: PropTypes.string.isRequired,
-    photoURL: PropTypes.string.isRequired,
-    uid: PropTypes.string.isRequired,
-  }).isRequired,
+  id: PropTypes.string.isRequired,
   history: PropTypes.object.isRequired, // eslint-disable-line
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line

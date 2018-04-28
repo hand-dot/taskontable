@@ -64,13 +64,13 @@ class App extends Component {
         this.setState({ user: { displayName: currentUser.displayName, photoURL: currentUser.photoURL, uid: currentUser.uid } });
         // dimension1はgaではuidとしている
         ReactGA.set({ dimension1: currentUser.uid });
-        setTimeout(() => {
+        // ログイン時もしくは自分のuidを含まないURLではワークシートの選択(urlルート)に飛ばす
+        const pathname = this.props.location.pathname;
+        if(pathname === '/login' || pathname === '/signup' || pathname.indexOf(currentUser.uid) === -1) {
           this.props.history.push('/');
-          this.setState({ loginProggres: false });
-        });
-      } else {
-        this.setState({ loginProggres: false });
-      }
+        }
+      } 
+      this.setState({ loginProggres: false });
     });
   }
 
@@ -131,7 +131,7 @@ class App extends Component {
           <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/logout" render={props => <Logout {...props} />} />
           <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable id={this.state.user.uid} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
-          <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts user={this.state.user} {...props} />; } return null; }} />
+          <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts id={this.state.user.uid} {...props} />; } return null; }} />
         </Switch>
         <Dialog open={this.state.loginProggres}>
           <CircularProgress className={classes.content} size={60} />
