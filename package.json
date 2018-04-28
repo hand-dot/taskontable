@@ -37,7 +37,7 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
-    "@storybook/react": "^3.4.2",
+    "@storybook/react": "^3.4.3",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "chai": "^4.1.2",
     "eslint": "^4.19.1",
