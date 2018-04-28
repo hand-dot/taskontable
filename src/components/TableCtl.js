@@ -97,18 +97,13 @@ class TableCtl extends Component {
                 <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
               </div>
             </Tooltip>
-            {(() => {
-              if (!util.isMobile()) {
-                return (
+            {!util.isMobile() && (
                   <Tooltip title={`最終保存時刻 : ${lastSaveTime}`} placement="top">
-                    <div style={{ display: 'inline-block' }}>
-                      <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
-                    </div>
-                  </Tooltip>
-                );
-              }
-              return null;
-            })()}
+                  <div style={{ display: 'inline-block' }}>
+                    <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
+                  </div>
+                </Tooltip>
+            )}
             <Tooltip title={moment(date, constants.DATEFMT).add(1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
                 <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><i className="fa fa-angle-right fa-lg" /></Button>

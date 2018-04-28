@@ -81,26 +81,19 @@ class Dashboard extends Component {
             }}
           />
         </Grid>
-        {(() => {
-          if (!util.isMobile()) {
-            return (
-              <Grid item xs={12} sm={6}>
-                <Typography gutterBottom variant="subheading">
-                       時刻
-                </Typography>
-                <Grid container>
-                  <Grid item xs={6}>
-                    <Clock title={'現在時刻'} time={this.state.currentTime} />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Clock title={'終了時刻'} time={this.state.endTime} />
-                  </Grid>
-                </Grid>
+        {!util.isMobile() && (
+          <Grid item xs={12} sm={6}>
+            <Typography gutterBottom variant="subheading">時刻</Typography>
+            <Grid container>
+              <Grid item xs={6}>
+                <Clock title={'現在時刻'} time={this.state.currentTime} />
               </Grid>
-            );
-          }
-          return null;
-        })()}
+              <Grid item xs={6}>
+                <Clock title={'終了時刻'} time={this.state.endTime} />
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
         <Grid item xs={12}>
           <Typography gutterBottom variant="subheading">タイムライン</Typography>
           <Grid container>
