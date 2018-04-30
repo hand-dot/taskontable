@@ -2,9 +2,13 @@
     "rules": {
         "users": {
             "$uid": {
-                ".read": "$uid === auth.uid",
+                ".read": "auth != null",
                 ".write": "$uid === auth.uid"
             }
+        },
+        "teams": {
+            ".read": "auth != null",
+            ".write": "auth != null"
         }
     }
 }

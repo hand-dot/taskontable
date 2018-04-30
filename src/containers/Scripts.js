@@ -104,7 +104,7 @@ class Scripts extends Component {
     if (this.state.importScript !== this.state.importScriptBk || this.state.exportScript !== this.state.exportScriptBk) {
       if (!window.confirm('保存していない内容がありますが、アプリに戻ってもよろしいですか？')) return;
     }
-    this.props.history.push(`/${this.props.id}`);
+    this.props.history.goBack();
   }
 
   resetExampleHot() {
@@ -116,7 +116,7 @@ class Scripts extends Component {
   resetScript(scriptType = 'exportScript', noConfirm) {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!noConfirm && !window.confirm(`${scriptType}を保存前に戻してもよろしいですか？`)) return;
-    firebase.database().ref(`/users/${this.props.id}/scripts/${scriptType}`).once('value').then((snapshot) => {
+    firebase.database().ref(`/users/${this.props.userId}/scripts/${scriptType}`).once('value').then((snapshot) => {
       const script = snapshot.exists() && snapshot.val() ? snapshot.val() : '';
       this.setState({ [scriptType]: script, [`${scriptType}Bk`]: script });
     });
@@ -125,7 +125,7 @@ class Scripts extends Component {
   saveScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!window.confirm(`${scriptType}を保存してもよろしいですか？`)) return;
-    firebase.database().ref(`/users/${this.props.id}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
+    firebase.database().ref(`/users/${this.props.userId}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
       this.setState({ isOpenSaveSnackbar: true, [`${scriptType}Bk`]: this.state[scriptType] });
     });
   }
@@ -176,7 +176,7 @@ class Scripts extends Component {
             <Typography gutterBottom variant="subheading">
             タスクテーブルのデータの例
               <span className={classes.divider}>/</span>
-              <Tooltip title={'リセット'} placement="top">
+              <Tooltip title="リセット" placement="top">
                 <div style={{ display: 'inline-block' }}>
                   <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><i className="fa fa-refresh" /></Button>
                 </div>
@@ -204,7 +204,7 @@ class Scripts extends Component {
         </Grid>
         <Grid item xs={12}>
           <ScriptsEditor
-            scriptType={'importScript'}
+            scriptType="importScript"
             script={this.state.importScript}
             scriptBk={this.state.importScriptBk}
             exampleScript={exampleImportScript.toString()}
@@ -218,7 +218,7 @@ class Scripts extends Component {
         </Grid>
         <Grid item xs={12}>
           <ScriptsEditor
-            scriptType={'exportScript'}
+            scriptType="exportScript"
             script={this.state.exportScript}
             scriptBk={this.state.exportScriptBk}
             exampleScript={exampleExportScript.toString()}
@@ -237,7 +237,7 @@ class Scripts extends Component {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSaveSnackbar}
           onClose={this.closeSnackbars.bind(this)}
-          message={'保存しました。'}
+          message="保存しました。"
         />
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
@@ -250,7 +250,7 @@ class Scripts extends Component {
   }
 }
 Scripts.propTypes = {
-  id: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
   history: PropTypes.object.isRequired, // eslint-disable-line
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line

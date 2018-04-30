@@ -45,6 +45,20 @@ const styles = theme => ({
   },
 });
 
+function handleMenuItem(event) {
+  const menuItemKey = event.currentTarget.getAttribute('data-menu-item-key');
+  if (constants.menuItemKey.CONTACT === menuItemKey) {
+    window.open(constants.CONTACT_URL);
+  } else if (constants.menuItemKey.GIT === menuItemKey) {
+    window.open(constants.REPOSITORY_URL);
+  } else if (constants.menuItemKey.ROADMAP === menuItemKey) {
+    window.open(constants.ROADMAP_URL);
+  } else if (constants.menuItemKey.COMMUNITY === menuItemKey) {
+    window.open(constants.COMMUNITY_URL);
+  } else if (constants.menuItemKey.BLOG === menuItemKey) {
+    window.open(constants.BLOG_URL);
+  }
+}
 class GlobalHeader extends Component {
   constructor(props) {
     super(props);
@@ -52,7 +66,6 @@ class GlobalHeader extends Component {
       login: false,
       anchorEl: null,
       openMenuKey: '',
-      isOpenDescriptionDialog: false,
     };
   }
 
@@ -81,27 +94,6 @@ class GlobalHeader extends Component {
     this.setState({ anchorEl: event.currentTarget, openMenuKey: menuKey });
   }
 
-  handleMenuItem(event) {
-    const menuItemKey = event.currentTarget.getAttribute('data-menu-item-key');
-    if (constants.menuItemKey.DESCRIPTION === menuItemKey) {
-      this.setState({ isOpenDescriptionDialog: true });
-    } else if (constants.menuItemKey.CONTACT === menuItemKey) {
-      window.open(constants.CONTACT_URL);
-    } else if (constants.menuItemKey.GIT === menuItemKey) {
-      window.open(constants.REPOSITORY_URL);
-    } else if (constants.menuItemKey.ROADMAP === menuItemKey) {
-      window.open(constants.ROADMAP_URL);
-    } else if (constants.menuItemKey.COMMUNITY === menuItemKey) {
-      window.open(constants.COMMUNITY_URL);
-    } else if (constants.menuItemKey.BLOG === menuItemKey) {
-      window.open(constants.BLOG_URL);
-    }
-  }
-
-  closeDescriptionDialog() {
-    this.setState({ isOpenDescriptionDialog: false });
-  }
-
   logout() {
     this.closeMenu();
     setTimeout(() => this.props.logout());
@@ -112,8 +104,15 @@ class GlobalHeader extends Component {
     setTimeout(() => this.props.goScripts());
   }
 
+  goWorkSheets() {
+    this.closeMenu();
+    setTimeout(() => this.props.goWorkSheets());
+  }
+
   render() {
-    const { user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes } = this.props;
+    const {
+      user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes,
+    } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -124,83 +123,83 @@ class GlobalHeader extends Component {
               <Link className={classes.title} to="/"><img src={title} style={{ marginTop: 5 }} alt="taskontable" height="18" /></Link>
               {(() => {
                 if (!this.state.login) {
-                  return (<div style={{ display: 'inline-flex' }}>
-                    <Link className={classes.link} to="/login"><Button variant="raised" className={classes.button}>ログイン</Button></Link>
-                    <Link className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >アカウント作成</Button></Link>
-                  </div>);
+                  return (
+                    <div style={{ display: 'inline-flex' }}>
+                      <Link className={classes.link} to="/login"><Button variant="raised" className={classes.button}>ログイン</Button></Link>
+                      <Link className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >アカウント作成</Button></Link>
+                    </div>);
                 }
-                return (<div style={{ display: 'inline-flex' }}>
-                  <div>
-                    <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
-                      {(() => {
+                return (
+                  <div style={{ display: 'inline-flex' }}>
+                    <div>
+                      <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
+                        {(() => {
                         if (user.photoURL) {
                           return <Avatar className={classes.userPhoto} src={user.photoURL} />;
                         }
                         return <i className="fa fa-user-circle" />;
                       })()}
-                    </IconButton>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={this.state.openMenuKey === 'user'}
-                      onClose={this.closeMenu.bind(this)}
-                    >
-                      <MenuItem>アカウント名: {user.displayName}</MenuItem>
-                      {(() => {
-                        if (!util.isMobile()) {
-                          return (
-                            <MenuItem onClick={this.goScripts.bind(this)}>
-                              <i className="fa fa-code" aria-hidden="true" />　スクリプト設定
-                            </MenuItem>
-                          );
-                        }
-                        return null;
-                      })()}
-                      <MenuItem onClick={this.logout.bind(this)}>
-                        <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
-                      </MenuItem>
-                    </Menu>
-                  </div>
-                  <div>
-                    <IconButton className={classes.iconButton} onClick={openHelpDialog}>
-                      <i className="fa fa-question-circle" />
-                    </IconButton>
-                  </div>
-                  <div>
-                    <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
-                      <i className="fa fa-info-circle" />
-                    </IconButton>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={this.state.openMenuKey === 'info'}
-                      onClose={this.closeMenu.bind(this)}
-                    >
-                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.CONTACT}>
-                        <i className="fa fa-envelope-o" aria-hidden="true" />
-                    　お問い合わせ
-                      </MenuItem>
-                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.ROADMAP}>
-                        <i className="fa fa-trello" aria-hidden="true" />
-                    　ロードマップ
-                      </MenuItem>
-                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.BLOG}>
-                        <i className="fa fa-medium" aria-hidden="true" />
-                      　ブログ
-                      </MenuItem>
-                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.COMMUNITY}>
-                        <i className="fa fa-slack" aria-hidden="true" />
-                      　コミュニティー
-                      </MenuItem>
-                      <MenuItem onClick={this.handleMenuItem.bind(this)} data-menu-item-key={constants.menuItemKey.GIT}>
-                        <i className="fa fa-github" aria-hidden="true" />
-                    　ソースコード
-                      </MenuItem>
-                    </Menu>
-                  </div>
-                </div>);
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={this.state.openMenuKey === 'user'}
+                        onClose={this.closeMenu.bind(this)}
+                      >
+                        <MenuItem>アカウント名: {user.displayName}</MenuItem>
+                        {!util.isMobile() && (
+                        <MenuItem onClick={this.goScripts.bind(this)}>
+                          <i className="fa fa-code" aria-hidden="true" />　スクリプト設定
+                        </MenuItem>
+                      )}
+                        <MenuItem onClick={this.goWorkSheets.bind(this)}>
+                          <i className="fa fa-files-o" aria-hidden="true" />ワークシートの選択
+                        </MenuItem>
+                        <MenuItem onClick={this.logout.bind(this)}>
+                          <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
+                        </MenuItem>
+                      </Menu>
+                    </div>
+                    <div>
+                      <IconButton className={classes.iconButton} onClick={openHelpDialog}>
+                        <i className="fa fa-question-circle" />
+                      </IconButton>
+                    </div>
+                    <div>
+                      <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
+                        <i className="fa fa-info-circle" />
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={this.state.openMenuKey === 'info'}
+                        onClose={this.closeMenu.bind(this)}
+                      >
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>
+                          <i className="fa fa-envelope-o" aria-hidden="true" />　お問い合わせ
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>
+                          <i className="fa fa-trello" aria-hidden="true" />　ロードマップ
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>
+                          <i className="fa fa-medium" aria-hidden="true" />　ブログ
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>
+                          <i className="fa fa-slack" aria-hidden="true" />　コミュニティー
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>
+                          <i className="fa fa-github" aria-hidden="true" />　ソースコード
+                        </MenuItem>
+                      </Menu>
+                    </div>
+                  </div>);
               })()}
               <div style={{ display: 'inline-flex' }}>
                 <IconButton className={classes.iconButton}>
-                  <i style={{ position: 'absolute', left: 10, top: 15, fontSize: 20 }} className="fa fa-bell-o" />
+                  <i
+                    style={{
+                      position: 'absolute', left: 10, top: 15, fontSize: 20,
+                    }}
+                    className="fa fa-bell-o"
+                  />
                   <span style={{ position: 'absolute', left: 10, top: 15 }} id="changelog" />
                 </IconButton>
               </div>
@@ -228,6 +227,7 @@ GlobalHeader.propTypes = {
   closeHelpDialog: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   goScripts: PropTypes.func.isRequired,
+  goWorkSheets: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

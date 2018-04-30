@@ -40,12 +40,15 @@ const styles = {
   },
 };
 
+const database = firebase.database();
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: { displayName: '', photoURL: '', uid: '' },
+      user: {
+        displayName: '', photoURL: '', uid: '', email: '',
+      },
       isOpenSupportBrowserDialog: false,
       isOpenHelpDialog: false,
       loginProggres: true,
@@ -60,16 +63,38 @@ class App extends Component {
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        const currentUser = firebase.auth().currentUser;
-        this.setState({ user: { displayName: currentUser.displayName, photoURL: currentUser.photoURL, uid: currentUser.uid } });
         // dimension1はgaではuidとしている
-        ReactGA.set({ dimension1: currentUser.uid });
-        // ログイン時もしくは自分のuidを含まないURLではワークシートの選択(urlルート)に飛ばす
-        const pathname = this.props.location.pathname;
-        if(pathname === '/login' || pathname === '/signup' || pathname.indexOf(currentUser.uid) === -1) {
-          this.props.history.push('/');
-        }
-      } 
+        ReactGA.set({ dimension1: user.uid });
+        const promises = [database.ref(`/users/${user.uid}/settings/`).once('value'), database.ref(`/users/${user.uid}/teams/`).once('value')];
+        Promise.all(promises).then((snapshots) => {
+          const [settings, teams] = snapshots;
+          if (settings.exists()) {
+            const mySettings = settings.val();
+            this.setState({
+              user: {
+                displayName: mySettings.displayName, photoURL: mySettings.photoURL, uid: mySettings.uid, email: mySettings.email,
+              },
+            });
+          } else {
+            const mySettings = {
+              displayName: user.displayName, photoURL: user.photoURL, uid: user.uid, email: user.email,
+            };
+            this.setState({ user: mySettings });
+            database.ref(`/users/${user.uid}/settings/`).set(mySettings);
+          }
+          if (teams.exists() && teams.val() !== []) {
+            // 自分のidと自分のチームのid
+            return teams.val().map(team => team.id).concat([user.uid]);
+          }
+          return [];
+        }).then((myWorkSheetsIds) => {
+          // ログイン時 or 自分のシートのIDを含まないURLではワークシートの選択(urlルート)に飛ばす
+          const pathname = this.props.location.pathname.replace('/', '');
+          if (pathname === '/login' || pathname === '/signup' || !myWorkSheetsIds.includes(pathname)) {
+            this.props.history.push('/');
+          }
+        });
+      }
       this.setState({ loginProggres: false });
     });
   }
@@ -113,6 +138,10 @@ class App extends Component {
     this.props.history.push(`/${this.state.user.uid}/scripts`);
   }
 
+  goWorkSheets() {
+    this.props.history.push('/');
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -124,20 +153,21 @@ class App extends Component {
           closeHelpDialog={this.closeHelpDialog.bind(this)}
           logout={this.logout.bind(this)}
           goScripts={this.goScripts.bind(this)}
+          goWorkSheets={this.goWorkSheets.bind(this)}
         />
         <Switch>
-          <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <WorkSheets displayName={this.state.user.displayName} id={this.state.user.uid} {...props} />; } return (<Top {...props} />); }} />
+          <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <WorkSheets user={this.state.user} {...props} />; } return (<Top {...props} />); }} />
           <Route exact strict path="/signup" render={props => <Signup login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/logout" render={props => <Logout {...props} />} />
-          <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable id={this.state.user.uid} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
-          <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts id={this.state.user.uid} {...props} />; } return null; }} />
+          <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable userId={this.state.user.uid} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
+          <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
         </Switch>
         <Dialog open={this.state.loginProggres}>
           <CircularProgress className={classes.content} size={60} />
         </Dialog>
         <Dialog open={this.state.isOpenSupportBrowserDialog}>
-          <DialogTitle>{'サポート対象外ブラウザです'}</DialogTitle>
+          <DialogTitle>サポート対象外ブラウザです</DialogTitle>
           <DialogContent>
             <DialogContentText>
             本サービスは現在{constants.SUPPORTEDBROWSERS}での動作をサポートしております。<br />
