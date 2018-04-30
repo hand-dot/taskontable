@@ -1,0 +1,10 @@
+// Anyone can read or write to the bucket, even non-users of your app.
+// Because it is shared with Google App Engine, this will also make
+// files uploaded via GAE public.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write;
+    }
+  }
+}
