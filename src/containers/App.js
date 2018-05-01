@@ -65,6 +65,9 @@ class App extends Component {
       if (user) {
         // dimension1はgaではuidとしている
         ReactGA.set({ dimension1: user.uid });
+
+        // ログイン後にどこのページからスタートするかをハンドリングする。
+        // また、招待されている場合、この処理でチームに参加する。
         const promises = [database.ref(`/users/${user.uid}/settings/`).once('value'), database.ref(`/users/${user.uid}/teams/`).once('value')];
         Promise.all(promises).then((snapshots) => {
           const [settings, teams] = snapshots;
@@ -82,16 +85,28 @@ class App extends Component {
             this.setState({ user: mySettings });
             database.ref(`/users/${user.uid}/settings/`).set(mySettings);
           }
-          if (teams.exists() && teams.val() !== []) {
-            // 自分のidと自分のチームのid
-            return teams.val().concat([user.uid]);
-          }
-          return [];
+          if (teams.exists() && teams.val() !== []) return teams.val().concat([user.uid]);// 自分のidと自分のチームのid
+          return [user.uid];
         }).then((myWorkSheetsIds) => {
-          // ログイン時 or 自分のシートのIDを含まないURLではワークシートの選択(urlルート)に飛ばす
           const pathname = this.props.location.pathname.replace('/', '');
-          if (pathname === '/login' || pathname === '/signup' || !myWorkSheetsIds.includes(pathname)) {
+          if (pathname === 'login' || pathname === 'signup') { // ログイン時はワークシートの選択(urlルート)に飛ばす
             this.props.history.push('/');
+          } else if (pathname !== '' && !myWorkSheetsIds.includes(pathname)) { // 招待の可能性がある場合の処理
+            const teamId = pathname;
+            database.ref(`/teams/${teamId}/invitedEmails/`).once('value').then((snapshot) => {
+              // 自分のメールアドレスがチームの招待中に存在するかチェックする。
+              if (!snapshot.exists() || snapshot.val() === [] || !snapshot.val().includes(user.email)) { // 違った場合はワークシートの選択に飛ばす
+                this.props.history.push('/');
+                return;
+              }
+              // 自分が招待されていた場合は自分のチームに加え、チームのメンバーに自分を加える
+              Promise.all([database.ref(`/users/${user.uid}/teams/`).once('value'), database.ref(`/teams/${teamId}/users/`).once('value')]).then((snapshots) => {
+                const [myTeams, teamUsers] = snapshots;
+                return [database.ref(`/users/${user.uid}/teams/`).set((myTeams.exists() ? myTeams.val() : []).concat([teamId])), database.ref(`/teams/${teamId}/users/`).set((teamUsers.exists() ? teamUsers.val() : []).concat([user.uid]))];
+              }).then(() => {
+                window.location.reload();
+              });
+            });
           }
         });
       }

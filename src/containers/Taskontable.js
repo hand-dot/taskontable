@@ -74,6 +74,7 @@ class Taskontable extends Component {
     // urlのidからmode(teams or users)を決定する
     if (this.props.match.params.id === this.props.userId) {
       this.setState({ mode: 'users', id: this.props.userId });
+      setTimeout(() => { this.syncTaskontable(); });
     } else {
       Promise.all([
         database.ref(`/teams/${this.props.match.params.id}/users/`).once('value'),
@@ -81,11 +82,11 @@ class Taskontable extends Component {
       ]).then((snapshots) => {
         const [userIds, teamName] = snapshots;
         if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') {
-          const promises = userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'));
-          Promise.all(promises).then((members) => {
+          Promise.all(userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'))).then((members) => {
             this.setState({
               mode: 'teams', teamName: teamName.val(), id: this.props.match.params.id, members: members.map(member => member.val()),
             });
+            this.syncTaskontable();
           });
         }
       });
@@ -103,14 +104,6 @@ class Taskontable extends Component {
 
   componentDidMount() {
     if ('Notification' in window && Notification.permission !== 'granted') Notification.requestPermission();
-    this.fetchScripts().then(() => {
-      // テーブルを同期開始&初期化
-      this.attachTableTasks();
-    });
-    // タスクプールをサーバーと同期開始
-    this.attachPoolTasks();
-    // メモを同期開始
-    this.attachMemo();
   }
 
   componentWillUnmount() {
@@ -291,6 +284,20 @@ class Taskontable extends Component {
    */
   saveMemo() {
     database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).set(this.state.memo);
+  }
+
+  /**
+   * Taskontable全体の同期を開始します。
+   */
+  syncTaskontable() {
+    this.fetchScripts().then(() => {
+      // テーブルを同期開始&初期化
+      this.attachTableTasks();
+    });
+    // タスクプールをサーバーと同期開始
+    this.attachPoolTasks();
+    // メモを同期開始
+    this.attachMemo();
   }
 
   /**

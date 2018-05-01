@@ -77,15 +77,14 @@ class Members extends Component {
         body: JSON.stringify({
           to: this.state.invitationEmail,
           from: constants.EMAIL,
-          subject: `${constants.TITLE}へのご招待 - ${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待状が届いています。`,
-          body: `${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待状が届いています。
-まだ、アカウント作成がお済でない場合はアカウントを作成し、${constants.URL}/${this.props.teamId}から参加してください。`,
+          subject: `${constants.TITLE}へのご招待 - ${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。`,
+          body: `${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。
+
+まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、ログインを済ませた状態で 
+
+${window.location.protocol}//${window.location.host}/${this.props.teamId} から参加してください。`,
         }),
-      }).then(() => {
-        alert('招待メールを送信しました。'); this.setState({ invitationEmail: '', isOpenAddMemberModal: false, sendEmailProcessing: false });
-      }, () => {
-        alert('招待メールの送信に失敗しました。'); this.setState({ sendEmailProcessing: false });
-      });
+      }).then(() => { alert('招待メールを送信しました。'); this.setState({ invitationEmail: '', isOpenAddMemberModal: false, sendEmailProcessing: false }); }, () => { alert('招待メールの送信に失敗しました。'); this.setState({ sendEmailProcessing: false }); });
     } else {
       alert('メールアドレスとして正しくありません。');
     }
