@@ -79,34 +79,14 @@ exports.sendgridEmail = functions.https.onRequest((req, res) => Promise.resolve(
       error.code = 401;
       throw error;
     }
-    console.log(`Sending email to: ${req.body.to}`);
-    return sgMail.setApiKey(key).send(getPayload(req.body));
-  })
-  .then((response) => {
-    if (response.statusCode < 200 || response.statusCode >= 400) {
-      const error = Error(response.body);
-      error.code = response.statusCode;
-      throw error;
-    }
-    console.log(`Email sent to: ${req.body.to}`);
-    // Forward the response back to the requester
-    res.status(response.statusCode);
-    if (response.headers['content-type']) {
-      res.set('content-type', response.headers['content-type']);
-    }
-    if (response.headers['content-length']) {
-      res.set('content-length', response.headers['content-length']);
-    }
-    if (response.body) {
-      res.send(response.body);
-    } else {
-      res.end();
-    }
-  })
-  .catch((err) => {
-    console.error(err);
-    const code = err.code || (err.response ? err.response.statusCode : 500) || 500;
-    res.status(code).send(err);
-    return Promise.reject(err);
+    sgMail.setApiKey(key);
+    sgMail.send(getPayload(JSON.parse(req.body))).then((response) => {
+      console.log('Successfully sent message:', response);
+      res.status(200).send({ success: true });
+    })
+      .catch((error) => {
+        console.log('Error sending message:', error);
+        res.status(500).send({ success: false, message: error });
+      });
   }));
 // [END functions_sendgrid_email]

@@ -34,7 +34,7 @@ const styles = {
   root: {
     minHeight: '100vh',
   },
-  content: {
+  circularProgress: {
     overflow: 'hidden',
     padding: 0,
   },
@@ -51,7 +51,7 @@ class App extends Component {
       },
       isOpenSupportBrowserDialog: false,
       isOpenHelpDialog: false,
-      loginProggres: true,
+      loginProcessing: true,
     };
   }
 
@@ -84,7 +84,7 @@ class App extends Component {
           }
           if (teams.exists() && teams.val() !== []) {
             // 自分のidと自分のチームのid
-            return teams.val().map(team => team.id).concat([user.uid]);
+            return teams.val().concat([user.uid]);
           }
           return [];
         }).then((myWorkSheetsIds) => {
@@ -95,7 +95,7 @@ class App extends Component {
           }
         });
       }
-      this.setState({ loginProggres: false });
+      this.setState({ loginProcessing: false });
     });
   }
 
@@ -116,7 +116,7 @@ class App extends Component {
 
   login() {
     if (util.isSupportBrowser()) {
-      this.setState({ loginProggres: true });
+      this.setState({ loginProcessing: true });
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithRedirect(provider);
     } else {
@@ -160,11 +160,11 @@ class App extends Component {
           <Route exact strict path="/signup" render={props => <Signup login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/logout" render={props => <Logout {...props} />} />
-          <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable userId={this.state.user.uid} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
+          <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable userId={this.state.user.uid} userName={this.state.user.displayName} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
           <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
         </Switch>
-        <Dialog open={this.state.loginProggres}>
-          <CircularProgress className={classes.content} size={60} />
+        <Dialog open={this.state.loginProcessing}>
+          <CircularProgress className={classes.circularProgress} size={60} />
         </Dialog>
         <Dialog open={this.state.isOpenSupportBrowserDialog}>
           <DialogTitle>サポート対象外ブラウザです</DialogTitle>

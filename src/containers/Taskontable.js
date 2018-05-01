@@ -416,8 +416,8 @@ class Taskontable extends Component {
 
   /**
    * 処理データに対してstateのインポートスクリプトorエクスポートスクリプトで処理を実行します。
-   * @param  {} data 処理データ
-   * @param  {} scriptType='exportScript' スクリプト種別(インポートスクリプトorエクスポートスクリプト)
+   * @param  {Array} data 処理データ
+   * @param  {String} scriptType='exportScript' スクリプト種別(インポートスクリプトorエクスポートスクリプト)
    */
   fireScript(data, scriptType = 'exportScript') {
     const script = scriptType === 'exportScript' ? this.state.exportScript : this.state.importScript;
@@ -464,7 +464,7 @@ class Taskontable extends Component {
                   this.setState({ tab, isOpenDashboard: !(this.state.isOpenDashboard && this.state.tab === tab) });
                   setTimeout(() => this.forceUpdate());
                 }}
-                scrollable={false}
+                scrollable
                 scrollButtons="off"
                 indicatorColor="primary"
               >
@@ -478,7 +478,7 @@ class Taskontable extends Component {
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
               {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} /></div>}
               {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
-              {this.state.tab === 2 && <div><Members members={this.state.members} id={this.state.id} teamName={this.state.teamName} /></div>}
+              {this.state.tab === 2 && <div><Members userName={this.props.userName} members={this.state.members} teamId={this.state.id} teamName={this.state.teamName} /></div>}
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <Paper elevation={1}>
@@ -534,6 +534,7 @@ class Taskontable extends Component {
 
 Taskontable.propTypes = {
   userId: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
   toggleHelpDialog: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
