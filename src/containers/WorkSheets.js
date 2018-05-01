@@ -48,7 +48,6 @@ class WorkSheets extends Component {
     const newTeams = this.state.teams.concat([{ id: newTeamId, name: this.state.newTeamName }]);
     database.ref(`/users/${this.props.user.uid}/teams/`).set(newTeams);
     database.ref(`/teams/${newTeamId}/`).set({ users: [this.props.user.uid] });
-
     this.setState({ teams: newTeams, newTeamName: '', isOpenCreateTeamModal: false });
   }
 
@@ -59,7 +58,7 @@ class WorkSheets extends Component {
           <Paper style={{ minHeight: '100vh' }} square elevation={0}>
             <div className={this.props.classes.content}>
               <Typography variant="title">
-          ワークシートの選択
+            ワークシートの選択
               </Typography>
               <Typography gutterBottom variant="caption">
             ワークシートを選択してください。
