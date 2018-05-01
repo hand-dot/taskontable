@@ -51,7 +51,7 @@ class Signup extends Component {
     this.props.signup(obj);
   }
   login(type) {
-    this.props.login(type);
+    this.props.login({ type });
   }
   render() {
     const { classes } = this.props;
