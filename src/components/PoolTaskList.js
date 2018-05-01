@@ -137,7 +137,7 @@ class TaskList extends Component {
               <CustomTableCell className={classes.miniCellInput} padding="none">見積(分)</CustomTableCell>
               {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">開始時刻</CustomTableCell>)}
               {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">第何週</CustomTableCell>)}
-              {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">何曜日</CustomTableCell>)}                
+              {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">何曜日</CustomTableCell>)}
               <CustomTableCell className={classes.miniCellInput} padding="none">編集</CustomTableCell>
             </TableRow>
           </TableHead>
@@ -175,39 +175,39 @@ class TaskList extends Component {
                   />
                 </CustomTableCell>
                 {isRegularTask && (
-                    <CustomTableCell padding="none">
-                    <TextField
-                      type="time"
+                <CustomTableCell padding="none">
+                  <TextField
+                    type="time"
+                    className={classes.miniCellInput}
+                    InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'startTime')}
+                    value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
+                    placeholder="開始時刻"
+                    disabled={this.state.editingTaskIndex !== index}
+                  />
+                </CustomTableCell>
+                )}
+                {isRegularTask && (
+                  <CustomTableCell padding="none">
+                    <MultipleSelect
                       className={classes.miniCellInput}
-                      InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
-                      onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'startTime')}
-                      value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
-                      placeholder="開始時刻"
+                      value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
+                      options={[1, 2, 3, 4, 5]}
+                      onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'week')}
                       disabled={this.state.editingTaskIndex !== index}
                     />
                   </CustomTableCell>
                 )}
                 {isRegularTask && (
                   <CustomTableCell padding="none">
-                  <MultipleSelect
-                    className={classes.miniCellInput}
-                    value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
-                    options={[1, 2, 3, 4, 5]}
-                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'week')}
-                    disabled={this.state.editingTaskIndex !== index}
-                  />
+                    <MultipleSelect
+                      className={classes.miniCellInput}
+                      value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
+                      options={constants.DAY_OF_WEEK_STR}
+                      onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'dayOfWeek')}
+                      disabled={this.state.editingTaskIndex !== index}
+                    />
                   </CustomTableCell>
-                )}
-                {isRegularTask && (
-                  <CustomTableCell padding="none">
-                  <MultipleSelect
-                    className={classes.miniCellInput}
-                    value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
-                    options={constants.DAY_OF_WEEK_STR}
-                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'dayOfWeek')}
-                    disabled={this.state.editingTaskIndex !== index}
-                  />
-                </CustomTableCell>
                 )}
                 <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                   <div className={classes.actionIcons}>
@@ -223,27 +223,27 @@ class TaskList extends Component {
                       open={Boolean(this.state.anchorEl[index] || false)}
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
-                      <MenuItem key={'moveTable'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_TABLE)}>
+                      <MenuItem key="moveTable" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_TABLE)}>
                         <i className="fa fa-download" />
                         <Typography variant="caption">テーブルに移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'topToTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
+                      <MenuItem key="topToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
                         <i className="fa fa-angle-double-up" />
                         <Typography variant="caption">先頭に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'upTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
+                      <MenuItem key="upTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
                         <i className="fa fa-angle-up" />
                         <Typography variant="caption">1つ上に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'downTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
+                      <MenuItem key="downTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
                         <i className="fa fa-angle-down" />
                         <Typography variant="caption">1つ下に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'bottomToTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
+                      <MenuItem key="bottomToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
                         <i className="fa fa-angle-double-down" />
                         <Typography variant="caption">末尾に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'removeTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
+                      <MenuItem key="removeTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
                         <i className="fa fa-trash-o" />
                         <Typography variant="caption">削除</Typography>
                       </MenuItem>
@@ -288,37 +288,37 @@ class TaskList extends Component {
               </CustomTableCell>
               {isRegularTask && (
                 <CustomTableCell padding="none">
-                <TextField
-                  type="time"
-                  className={classes.miniCellInput}
-                  InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
-                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'startTime')}
-                  value={this.state[constants.taskStateType.add].startTime}
-                  placeholder="開始時刻"
-                  disabled={this.state.editingTaskIndex !== -1}
-                />
+                  <TextField
+                    type="time"
+                    className={classes.miniCellInput}
+                    InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.add, 'startTime')}
+                    value={this.state[constants.taskStateType.add].startTime}
+                    placeholder="開始時刻"
+                    disabled={this.state.editingTaskIndex !== -1}
+                  />
                 </CustomTableCell>
               )}
               {isRegularTask && (
                 <CustomTableCell padding="none">
-                <MultipleSelect
-                  className={classes.miniCellInput}
-                  value={this.state[constants.taskStateType.add].week}
-                  options={[1, 2, 3, 4, 5]}
-                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'week')}
-                  disabled={this.state.editingTaskIndex !== -1}
-                />
+                  <MultipleSelect
+                    className={classes.miniCellInput}
+                    value={this.state[constants.taskStateType.add].week}
+                    options={[1, 2, 3, 4, 5]}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.add, 'week')}
+                    disabled={this.state.editingTaskIndex !== -1}
+                  />
                 </CustomTableCell>
               )}
               {isRegularTask && (
                 <CustomTableCell padding="none">
-                <MultipleSelect
-                  className={classes.miniCellInput}
-                  value={this.state[constants.taskStateType.add].dayOfWeek}
-                  options={constants.DAY_OF_WEEK_STR}
-                  onChange={this.changeTask.bind(this, constants.taskStateType.add, 'dayOfWeek')}
-                  disabled={this.state.editingTaskIndex !== -1}
-                />
+                  <MultipleSelect
+                    className={classes.miniCellInput}
+                    value={this.state[constants.taskStateType.add].dayOfWeek}
+                    options={constants.DAY_OF_WEEK_STR}
+                    onChange={this.changeTask.bind(this, constants.taskStateType.add, 'dayOfWeek')}
+                    disabled={this.state.editingTaskIndex !== -1}
+                  />
                 </CustomTableCell>
               )}
               <CustomTableCell style={{ textAlign: 'center' }} padding="none">

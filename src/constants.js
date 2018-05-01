@@ -39,6 +39,10 @@ export default {
   REQEST_DELAY: 50,
   RENDER_DELAY: 100,
   HOT_MINROW: 20,
+  authType: {
+    GOOGLE: 'google',
+    EMAIL_AND_PASSWORD: 'emailAndPassword',
+  },
   shortcuts: {
     SAVE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && !e.shiftKey && e.keyCode === 83,
     HOT_CURRENTTIME: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.key === ':',

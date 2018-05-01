@@ -134,11 +134,11 @@ class GlobalHeader extends Component {
                     <div>
                       <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
                         {(() => {
-                        if (user.photoURL) {
-                          return <Avatar className={classes.userPhoto} src={user.photoURL} />;
-                        }
-                        return <i className="fa fa-user-circle" />;
-                      })()}
+                          if (user.photoURL) {
+                            return <Avatar className={classes.userPhoto} src={user.photoURL} />;
+                          }
+                          return <i className="fa fa-user-circle" />;
+                        })()}
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}

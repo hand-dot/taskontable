@@ -16,6 +16,7 @@ const styles = theme => ({
   userPhoto: {
     width: 25,
     height: 25,
+    textAlign: 'center',
     margin: '0 auto',
   },
   membersContainer: {
@@ -80,7 +81,7 @@ class Members extends Component {
           subject: `${constants.TITLE}へのご招待 - ${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。`,
           body: `${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。
 
-まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、ログインを済ませた状態で 
+まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、"ログインを済ませた状態"で 
 
 ${window.location.protocol}//${window.location.host}/${this.props.teamId} から参加してください。`,
         }),
@@ -103,7 +104,12 @@ ${window.location.protocol}//${window.location.host}/${this.props.teamId} から
           {members.map(member => (
             <div className={classes.member} key={member.uid} title={`${member.displayName} - ${member.email}`}>
               <Typography className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
-              <Avatar className={classes.userPhoto} src={member.photoURL} />
+              {(() => {
+                if (member.photoURL) {
+                  return <Avatar className={classes.userPhoto} src={member.photoURL} />;
+                }
+                return <div className={classes.userPhoto}><i className="fa fa-user-circle" /></div>;
+              })()}
               <Typography className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
             </div>
         ))}

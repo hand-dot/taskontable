@@ -40,6 +40,10 @@ const styles = {
   },
 };
 
+// constants.authType.EMAIL_AND_PASSWORDの方法でユーザーを登録すると
+// displayNameが設定されないため一次的にこの変数に格納する。
+let tmpDisplayName = '';
+
 const database = firebase.database();
 
 class App extends Component {
@@ -51,7 +55,7 @@ class App extends Component {
       },
       isOpenSupportBrowserDialog: false,
       isOpenHelpDialog: false,
-      loginProcessing: true,
+      processing: true,
     };
   }
 
@@ -80,7 +84,7 @@ class App extends Component {
             });
           } else {
             const mySettings = {
-              displayName: user.displayName, photoURL: user.photoURL, uid: user.uid, email: user.email,
+              displayName: user.displayName || tmpDisplayName, photoURL: user.photoURL || '', uid: user.uid, email: user.email,
             };
             this.setState({ user: mySettings });
             database.ref(`/users/${user.uid}/settings/`).set(mySettings);
@@ -110,7 +114,7 @@ class App extends Component {
           }
         });
       }
-      this.setState({ loginProcessing: false });
+      this.setState({ processing: false });
     });
   }
 
@@ -129,11 +133,28 @@ class App extends Component {
     this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
   }
 
-  login() {
+  signup({
+    type, username, email, password,
+  }) {
+    tmpDisplayName = username;
+    this.setState({ processing: true });
+    if (type === constants.authType.EMAIL_AND_PASSWORD) {
+      firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
+        alert('アカウントの作成が完了しました。');
+      }, (res) => {
+        alert(res);
+      });
+    }
+  }
+
+  login({ type, email, password }) {
     if (util.isSupportBrowser()) {
-      this.setState({ loginProcessing: true });
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithRedirect(provider);
+      this.setState({ processing: true });
+      if (type === constants.authType.GOOGLE) {
+        firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      } else if (type === constants.authType.EMAIL_AND_PASSWORD) {
+        firebase.auth().signInWithEmailAndPassword(email, password);
+      }
     } else {
       this.setState({ isOpenSupportBrowserDialog: true });
     }
@@ -172,13 +193,13 @@ class App extends Component {
         />
         <Switch>
           <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <WorkSheets user={this.state.user} {...props} />; } return (<Top {...props} />); }} />
-          <Route exact strict path="/signup" render={props => <Signup login={this.login.bind(this)} {...props} />} />
+          <Route exact strict path="/signup" render={props => <Signup signup={this.signup.bind(this)} login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/logout" render={props => <Logout {...props} />} />
           <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable userId={this.state.user.uid} userName={this.state.user.displayName} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
           <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
         </Switch>
-        <Dialog open={this.state.loginProcessing}>
+        <Dialog open={this.state.processing}>
           <CircularProgress className={classes.circularProgress} size={60} />
         </Dialog>
         <Dialog open={this.state.isOpenSupportBrowserDialog}>
