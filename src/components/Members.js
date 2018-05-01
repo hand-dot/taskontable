@@ -8,7 +8,6 @@ import IconButton from 'material-ui/IconButton';
 import Button from 'material-ui/Button';
 import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
 import util from '../util';
-import constants from '../constants';
 
 const styles = theme => ({
   userPhoto: {
