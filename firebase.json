@@ -1,20 +1,26 @@
 {
-    "database": {
-      "rules": "database-rules.json"
-    },
-    "hosting": {
-      "public": "build",
-      "ignore": [
-        "firebase.json",
-        "database-rules.json",
-        "storage.rules",
-        "functions",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "rewrites": [ {
+  "database": {
+    "rules": "database-rules.json"
+  },
+  "hosting": {
+    "public": "build",
+    "ignore": [
+      "firebase.json",
+      "database-rules.json",
+      "storage.rules",
+      "functions",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/sendEmail",
+        "function": "sendgridEmail"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
-      } ]
-    }
+      }
+    ]
   }
+}
