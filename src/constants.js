@@ -1,5 +1,6 @@
 import UAParser from 'ua-parser-js';
 import SENTRY_URL from './configs/sentry';
+import SENDGRID_API_KEY from './configs/sendgrid';
 import GA_ID from './configs/ga';
 
 const parser = new UAParser();
@@ -16,6 +17,7 @@ const rgb = {
 export default {
   RELEASE: '0.0.0-beta',
   TITLE: 'Taskontable',
+  EMAIL: 'info@taskontable.com',
   SUPPORTEDBROWSERS: ['Chrome'],
   METAKEY: osName === 'Mac OS' ? '⌘' : 'ctrl',
   URL: 'https://taskontable.com',
@@ -23,6 +25,7 @@ export default {
   DEVURL2: 'http://192.168.0.104:3000', // lanの別端末で検証を行う場合に必要。
   GA_ID,
   SENTRY_URL,
+  SENDGRID_API_KEY,
   CHROME_DL_URL: 'https://www.google.co.jp/chrome/',
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',

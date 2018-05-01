@@ -1,3 +1,4 @@
+// TODO ここのスクリプトはサンプル。直近ではメール送信のサービスが必要
 const gcs = require('@google-cloud/storage')();
 const spawn = require('child-process-promise').spawn;
 const path = require('path');

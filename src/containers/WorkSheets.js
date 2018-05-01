@@ -39,16 +39,24 @@ class WorkSheets extends Component {
   }
 
   componentWillMount() {
-    database.ref(`/users/${this.props.user.uid}/teams/`).once('value').then((snapshot) => {
-      if (snapshot.exists() && snapshot.val() !== []) this.setState({ teams: snapshot.val() });
+    database.ref(`/users/${this.props.user.uid}/teams/`).once('value').then((myTeamIds) => {
+      if (myTeamIds.exists() && myTeamIds.val() !== []) {
+        const promises = myTeamIds.val().map(id => database.ref(`/teams/${id}/name/`).once('value'));
+        Promise.all(promises).then((myTeamNames) => {
+          myTeamNames.forEach((myTeamName) => {
+            if (myTeamName.exists() && myTeamName.val() !== []) {
+              this.setState({ teams: myTeamIds.val().map((id, i) => ({ id, name: myTeamName.val()[i] })) });
+            }
+          });
+        });
+      }
     });
   }
   createTeam() {
     const newTeamId = uuid();
-    const newTeams = this.state.teams.concat([{ id: newTeamId, name: this.state.newTeamName }]);
-    database.ref(`/users/${this.props.user.uid}/teams/`).set(newTeams);
-    database.ref(`/teams/${newTeamId}/`).set({ users: [this.props.user.uid] });
-    this.setState({ teams: newTeams, newTeamName: '', isOpenCreateTeamModal: false });
+    database.ref(`/users/${this.props.user.uid}/teams/`).set(this.state.teams.concat([newTeamId]));
+    database.ref(`/teams/${newTeamId}/`).set({ users: [this.props.user.uid], name: this.state.newTeamName });
+    this.setState({ teams: this.state.teams.concat([{ id: newTeamId, name: this.state.newTeamName }]), newTeamName: '', isOpenCreateTeamModal: false });
   }
 
   render() {

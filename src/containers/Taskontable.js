@@ -471,7 +471,7 @@ class Taskontable extends Component {
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
               {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} /></div>}
               {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
-              {this.state.tab === 2 && <div><Members members={this.state.members} /></div>}
+              {this.state.tab === 2 && <div><Members members={this.state.members} id={this.state.id} /></div>}
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <Paper elevation={1}>

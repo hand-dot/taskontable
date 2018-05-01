@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import Button from 'material-ui/Button';
 import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
 import util from '../util';
+import constants from '../constants';
 
 const styles = theme => ({
   userPhoto: {
@@ -43,8 +44,16 @@ class Members extends Component {
 
   addMember() {
     if (util.validateEmail(this.state.invitationEmail)) {
-      this.setState({ invitationEmail: '', isOpenAddMemberModal: false });
       // TODO ここでメールを送信するサービスを呼ぶ
+      // クライアントで呼べないことがわかったので、ここではcloudfunctionsを呼び、別途cloudfunctionsを実装する
+      // util.sendMail(
+      //   this.state.invitationEmail,
+      //   'Taskontableで${this.props.team}に招待されました。',
+      //   `${url}${this.props.id}
+      //   上記のURLをクリックしてください。
+      //   `,
+      // );
+      this.setState({ invitationEmail: '', isOpenAddMemberModal: false });
     } else {
       alert('emailとして正しくありません。');
     }
@@ -54,6 +63,7 @@ class Members extends Component {
     const { members, classes } = this.props;
     return (
       <div>
+        {/* TODO ここにチーム名を出したい */}
         <Typography variant="subheading">
             メンバー
         </Typography>
@@ -94,8 +104,7 @@ class Members extends Component {
             <Button onClick={this.addMember.bind(this)} color="primary">招待メールを送信</Button>
           </DialogActions>
         </Dialog>
-        {/* TODO ここでほかのメンバーを呼ぶ処理を書く */}
-        {/* URLをコピーできる機能もあったほうがいい */}
+        {/* TODO URLをコピーできる機能もあったほうがいい */}
       </div>
     );
   }
@@ -108,6 +117,7 @@ Members.propTypes = {
     uid: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
   })).isRequired,
+  id: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
