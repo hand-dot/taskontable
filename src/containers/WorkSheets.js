@@ -45,7 +45,7 @@ class WorkSheets extends Component {
         Promise.all(promises).then((myTeamNames) => {
           myTeamNames.forEach((myTeamName) => {
             if (myTeamName.exists() && myTeamName.val() !== []) {
-              this.setState({ teams: myTeamIds.val().map((id, i) => ({ id, name: myTeamName.val()[i] })) });
+              this.setState({ teams: myTeamIds.val().map(id => ({ id, name: myTeamName.val() })) });
             }
           });
         });
@@ -53,6 +53,10 @@ class WorkSheets extends Component {
     });
   }
   createTeam() {
+    if (this.state.newTeamName === '') {
+      alert('チーム名が未入力です。');
+      return;
+    }
     const newTeamId = uuid();
     database.ref(`/users/${this.props.user.uid}/teams/`).set(this.state.teams.concat([newTeamId]));
     database.ref(`/teams/${newTeamId}/`).set({ users: [this.props.user.uid], name: this.state.newTeamName });

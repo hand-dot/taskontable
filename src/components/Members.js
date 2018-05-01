@@ -44,27 +44,20 @@ class Members extends Component {
   addMember() {
     if (util.validateEmail(this.state.invitationEmail)) {
       // TODO ここでメールを送信するサービスを呼ぶ
-      // クライアントで呼べないことがわかったので、ここではcloudfunctionsを呼び、別途cloudfunctionsを実装する
-      // util.sendMail(
-      //   this.state.invitationEmail,
-      //   'Taskontableで${this.props.team}に招待されました。',
-      //   `${url}${this.props.id}
-      //   上記のURLをクリックしてください。
-      //   `,
-      // );
+      // teamのデータベースのinvitedにメールアドレスがない場合メールアドレスを追加する。
+      alert('招待メールを送信しました。');
       this.setState({ invitationEmail: '', isOpenAddMemberModal: false });
     } else {
-      alert('emailとして正しくありません。');
+      alert('メールアドレスとして正しくありません。');
     }
   }
 
   render() {
-    const { members, classes } = this.props;
+    const { members, classes, theme } = this.props;
     return (
-      <div>
-        {/* TODO ここにチーム名を出したい */}
+      <div style={{ padding: theme.spacing.unit }}>
         <Typography variant="subheading">
-            メンバー
+          {this.props.teamName}のメンバー
         </Typography>
         <div className={classes.membersContainer}>
           {members.map(member => (
@@ -117,6 +110,7 @@ Members.propTypes = {
     email: PropTypes.string.isRequired,
   })).isRequired,
   id: PropTypes.string.isRequired,
+  teamName: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

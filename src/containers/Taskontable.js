@@ -48,6 +48,7 @@ class Taskontable extends Component {
     this.state = {
       mode: '', // teams or users
       id: '',
+      teamName: '', // modeがteamsの時にチーム名が入る
       members: [],
       isOpenSnackbar: false,
       snackbarText: '',
@@ -70,15 +71,21 @@ class Taskontable extends Component {
   }
 
   componentWillMount() {
-    // urlのidから保存先を決定する
+    // urlのidからmode(teams or users)を決定する
     if (this.props.match.params.id === this.props.userId) {
       this.setState({ mode: 'users', id: this.props.userId });
     } else {
-      database.ref(`/teams/${this.props.match.params.id}/users/`).once('value').then((snapshot) => {
-        if (snapshot.exists() && snapshot.val() !== []) {
-          const promises = snapshot.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'));
+      Promise.all([
+        database.ref(`/teams/${this.props.match.params.id}/users/`).once('value'),
+        database.ref(`/teams/${this.props.match.params.id}/name/`).once('value'),
+      ]).then((snapshots) => {
+        const [userIds, teamName] = snapshots;
+        if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') {
+          const promises = userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'));
           Promise.all(promises).then((members) => {
-            this.setState({ mode: 'teams', id: this.props.match.params.id, members: members.map(member => member.val()) });
+            this.setState({
+              mode: 'teams', teamName: teamName.val(), id: this.props.match.params.id, members: members.map(member => member.val()),
+            });
           });
         }
       });
@@ -471,7 +478,7 @@ class Taskontable extends Component {
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
               {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} /></div>}
               {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
-              {this.state.tab === 2 && <div><Members members={this.state.members} id={this.state.id} /></div>}
+              {this.state.tab === 2 && <div><Members members={this.state.members} id={this.state.id} teamName={this.state.teamName} /></div>}
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <Paper elevation={1}>
