@@ -106,7 +106,7 @@ class Signup extends Component {
                   InputLabelProps={{
                   shrink: true,
                 }}
-                  placeholder="8文字以上入力してください"
+                  placeholder="6文字以上入力してください"
                   fullWidth
                   margin="normal"
                 />

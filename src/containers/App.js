@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { CircularProgress } from 'material-ui/Progress';
+import Snackbar from 'material-ui/Snackbar';
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -139,10 +140,14 @@ class App extends Component {
     tmpDisplayName = username;
     this.setState({ processing: true });
     if (type === constants.authType.EMAIL_AND_PASSWORD) {
+      if (!util.validateEmail(email) || password.length < 6) {
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'メールアドレスとパスワードを正しく入力してください。' });
+        return;
+      }
       firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
-        alert('アカウントの作成が完了しました。');
-      }, (res) => {
-        alert(res);
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウントを作成しました。' });
+      }, () => {
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウント作成に失敗しました。' });
       });
     }
   }
@@ -153,7 +158,15 @@ class App extends Component {
       if (type === constants.authType.GOOGLE) {
         firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());
       } else if (type === constants.authType.EMAIL_AND_PASSWORD) {
-        firebase.auth().signInWithEmailAndPassword(email, password);
+        if (!util.validateEmail(email) || password.length < 6) {
+          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'メールアドレスとパスワードを正しく入力してください。' });
+          return;
+        }
+        firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
+          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'ログインしました。' });
+        }, () => {
+          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'ログインに失敗しました。' });
+        });
       }
     } else {
       this.setState({ isOpenSupportBrowserDialog: true });
@@ -223,6 +236,12 @@ class App extends Component {
             </Button>
           </DialogActions>
         </Dialog>
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={this.state.isOpenSnackbar}
+          onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
+          message={this.state.snackbarText}
+        />
       </div>
     );
   }
