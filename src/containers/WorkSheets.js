@@ -64,14 +64,18 @@ class WorkSheets extends Component {
     return (
       <Grid className={this.props.classes.root} container spacing={0} alignItems="stretch">
         <Grid item xs={12}>
-          <div style={{ minHeight: '100vh' }} square elevation={0}>
+          <div style={{ minHeight: '100vh' }}>
             <div className={this.props.classes.content}>
               <div style={{ marginBottom: 30 }}>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="title">Taskontable(Beta)へようこそ！</Typography>
-                <Typography style={{ color: '#fff' }} gutterBottom variant="caption">
+                <Typography style={{ color: '#fff' }} variant="body2">
+                  Tips💡
+                </Typography>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="body1">
                   もしまだコミュニティに参加されていなければ是非
                   　<a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>　に参加してみてください！<br />
                   Beta版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜<br />
+                  Taskontableの話以外にもいろいろな雑談☕がゆる～く行われています。
                 </Typography>
               </div>
               <Divider />
@@ -87,7 +91,7 @@ class WorkSheets extends Component {
               </div>
               <div style={{ marginTop: 30 }}>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="subheading">
-                  <i className="fa fa-users" aria-hidden="true" />　チーム
+                  <i className="fa fa-users" aria-hidden="true" />　チームワークシート
                 </Typography>
                 {this.state.teams.map(team => (
                   <Link key={team.id} to={`/${team.id}`} style={{ margin: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>
