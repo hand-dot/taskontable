@@ -26,6 +26,7 @@ const Login = AsyncContainer(() => import('./Login').then(module => module.defau
 const Logout = AsyncContainer(() => import('./Logout').then(module => module.default), {});
 const Signup = AsyncContainer(() => import('./Signup').then(module => module.default), {});
 const Scripts = AsyncContainer(() => import('./Scripts').then(module => module.default), {});
+const Settings = AsyncContainer(() => import('./Settings').then(module => module.default), {});
 const Taskontable = AsyncContainer(() => import('./Taskontable').then(module => module.default), {});
 const WorkSheets = AsyncContainer(() => import('./WorkSheets').then(module => module.default), {});
 
@@ -84,10 +85,13 @@ class App extends Component {
               },
             });
           } else {
+            // アカウント作成後の処理
             const mySettings = {
               displayName: user.displayName || tmpDisplayName, photoURL: user.photoURL || '', uid: user.uid, email: user.email,
             };
             this.setState({ user: mySettings });
+            // EMAIL_AND_PASSWORDでユーザーを作成した場合、displayNameがnullなので、firebaseのauthで管理しているユーザーのプロフィールを更新する
+            if (!user.displayName) user.updateProfile({ displayName: tmpDisplayName });
             database.ref(`/users/${user.uid}/settings/`).set(mySettings);
           }
           if (teams.exists() && teams.val() !== []) return teams.val().concat([user.uid]);// 自分のidと自分のチームのid
@@ -132,6 +136,10 @@ class App extends Component {
 
   toggleHelpDialog() {
     this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
+  }
+
+  handleUser({ displayName, email, photoURL }) {
+    this.setState({ user: { displayName, email, photoURL } });
   }
 
   signup({
@@ -183,6 +191,10 @@ class App extends Component {
     });
   }
 
+  goSettings() {
+    this.props.history.push(`/${this.state.user.uid}/settings`);
+  }
+
   goScripts() {
     this.props.history.push(`/${this.state.user.uid}/scripts`);
   }
@@ -201,6 +213,7 @@ class App extends Component {
           openHelpDialog={this.openHelpDialog.bind(this)}
           closeHelpDialog={this.closeHelpDialog.bind(this)}
           logout={this.logout.bind(this)}
+          goSettings={this.goSettings.bind(this)}
           goScripts={this.goScripts.bind(this)}
           goWorkSheets={this.goWorkSheets.bind(this)}
         />
@@ -211,6 +224,7 @@ class App extends Component {
           <Route exact strict path="/logout" render={props => <Logout {...props} />} />
           <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable userId={this.state.user.uid} userName={this.state.user.displayName} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
           <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
+          <Route exact strict path="/:id/settings" render={(props) => { if (this.state.user.uid !== '') { return <Settings user={this.state.user} handleUser={this.handleUser.bind(this)} {...props} />; } return null; }} />
         </Switch>
         <Dialog open={this.state.processing}>
           <CircularProgress className={classes.circularProgress} size={60} />

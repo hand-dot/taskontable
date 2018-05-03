@@ -43,6 +43,10 @@ export default {
     GOOGLE: 'google',
     EMAIL_AND_PASSWORD: 'emailAndPassword',
   },
+  loginProviderId: {
+    PASSWORD: 'password',
+    GOOGLE: 'google.com',
+  },
   shortcuts: {
     SAVE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && !e.shiftKey && e.keyCode === 83,
     HOT_CURRENTTIME: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.key === ':',

@@ -76,17 +76,17 @@ class WorkSheets extends Component {
                 <Typography variant="subheading" gutterBottom>
                   <i className="fa fa-user" aria-hidden="true" />　パーソナルワークシート
                 </Typography>
-                <Link to={`/${this.props.user.uid}`}><Button variant="raised">{this.props.user.displayName}</Button></Link>
+                <Link to={`/${this.props.user.uid}`}><Button size="small" variant="raised">{this.props.user.displayName}</Button></Link>
               </div>
               <div style={{ marginTop: 30 }}>
                 <Typography variant="subheading" gutterBottom>
                   <i className="fa fa-users" aria-hidden="true" />　チーム
                 </Typography>
                 {this.state.teams.map(team => (
-                  <Link key={team.id} to={`/${team.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button variant="raised">{team.name}</Button></Link>
+                  <Link key={team.id} to={`/${team.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>
                 ))}
                 <span style={{ padding: this.props.theme.spacing.unit }}>
-                  <Button variant="raised" onClick={() => { this.setState({ isOpenCreateTeamModal: true }); }}>+</Button>
+                  <Button size="small" variant="raised" onClick={() => { this.setState({ isOpenCreateTeamModal: true }); }}>+</Button>
                 </span>
                 <Dialog
                   open={this.state.isOpenCreateTeamModal}
@@ -106,8 +106,8 @@ class WorkSheets extends Component {
                     />
                   </DialogContent>
                   <DialogActions>
-                    <Button onClick={() => { this.setState({ isOpenCreateTeamModal: false }); }} color="primary">キャンセル</Button>
-                    <Button onClick={this.createTeam.bind(this)} color="primary">作成</Button>
+                    <Button size="small" onClick={() => { this.setState({ isOpenCreateTeamModal: false }); }} color="primary">キャンセル</Button>
+                    <Button size="small" onClick={this.createTeam.bind(this)} color="primary">作成</Button>
                   </DialogActions>
                 </Dialog>
               </div>

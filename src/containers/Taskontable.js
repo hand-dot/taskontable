@@ -84,7 +84,7 @@ class Taskontable extends Component {
         if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') {
           Promise.all(userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'))).then((members) => {
             this.setState({
-              mode: 'teams', teamName: teamName.val(), id: this.props.match.params.id, members: members.map(member => member.val()),
+              mode: 'teams', teamName: teamName.val(), id: this.props.match.params.id, members: members.filter(member => member.exists()).map(member => member.val()),
             });
             this.syncTaskontable();
           });

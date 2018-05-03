@@ -104,12 +104,7 @@ ${window.location.protocol}//${window.location.host}/${this.props.teamId} から
           {members.map(member => (
             <div className={classes.member} key={member.uid} title={`${member.displayName} - ${member.email}`}>
               <Typography className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
-              {(() => {
-                if (member.photoURL) {
-                  return <Avatar className={classes.userPhoto} src={member.photoURL} />;
-                }
-                return <div className={classes.userPhoto}><i className="fa fa-user-circle" /></div>;
-              })()}
+              {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
               <Typography className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
             </div>
         ))}

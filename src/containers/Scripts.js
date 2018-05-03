@@ -231,7 +231,7 @@ class Scripts extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button size="small" onClick={this.backToApp.bind(this)} variant="raised" color="default">アプリに戻る</Button>
+          <Button size="small" onClick={this.backToApp.bind(this)} variant="raised">アプリに戻る</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

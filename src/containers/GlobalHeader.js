@@ -99,6 +99,11 @@ class GlobalHeader extends Component {
     setTimeout(() => this.props.logout());
   }
 
+  goSettings() {
+    this.closeMenu();
+    setTimeout(() => this.props.goSettings());
+  }
+
   goScripts() {
     this.closeMenu();
     setTimeout(() => this.props.goScripts());
@@ -133,26 +138,24 @@ class GlobalHeader extends Component {
                   <div style={{ display: 'inline-flex' }}>
                     <div>
                       <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
-                        {(() => {
-                          if (user.photoURL) {
-                            return <Avatar className={classes.userPhoto} src={user.photoURL} />;
-                          }
-                          return <i className="fa fa-user-circle" />;
-                        })()}
+                        {user.photoURL ? <Avatar className={classes.userPhoto} src={user.photoURL} /> : <i className="fa fa-user-circle" />}
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
                         open={this.state.openMenuKey === 'user'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem>アカウント名: {user.displayName}</MenuItem>
+                        <MenuItem title={user.email}>アカウント名: {user.displayName}</MenuItem>
                         {!util.isMobile() && (
-                        <MenuItem onClick={this.goScripts.bind(this)}>
-                          <i className="fa fa-code" aria-hidden="true" />　スクリプト設定
-                        </MenuItem>
-                      )}
+                          <MenuItem onClick={this.goScripts.bind(this)}>
+                            <i className="fa fa-code" aria-hidden="true" />　スクリプト設定
+                          </MenuItem>
+                        )}
                         <MenuItem onClick={this.goWorkSheets.bind(this)}>
                           <i className="fa fa-files-o" aria-hidden="true" />ワークシートの選択
+                        </MenuItem>
+                        <MenuItem onClick={this.goSettings.bind(this)}>
+                          <i className="fa fa-cog" aria-hidden="true" />　アカウント設定
                         </MenuItem>
                         <MenuItem onClick={this.logout.bind(this)}>
                           <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
@@ -219,6 +222,7 @@ class GlobalHeader extends Component {
 GlobalHeader.propTypes = {
   user: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
     photoURL: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
   }).isRequired,
@@ -226,6 +230,7 @@ GlobalHeader.propTypes = {
   openHelpDialog: PropTypes.func.isRequired,
   closeHelpDialog: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
+  goSettings: PropTypes.func.isRequired,
   goScripts: PropTypes.func.isRequired,
   goWorkSheets: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
