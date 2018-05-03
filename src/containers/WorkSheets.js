@@ -9,7 +9,7 @@ import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import Paper from 'material-ui/Paper';
+import Divider from 'material-ui/Divider';
 import constants from '../constants';
 
 const styles = {
@@ -64,26 +64,33 @@ class WorkSheets extends Component {
     return (
       <Grid className={this.props.classes.root} container spacing={0} alignItems="stretch">
         <Grid item xs={12}>
-          <Paper style={{ minHeight: '100vh' }} square elevation={0}>
+          <div style={{ minHeight: '100vh' }} square elevation={0}>
             <div className={this.props.classes.content}>
-              <Typography variant="title">
-            ワークシートの選択
-              </Typography>
-              <Typography gutterBottom variant="caption">
-            ワークシートを選択してください。
-              </Typography>
-              <div style={{ marginTop: 30 }}>
-                <Typography variant="subheading" gutterBottom>
-                  <i className="fa fa-user" aria-hidden="true" />　パーソナルワークシート
+              <div style={{ marginBottom: 30 }}>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="title">Taskontable(Beta)へようこそ！</Typography>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="caption">
+                  もしまだコミュニティに参加されていなければ是非
+                  　<a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>　に参加してみてください！<br />
+                  Beta版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜<br />
                 </Typography>
-                <Link to={`/${this.props.user.uid}`}><Button size="small" variant="raised">{this.props.user.displayName}</Button></Link>
+              </div>
+              <Divider />
+              <div style={{ marginTop: 30 }}>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="title">ワークシートの選択</Typography>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="caption">ワークシートを選択してください。</Typography>
               </div>
               <div style={{ marginTop: 30 }}>
-                <Typography variant="subheading" gutterBottom>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="subheading">
+                  <i className="fa fa-user" aria-hidden="true" />　パーソナルワークシート
+                </Typography>
+                <Link to={`/${this.props.user.uid}`} style={{ margin: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{this.props.user.displayName}</Button></Link>
+              </div>
+              <div style={{ marginTop: 30 }}>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="subheading">
                   <i className="fa fa-users" aria-hidden="true" />　チーム
                 </Typography>
                 {this.state.teams.map(team => (
-                  <Link key={team.id} to={`/${team.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>
+                  <Link key={team.id} to={`/${team.id}`} style={{ margin: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>
                 ))}
                 <span style={{ padding: this.props.theme.spacing.unit }}>
                   <Button size="small" variant="raised" onClick={() => { this.setState({ isOpenCreateTeamModal: true }); }}>+</Button>
@@ -112,7 +119,7 @@ class WorkSheets extends Component {
                 </Dialog>
               </div>
             </div>
-          </Paper>
+          </div>
         </Grid>
       </Grid>
     );
