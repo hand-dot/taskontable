@@ -10,6 +10,7 @@ import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
+import constants from '../constants';
 
 const styles = {
   root: {
@@ -17,6 +18,7 @@ const styles = {
   },
   content: {
     padding: '6em 2em',
+    maxWidth: constants.APPWIDTH,
     margin: '0 auto',
   },
   button: {
