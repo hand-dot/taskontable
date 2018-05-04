@@ -64,7 +64,7 @@ function Top(props) {
             </Typography>
             <img style={{ margin: '2em 2em 2em 1.7em' }} src={titleGr} alt="taskontable" height="40" />
             <Typography align="center" style={{ marginBottom: '2em' }}>
-            David Allenの<a href="https://ja.m.wikipedia.org/wiki/Getting_Things_Done">Getting Things Done</a>を独自解釈し作成された、ワークフロー構築のためのLifeHackツールです。
+            TaskontableはExcelライクなタスク管理ツールです。
             </Typography>
             <Typography align="center" style={{ marginBottom: '2em' }}>
             タスクをシーケンシャルにすることで生産性を向上させ一日をスムーズに進行することができます。<br />
