@@ -69,7 +69,7 @@ class WorkSheets extends Component {
               <div style={{ marginBottom: 30 }}>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="title">Taskontable(Beta)へようこそ！</Typography>
                 <Typography style={{ color: '#fff' }} variant="body2">
-                  Tips💡
+                  Tips<span role="img" aria-label="Tips">💡</span>
                 </Typography>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="body1">
                   もしまだコミュニティに参加されていなければ是非
