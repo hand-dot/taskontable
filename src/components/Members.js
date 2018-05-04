@@ -96,7 +96,7 @@ ${window.location.protocol}//${window.location.host}/${this.props.teamId} から
       teamName, members, classes, theme,
     } = this.props;
     return (
-      <div style={{ padding: theme.spacing.unit }}>
+      <div style={{ padding: theme.spacing.unit, overflow: 'auto' }}>
         <Typography variant="subheading">
           {teamName}のメンバー
         </Typography>
