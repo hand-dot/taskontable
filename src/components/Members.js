@@ -83,7 +83,17 @@ class Members extends Component {
 
 まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、"ログインを済ませた状態"で 
 
-${window.location.protocol}//${window.location.host}/${this.props.teamId} から参加してください。`,
+${window.location.protocol}//${window.location.host}/${this.props.teamId} から参加してください。
+
+------>> Build Your WorkFlow ----------->>>--
+
+${constants.TITLE}
+
+e-mail: ${constants.EMAIL}
+
+HP: ${window.location.protocol}//${window.location.host}
+
+------>> Build Your WorkFlow ----------->>>--`,
         }),
       }).then(() => { alert('招待メールを送信しました。'); this.setState({ invitationEmail: '', isOpenAddMemberModal: false, sendEmailProcessing: false }); }, () => { alert('招待メールの送信に失敗しました。'); this.setState({ sendEmailProcessing: false }); });
     } else {
