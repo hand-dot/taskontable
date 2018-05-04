@@ -271,10 +271,10 @@ class Taskontable extends Component {
           saveable: false,
         });
       });
-    }, () => {
+    }, (reason) => {
       database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(sortedTableTask).then(() => {
         this.setState({
-          isOpenSnackbar: true, snackbarText: '保存しました。', lastSaveTime: moment().format(constants.TIMEFMT), saveable: false,
+          isOpenSnackbar: true, snackbarText: reason ? `エラー[exportScript]：${reason}` : '保存しました。', lastSaveTime: moment().format(constants.TIMEFMT), saveable: false,
         });
       });
     });
@@ -329,7 +329,10 @@ class Taskontable extends Component {
           this.setSortedTableTasks(data);
           this.setState({ isOpenSnackbar: true, snackbarText: 'インポートスクリプトを実行しました。' });
         },
-        () => { this.setSortedTableTasks(tableTasks); },
+        (reason) => {
+          if (reason) this.setState({ isOpenSnackbar: true, snackbarText: `エラー[importScript]：${reason}` });
+          this.setSortedTableTasks(tableTasks);
+        },
       );
       this.setState({ saveable: false });
     });
@@ -434,7 +437,7 @@ class Taskontable extends Component {
         return;
       }
       // スクリプトを発火するのはスクリプトが存在する かつ 本日のタスクテーブルのみ
-      util.runWorker(script, data).then((result) => { resolve(result); }, () => { reject(); });
+      util.runWorker(script, data).then((result) => { resolve(result); }, (reason) => { reject(reason); });
     });
   }
 
