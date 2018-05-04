@@ -411,16 +411,22 @@ class Taskontable extends Component {
    * スクリプトを取得します。
    */
   fetchScripts() {
-    const scriptsPath = `/users/${this.props.userId}/scripts/`;
-    const promises = [database.ref(`${scriptsPath}importScript`).once('value'), database.ref(`${scriptsPath}exportScript`).once('value')];
-    return Promise.all(promises).then((snapshots) => {
-      const [importScriptSnapshot, exportScriptSnapshot] = snapshots;
-      if (importScriptSnapshot.exists() && importScriptSnapshot.val() !== '') {
-        this.setState({ importScript: importScriptSnapshot.val() });
-      }
-      if (exportScriptSnapshot.exists() && exportScriptSnapshot.val() !== '') {
-        this.setState({ exportScript: exportScriptSnapshot.val() });
-      }
+    return database.ref(`/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
+      if (snapshot.exists() && snapshot.val()) return true;
+      return false;
+    }).then((enable) => {
+      if (!enable) return Promise.resolve();
+      const scriptsPath = `/users/${this.props.userId}/scripts/`;
+      const promises = [database.ref(`${scriptsPath}importScript`).once('value'), database.ref(`${scriptsPath}exportScript`).once('value')];
+      return Promise.all(promises).then((snapshots) => {
+        const [importScriptSnapshot, exportScriptSnapshot] = snapshots;
+        if (importScriptSnapshot.exists() && importScriptSnapshot.val() !== '') {
+          this.setState({ importScript: importScriptSnapshot.val() });
+        }
+        if (exportScriptSnapshot.exists() && exportScriptSnapshot.val() !== '') {
+          this.setState({ exportScript: exportScriptSnapshot.val() });
+        }
+      });
     });
   }
 

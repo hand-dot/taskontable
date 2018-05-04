@@ -9,6 +9,7 @@ import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
+import Switch from 'material-ui/Switch';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 import { Controlled as CodeMirror } from 'react-codemirror2';
@@ -49,6 +50,8 @@ const styles = {
   },
 };
 
+const database = firebase.database();
+
 class Scripts extends Component {
   constructor(props) {
     super(props);
@@ -59,6 +62,7 @@ class Scripts extends Component {
       isOpenScriptSnackbar: false,
       scriptSnackbarText: '',
       exampleTaskData: '',
+      scriptEnable: false,
       importScript: '',
       exportScript: '',
       importScriptBk: '',
@@ -67,6 +71,9 @@ class Scripts extends Component {
   }
 
   componentWillMount() {
+    database.ref(`/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
+      if (snapshot.exists() && snapshot.val()) this.setState({ scriptEnable: true });
+    });
   }
 
   componentDidMount() {
@@ -116,7 +123,7 @@ class Scripts extends Component {
   resetScript(scriptType = 'exportScript', noConfirm) {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!noConfirm && !window.confirm(`${scriptType}を保存前に戻してもよろしいですか？`)) return;
-    firebase.database().ref(`/users/${this.props.userId}/scripts/${scriptType}`).once('value').then((snapshot) => {
+    database.ref(`/users/${this.props.userId}/scripts/${scriptType}`).once('value').then((snapshot) => {
       const script = snapshot.exists() && snapshot.val() ? snapshot.val() : '';
       this.setState({ [scriptType]: script, [`${scriptType}Bk`]: script });
     });
@@ -125,7 +132,7 @@ class Scripts extends Component {
   saveScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!window.confirm(`${scriptType}を保存してもよろしいですか？`)) return;
-    firebase.database().ref(`/users/${this.props.userId}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
+    database.ref(`/users/${this.props.userId}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
       this.setState({ isOpenSaveSnackbar: true, [`${scriptType}Bk`]: this.state[scriptType] });
     });
   }
@@ -159,6 +166,14 @@ class Scripts extends Component {
     this.setState({ [scriptType]: script });
   }
 
+  handleScriptEnable(event) {
+    event.persist();
+    this.setState({ scriptEnable: event.target.checked });
+    database.ref(`/users/${this.props.userId}/scripts/enable`).set(event.target.checked).then(() => {
+      this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `スクリプトを${event.target.checked ? '有効' : '無効'}にしました。` });
+    });
+  }
+
   render() {
     const { classes, theme } = this.props;
     return (
@@ -174,6 +189,22 @@ class Scripts extends Component {
         <Grid item xs={12}>
           <Paper square elevation={0}>
             <Typography gutterBottom variant="subheading">
+            スクリプトの利用(ON/OFF)
+              <span className={classes.divider}>/</span>
+              <div style={{ display: 'inline-block' }}>
+                <Switch
+                  color="primary"
+                  checked={this.state.scriptEnable}
+                  onChange={this.handleScriptEnable.bind(this)}
+                  value="scriptEnable"
+                />
+              </div>
+            </Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper square elevation={0}>
+            <Typography gutterBottom variant="subheading">
             タスクテーブルのデータの例
               <span className={classes.divider}>/</span>
               <Tooltip title="リセット" placement="top">
@@ -182,7 +213,6 @@ class Scripts extends Component {
                 </div>
               </Tooltip>
             </Typography>
-
             <Typography gutterBottom variant="caption">
               タスクのスキーマは　{JSON.stringify(tableTaskSchema)}　このようになっております。
             </Typography>
