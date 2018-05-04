@@ -139,7 +139,7 @@ class App extends Component {
   }
 
   handleUser({ displayName, email, photoURL }) {
-    this.setState({ user: { displayName, email, photoURL } });
+    this.setState({ user: Object.assign(this.state.user, { displayName, email, photoURL }) });
   }
 
   signup({
