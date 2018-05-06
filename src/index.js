@@ -27,7 +27,7 @@ ReactDOM.render(
           minHeight: '100vh',
           backgroundColor: constants.brandColor.base.BLUE,
           transformOrigin: 0,
-          backgroundImage: `linear-gradient(150deg,${constants.brandColor.light.PURPLE} 15%,${constants.brandColor.light.BLUE} 70%,${constants.brandColor.base.GREEN} 94%)`,
+          backgroundImage: `linear-gradient(150deg,${constants.brandColor.light.PURPLE} 15%,${theme.palette.primary.main} 70%,${constants.brandColor.base.GREEN} 94%)`,
           backgroundAttachment: 'fixed',
         }}
         >
@@ -37,5 +37,6 @@ ReactDOM.render(
       </ErrorBoundary>
     </MuiThemeProvider>
   </BrowserRouter>
-  , document.getElementById('root'));
+  , document.getElementById('root'),
+);
 registerServiceWorker();

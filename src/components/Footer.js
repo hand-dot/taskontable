@@ -39,10 +39,6 @@ const styles = theme => ({
     margin: '0 auto',
     textAlign: 'center',
   },
-  stroke: {
-    color: constants.brandColor.light.BLUE,
-    WebkitTextStroke: `1px ${constants.brandColor.base.BLUE}`,
-  },
 });
 
 function Footer(props) {

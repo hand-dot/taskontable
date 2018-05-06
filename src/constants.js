@@ -28,7 +28,7 @@ export default {
   SENDGRID_API_KEY,
   CHROME_DL_URL: 'https://www.google.co.jp/chrome/',
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
-  REPOSITORY_URL: 'https://github.com/hand-dot/taskchute-web',
+  REPOSITORY_URL: 'https://github.com/hand-dot/taskontable',
   ROADMAP_URL: 'https://trello.com/b/fFhYhlCu/taskontable-roadmap',
   BLOG_URL: 'https://medium.com/@taskontable',
   COMMUNITY_URL: 'https://join.slack.com/t/taskontable/shared_invite/enQtMzQwMDQ0MjcwOTE1LTZiODZjYmY4OTczNzJjZTU2NDM1NTlmODIyNDdlNTY3MGIzYzE0YTNjZjU0NmM2MzRhOGQ1ZTIyYTA3NmNiODE',

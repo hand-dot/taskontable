@@ -47,8 +47,8 @@ const styles = theme => ({
     textAlign: 'center',
   },
   stroke: {
-    color: constants.brandColor.light.BLUE,
-    WebkitTextStroke: `1px ${constants.brandColor.base.BLUE}`,
+    color: theme.palette.primary.light,
+    WebkitTextStroke: `1px ${theme.palette.primary.main}`,
   },
 });
 

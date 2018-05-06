@@ -56,7 +56,7 @@ class Login extends Component {
           <Paper style={{ minHeight: '100vh' }} square elevation={0}>
             <div className={classes.content}>
               <Typography variant="headline" gutterBottom>
-              Taskontableにログイン
+                {constants.TITLE}にログイン
               </Typography>
               <div style={{ fontSize: 12, marginBottom: 20 }}>
               OR<Link to="/signup">アカウント作成</Link>

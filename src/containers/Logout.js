@@ -39,8 +39,8 @@ const styles = theme => ({
     textAlign: 'center',
   },
   stroke: {
-    color: constants.brandColor.light.BLUE,
-    WebkitTextStroke: `1px ${constants.brandColor.base.BLUE}`,
+    color: theme.palette.primary.light,
+    WebkitTextStroke: `1px ${theme.palette.primary.main}`,
   },
 });
 
@@ -55,7 +55,7 @@ function Logout(props) {
               Did You Build Your Workflow?
             </Typography>
             <Typography variant="headline" align="center" style={{ marginBottom: '2em' }}>
-            お使いいただきありがとうございました。<br />Taskontableからログアウトしました。
+            お使いいただきありがとうございました。<br />{constants.TITLE}からログアウトしました。
             </Typography>
             <div style={{ fontSize: 12, marginTop: 20 }}>
               <Link to="/">Topに戻る</Link>
