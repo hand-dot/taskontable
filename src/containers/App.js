@@ -184,7 +184,11 @@ class App extends Component {
   logout() {
     firebase.auth().signOut().then(() => {
       // userの初期化
-      this.setState({ user: { displayName: '', photoURL: '', uid: '' } });
+      this.setState({
+        user: {
+          displayName: '', photoURL: '', uid: '', email: '',
+        },
+      });
       this.props.history.push('/logout');
     }).catch((error) => {
       throw new Error(error);
