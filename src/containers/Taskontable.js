@@ -49,7 +49,8 @@ class Taskontable extends Component {
       mode: '', // teams or users
       id: '',
       teamName: '', // modeがteamsの時にチーム名が入る
-      members: [],
+      members: [], // modeがteamsの時にメンバーが入る
+      invitedEmails: [], // modeがteamsの時に招待したメールが入る
       isOpenSnackbar: false,
       snackbarText: '',
       isMobile: util.isMobile(),
@@ -73,20 +74,25 @@ class Taskontable extends Component {
   componentWillMount() {
     // urlのidからmode(teams or users)を決定する
     if (this.props.match.params.id === this.props.userId) {
-      this.setState({ mode: 'users', id: this.props.userId });
-      setTimeout(() => { this.syncTaskontable(); });
+      this.setState({ mode: constants.taskontableMode.USERS, id: this.props.userId });
+      setTimeout(() => { this.fetchScripts().then(() => { this.syncTaskontable(); }); });
     } else {
       Promise.all([
+        database.ref(`/teams/${this.props.match.params.id}/invitedEmails/`).once('value'),
         database.ref(`/teams/${this.props.match.params.id}/users/`).once('value'),
         database.ref(`/teams/${this.props.match.params.id}/name/`).once('value'),
       ]).then((snapshots) => {
-        const [userIds, teamName] = snapshots;
+        const [invitedEmails, userIds, teamName] = snapshots;
         if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') {
           Promise.all(userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'))).then((members) => {
             this.setState({
-              mode: 'teams', teamName: teamName.val(), id: this.props.match.params.id, members: members.filter(member => member.exists()).map(member => member.val()),
+              mode: constants.taskontableMode.TEAMS,
+              teamName: teamName.val(),
+              id: this.props.match.params.id,
+              members: members.filter(member => member.exists()).map(member => member.val()),
+              invitedEmails: invitedEmails.exists() ? invitedEmails.val() : [],
             });
-            this.syncTaskontable();
+            this.fetchScripts().then(() => { this.syncTaskontable(); });
           });
         }
       });
@@ -290,10 +296,8 @@ class Taskontable extends Component {
    * Taskontable全体の同期を開始します。
    */
   syncTaskontable() {
-    this.fetchScripts().then(() => {
-      // テーブルを同期開始&初期化
-      this.attachTableTasks();
-    });
+    // テーブルを同期開始&初期化
+    this.attachTableTasks();
     // タスクプールをサーバーと同期開始
     this.attachPoolTasks();
     // メモを同期開始
@@ -467,6 +471,17 @@ class Taskontable extends Component {
     }
   }
 
+  handleMembers(newMembers) {
+    if (this.state.mode !== constants.taskontableMode.TEAMS) return;
+    this.setState({ members: newMembers });
+    database.ref(`/teams/${this.state.id}/users/`).set(newMembers.map(newMember => newMember.uid));
+  }
+  handleInvitedEmails(newEmails) {
+    if (this.state.mode !== constants.taskontableMode.TEAMS) return;
+    this.setState({ invitedEmails: newEmails });
+    database.ref(`/teams/${this.state.id}/invitedEmails/`).set(newEmails);
+  }
+
   render() {
     const { classes, theme } = this.props;
     return (
@@ -486,7 +501,7 @@ class Taskontable extends Component {
               >
                 <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
                 <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-tasks fa-lg" />タスクプール</span>} />
-                {this.state.mode === 'teams' && (
+                {this.state.mode === constants.taskontableMode.TEAMS && (
                   <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-users fa-lg" />メンバー</span>} />
                 )}
               </Tabs>
@@ -494,7 +509,20 @@ class Taskontable extends Component {
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
               {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} /></div>}
               {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
-              {this.state.tab === 2 && <div><Members userName={this.props.userName} members={this.state.members} teamId={this.state.id} teamName={this.state.teamName} /></div>}
+              {this.state.tab === 2 && (
+                <div>
+                  <Members
+                    teamId={this.state.id}
+                    teamName={this.state.teamName}
+                    userId={this.props.userId}
+                    userName={this.props.userName}
+                    members={this.state.members}
+                    invitedEmails={this.state.invitedEmails}
+                    handleMembers={this.handleMembers.bind(this)}
+                    handleInvitedEmails={this.handleInvitedEmails.bind(this)}
+                  />
+                </div>
+              )}
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <Paper elevation={1}>

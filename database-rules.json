@@ -3,7 +3,7 @@
         "users": {
             "$uid": {
                 ".read": "auth != null",
-                ".write": "$uid === auth.uid"
+                ".write": "auth != null"
             }
         },
         "teams": {

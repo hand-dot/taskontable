@@ -13,6 +13,10 @@ import util from '../util';
 import constants from '../constants';
 
 const styles = theme => ({
+  actionIcon: {
+    width: 25,
+    height: 25,
+  },
   userPhoto: {
     width: 25,
     height: 25,
@@ -25,9 +29,13 @@ const styles = theme => ({
     alignItems: 'center',
   },
   member: {
-    maxWidth: 150,
+    maxWidth: 200,
     display: 'inline-block',
     padding: theme.spacing.unit,
+    borderRadius: theme.spacing.unit,
+    '&:hover': {
+      background: theme.palette.grey[50],
+    },
   },
   memberText: {
     overflow: 'hidden',
@@ -41,14 +49,21 @@ const styles = theme => ({
 });
 
 const database = firebase.database();
-
 class Members extends Component {
   constructor(props) {
     super(props);
     this.state = {
       invitationEmail: '',
+      removeTarget: {
+        type: '',
+        uid: '',
+        displayName: '',
+        email: '',
+        photoURL: '',
+      },
       isOpenAddMemberModal: false,
-      sendEmailProcessing: false,
+      isOpenRemoveMemberModal: false,
+      processing: false,
     };
   }
 
@@ -59,12 +74,12 @@ class Members extends Component {
         this.setState({ invitationEmail: '' });
         return;
       }
-      this.setState({ sendEmailProcessing: true });
+      this.setState({ processing: true });
       // teamのデータベースのinvitedにメールアドレスがない場合メールアドレスを追加する。
       database.ref(`/teams/${this.props.teamId}/invitedEmails/`).once('value').then((snapshot) => {
         const invitedEmails = [];
-        if (snapshot.exists() && snapshot.val() !== []) {
-          invitedEmails.push(...(snapshot.val().concat([this.state.invitationEmail]).filter((x, i, self) => self.indexOf(x) === i)));
+        if (snapshot.exists() && snapshot.val() !== [] && !snapshot.val().includes(this.state.invitationEmail)) {
+          invitedEmails.push(...(snapshot.val().concat([this.state.invitationEmail])));
         } else {
           invitedEmails.push(this.state.invitationEmail);
         }
@@ -95,15 +110,78 @@ HP: ${window.location.protocol}//${window.location.host}
 
 ------>> Build Your WorkFlow ----------->>>--`,
         }),
-      }).then(() => { alert('招待メールを送信しました。'); this.setState({ invitationEmail: '', isOpenAddMemberModal: false, sendEmailProcessing: false }); }, () => { alert('招待メールの送信に失敗しました。'); this.setState({ sendEmailProcessing: false }); });
+      }).then(
+        () => {
+          alert('招待メールを送信しました。');
+          this.props.handleInvitedEmails(this.props.invitedEmails.concat([this.state.invitationEmail]).filter((x, i, self) => self.indexOf(x) === i));
+          this.setState({ invitationEmail: '', isOpenAddMemberModal: false, processing: false });
+        },
+        () => {
+          alert('招待メールの送信に失敗しました。');
+          this.setState({ processing: false });
+        },
+      );
     } else {
       alert('メールアドレスとして正しくありません。');
     }
   }
 
+  removeMemberOrInvitedEmail() {
+    if (this.state.removeTarget.type === constants.handleUserType.MEMBER) {
+      this.setState({ processing: true });
+      database.ref(`/users/${this.state.removeTarget.uid}/teams/`).once('value').then((snapshot) => {
+        if (!snapshot.exists() && !Array.isArray(snapshot.val())) {
+          // メンバーが最新でない可能性がある。
+          // TODO ここダサい。
+          alert('メンバーの再取得が必要なためリロードします。');
+          window.location.reload();
+        }
+        return snapshot.val().filter(teamId => teamId !== this.props.teamId);
+      }).then((newTeamIds) => {
+        if (this.props.userId === this.state.removeTarget.uid && !window.confirm(`${this.props.teamName}から自分を削除しようとしています。もう一度参加するためにはメンバーに招待してもらう必要があります。よろしいですか？`)) {
+          this.setState({ isOpenRemoveMemberModal: false, processing: false });
+          return;
+        }
+        if (newTeamIds.length === 1 && !window.confirm(`${this.props.teamName}からメンバーがいなくなります。このチームに二度と遷移できなくなりますがよろしいですか？`)) {
+          this.setState({ isOpenRemoveMemberModal: false, processing: false });
+          return;
+        }
+        database.ref(`/users/${this.state.removeTarget.uid}/teams/`).set(newTeamIds).then(() => {
+          const newMembers = this.props.members.filter(member => member.email !== this.state.removeTarget.email);
+          this.props.handleMembers(newMembers);
+          if (this.props.userId === this.state.removeTarget.uid) setTimeout(() => { window.location.reload(); });
+          this.setState({
+            processing: false,
+            isOpenRemoveMemberModal: false,
+            removeTarget: {
+              type: '',
+              uid: '',
+              displayName: '',
+              email: '',
+              photoURL: '',
+            },
+          });
+        });
+      });
+    } else if (this.state.removeTarget.type === constants.handleUserType.INVITED) {
+      const newEmails = this.props.invitedEmails.filter(invitedEmail => invitedEmail !== this.state.removeTarget.email);
+      this.props.handleInvitedEmails(newEmails);
+      this.setState({
+        isOpenRemoveMemberModal: false,
+        removeTarget: {
+          type: '',
+          uid: '',
+          displayName: '',
+          email: '',
+          photoURL: '',
+        },
+      });
+    }
+  }
+
   render() {
     const {
-      teamName, members, classes, theme,
+      teamName, members, invitedEmails, classes, theme,
     } = this.props;
     return (
       <div style={{ padding: theme.spacing.unit, overflow: 'auto' }}>
@@ -111,15 +189,67 @@ HP: ${window.location.protocol}//${window.location.host}
           {teamName}のメンバー
         </Typography>
         <div className={classes.membersContainer}>
-          {members.map(member => (
+          {members.length === 0 ? <Typography align="center" variant="caption">メンバーがいません</Typography> : members.map(member => (
             <div className={classes.member} key={member.uid} title={`${member.displayName} - ${member.email}`}>
+              <IconButton
+                className={classes.actionIcon}
+                color="default"
+                onClick={() => {
+                  this.setState({
+                    isOpenRemoveMemberModal: true,
+                    removeTarget: Object.assign({
+                      type: constants.handleUserType.MEMBER,
+                      uid: '',
+                      displayName: '',
+                      email: '',
+                      photoURL: '',
+                      }, {
+                        uid: member.uid,
+                        displayName: member.displayName,
+                        email: member.email,
+                        photoURL: member.photoURL,
+                      }),
+                  });
+                }}
+              >
+                <i className="fa fa-times-circle" aria-hidden="true" />
+              </IconButton>
               <Typography className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
               {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
               <Typography className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
             </div>
-        ))}
-          <div className={classes.member}>
-            <IconButton className={classes.actionIcon} color="default" onClick={() => { this.setState({ isOpenAddMemberModal: true }); }}>
+          ))}
+          <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
+          {invitedEmails.length === 0 ? <Typography align="center" variant="caption">誰も招待されていません。</Typography> : invitedEmails.map(invitedEmail => (
+            <div className={classes.member} key={invitedEmail} title={`招待中 - ${invitedEmail}`}>
+              <IconButton
+                className={classes.actionIcon}
+                color="default"
+                onClick={() => {
+                  this.setState({
+                    isOpenRemoveMemberModal: true,
+                    removeTarget: Object.assign({
+                      type: constants.handleUserType.INVITED,
+                      uid: '',
+                      displayName: '',
+                      email: '',
+                      photoURL: '',
+                      }, {
+                        email: invitedEmail,
+                      }),
+                  });
+                }}
+              >
+                <i className="fa fa-times-circle" aria-hidden="true" />
+              </IconButton>
+              <Typography className={classes.memberText} align="center" variant="caption">招待中</Typography>
+              <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>
+              <Typography className={classes.memberText} align="center" variant="caption">{invitedEmail}</Typography>
+            </div>
+          ))}
+          <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
+          <div>
+            <IconButton color="default" onClick={() => { this.setState({ isOpenAddMemberModal: true }); }}>
               <i className="fa fa-plus" />
             </IconButton>
           </div>
@@ -127,9 +257,9 @@ HP: ${window.location.protocol}//${window.location.host}
         <Dialog
           open={this.state.isOpenAddMemberModal}
           onClose={() => { this.setState({ invitationEmail: '', isOpenAddMemberModal: false }); }}
-          aria-labelledby="form-dialog-title"
+          aria-labelledby="add-member-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">メンバーを追加する</DialogTitle>
+          <DialogTitle id="add-member-dialog-title">メンバーを追加する</DialogTitle>
           <DialogContent>
             <TextField
               onChange={(e) => { this.setState({ invitationEmail: e.target.value }); }}
@@ -147,16 +277,36 @@ HP: ${window.location.protocol}//${window.location.host}
             <Button onClick={this.addMember.bind(this)} color="primary">招待メールを送信</Button>
           </DialogActions>
         </Dialog>
-        <Dialog open={this.state.sendEmailProcessing}>
+        <Dialog
+          open={this.state.isOpenRemoveMemberModal}
+          onClose={() => { this.setState({ isOpenRemoveMemberModal: false }); }}
+          aria-labelledby="remove-member-dialog-title"
+        >
+          <DialogTitle id="remove-member-dialog-title">{this.state.removeTarget.type === constants.handleUserType.MEMBER ? 'メンバー' : '招待中のユーザー'}を削除する</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" gutterBottom>本当に{this.state.removeTarget.type === constants.handleUserType.MEMBER ? `メンバーの${this.state.removeTarget.displayName}` : `招待中のユーザーの${this.state.removeTarget.email}`}を削除してもよろしいですか？</Typography>
+            <Typography variant="caption">*削除後は再度招待しないとこのワークシートにアクセスできなくなります。</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => { this.setState({ isOpenRemoveMemberModal: false }); }}
+              color="primary"
+            >キャンセル
+            </Button>
+            <Button onClick={this.removeMemberOrInvitedEmail.bind(this)} color="primary">削除</Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={this.state.processing}>
           <CircularProgress className={classes.circularProgress} size={60} />
         </Dialog>
-        {/* TODO URLをコピーできる機能もあったほうがいい */}
+
       </div>
     );
   }
 }
 
 Members.propTypes = {
+  userId: PropTypes.string.isRequired,
   userName: PropTypes.string.isRequired,
   members: PropTypes.arrayOf(PropTypes.shape({
     displayName: PropTypes.string.isRequired,
@@ -164,8 +314,11 @@ Members.propTypes = {
     uid: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
   })).isRequired,
+  invitedEmails: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   teamId: PropTypes.string.isRequired,
   teamName: PropTypes.string.isRequired,
+  handleMembers: PropTypes.func.isRequired,
+  handleInvitedEmails: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

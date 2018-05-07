@@ -62,6 +62,10 @@ export default {
     BLOG: 'blog',
     COMMUNITY: 'community',
   },
+  taskontableMode: {
+    TEAMS: 'teams',
+    USERS: 'users',
+  },
   taskPoolType: {
     HIGHPRIORITY: 'highPriorityTasks',
     LOWPRIORITY: 'lowPriorityTasks',
@@ -91,6 +95,10 @@ export default {
   scriptType: {
     IMPORTSCRIPT: 'importScript',
     EXPORTSCRIPT: 'exportScript',
+  },
+  handleUserType: {
+    MEMBER: 'member',
+    INVITED: 'invited',
   },
   DATEFMT: 'YYYY-MM-DD',
   TIMEFMT: 'HH:mm',

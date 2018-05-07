@@ -74,8 +74,7 @@ class App extends Component {
 
         // ログイン後にどこのページからスタートするかをハンドリングする。
         // また、招待されている場合、この処理でチームに参加する。
-        const promises = [database.ref(`/users/${user.uid}/settings/`).once('value'), database.ref(`/users/${user.uid}/teams/`).once('value')];
-        Promise.all(promises).then((snapshots) => {
+        Promise.all([database.ref(`/users/${user.uid}/settings/`).once('value'), database.ref(`/users/${user.uid}/teams/`).once('value')]).then((snapshots) => {
           const [settings, teams] = snapshots;
           if (settings.exists()) {
             const mySettings = settings.val();
@@ -94,8 +93,7 @@ class App extends Component {
             if (!user.displayName) user.updateProfile({ displayName: tmpDisplayName });
             database.ref(`/users/${user.uid}/settings/`).set(mySettings);
           }
-          if (teams.exists() && teams.val() !== []) return teams.val().concat([user.uid]);// 自分のidと自分のチームのid
-          return [user.uid];
+          return (teams.exists() && teams.val() !== []) ? teams.val().concat([user.uid]) : [user.uid]; // 自分のidと自分のチームのid or 自分のid
         }).then((myWorkSheetsIds) => {
           const pathname = this.props.location.pathname.replace('/', '');
           if (pathname === 'login' || pathname === 'signup') { // ログイン時はワークシートの選択(urlルート)に飛ばす
@@ -103,15 +101,20 @@ class App extends Component {
           } else if (pathname !== '' && !myWorkSheetsIds.includes(pathname)) { // 招待の可能性がある場合の処理
             const teamId = pathname;
             database.ref(`/teams/${teamId}/invitedEmails/`).once('value').then((snapshot) => {
-              // 自分のメールアドレスがチームの招待中に存在するかチェックする。
-              if (!snapshot.exists() || snapshot.val() === [] || !snapshot.val().includes(user.email)) { // 違った場合はワークシートの選択に飛ばす
+              // 自分のメールアドレスがチームの招待中メールアドレスリストに存在するかチェックする。
+              if (!snapshot.exists() || !Array.isArray(snapshot.val()) || snapshot.val() === [] || !snapshot.val().includes(user.email)) { // 違った場合はワークシートの選択に飛ばす
                 this.props.history.push('/');
                 return;
               }
               // 自分が招待されていた場合は自分のチームに加え、チームのメンバーに自分を加える
               Promise.all([database.ref(`/users/${user.uid}/teams/`).once('value'), database.ref(`/teams/${teamId}/users/`).once('value')]).then((snapshots) => {
                 const [myTeams, teamUsers] = snapshots;
-                return [database.ref(`/users/${user.uid}/teams/`).set((myTeams.exists() ? myTeams.val() : []).concat([teamId])), database.ref(`/teams/${teamId}/users/`).set((teamUsers.exists() ? teamUsers.val() : []).concat([user.uid]))];
+                const promises = [
+                  database.ref(`/users/${user.uid}/teams/`).set((myTeams.exists() ? myTeams.val() : []).concat([teamId])), // 自分の参加しているチームにチームのidを追加
+                  database.ref(`/teams/${teamId}/users/`).set((teamUsers.exists() ? teamUsers.val() : []).concat([user.uid])), // 参加しているチームのユーザーに自分のidを追加
+                  database.ref(`/teams/${teamId}/invitedEmails/`).set(snapshot.val().filter(email => email !== user.email)), // 参加しているチーム招待中メールアドレスリストから削除
+                ];
+                return Promise.all(promises);
               }).then(() => {
                 window.location.reload();
               });
