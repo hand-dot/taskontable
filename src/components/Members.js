@@ -185,17 +185,21 @@ HP: ${window.location.protocol}//${window.location.host}
       teamName, members, invitedEmails, classes, theme,
     } = this.props;
     return (
-      <div style={{ padding: theme.spacing.unit, overflow: 'auto' }}>
-        <Typography variant="subheading">
-          {teamName}のメンバー
-        </Typography>
-        <div className={classes.membersContainer}>
-          {members.length === 0 ? <Typography align="center" variant="caption">メンバーがいません</Typography> : members.map(member => (
-            <div className={classes.member} key={member.uid} title={`${member.displayName} - ${member.email}`}>
-              <IconButton
-                className={classes.actionIcon}
-                color="default"
-                onClick={() => {
+      <div style={{
+        padding: theme.spacing.unit, overflow: 'auto', display: 'inline-flex', flexDirection: 'row', alignItems: 'center',
+        }}
+      >
+        <div>
+          <Typography variant="subheading">
+            {teamName}のメンバー
+          </Typography>
+          <div className={classes.membersContainer}>
+            {members.length === 0 ? <Typography align="center" variant="caption">メンバーがいません</Typography> : members.map(member => (
+              <div className={classes.member} key={member.uid} title={`${member.displayName} - ${member.email}`}>
+                <IconButton
+                  className={classes.actionIcon}
+                  color="default"
+                  onClick={() => {
                   this.setState({
                     isOpenRemoveMemberModal: true,
                     removeTarget: Object.assign({
@@ -212,21 +216,28 @@ HP: ${window.location.protocol}//${window.location.host}
                       }),
                   });
                 }}
-              >
-                <i className="fa fa-times-circle" aria-hidden="true" />
-              </IconButton>
-              <Typography className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
-              {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
-              <Typography className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
-            </div>
+                >
+                  <i style={{ fontSize: 15 }} className="fa fa-times-circle" aria-hidden="true" />
+                </IconButton>
+                <Typography className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
+                {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
+                <Typography className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
+              </div>
           ))}
-          <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
-          {invitedEmails.length === 0 ? <Typography align="center" variant="caption">誰も招待されていません。</Typography> : invitedEmails.map(invitedEmail => (
-            <div className={classes.member} key={invitedEmail} title={`招待中 - ${invitedEmail}`}>
-              <IconButton
-                className={classes.actionIcon}
-                color="default"
-                onClick={() => {
+          </div>
+        </div>
+        <div>
+          <Typography variant="subheading">
+            招待されたメンバー
+          </Typography>
+          <div className={classes.membersContainer}>
+            <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
+            {invitedEmails.length === 0 ? <Typography align="center" variant="caption">誰も招待されていません。</Typography> : invitedEmails.map(invitedEmail => (
+              <div className={classes.member} key={invitedEmail} title={`招待中 - ${invitedEmail}`}>
+                <IconButton
+                  className={classes.actionIcon}
+                  color="default"
+                  onClick={() => {
                   this.setState({
                     isOpenRemoveMemberModal: true,
                     removeTarget: Object.assign({
@@ -240,20 +251,21 @@ HP: ${window.location.protocol}//${window.location.host}
                       }),
                   });
                 }}
-              >
-                <i className="fa fa-times-circle" aria-hidden="true" />
-              </IconButton>
-              <Typography className={classes.memberText} align="center" variant="caption">招待中</Typography>
-              <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>
-              <Typography className={classes.memberText} align="center" variant="caption">{invitedEmail}</Typography>
-            </div>
+                >
+                  <i style={{ fontSize: 15 }} className="fa fa-times-circle" aria-hidden="true" />
+                </IconButton>
+                <Typography className={classes.memberText} align="center" variant="caption">招待中</Typography>
+                <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>
+                <Typography className={classes.memberText} align="center" variant="caption">{invitedEmail}</Typography>
+              </div>
           ))}
-          <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
-          <div>
-            <IconButton color="default" onClick={() => { this.setState({ isOpenAddMemberModal: true }); }}>
-              <i className="fa fa-plus" />
-            </IconButton>
           </div>
+        </div>
+        <div style={{ marginTop: '2em' }}>
+          <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
+          <IconButton color="default" onClick={() => { this.setState({ isOpenAddMemberModal: true }); }}>
+            <i className="fa fa-plus" />
+          </IconButton>
         </div>
         <Dialog
           open={this.state.isOpenAddMemberModal}
