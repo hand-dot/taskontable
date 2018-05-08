@@ -146,6 +146,7 @@ HP: ${window.location.protocol}//${window.location.host}
           this.setState({ isOpenRemoveMemberModal: false, processing: false });
           return;
         }
+        // TODO ここはcloudfunctionでusersのチームから値を削除し、realtimeデータベースのusers/$uid/.writeは自分しか書き込み出来ないようにしたほうがよさそう。
         database.ref(`/users/${this.state.removeTarget.uid}/teams/`).set(newTeamIds).then(() => {
           const newMembers = this.props.members.filter(member => member.email !== this.state.removeTarget.email);
           this.props.handleMembers(newMembers);

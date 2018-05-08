@@ -129,18 +129,6 @@ class App extends Component {
   componentDidMount() {
   }
 
-  openHelpDialog() {
-    this.setState({ isOpenHelpDialog: true });
-  }
-
-  closeHelpDialog() {
-    this.setState({ isOpenHelpDialog: false });
-  }
-
-  toggleHelpDialog() {
-    this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog });
-  }
-
   handleUser({ displayName, email, photoURL }) {
     this.setState({ user: Object.assign(this.state.user, { displayName, email, photoURL }) });
   }
@@ -159,6 +147,7 @@ class App extends Component {
         this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウントを作成しました。' });
       }, () => {
         this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウント作成に失敗しました。' });
+        throw new Error('アカウント作成に失敗');
       });
     }
   }
@@ -217,8 +206,8 @@ class App extends Component {
         <GlobalHeader
           user={this.state.user}
           isOpenHelpDialog={this.state.isOpenHelpDialog}
-          openHelpDialog={this.openHelpDialog.bind(this)}
-          closeHelpDialog={this.closeHelpDialog.bind(this)}
+          openHelpDialog={() => { this.setState({ isOpenHelpDialog: true }); }}
+          closeHelpDialog={() => { this.setState({ isOpenHelpDialog: false }); }}
           logout={this.logout.bind(this)}
           goSettings={this.goSettings.bind(this)}
           goScripts={this.goScripts.bind(this)}
@@ -229,7 +218,28 @@ class App extends Component {
           <Route exact strict path="/signup" render={props => <Signup signup={this.signup.bind(this)} login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/logout" render={props => <Logout {...props} />} />
-          <Route exact strict path="/:id" render={(props) => { if (this.state.user.uid !== '') { return <Taskontable userId={this.state.user.uid} userName={this.state.user.displayName} toggleHelpDialog={this.toggleHelpDialog.bind(this)} {...props} />; } return null; }} />
+          <Route
+            exact
+            strict
+            path="/:id"
+            render={(props) => {
+              if (this.state.user.uid !== '') {
+                return (<Taskontable
+                  userId={this.state.user.uid}
+                  userName={this.state.user.displayName}
+                  toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
+                  {...props}
+                />);
+              }
+              // TODO ここでうまくlogin or signup にリダイレクトすることで
+              // https://github.com/hand-dot/taskontable/issues/358 このチケットを消化できそう
+              // ネックになっている部分が、loginではなく、signupに遷移されたときに"/:id"が消えてしまう。
+              // また、トップページに遷移されたときも/:idが消えてしまう。
+              // トップページに遷移されたときは仕方ないにしろ、login → signupの遷移などでは/:idを引き継ぎたい。
+              // クエリパラメーターが引き回し可能ならそれにしてもいいかもしれない。
+              return <Login login={this.login.bind(this)} {...props} />;
+            }}
+          />
           <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
           <Route exact strict path="/:id/settings" render={(props) => { if (this.state.user.uid !== '') { return <Settings user={this.state.user} handleUser={this.handleUser.bind(this)} {...props} />; } return null; }} />
         </Switch>
@@ -271,6 +281,7 @@ class App extends Component {
 App.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line
   history: PropTypes.object.isRequired, // eslint-disable-line
+  location: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 
