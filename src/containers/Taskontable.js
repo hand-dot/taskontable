@@ -68,6 +68,7 @@ class Taskontable extends Component {
       memo: '',
       importScript: '',
       exportScript: '',
+      isSyncedTaskontable: false,
     };
   }
 
@@ -235,13 +236,13 @@ class Taskontable extends Component {
   savePoolTasks() {
     // IDの生成処理
     Object.keys(this.state.poolTasks).forEach((poolTaskKey) => {
-      const poolTasks = this.state.poolTasks;
+      const { poolTasks } = this.state;
       poolTasks[poolTaskKey] = this.state.poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask));
     });
     if (this.state.poolTasks.regularTasks) {
       // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
       // https://github.com/hand-dot/taskontable/issues/118
-      const poolTasks = this.state.poolTasks;
+      const { poolTasks } = this.state;
       poolTasks.regularTasks = this.state.poolTasks.regularTasks.map((task) => {
         const copyTask = Object.assign({}, task);
         if (copyTask.dayOfWeek) {
@@ -308,7 +309,7 @@ class Taskontable extends Component {
    * テーブルタスクを同期します。
    */
   attachTableTasks() {
-    database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
+    return database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       if (snapshot.exists() && util.equal(this.state.tableTasks, snapshot.val())) {
         // 同期したがテーブルのデータと差分がなかった場合(自分の更新)
         this.setState({ saveable: false });
@@ -318,6 +319,12 @@ class Taskontable extends Component {
       // 初期化もしくは自分のテーブル以外の更新
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
+        const lastSaveTime = moment().format(constants.TIMEFMT);
+        if (this.state.isSyncedTaskontable) { // ほかのユーザーの更新
+          this.setState({ lastSaveTime, isOpenSnackbar: true, snackbarText: `テーブルが更新されました。（${lastSaveTime}）` });
+        } else { // 初期化
+          this.setState({ isSyncedTaskontable: true });
+        }
         tableTasks = snapshot.val();
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合(定期タスクをテーブルに設定する処理。本日以降しか動作しない)
@@ -334,8 +341,8 @@ class Taskontable extends Component {
           this.setState({ isOpenSnackbar: true, snackbarText: 'インポートスクリプトを実行しました。' });
         },
         (reason) => {
-          if (reason) this.setState({ isOpenSnackbar: true, snackbarText: `エラー[importScript]：${reason}` });
           this.setSortedTableTasks(tableTasks);
+          if (reason) this.setState({ isOpenSnackbar: true, snackbarText: `エラー[importScript]：${reason}` });
         },
       );
       this.setState({ saveable: false });
@@ -345,7 +352,7 @@ class Taskontable extends Component {
    * プールタスクを同期します。
    */
   attachPoolTasks() {
-    database.ref(`/${this.state.mode}/${this.state.id}/poolTasks`).on('value', (snapshot) => {
+    return database.ref(`/${this.state.mode}/${this.state.id}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
         const poolTasks = snapshot.val();
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
@@ -379,7 +386,7 @@ class Taskontable extends Component {
    * プールタスクを同期します。
    */
   attachMemo() {
-    database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).on('value', (snapshot) => {
+    return database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).on('value', (snapshot) => {
       const memo = snapshot.val();
       if (snapshot.exists() && memo) {
         if (this.state.memo !== memo) this.setState({ memo });
@@ -582,6 +589,7 @@ Taskontable.propTypes = {
   toggleHelpDialog: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
+  match: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles, { withTheme: true })(Taskontable);
