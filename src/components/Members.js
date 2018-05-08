@@ -142,7 +142,7 @@ HP: ${window.location.protocol}//${window.location.host}
           this.setState({ isOpenRemoveMemberModal: false, processing: false });
           return;
         }
-        if (newTeamIds.length === 1 && !window.confirm(`${this.props.teamName}からメンバーがいなくなります。このチームに二度と遷移できなくなりますがよろしいですか？`)) {
+        if (newTeamIds.length === 0 && !window.confirm(`${this.props.teamName}からメンバーがいなくなります。このチームに二度と遷移できなくなりますがよろしいですか？`)) {
           this.setState({ isOpenRemoveMemberModal: false, processing: false });
           return;
         }
