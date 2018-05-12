@@ -361,18 +361,12 @@ class Taskontable extends Component {
       this.fireScript(tableTasks, 'importScript').then(
         (data) => {
           this.setSortedTableTasks(data);
-          this.setState({
-            isOpenSnackbar: true,
-            snackbarText: `インポートスクリプトを実行しました。(success)${snackbarText ? ` - ${snackbarText}` : ''}`,
-          });
+          this.setState({ isOpenSnackbar: true, snackbarText: `インポートスクリプトを実行しました。(success)${snackbarText ? ` - ${snackbarText}` : ''}` });
         },
         (reason) => {
           this.setSortedTableTasks(tableTasks);
           if (reason) snackbarText = `インポートスクリプトを実行しました。(error)：${reason}${snackbarText ? ` - ${snackbarText}` : ''}`;
-          this.setState({
-            isOpenSnackbar: snackbarText !== '',
-            snackbarText,
-          });
+          this.setState({ isOpenSnackbar: snackbarText !== '', snackbarText });
         },
       );
       this.setState({ saveable: false });
@@ -593,7 +587,7 @@ class Taskontable extends Component {
             <Divider />
             <TextField
               fullWidth
-              InputProps={{ style: { fontSize: 13 } }}
+              InputProps={{ style: { fontSize: 13, padding: theme.spacing.unit } }}
               onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
               onBlur={() => {
                 if (this.state.isMobile && this.state.saveable) {
