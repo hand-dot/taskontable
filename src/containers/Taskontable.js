@@ -336,13 +336,14 @@ class Taskontable extends Component {
         this.setState({ saveable: false });
         return;
       }
+      let snackbarText = '';
       let tableTasks = [];
       // 初期化もしくは自分のテーブル以外の更新
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
         const lastSaveTime = moment().format(constants.TIMEFMT);
         if (this.state.isSyncedTableTasks) { // ほかのユーザーの更新
-          this.setState({ lastSaveTime, isOpenSnackbar: true, snackbarText: `テーブルが更新されました。（${lastSaveTime}）` });
+          snackbarText = `テーブルが更新されました。（${lastSaveTime}）`;
         } else { // 初期化
           this.setState({ isSyncedTableTasks: true });
         }
@@ -355,15 +356,23 @@ class Taskontable extends Component {
         // https://github.com/hand-dot/taskontable/issues/118
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.convertDayOfWeekToString(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
         tableTasks = regularTasks;
+        if (tableTasks.length !== 0) snackbarText = '定期タスクを読み込みました。';
       }
       this.fireScript(tableTasks, 'importScript').then(
         (data) => {
           this.setSortedTableTasks(data);
-          this.setState({ isOpenSnackbar: true, snackbarText: 'インポートスクリプトを実行しました。(success)' });
+          this.setState({
+            isOpenSnackbar: true,
+            snackbarText: `インポートスクリプトを実行しました。(success)${snackbarText ? ` - ${snackbarText}` : ''}`,
+          });
         },
         (reason) => {
           this.setSortedTableTasks(tableTasks);
-          if (reason) this.setState({ isOpenSnackbar: true, snackbarText: `インポートスクリプトを実行しました。(error)：${reason}` });
+          if (reason) snackbarText = `インポートスクリプトを実行しました。(error)：${reason}${snackbarText ? ` - ${snackbarText}` : ''}`;
+          this.setState({
+            isOpenSnackbar: snackbarText !== '',
+            snackbarText,
+          });
         },
       );
       this.setState({ saveable: false });
