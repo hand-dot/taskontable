@@ -40,9 +40,7 @@ const database = firebase.database();
 class Taskontable extends Component {
   constructor(props) {
     super(props);
-    this.saveTableTasks = debounce(this.saveTableTasks, constants.REQEST_DELAY);
-    this.savePoolTasks = debounce(this.savePoolTasks, constants.REQEST_DELAY);
-    this.saveMemo = debounce(this.saveMemo, constants.REQEST_DELAY);
+    this.saveWorkSheet = debounce(this.saveWorkSheet, constants.REQEST_DELAY);
     this.attachTableTasks = debounce(this.attachTableTasks, constants.REQEST_DELAY);
     this.attachMemo = debounce(this.attachMemo, constants.REQEST_DELAY);
     this.state = {
@@ -167,7 +165,16 @@ class Taskontable extends Component {
       setTimeout(() => { this.moveTableTaskToPoolTask(taskPoolType, removeTask); });
       return;
     }
-    setTimeout(() => { this.saveTableTasks(); });
+    setTimeout(() => {
+      this.saveTableTasks().then((snackbarText) => {
+        this.setState({
+          isOpenSnackbar: true,
+          snackbarText: `${snackbarText}テーブルタスクを保存しました。`,
+          lastSaveTime: moment().format(constants.TIMEFMT),
+          saveable: false,
+        });
+      });
+    });
   }
 
   /**
@@ -183,7 +190,16 @@ class Taskontable extends Component {
     poolTasks[taskPoolType].push(willPooltask);
     this.setState({ poolTasks });
     // テーブルタスクからタスクプールに移動したら保存する
-    setTimeout(() => { this.saveTableTasks(); this.savePoolTasks(); });
+    setTimeout(() => {
+      Promise.all([this.saveTableTasks(), this.savePoolTasks()]).then(() => {
+        this.setState({
+          isOpenSnackbar: true,
+          snackbarText: 'テーブルタスクをタスクプールに移動しました。',
+          lastSaveTime: moment().format(constants.TIMEFMT),
+          saveable: false,
+        });
+      });
+    });
   }
 
   /**
@@ -222,12 +238,19 @@ class Taskontable extends Component {
          taskPoolType === constants.taskPoolType.LOWPRIORITY) {
         this.state.poolTasks[taskPoolType].splice(value, 1);
       }
-      // タスクプールからテーブルタスクに移動したら保存する
+      // タスクプールからテーブルタスクに移動したらテーブルタスクを保存する
       this.setState({ tableTasks });
       if (!this.state.isMobile) this.taskTable.setDataForHot(tableTasks);
       setTimeout(() => { this.saveTableTasks(); });
     }
-    setTimeout(() => this.savePoolTasks());
+    setTimeout(() => {
+      this.savePoolTasks().then(() => {
+        this.setState({
+          isOpenSnackbar: true,
+          snackbarText: taskActionType === constants.taskActionType.MOVE_TABLE ? 'タスクプールからテーブルタスクに移動しました。' : 'タスクプールを保存しました。',
+        });
+      });
+    });
   }
 
   /**
@@ -251,14 +274,21 @@ class Taskontable extends Component {
         return copyTask;
       });
     }
-    database.ref(`/${this.state.mode}/${this.state.id}/poolTasks`).set(this.state.poolTasks);
+    return database.ref(`/${this.state.mode}/${this.state.id}/poolTasks`).set(this.state.poolTasks);
   }
+
   /**
    * stateのtableTasksとmemoをサーバーに保存します。
    */
   saveWorkSheet() {
-    this.saveTableTasks();
-    this.saveMemo();
+    Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
+      this.setState({
+        isOpenSnackbar: true,
+        snackbarText: `${snackbarTexts[0]}ワークシートを保存しました。`,
+        lastSaveTime: moment().format(constants.TIMEFMT),
+        saveable: false,
+      });
+    });
   }
 
   /**
@@ -269,27 +299,19 @@ class Taskontable extends Component {
     const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(util.setIdIfNotExist(tableTask)));
     // 開始時刻順に並び替える
     const sortedTableTask = this.setSortedTableTasks(tableTasks);
-    this.fireScript(sortedTableTask, 'exportScript')
+    return this.fireScript(sortedTableTask, 'exportScript')
       .then(
         data => database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(data)
-          .then(() => 'エクスポートスクリプトを実行し、テーブルタスクを保存しました。'),
+          .then(() => 'エクスポートスクリプトを実行しました。(success) - '),
         reason => database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(sortedTableTask)
-          .then(() => (reason ? `エラー[exportScript]：${reason}` : 'テーブルタスクを保存しました。')),
-      )
-      .then((snackbarText) => {
-        this.setState({
-          isOpenSnackbar: true,
-          snackbarText,
-          lastSaveTime: moment().format(constants.TIMEFMT),
-          saveable: false,
-        });
-      });
+          .then(() => (reason ? `エクスポートスクリプトを実行しました。(error)：${reason} - ` : '')),
+      );
   }
   /**
    * stateのmemoをサーバーに保存します。
    */
   saveMemo() {
-    database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).set(this.state.memo);
+    return database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).set(this.state.memo);
   }
 
   /**
@@ -337,11 +359,11 @@ class Taskontable extends Component {
       this.fireScript(tableTasks, 'importScript').then(
         (data) => {
           this.setSortedTableTasks(data);
-          this.setState({ isOpenSnackbar: true, snackbarText: 'インポートスクリプトを実行しました。' });
+          this.setState({ isOpenSnackbar: true, snackbarText: 'インポートスクリプトを実行しました。(success)' });
         },
         (reason) => {
           this.setSortedTableTasks(tableTasks);
-          if (reason) this.setState({ isOpenSnackbar: true, snackbarText: `エラー[importScript]：${reason}` });
+          if (reason) this.setState({ isOpenSnackbar: true, snackbarText: `インポートスクリプトを実行しました。(error)：${reason}` });
         },
       );
       this.setState({ saveable: false });
@@ -566,8 +588,8 @@ class Taskontable extends Component {
               onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
               onBlur={() => {
                 if (this.state.isMobile && this.state.saveable) {
-                  this.saveMemo();
-                  setTimeout(() => {
+                  this.saveMemo()
+                  .then(() => {
                     this.setState({
                       isOpenSnackbar: true,
                       snackbarText: 'メモを保存しました。',
