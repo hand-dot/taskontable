@@ -564,7 +564,14 @@ class Taskontable extends Component {
             <TextField
               fullWidth
               InputProps={{ style: { fontSize: 13 } }}
-              onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
+              onChange={(e) => {
+                this.setState({ memo: e.target.value });
+                if (this.state.isMobile) {
+                  this.saveMemo();
+                } else {
+                  this.setState({ saveable: true });
+                }
+              }}
               value={this.state.memo}
               label={`${this.state.date}のメモ`}
               multiline
