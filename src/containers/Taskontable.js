@@ -68,7 +68,7 @@ class Taskontable extends Component {
       memo: '',
       importScript: '',
       exportScript: '',
-      isSyncedTaskontable: false,
+      isSyncedTableTasks: false,
     };
   }
 
@@ -320,10 +320,10 @@ class Taskontable extends Component {
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
         const lastSaveTime = moment().format(constants.TIMEFMT);
-        if (this.state.isSyncedTaskontable) { // ほかのユーザーの更新
+        if (this.state.isSyncedTableTasks) { // ほかのユーザーの更新
           this.setState({ lastSaveTime, isOpenSnackbar: true, snackbarText: `テーブルが更新されました。（${lastSaveTime}）` });
         } else { // 初期化
-          this.setState({ isSyncedTaskontable: true });
+          this.setState({ isSyncedTableTasks: true });
         }
         tableTasks = snapshot.val();
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
@@ -467,7 +467,7 @@ class Taskontable extends Component {
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
       database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).off();
       database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).off();
-      this.setState({ date: newDate });
+      this.setState({ date: newDate, isSyncedTableTasks: false });
       if (!this.state.isMobile) {
         this.taskTable.updateIsActive(util.isToday(newDate));
         this.taskTable.setDataForHot([{
