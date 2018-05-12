@@ -269,22 +269,21 @@ class Taskontable extends Component {
     const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(util.setIdIfNotExist(tableTask)));
     // 開始時刻順に並び替える
     const sortedTableTask = this.setSortedTableTasks(tableTasks);
-    this.fireScript(sortedTableTask, 'exportScript').then((data) => {
-      database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(data).then(() => {
+    this.fireScript(sortedTableTask, 'exportScript')
+      .then(
+        data => database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(data)
+          .then(() => 'エクスポートスクリプトを実行し、テーブルタスクを保存しました。'),
+        reason => database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(sortedTableTask)
+          .then(() => (reason ? `エラー[exportScript]：${reason}` : 'テーブルタスクを保存しました。')),
+      )
+      .then((snackbarText) => {
         this.setState({
           isOpenSnackbar: true,
-          snackbarText: 'エクスポートスクリプトを実行し、保存しました。',
+          snackbarText,
           lastSaveTime: moment().format(constants.TIMEFMT),
           saveable: false,
         });
       });
-    }, (reason) => {
-      database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(sortedTableTask).then(() => {
-        this.setState({
-          isOpenSnackbar: true, snackbarText: reason ? `エラー[exportScript]：${reason}` : '保存しました。', lastSaveTime: moment().format(constants.TIMEFMT), saveable: false,
-        });
-      });
-    });
   }
   /**
    * stateのmemoをサーバーに保存します。
@@ -564,12 +563,18 @@ class Taskontable extends Component {
             <TextField
               fullWidth
               InputProps={{ style: { fontSize: 13 } }}
-              onChange={(e) => {
-                this.setState({ memo: e.target.value });
-                if (this.state.isMobile) {
+              onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
+              onBlur={() => {
+                if (this.state.isMobile && this.state.saveable) {
                   this.saveMemo();
-                } else {
-                  this.setState({ saveable: true });
+                  setTimeout(() => {
+                    this.setState({
+                      isOpenSnackbar: true,
+                      snackbarText: 'メモを保存しました。',
+                      lastSaveTime: moment().format(constants.TIMEFMT),
+                      saveable: false,
+                    });
+                  });
                 }
               }}
               value={this.state.memo}
