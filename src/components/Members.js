@@ -186,7 +186,7 @@ HP: ${window.location.protocol}//${window.location.host}
     } = this.props;
     return (
       <div style={{
-        padding: theme.spacing.unit, overflow: 'auto', display: 'inline-flex', flexDirection: 'row', alignItems: 'center',
+        padding: theme.spacing.unit, display: 'inline-flex', flexDirection: 'row', alignItems: 'center',
         }}
       >
         <div>
@@ -232,7 +232,7 @@ HP: ${window.location.protocol}//${window.location.host}
           </Typography>
           <div className={classes.membersContainer}>
             <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
-            {invitedEmails.length === 0 ? <Typography align="center" variant="caption">誰も招待されていません。</Typography> : invitedEmails.map(invitedEmail => (
+            {invitedEmails.length === 0 ? <Typography align="center" variant="caption" style={{ minWidth: 150 }}>誰も招待されていません。</Typography> : invitedEmails.map(invitedEmail => (
               <div className={classes.member} key={invitedEmail} title={`招待中 - ${invitedEmail}`}>
                 <IconButton
                   className={classes.actionIcon}

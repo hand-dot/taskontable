@@ -517,7 +517,7 @@ class Taskontable extends Component {
               {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} /></div>}
               {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
               {this.state.tab === 2 && (
-                <div>
+                <div style={{ overflow: 'auto' }}>
                   <Members
                     teamId={this.state.id}
                     teamName={this.state.teamName}
