@@ -60,10 +60,12 @@ class Members extends Component {
         displayName: '',
         email: '',
         photoURL: '',
+        fcmToken: '',
       },
       isOpenAddMemberModal: false,
       isOpenRemoveMemberModal: false,
       isOpenResendEmailModal: false,
+      isOpenSendNotificationModal: false,
       processing: false,
     };
   }
@@ -164,6 +166,7 @@ HP: ${window.location.protocol}//${window.location.host}
               displayName: '',
               email: '',
               photoURL: '',
+              fcmToken: '',
             },
           });
         });
@@ -179,6 +182,7 @@ HP: ${window.location.protocol}//${window.location.host}
           displayName: '',
           email: '',
           photoURL: '',
+          fcmToken: '',
         },
       });
     }
@@ -201,6 +205,34 @@ HP: ${window.location.protocol}//${window.location.host}
           this.setState({ processing: false });
         },
       );
+    }
+  }
+
+  /**
+   * メンバーに通知を送信します。
+   */
+  sendNotification() {
+    if (this.state.target.type === constants.handleUserType.MEMBER) {
+      if (this.state.target.uid === this.props.userId) {
+        alert('自分に通知を送ることはできません');
+        this.setState({ isOpenSendNotificationModal: false });
+        return;
+      }
+      if (this.state.target.fcmToken === '') {
+        alert(`${this.state.target.displayName}さんは通知を拒否しているようです。`);
+        this.setState({ isOpenSendNotificationModal: false });
+        return;
+      }
+      util.sendNotification({
+        title: `${this.props.userName}さんが通知を送信しました。`,
+        body: `${this.props.teamName}のワークシートを開いてください。`,
+        url: `${window.location.protocol}//${window.location.host}/${this.props.teamId}`,
+        icon: this.props.userPhotoURL,
+        to: this.state.target.fcmToken,
+      }).then((res) => {
+        alert(res.ok ? '通知を送信しました。' : '通知の送信に失敗しました。');
+        this.setState({ isOpenSendNotificationModal: false });
+      });
     }
   }
 
@@ -232,16 +264,44 @@ HP: ${window.location.protocol}//${window.location.host}
                       displayName: '',
                       email: '',
                       photoURL: '',
+                      fcmToken: '',
                       }, {
                         uid: member.uid,
                         displayName: member.displayName,
                         email: member.email,
                         photoURL: member.photoURL,
+                        fcmToken: member.fcmToken,
                       }),
                   });
                 }}
                 >
                   <i style={{ fontSize: 15 }} className="fa fa-times-circle" aria-hidden="true" />
+                </IconButton>
+                /
+                <IconButton
+                  className={classes.actionIcon}
+                  color="default"
+                  onClick={() => {
+                    this.setState({
+                      isOpenSendNotificationModal: true,
+                      target: Object.assign({
+                        type: constants.handleUserType.MEMBER,
+                        uid: '',
+                        displayName: '',
+                        email: '',
+                        photoURL: '',
+                        fcmToken: '',
+                        }, {
+                          uid: member.uid,
+                          displayName: member.displayName,
+                          email: member.email,
+                          photoURL: member.photoURL,
+                          fcmToken: member.fcmToken,
+                        }),
+                    });
+                  }}
+                >
+                  <i style={{ fontSize: 15 }} className="fa fa-bell" aria-hidden="true" />
                 </IconButton>
                 <Typography className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
                 {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
@@ -270,6 +330,7 @@ HP: ${window.location.protocol}//${window.location.host}
                       displayName: '',
                       email: '',
                       photoURL: '',
+                      fcmToken: '',
                       }, {
                         email: invitedEmail,
                       }),
@@ -283,19 +344,20 @@ HP: ${window.location.protocol}//${window.location.host}
                   className={classes.actionIcon}
                   color="default"
                   onClick={() => {
-                  this.setState({
-                    isOpenResendEmailModal: true,
-                    target: Object.assign({
-                      type: constants.handleUserType.INVITED,
-                      uid: '',
-                      displayName: '',
-                      email: '',
-                      photoURL: '',
-                      }, {
-                        email: invitedEmail,
-                      }),
-                  });
-                }}
+                    this.setState({
+                      isOpenResendEmailModal: true,
+                      target: Object.assign({
+                        type: constants.handleUserType.INVITED,
+                        uid: '',
+                        displayName: '',
+                        email: '',
+                        photoURL: '',
+                        fcmToken: '',
+                        }, {
+                          email: invitedEmail,
+                        }),
+                    });
+                  }}
                 >
                   <i style={{ fontSize: 15 }} className="fa fa-envelope" aria-hidden="true" />
                 </IconButton>
@@ -364,7 +426,7 @@ HP: ${window.location.protocol}//${window.location.host}
         >
           <DialogTitle id="resend-email-dialog-title">招待中のメンバーにメールを再送信する</DialogTitle>
           <DialogContent>
-            <Typography variant="body1" gutterBottom>{`招待中のメンバーの${this.state.target.email}宛にメールを再送信してもよろしいですか？`}</Typography>
+            <Typography variant="body1" gutterBottom>{`招待中のメンバーの${this.state.target.email}宛に招待メールを再送信してもよろしいですか？`}</Typography>
           </DialogContent>
           <DialogActions>
             <Button
@@ -375,10 +437,28 @@ HP: ${window.location.protocol}//${window.location.host}
             <Button onClick={this.resendEmail.bind(this)} color="primary">再送信</Button>
           </DialogActions>
         </Dialog>
+        {/* メンバー通知モーダル */}
+        <Dialog
+          open={this.state.isOpenSendNotificationModal}
+          onClose={() => { this.setState({ isOpenSendNotificationModal: false }); }}
+          aria-labelledby="send-notification-dialog-title"
+        >
+          <DialogTitle id="send-notification-dialog-title">メンバーに通知を送信する</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" gutterBottom>{`メンバーの${this.state.target.displayName}さん宛にこのページを開いてもらう通知を送信してもよろしいですか？`}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => { this.setState({ isOpenSendNotificationModal: false }); }}
+              color="primary"
+            >キャンセル
+            </Button>
+            <Button onClick={this.sendNotification.bind(this)} color="primary">送信</Button>
+          </DialogActions>
+        </Dialog>
         <Dialog open={this.state.processing}>
           <CircularProgress className={classes.circularProgress} size={60} />
         </Dialog>
-
       </div>
     );
   }
@@ -387,11 +467,13 @@ HP: ${window.location.protocol}//${window.location.host}
 Members.propTypes = {
   userId: PropTypes.string.isRequired,
   userName: PropTypes.string.isRequired,
+  userPhotoURL: PropTypes.string.isRequired,
   members: PropTypes.arrayOf(PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     photoURL: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
+    fcmToken: PropTypes.string.isRequired,
   })).isRequired,
   invitedEmails: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   teamId: PropTypes.string.isRequired,

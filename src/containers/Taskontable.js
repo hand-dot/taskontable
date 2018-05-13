@@ -543,10 +543,11 @@ class Taskontable extends Component {
               {this.state.tab === 2 && (
                 <div style={{ overflow: 'auto' }}>
                   <Members
-                    teamId={this.state.id}
-                    teamName={this.state.teamName}
                     userId={this.props.userId}
                     userName={this.props.userName}
+                    userPhotoURL={this.props.userPhotoURL}
+                    teamId={this.state.id}
+                    teamName={this.state.teamName}
                     members={this.state.members}
                     invitedEmails={this.state.invitedEmails}
                     handleMembers={this.handleMembers.bind(this)}
@@ -623,6 +624,7 @@ class Taskontable extends Component {
 Taskontable.propTypes = {
   userId: PropTypes.string.isRequired,
   userName: PropTypes.string.isRequired,
+  userPhotoURL: PropTypes.string.isRequired,
   toggleHelpDialog: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line

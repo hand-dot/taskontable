@@ -184,4 +184,30 @@ export default {
       },
     );
   },
+  /**
+   * CloudMessagingを使って通知を送信します。
+   * @param  {String} {title 題名
+   * @param  {String} body 本文
+   * @param  {String} url クリック後のURL
+   * @param  {String} icon} アイコン
+   * @param  {String} to} 送り相手のトークン
+   */
+  sendNotification({
+    title, body, url, icon, to,
+  }) {
+    return fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json; charset=utf-8', 'Authorization': `key=${constants.FCM_KEY}` },
+      body: JSON.stringify({
+        notification: {
+          title,
+          body,
+          url,
+          click_action: url,
+          icon,
+        },
+        to,
+      }),
+    });
+  },
 };

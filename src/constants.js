@@ -1,6 +1,7 @@
 import UAParser from 'ua-parser-js';
 import SENTRY_URL from './configs/sentry';
 import SENDGRID_API_KEY from './configs/sendgrid';
+import FCM_KEY from './configs/cloudmessaging';
 import GA_ID from './configs/ga';
 
 const parser = new UAParser();
@@ -26,6 +27,7 @@ export default {
   GA_ID,
   SENTRY_URL,
   SENDGRID_API_KEY,
+  FCM_KEY,
   CHROME_DL_URL: 'https://www.google.co.jp/chrome/',
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskontable',

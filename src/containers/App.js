@@ -47,13 +47,23 @@ const styles = {
 let tmpDisplayName = '';
 
 const database = firebase.database();
+const messaging = firebase.messaging();
+
+messaging.onMessage((payload) => {
+  const { notification } = payload;
+  const notifi = new Notification(notification.title, { icon: notification.icon, body: notification.body });
+  notifi.onclick = () => {
+    notifi.close();
+    window.location.replace(notification.click_action);
+  };
+});
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       user: {
-        displayName: '', photoURL: '', uid: '', email: '',
+        displayName: '', photoURL: '', uid: '', email: '', fcmToken: '',
       },
       isOpenSupportBrowserDialog: false,
       isOpenHelpDialog: false,
@@ -74,19 +84,25 @@ class App extends Component {
 
         // ログイン後にどこのページからスタートするかをハンドリングする。
         // また、招待されている場合、この処理でチームに参加する。
-        Promise.all([database.ref(`/users/${user.uid}/settings/`).once('value'), database.ref(`/users/${user.uid}/teams/`).once('value')]).then((snapshots) => {
-          const [settings, teams] = snapshots;
+        Promise.all([
+          database.ref(`/users/${user.uid}/settings/`).once('value'),
+          database.ref(`/users/${user.uid}/teams/`).once('value'),
+          messaging.requestPermission().then(() => messaging.getToken()).catch(() => ''),
+        ]).then((snapshots) => {
+          const [settings, teams, fcmToken] = snapshots;
           if (settings.exists()) {
             const mySettings = settings.val();
             this.setState({
               user: {
-                displayName: mySettings.displayName, photoURL: mySettings.photoURL, uid: mySettings.uid, email: mySettings.email,
+                displayName: mySettings.displayName, photoURL: mySettings.photoURL, uid: mySettings.uid, email: mySettings.email, fcmToken,
               },
             });
+            // fcmTokenは更新されている可能性を考えてログイン後、必ず更新する。
+            database.ref(`/users/${user.uid}/settings/fcmToken`).set(fcmToken);
           } else {
             // アカウント作成後の処理
             const mySettings = {
-              displayName: user.displayName || tmpDisplayName, photoURL: user.photoURL || '', uid: user.uid, email: user.email,
+              displayName: user.displayName || tmpDisplayName, photoURL: user.photoURL || '', uid: user.uid, email: user.email, fcmToken,
             };
             this.setState({ user: mySettings });
             // EMAIL_AND_PASSWORDでユーザーを作成した場合、displayNameがnullなので、firebaseのauthで管理しているユーザーのプロフィールを更新する
@@ -224,12 +240,15 @@ class App extends Component {
             path="/:id"
             render={(props) => {
               if (this.state.user.uid !== '') {
-                return (<Taskontable
-                  userId={this.state.user.uid}
-                  userName={this.state.user.displayName}
-                  toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
-                  {...props}
-                />);
+                return (
+                  <Taskontable
+                    userId={this.state.user.uid}
+                    userName={this.state.user.displayName}
+                    userPhotoURL={this.state.user.photoURL}
+                    toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
+                    {...props}
+                  />
+              );
               }
               // TODO ここでうまくlogin or signup にリダイレクトすることで
               // https://github.com/hand-dot/taskontable/issues/358 このチケットを消化できそう

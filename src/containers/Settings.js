@@ -14,6 +14,7 @@ import Avatar from 'material-ui/Avatar';
 import constants from '../constants';
 import google from '../images/google.svg';
 import email from '../images/email.svg';
+import util from '../util';
 
 const styles = {
   root: {
@@ -117,16 +118,28 @@ class Settings extends Component {
         }
       }
       if (propsUser.displayName !== this.state.displayName) {
-        promises.push(
-          database.ref(`/users/${propsUser.uid}/settings/displayName/`).set(this.state.displayName),
-          authUser.updateProfile({ displayName: this.state.displayName }),
-        );
+        if (this.state.displayName !== '') {
+          promises.push(
+            database.ref(`/users/${propsUser.uid}/settings/displayName/`).set(this.state.displayName),
+            authUser.updateProfile({ displayName: this.state.displayName }),
+          );
+        } else {
+          alert('ユーザー名が空文字です。');
+          this.setState({ processing: false });
+          return;
+        }
       }
       if (propsUser.email !== this.state.email) {
-        promises.push(
-          database.ref(`/users/${propsUser.uid}/settings/email/`).set(this.state.email),
-          authUser.updateEmail(this.state.email),
-        );
+        if (util.validateEmail(this.state.email)) {
+          promises.push(
+            database.ref(`/users/${propsUser.uid}/settings/email/`).set(this.state.email),
+            authUser.updateEmail(this.state.email),
+          );
+        } else {
+          alert('無効なメールアドレスです。');
+          this.setState({ processing: false });
+          return;
+        }
       }
       Promise.all(promises).then(() => {
         this.setState({ isOpenSaveSnackbar: true, processing: false });
