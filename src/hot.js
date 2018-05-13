@@ -142,19 +142,14 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
     removeNotifiCell(hotInstance, row, [prop]);
     let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
     let taskTitleLabel;
-    let soundType;
     if (snooz) {
       taskTitleLabel = 'スヌーズ';
-      soundType = constants.soundType.snooz;
     } else if (prop === 'startTime') {
       taskTitleLabel = '開始';
-      soundType = constants.soundType.start;
     } else {
       taskTitleLabel = '終了';
-      soundType = constants.soundType.end;
     }
     taskTitle = taskTitle ? `[${taskTitleLabel}] - ${taskTitle}` : `[${taskTitleLabel}] - 無名タスク`;
-    util.PlaySound(soundType);
     if (permission !== 'granted') {
       alert(taskTitle);
       window.focus();

@@ -1,7 +1,8 @@
 // https://docs.sentry.io/clients/javascript/integrations/react/#expanded-usage
 // https://reactjs.org/blog/2017/07/26/error-handling-in-react-16.html
 import Raven from 'raven-js';
-import * as firebase from 'firebase';
+import { firebase } from '@firebase/app';
+import '@firebase/auth';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';

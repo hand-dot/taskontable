@@ -1,4 +1,6 @@
-import * as firebase from 'firebase';
+import { firebase } from '@firebase/app';
+import '@firebase/database';
+import '@firebase/messaging';
 import React, { Component } from 'react';
 import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';

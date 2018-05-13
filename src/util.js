@@ -1,19 +1,9 @@
 import moment from 'moment';
 import uuid from 'uuid';
 import fastclone from 'fast-clone';
-import Tone from 'tone';
 import { deepEqual } from 'fast-equals';
 import UAParser from 'ua-parser-js';
 import constants from './constants';
-
-let synth;
-let pluckSynth;
-let metalSynth;
-if (window.AudioContext || window.webkitAudioContext) {
-  synth = new Tone.Synth().toMaster();
-  pluckSynth = new Tone.PluckSynth().toMaster();
-  metalSynth = new Tone.MetalSynth().toMaster();
-}
 
 const parser = new UAParser();
 const browserName = parser.getBrowser().name;
@@ -136,20 +126,6 @@ export default {
    */
   isMobile() {
     return deviceType === 'mobile';
-  },
-  /**
-   * constants.soundTypeの種類に従って音を鳴らします。
-   * @param  {String} soundType
-   */
-  PlaySound(soundType) {
-    if (!window.AudioContext && !window.webkitAudioContext) return;
-    if (soundType === constants.soundType.start) {
-      synth.triggerAttackRelease('C4', '8n');
-    } else if (soundType === constants.soundType.end) {
-      pluckSynth.triggerAttackRelease('C3', '8n');
-    } else if (soundType === constants.soundType.snooz) {
-      metalSynth.triggerAttackRelease('16n', 0);
-    }
   },
   /**
    * 引き数の値がemailとして正しいかチェックする
