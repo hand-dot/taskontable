@@ -54,7 +54,7 @@ class Members extends Component {
     super(props);
     this.state = {
       invitationEmail: '',
-      removeTarget: {
+      target: {
         type: '',
         uid: '',
         displayName: '',
@@ -63,8 +63,32 @@ class Members extends Component {
       },
       isOpenAddMemberModal: false,
       isOpenRemoveMemberModal: false,
+      isOpenResendEmailModal: false,
       processing: false,
     };
+  }
+
+  sendInviteEmail(to) {
+    return util.sendEmail({
+      to,
+      from: constants.EMAIL,
+      subject: `${constants.TITLE}へのご招待 - ${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。`,
+      body: `${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。
+
+まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、"ログインを済ませた状態"で 
+
+${window.location.protocol}//${window.location.host}/${this.props.teamId} から参加してください。
+
+------>> Build Your WorkFlow ----------->>>--
+
+${constants.TITLE}
+
+e-mail: ${constants.EMAIL}
+
+HP: ${window.location.protocol}//${window.location.host}
+
+------>> Build Your WorkFlow ----------->>>--`,
+    });
   }
 
   addMember() {
@@ -86,31 +110,7 @@ class Members extends Component {
         database.ref(`/teams/${this.props.teamId}/invitedEmails/`).set(invitedEmails);
       });
       // 招待メールの送信
-      fetch(`https://us-central1-taskontable.cloudfunctions.net/sendgridEmail?sg_key=${constants.SENDGRID_API_KEY}`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json; charset=utf-8' },
-        mode: 'no-cors',
-        body: JSON.stringify({
-          to: this.state.invitationEmail,
-          from: constants.EMAIL,
-          subject: `${constants.TITLE}へのご招待 - ${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。`,
-          body: `${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。
-
-まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、"ログインを済ませた状態"で 
-
-${window.location.protocol}//${window.location.host}/${this.props.teamId} から参加してください。
-
------->> Build Your WorkFlow ----------->>>--
-
-${constants.TITLE}
-
-e-mail: ${constants.EMAIL}
-
-HP: ${window.location.protocol}//${window.location.host}
-
------->> Build Your WorkFlow ----------->>>--`,
-        }),
-      }).then(
+      this.sendInviteEmail(this.state.invitationEmail).then(
         () => {
           alert('招待メールを送信しました。');
           this.props.handleInvitedEmails(this.props.invitedEmails.concat([this.state.invitationEmail]).filter((x, i, self) => self.indexOf(x) === i));
@@ -126,10 +126,14 @@ HP: ${window.location.protocol}//${window.location.host}
     }
   }
 
-  removeMemberOrInvitedEmail() {
-    if (this.state.removeTarget.type === constants.handleUserType.MEMBER) {
+
+  /**
+   * メンバーもしくは招待中のメンバーを削除します。
+   */
+  removeMember() {
+    if (this.state.target.type === constants.handleUserType.MEMBER) {
       this.setState({ processing: true });
-      database.ref(`/users/${this.state.removeTarget.uid}/teams/`).once('value').then((snapshot) => {
+      database.ref(`/users/${this.state.target.uid}/teams/`).once('value').then((snapshot) => {
         if (!snapshot.exists() && !Array.isArray(snapshot.val())) {
           // メンバーが最新でない可能性がある。
           // TODO ここダサい。
@@ -138,7 +142,7 @@ HP: ${window.location.protocol}//${window.location.host}
         }
         return snapshot.val().filter(teamId => teamId !== this.props.teamId);
       }).then((newTeamIds) => {
-        if (this.props.userId === this.state.removeTarget.uid && !window.confirm(`${this.props.teamName}から自分を削除しようとしています。もう一度参加するためにはメンバーに招待してもらう必要があります。よろしいですか？`)) {
+        if (this.props.userId === this.state.target.uid && !window.confirm(`${this.props.teamName}から自分を削除しようとしています。もう一度参加するためにはメンバーに招待してもらう必要があります。よろしいですか？`)) {
           this.setState({ isOpenRemoveMemberModal: false, processing: false });
           return;
         }
@@ -147,14 +151,14 @@ HP: ${window.location.protocol}//${window.location.host}
           return;
         }
         // TODO ここはcloudfunctionでusersのチームから値を削除し、realtimeデータベースのusers/$uid/.writeは自分しか書き込み出来ないようにしたほうがよさそう。
-        database.ref(`/users/${this.state.removeTarget.uid}/teams/`).set(newTeamIds).then(() => {
-          const newMembers = this.props.members.filter(member => member.email !== this.state.removeTarget.email);
+        database.ref(`/users/${this.state.target.uid}/teams/`).set(newTeamIds).then(() => {
+          const newMembers = this.props.members.filter(member => member.email !== this.state.target.email);
           this.props.handleMembers(newMembers);
-          if (this.props.userId === this.state.removeTarget.uid) setTimeout(() => { window.location.reload(); });
+          if (this.props.userId === this.state.target.uid) setTimeout(() => { window.location.reload(); });
           this.setState({
             processing: false,
             isOpenRemoveMemberModal: false,
-            removeTarget: {
+            target: {
               type: '',
               uid: '',
               displayName: '',
@@ -164,12 +168,12 @@ HP: ${window.location.protocol}//${window.location.host}
           });
         });
       });
-    } else if (this.state.removeTarget.type === constants.handleUserType.INVITED) {
-      const newEmails = this.props.invitedEmails.filter(invitedEmail => invitedEmail !== this.state.removeTarget.email);
+    } else if (this.state.target.type === constants.handleUserType.INVITED) {
+      const newEmails = this.props.invitedEmails.filter(invitedEmail => invitedEmail !== this.state.target.email);
       this.props.handleInvitedEmails(newEmails);
       this.setState({
         isOpenRemoveMemberModal: false,
-        removeTarget: {
+        target: {
           type: '',
           uid: '',
           displayName: '',
@@ -177,6 +181,26 @@ HP: ${window.location.protocol}//${window.location.host}
           photoURL: '',
         },
       });
+    }
+  }
+
+  /**
+   * 招待中のメンバーにメールを再送信します。
+   */
+  resendEmail() {
+    if (this.state.target.type === constants.handleUserType.INVITED) {
+      this.setState({ processing: true });
+      // 招待メールの再送信
+      this.sendInviteEmail(this.state.target.email).then(
+        () => {
+          alert('招待メールを再送信しました。');
+          this.setState({ processing: false, isOpenResendEmailModal: false });
+        },
+        () => {
+          alert('招待メールの再送信に失敗しました。');
+          this.setState({ processing: false });
+        },
+      );
     }
   }
 
@@ -202,7 +226,7 @@ HP: ${window.location.protocol}//${window.location.host}
                   onClick={() => {
                   this.setState({
                     isOpenRemoveMemberModal: true,
-                    removeTarget: Object.assign({
+                    target: Object.assign({
                       type: constants.handleUserType.MEMBER,
                       uid: '',
                       displayName: '',
@@ -228,7 +252,7 @@ HP: ${window.location.protocol}//${window.location.host}
         </div>
         <div>
           <Typography variant="subheading">
-            招待されたメンバー
+            招待中メンバー
           </Typography>
           <div className={classes.membersContainer}>
             <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
@@ -240,7 +264,7 @@ HP: ${window.location.protocol}//${window.location.host}
                   onClick={() => {
                   this.setState({
                     isOpenRemoveMemberModal: true,
-                    removeTarget: Object.assign({
+                    target: Object.assign({
                       type: constants.handleUserType.INVITED,
                       uid: '',
                       displayName: '',
@@ -253,6 +277,27 @@ HP: ${window.location.protocol}//${window.location.host}
                 }}
                 >
                   <i style={{ fontSize: 15 }} className="fa fa-times-circle" aria-hidden="true" />
+                </IconButton>
+                /
+                <IconButton
+                  className={classes.actionIcon}
+                  color="default"
+                  onClick={() => {
+                  this.setState({
+                    isOpenResendEmailModal: true,
+                    target: Object.assign({
+                      type: constants.handleUserType.INVITED,
+                      uid: '',
+                      displayName: '',
+                      email: '',
+                      photoURL: '',
+                      }, {
+                        email: invitedEmail,
+                      }),
+                  });
+                }}
+                >
+                  <i style={{ fontSize: 15 }} className="fa fa-envelope" aria-hidden="true" />
                 </IconButton>
                 <Typography className={classes.memberText} align="center" variant="caption">招待中</Typography>
                 <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>
@@ -267,6 +312,7 @@ HP: ${window.location.protocol}//${window.location.host}
             <i className="fa fa-plus" />
           </IconButton>
         </div>
+        {/* メンバーの追加モーダル */}
         <Dialog
           open={this.state.isOpenAddMemberModal}
           onClose={() => { this.setState({ invitationEmail: '', isOpenAddMemberModal: false }); }}
@@ -290,14 +336,15 @@ HP: ${window.location.protocol}//${window.location.host}
             <Button onClick={this.addMember.bind(this)} color="primary">招待メールを送信</Button>
           </DialogActions>
         </Dialog>
+        {/* メンバーの削除モーダル */}
         <Dialog
           open={this.state.isOpenRemoveMemberModal}
           onClose={() => { this.setState({ isOpenRemoveMemberModal: false }); }}
           aria-labelledby="remove-member-dialog-title"
         >
-          <DialogTitle id="remove-member-dialog-title">{this.state.removeTarget.type === constants.handleUserType.MEMBER ? 'メンバー' : '招待中のユーザー'}を削除する</DialogTitle>
+          <DialogTitle id="remove-member-dialog-title">{this.state.target.type === constants.handleUserType.MEMBER ? 'メンバー' : '招待中のメンバー'}を削除する</DialogTitle>
           <DialogContent>
-            <Typography variant="body1" gutterBottom>本当に{this.state.removeTarget.type === constants.handleUserType.MEMBER ? `メンバーの${this.state.removeTarget.displayName}` : `招待中のユーザーの${this.state.removeTarget.email}`}を削除してもよろしいですか？</Typography>
+            <Typography variant="body1" gutterBottom>本当に{this.state.target.type === constants.handleUserType.MEMBER ? `メンバーの${this.state.target.displayName}` : `招待中のメンバーの${this.state.target.email}`}を削除してもよろしいですか？</Typography>
             <Typography variant="caption">*削除後は再度招待しないとこのワークシートにアクセスできなくなります。</Typography>
           </DialogContent>
           <DialogActions>
@@ -306,7 +353,26 @@ HP: ${window.location.protocol}//${window.location.host}
               color="primary"
             >キャンセル
             </Button>
-            <Button onClick={this.removeMemberOrInvitedEmail.bind(this)} color="primary">削除</Button>
+            <Button onClick={this.removeMember.bind(this)} color="primary">削除</Button>
+          </DialogActions>
+        </Dialog>
+        {/* 招待中のメンバーメール再送信モーダル */}
+        <Dialog
+          open={this.state.isOpenResendEmailModal}
+          onClose={() => { this.setState({ isOpenResendEmailModal: false }); }}
+          aria-labelledby="resend-email-dialog-title"
+        >
+          <DialogTitle id="resend-email-dialog-title">招待中のメンバーにメールを再送信する</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" gutterBottom>{`招待中のメンバーの${this.state.target.email}宛にメールを再送信してもよろしいですか？`}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => { this.setState({ isOpenResendEmailModal: false }); }}
+              color="primary"
+            >キャンセル
+            </Button>
+            <Button onClick={this.resendEmail.bind(this)} color="primary">再送信</Button>
           </DialogActions>
         </Dialog>
         <Dialog open={this.state.processing}>

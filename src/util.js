@@ -159,4 +159,29 @@ export default {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
   },
+  /**
+   * メールを送信します。
+   * @param  {String} {to 宛先
+   * @param  {String} from 送り元
+   * @param  {String} subject 題名
+   * @param  {String} body} 本文
+   */
+  sendEmail({
+    to, from, subject, body,
+  }) {
+    return fetch(
+      `https://us-central1-taskontable.cloudfunctions.net/sendgridEmail?sg_key=${constants.SENDGRID_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json; charset=utf-8' },
+        mode: 'no-cors',
+        body: JSON.stringify({
+          to,
+          from,
+          subject,
+          body,
+        }),
+      },
+    );
+  },
 };
