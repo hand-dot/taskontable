@@ -10,8 +10,10 @@ import App from './containers/App';
 import WithTracker from './containers/WithTracker';
 import registerServiceWorker from './registerServiceWorker';
 import constants from './constants';
+import quotations from './quotations';
 import theme from './assets/theme';
 
+console.log(`%c ${quotations[Math.floor(Math.random() * quotations.length)]} `, 'font-size: 40px; background: #222; color: #bada55;');
 
 Raven.config(constants.SENTRY_URL, {
   release: constants.RELEASE,
