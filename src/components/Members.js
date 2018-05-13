@@ -225,7 +225,7 @@ HP: ${window.location.protocol}//${window.location.host}
         return;
       }
       util.sendNotification({
-        title: `${this.props.userName}さんが通知を送信しました。`,
+        title: `🔔 ${this.props.userName}さんが通知を送信しました。`,
         body: `${this.props.teamName}のワークシートを開いてください。`,
         url: `${window.location.protocol}//${window.location.host}/${this.props.teamId}`,
         icon: this.props.userPhotoURL,

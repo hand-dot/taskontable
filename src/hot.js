@@ -149,7 +149,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
     } else {
       taskTitleLabel = '終了';
     }
-    taskTitle = taskTitle ? `[${taskTitleLabel}] - ${taskTitle}` : `[${taskTitleLabel}] - 無名タスク`;
+    taskTitle = taskTitle ? `⏰ ${taskTitleLabel} - ${taskTitle}` : `⏰ ${taskTitleLabel} - 無名タスク`;
     if (permission !== 'granted') {
       alert(taskTitle);
       window.focus();
