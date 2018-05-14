@@ -5,7 +5,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy": "react-scripts build && firebase deploy",
+    "deploy": "react-scripts build && rm build/static/js/*.map && firebase deploy",
     "test": "react-scripts test --env=jsdom --coverage",
     "test_watch": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
