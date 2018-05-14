@@ -9,7 +9,6 @@ import Button from 'material-ui/Button';
 
 import titleGr from '../images/title_gr.png';
 import Footer from '../components/Footer';
-import screencapture from '../images/screencapture.gif';
 import plugins from '../images/plugins.png';
 import devices from '../images/devices.png';
 import collaboration from '../images/collaboration.png';
@@ -81,7 +80,8 @@ function Top(props) {
             <Typography align="center" style={{ color: '#fff', marginBottom: '2em' }}>
               TaskontableはExcelを扱うようにタスクを管理できるツールです。<br />高速に入力でき、タスクの整理に使う時間をできる限り減らし、実行する時間を増やすことができます。
             </Typography>
-            <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src={screencapture} alt="taskontable" />
+            {/* TODO ここは動画にする予定 */}
+            <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src="https://user-images.githubusercontent.com/24843808/40023209-44d12cd0-5805-11e8-8b77-77a1f2f5ba37.gif" alt="taskontable" />
             <Typography align="center" style={{ color: '#fff', marginBottom: '2em' }}>
               複雑な設定は一切必要なく、すぐに使い始められます。
             </Typography>

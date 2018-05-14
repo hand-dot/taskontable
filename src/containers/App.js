@@ -22,6 +22,8 @@ import '../styles/keyframes.css';
 import util from '../util';
 import constants from '../constants';
 
+firebase.initializeApp(firebaseConf);
+
 const GlobalHeader = AsyncContainer(() => import('./GlobalHeader').then(module => module.default), {});
 const Top = AsyncContainer(() => import('./Top').then(module => module.default), {});
 const Login = AsyncContainer(() => import('./Login').then(module => module.default), {});
@@ -31,8 +33,6 @@ const Scripts = AsyncContainer(() => import('./Scripts').then(module => module.d
 const Settings = AsyncContainer(() => import('./Settings').then(module => module.default), {});
 const Taskontable = AsyncContainer(() => import('./Taskontable').then(module => module.default), {});
 const WorkSheets = AsyncContainer(() => import('./WorkSheets').then(module => module.default), {});
-
-firebase.initializeApp(firebaseConf);
 
 const styles = {
   root: {
