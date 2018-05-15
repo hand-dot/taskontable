@@ -114,7 +114,7 @@ class App extends Component {
           return (teams.exists() && teams.val() !== []) ? teams.val().concat([user.uid]) : [user.uid]; // 自分のidと自分のチームのid or 自分のid
         }).then((myWorkSheetsIds) => {
           const pathname = this.props.location.pathname.replace('/', '');
-          if (pathname === 'login' || pathname === 'signup') { // ログイン時はワークシートの選択(urlルート)に飛ばす
+          if (pathname === 'login' || pathname === 'signup' || pathname === 'index.html') { // ログイン時はワークシートの選択(urlルート)に飛ばす
             this.props.history.push('/');
           } else if (pathname !== '' && !myWorkSheetsIds.includes(pathname)) { // 招待の可能性がある場合の処理
             const teamId = pathname;
