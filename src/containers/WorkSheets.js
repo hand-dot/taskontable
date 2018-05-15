@@ -95,9 +95,9 @@ class WorkSheets extends Component {
                   <i className="fa fa-users" aria-hidden="true" />　チームワークシート
                 </Typography>
                 {this.state.teams.map(team => (
-                  <Link key={team.id} to={`/${team.id}`} style={{ margin: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>
+                  <Link key={team.id} to={`/${team.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>
                 ))}
-                <span style={{ padding: this.props.theme.spacing.unit }}>
+                <span style={{ display: 'block', margin: this.props.theme.spacing.unit }}>
                   <Button size="small" variant="raised" onClick={() => { this.setState({ isOpenCreateTeamModal: true }); }}>+</Button>
                 </span>
                 <Dialog
