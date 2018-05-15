@@ -97,9 +97,9 @@ class WorkSheets extends Component {
                 {this.state.teams.map(team => (
                   <Link key={team.id} to={`/${team.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>
                 ))}
-                <span style={{ display: 'block', margin: this.props.theme.spacing.unit }}>
+                <div style={{ display: 'inline-block', margin: this.props.theme.spacing.unit }}>
                   <Button size="small" variant="raised" onClick={() => { this.setState({ isOpenCreateTeamModal: true }); }}>+</Button>
-                </span>
+                </div>
                 <Dialog
                   open={this.state.isOpenCreateTeamModal}
                   onClose={() => { this.setState({ newTeamName: '', isOpenCreateTeamModal: false }); }}
