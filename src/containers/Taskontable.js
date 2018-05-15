@@ -3,6 +3,7 @@ import '@firebase/database';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import debounce from 'lodash.debounce';
 
@@ -17,6 +18,7 @@ import ExpansionPanel, {
   ExpansionPanelDetails,
 } from 'material-ui/ExpansionPanel';
 import Snackbar from 'material-ui/Snackbar';
+import Avatar from 'material-ui/Avatar';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';
@@ -68,6 +70,9 @@ class Taskontable extends Component {
       importScript: '',
       exportScript: '',
       isSyncedTableTasks: false,
+      isOpenNotificationMessage: false,
+      notificationMessage: '',
+      notificationIcon: '',
     };
   }
 
@@ -85,6 +90,11 @@ class Taskontable extends Component {
         const [invitedEmails, userIds, teamName] = snapshots;
         if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') {
           Promise.all(userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'))).then((members) => {
+            // 通知からメッセージやアイコンを取り出す処理。
+            if (this.props.location.search) {
+              this.setState({ isOpenNotificationMessage: true, notificationMessage: util.getQueryVariable('message'), notificationIcon: util.getQueryVariable('icon') });
+              setTimeout(() => { this.props.history.push(`/${this.props.match.params.id}`); });
+            }
             this.setState({
               mode: constants.taskontableMode.TEAMS,
               teamName: teamName.val(),
@@ -617,6 +627,26 @@ class Taskontable extends Component {
           onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
           message={this.state.snackbarText}
         />
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          ContentProps={{ 'aria-describedby': 'message-id' }}
+          message={
+            <span id="message-id" style={{ display: 'flex', alignItems: 'center' }}>
+              {this.state.notificationIcon ? <Avatar className={classes.userPhoto} src={this.state.notificationIcon} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
+              <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.notificationMessage}</span>
+            </span>
+          }
+          open={this.state.isOpenNotificationMessage}
+          onClick={() => { this.setState({ isOpenNotificationMessage: false, notificationMessage: '', notificationIcon: '' }); }}
+          action={[
+            <IconButton
+              color="inherit"
+              onClick={() => { this.setState({ isOpenNotificationMessage: false, notificationMessage: '', notificationIcon: '' }); }}
+            >
+              <i className="fa fa-times" aria-hidden="true" />
+            </IconButton>,
+          ]}
+        />
       </Grid>
     );
   }
@@ -630,6 +660,8 @@ Taskontable.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
   match: PropTypes.object.isRequired, // eslint-disable-line
+  history: PropTypes.object.isRequired, // eslint-disable-line
+  location: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles, { withTheme: true })(Taskontable);
+export default withRouter(withStyles(styles, { withTheme: true })(Taskontable));

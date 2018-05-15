@@ -65,6 +65,7 @@ class Members extends Component {
     super(props);
     this.state = {
       invitationEmail: '',
+      notificationMessage: '',
       target: {
         type: '',
         uid: '',
@@ -210,25 +211,17 @@ HP: ${window.location.protocol}//${window.location.host}
    */
   sendNotification() {
     if (this.state.target.type === constants.handleUserType.MEMBER) {
-      if (this.state.target.uid === this.props.userId) {
-        alert('自分に通知を送ることはできません');
-        this.setState({ isOpenSendNotificationModal: false });
-        return;
-      }
-      if (this.state.target.fcmToken === '') {
-        alert(`${this.state.target.displayName}さんは通知を拒否しているようです。`);
-        this.setState({ isOpenSendNotificationModal: false });
-        return;
-      }
+      const messageForURI = encodeURIComponent(`${this.props.userName}：${this.state.notificationMessage}`);
+      const iconForURI = encodeURIComponent(this.props.userPhotoURL);
       util.sendNotification({
         title: `🔔 ${this.props.userName}さんが通知を送信しました。`,
-        body: `${this.props.teamName}のワークシートを開いてください。`,
-        url: `${window.location.protocol}//${window.location.host}/${this.props.teamId}`,
+        body: this.state.notificationMessage ? `${this.state.notificationMessage}` : `${this.props.teamName}のワークシートを開いてください。`,
+        url: `${window.location.protocol}//${window.location.host}/${this.props.teamId}${this.state.notificationMessage ? `?message=${messageForURI}&icon=${iconForURI}` : ''}`,
         icon: this.props.userPhotoURL,
         to: this.state.target.fcmToken,
       }).then((res) => {
         alert(res.ok ? '通知を送信しました。' : '通知の送信に失敗しました。');
-        this.setState({ isOpenSendNotificationModal: false });
+        this.setState({ isOpenSendNotificationModal: false, notificationMessage: '' });
       });
     }
   }
@@ -248,7 +241,7 @@ HP: ${window.location.protocol}//${window.location.host}
           </Typography>
           <div className={classes.membersContainer}>
             {members.length === 0 ? <Typography align="center" variant="caption">メンバーがいません</Typography> : members.map(member => (
-              <div className={classes.member} key={member.uid} title={`${member.displayName} - ${member.email}`}>
+              <div className={classes.member} key={member.uid}>
                 <IconButton
                   className={classes.actionIcon}
                   color="default"
@@ -269,10 +262,12 @@ HP: ${window.location.protocol}//${window.location.host}
                   <i style={{ fontSize: 15 }} className="fa fa-trash" aria-hidden="true" />
                 </IconButton>
                 /
-                <IconButton
-                  className={classes.actionIcon}
-                  color="default"
-                  onClick={() => {
+                <span title={(!member.fcmToken ? `${member.displayName}さんは通知を拒否しているようです。` : '') || (member.uid === this.props.userId ? '自分に通知を送ることはできません' : '')}>
+                  <IconButton
+                    disabled={!member.fcmToken || member.uid === this.props.userId}
+                    className={classes.actionIcon}
+                    color="default"
+                    onClick={() => {
                     this.setState({
                       isOpenSendNotificationModal: true,
                       target: {
@@ -285,12 +280,13 @@ HP: ${window.location.protocol}//${window.location.host}
                       },
                     });
                   }}
-                >
-                  <i style={{ fontSize: 15 }} className="fa fa-bell" aria-hidden="true" />
-                </IconButton>
-                <Typography className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
+                  >
+                    <i style={{ fontSize: 15 }} className="fa fa-commenting" aria-hidden="true" />
+                  </IconButton>
+                </span>
+                <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
                 {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
-                <Typography className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
+                <Typography title={member.email} className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
               </div>
           ))}
           </div>
@@ -419,6 +415,18 @@ HP: ${window.location.protocol}//${window.location.host}
           <DialogTitle id="send-notification-dialog-title">メンバーに通知を送信する</DialogTitle>
           <DialogContent>
             <Typography variant="body1" gutterBottom>{`メンバーの${this.state.target.displayName}さん宛にこのページを開いてもらう通知を送信してもよろしいですか？`}</Typography>
+            <TextField
+              maxLength={100}
+              onChange={(e) => { this.setState({ notificationMessage: e.target.value }); }}
+              value={this.state.notificationMessage}
+              autoFocus
+              margin="dense"
+              id="message"
+              type="message"
+              label="一言メッセージ"
+              placeholder={`例えば${this.props.teamName}のワークシートを開いてください。とか`}
+              fullWidth
+            />
           </DialogContent>
           <DialogActions>
             <Button

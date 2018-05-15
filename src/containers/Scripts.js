@@ -271,7 +271,7 @@ class Scripts extends Component {
           message="保存しました。"
         />
         <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenScriptSnackbar}
           onClose={this.closeSnackbars.bind(this)}
           message={this.state.scriptSnackbarText}
