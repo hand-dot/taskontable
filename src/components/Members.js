@@ -50,6 +50,16 @@ const styles = theme => ({
 });
 
 const database = firebase.database();
+
+const getBlankTarget = () => util.cloneDeep({
+  type: '',
+  uid: '',
+  displayName: '',
+  email: '',
+  photoURL: '',
+  fcmToken: '',
+});
+
 class Members extends Component {
   constructor(props) {
     super(props);
@@ -78,7 +88,7 @@ class Members extends Component {
       subject: `${constants.TITLE}へのご招待 - ${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。`,
       body: `${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。
 
-まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、"ログインを済ませた状態"で 
+まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、"ログインを済ませた状態"で
 
 ${window.location.protocol}//${window.location.host}/${this.props.teamId} から参加してください。
 
@@ -161,14 +171,7 @@ HP: ${window.location.protocol}//${window.location.host}
           this.setState({
             processing: false,
             isOpenRemoveMemberModal: false,
-            target: {
-              type: '',
-              uid: '',
-              displayName: '',
-              email: '',
-              photoURL: '',
-              fcmToken: '',
-            },
+            target: getBlankTarget(),
           });
         });
       });
@@ -177,14 +180,7 @@ HP: ${window.location.protocol}//${window.location.host}
       this.props.handleInvitedEmails(newEmails);
       this.setState({
         isOpenRemoveMemberModal: false,
-        target: {
-          type: '',
-          uid: '',
-          displayName: '',
-          email: '',
-          photoURL: '',
-          fcmToken: '',
-        },
+        target: getBlankTarget(),
       });
     }
   }
@@ -259,24 +255,18 @@ HP: ${window.location.protocol}//${window.location.host}
                   onClick={() => {
                   this.setState({
                     isOpenRemoveMemberModal: true,
-                    target: Object.assign({
+                    target: {
                       type: constants.handleUserType.MEMBER,
-                      uid: '',
-                      displayName: '',
-                      email: '',
-                      photoURL: '',
-                      fcmToken: '',
-                      }, {
-                        uid: member.uid,
-                        displayName: member.displayName,
-                        email: member.email,
-                        photoURL: member.photoURL,
-                        fcmToken: member.fcmToken,
-                      }),
+                      uid: member.uid,
+                      displayName: member.displayName,
+                      email: member.email,
+                      photoURL: member.photoURL,
+                      fcmToken: member.fcmToken,
+                    },
                   });
                 }}
                 >
-                  <i style={{ fontSize: 15 }} className="fa fa-times-circle" aria-hidden="true" />
+                  <i style={{ fontSize: 15 }} className="fa fa-trash" aria-hidden="true" />
                 </IconButton>
                 /
                 <IconButton
@@ -285,20 +275,14 @@ HP: ${window.location.protocol}//${window.location.host}
                   onClick={() => {
                     this.setState({
                       isOpenSendNotificationModal: true,
-                      target: Object.assign({
+                      target: {
                         type: constants.handleUserType.MEMBER,
-                        uid: '',
-                        displayName: '',
-                        email: '',
-                        photoURL: '',
-                        fcmToken: '',
-                        }, {
-                          uid: member.uid,
-                          displayName: member.displayName,
-                          email: member.email,
-                          photoURL: member.photoURL,
-                          fcmToken: member.fcmToken,
-                        }),
+                        uid: member.uid,
+                        displayName: member.displayName,
+                        email: member.email,
+                        photoURL: member.photoURL,
+                        fcmToken: member.fcmToken,
+                      },
                     });
                   }}
                 >
@@ -325,20 +309,14 @@ HP: ${window.location.protocol}//${window.location.host}
                   onClick={() => {
                   this.setState({
                     isOpenRemoveMemberModal: true,
-                    target: Object.assign({
+                    target: Object.assign(getBlankTarget(), {
                       type: constants.handleUserType.INVITED,
-                      uid: '',
-                      displayName: '',
-                      email: '',
-                      photoURL: '',
-                      fcmToken: '',
-                      }, {
-                        email: invitedEmail,
-                      }),
+                      email: invitedEmail,
+                    }),
                   });
                 }}
                 >
-                  <i style={{ fontSize: 15 }} className="fa fa-times-circle" aria-hidden="true" />
+                  <i style={{ fontSize: 15 }} className="fa fa-trash" aria-hidden="true" />
                 </IconButton>
                 /
                 <IconButton
@@ -347,16 +325,10 @@ HP: ${window.location.protocol}//${window.location.host}
                   onClick={() => {
                     this.setState({
                       isOpenResendEmailModal: true,
-                      target: Object.assign({
+                      target: Object.assign(getBlankTarget(), {
                         type: constants.handleUserType.INVITED,
-                        uid: '',
-                        displayName: '',
-                        email: '',
-                        photoURL: '',
-                        fcmToken: '',
-                        }, {
-                          email: invitedEmail,
-                        }),
+                        email: invitedEmail,
+                      }),
                     });
                   }}
                 >
