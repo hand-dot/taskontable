@@ -49,16 +49,21 @@ const styles = {
 let tmpDisplayName = '';
 
 const database = firebase.database();
-const messaging = firebase.messaging();
+let messaging;
 
-messaging.onMessage((payload) => {
-  const { notification } = payload;
-  const notifi = new Notification(notification.title, { icon: notification.icon, body: notification.body });
-  notifi.onclick = () => {
-    notifi.close();
-    window.location.replace(notification.click_action);
-  };
-});
+// iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこの処理が必要。
+// https://github.com/hand-dot/taskontable/issues/380
+if (!util.isiOS()) {
+  messaging = firebase.messaging();
+  messaging.onMessage((payload) => {
+    const { notification } = payload;
+    const notifi = new Notification(notification.title, { icon: notification.icon, body: notification.body });
+    notifi.onclick = () => {
+      notifi.close();
+      window.location.replace(notification.click_action);
+    };
+  });
+}
 
 class App extends Component {
   constructor(props) {
@@ -84,12 +89,23 @@ class App extends Component {
         // dimension1はgaではuidとしている
         ReactGA.set({ dimension1: user.uid });
 
+        // トークン更新のモニタリング
+        if (messaging) {
+          messaging.onTokenRefresh(() => {
+            messaging.getToken().then((refreshedToken) => {
+              database.ref(`/users/${user.uid}/settings/fcmToken`).set(refreshedToken);
+            }).catch((err) => {
+              throw new Error(`トークン更新のモニタリングに失敗: ${err}`);
+            });
+          });
+        }
+
         // ログイン後にどこのページからスタートするかをハンドリングする。
         // また、招待されている場合、この処理でチームに参加する。
         Promise.all([
           database.ref(`/users/${user.uid}/settings/`).once('value'),
           database.ref(`/users/${user.uid}/teams/`).once('value'),
-          messaging.requestPermission().then(() => messaging.getToken()).catch(() => ''),
+          messaging ? messaging.requestPermission().then(() => messaging.getToken()).catch(() => '') : '',
         ]).then((snapshots) => {
           const [settings, teams, fcmToken] = snapshots;
           if (settings.exists()) {
@@ -99,8 +115,8 @@ class App extends Component {
                 displayName: mySettings.displayName, photoURL: mySettings.photoURL, uid: mySettings.uid, email: mySettings.email, fcmToken,
               },
             });
-            // fcmTokenは更新されている可能性を考えてログイン後、必ず更新する。
-            database.ref(`/users/${user.uid}/settings/fcmToken`).set(fcmToken);
+            // fcmTokenは更新されている可能性を考えて空じゃない場合ログイン後、必ず更新する。
+            if (fcmToken) database.ref(`/users/${user.uid}/settings/fcmToken`).set(fcmToken);
           } else {
             // アカウント作成後の処理
             const mySettings = {

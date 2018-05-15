@@ -7,6 +7,7 @@ import constants from './constants';
 
 const parser = new UAParser();
 const browserName = parser.getBrowser().name;
+const osName = parser.getOS().name;
 const deviceType = parser.getDevice().type;
 
 export default {
@@ -128,6 +129,12 @@ export default {
     return deviceType === 'mobile';
   },
   /**
+   * iOSならtrueを返します。
+   */
+  isiOS() {
+    return osName === 'iOS';
+  },
+  /**
    * 引き数の値がemailとして正しいかチェックする
    * @param  {String} email
    */
@@ -173,7 +180,7 @@ export default {
   }) {
     return fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
-      headers: { 'content-type': 'application/json; charset=utf-8', 'Authorization': `key=${constants.FCM_KEY}` },
+      headers: { 'content-type': 'application/json; charset=utf-8', Authorization: `key=${constants.FCM_KEY}` },
       body: JSON.stringify({
         notification: {
           title,
