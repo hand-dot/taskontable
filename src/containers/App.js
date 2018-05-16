@@ -130,30 +130,37 @@ class App extends Component {
           return (teams.exists() && teams.val() !== []) ? teams.val().concat([user.uid]) : [user.uid]; // 自分のidと自分のチームのid or 自分のid
         }).then((myWorkSheetsIds) => {
           const pathname = this.props.location.pathname.replace('/', '');
-          if (pathname === 'login' || pathname === 'signup' || pathname === 'index.html') { // ログイン時はワークシートの選択(urlルート)に飛ばす
+          const fromInviteEmail = util.getQueryVariable('team') !== '';
+          if (!fromInviteEmail && (pathname === 'login' || pathname === 'signup' || pathname === 'index.html')) { // ■ログイン時はワークシートの選択(urlルート)に飛ばす
             this.props.history.push('/');
-          } else if (pathname !== '' && !myWorkSheetsIds.includes(pathname)) { // 招待の可能性がある場合の処理
-            const teamId = pathname;
-            database.ref(`/teams/${teamId}/invitedEmails/`).once('value').then((snapshot) => {
+          } else if (pathname !== '' && (fromInviteEmail || !myWorkSheetsIds.includes(pathname))) { // ■招待の可能性がある場合の処理
+            const teamId = fromInviteEmail ? util.getQueryVariable('team') : pathname;
+            database.ref(`/teams/${teamId}/invitedEmails/`).once('value').then((invitedEmails) => {
               // 自分のメールアドレスがチームの招待中メールアドレスリストに存在するかチェックする。
-              if (!snapshot.exists() || !Array.isArray(snapshot.val()) || snapshot.val() === [] || !snapshot.val().includes(user.email)) { // 違った場合はワークシートの選択に飛ばす
+              if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || invitedEmails.val() === [] || !invitedEmails.val().includes(user.email)) { // 違った場合はワークシートの選択に飛ばす
                 this.props.history.push('/');
                 return;
               }
               // 自分が招待されていた場合は自分のチームに加え、チームのメンバーに自分を加える
               Promise.all([database.ref(`/users/${user.uid}/teams/`).once('value'), database.ref(`/teams/${teamId}/users/`).once('value')]).then((snapshots) => {
-                const [myTeams, teamUsers] = snapshots;
+                const [myTeamIds, teamUserIds] = snapshots;
                 const promises = [
-                  database.ref(`/users/${user.uid}/teams/`).set((myTeams.exists() ? myTeams.val() : []).concat([teamId])), // 自分の参加しているチームにチームのidを追加
-                  database.ref(`/teams/${teamId}/users/`).set((teamUsers.exists() ? teamUsers.val() : []).concat([user.uid])), // 参加しているチームのユーザーに自分のidを追加
-                  database.ref(`/teams/${teamId}/invitedEmails/`).set(snapshot.val().filter(email => email !== user.email)), // 参加しているチーム招待中メールアドレスリストから削除
+                  database.ref(`/users/${user.uid}/teams/`).set((myTeamIds.exists() ? myTeamIds.val() : []).concat([teamId])), // 自分の参加しているチームにチームのidを追加
+                  database.ref(`/teams/${teamId}/users/`).set((teamUserIds.exists() ? teamUserIds.val() : []).concat([user.uid])), // 参加しているチームのユーザーに自分のidを追加
+                  database.ref(`/teams/${teamId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているチーム招待中メールアドレスリストから削除
                 ];
                 return Promise.all(promises);
               }).then(() => {
-                window.location.reload();
+                database.ref(`/teams/${teamId}/users/`).once('value').then((teamUserIds) => {
+                  if (teamUserIds.exists() && Array.isArray(teamUserIds.val()) && teamUserIds.val().includes(user.uid)) { // 参加しているチームのユーザーに自分のidが含まれていたら目的のチームidに遷移できる
+                    this.props.history.push(`/${teamId}`);
+                  } else {
+                    this.props.history.push('/');
+                  }
+                });
               });
             });
-          }
+          } // else ■自分の所属しているチームへの直遷移
         });
       }
       this.setState({ processing: false });
@@ -170,18 +177,22 @@ class App extends Component {
   signup({
     type, username, email, password,
   }) {
-    tmpDisplayName = username;
     this.setState({ processing: true });
     if (type === constants.authType.EMAIL_AND_PASSWORD) {
+      if (username === '') {
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'ユーザー名を入力してください。' });
+        return;
+      }
       if (!util.validateEmail(email) || password.length < 6) {
         this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'メールアドレスとパスワードを正しく入力してください。' });
         return;
       }
+      tmpDisplayName = username;
       firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
         this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウントを作成しました。' });
-      }, () => {
+      }, (e) => {
         this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウント作成に失敗しました。' });
-        throw new Error('アカウント作成に失敗');
+        throw new Error(`アカウント作成に失敗:${e}`);
       });
     }
   }

@@ -9,6 +9,7 @@ import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import google from '../images/google.svg';
 import constants from '../constants';
+import util from '../util';
 
 const styles = {
   root: {
@@ -33,6 +34,12 @@ class Login extends Component {
       email: '',
       password: '',
     };
+  }
+  componentWillMount() {
+    // 招待されたメールからメールアドレスを設定する処理。
+    if (this.props.location.search) {
+      this.setState({ email: util.getQueryVariable('email') });
+    }
   }
   login(type) {
     const obj = {
@@ -59,7 +66,7 @@ class Login extends Component {
                 {constants.TITLE}にログイン
               </Typography>
               <div style={{ fontSize: 12, marginBottom: 20 }}>
-              OR<Link to="/signup">アカウント作成</Link>
+              OR<Link to={this.props.location.search === '' ? '/signup' : `/signup${this.props.location.search}`}>アカウント作成</Link>
               </div>
               <Typography variant="caption" gutterBottom>
             *現在Beta版のため一部の機能を除いてアプリをお試しできます。(データがクリアさせる可能性があります。)
@@ -71,6 +78,7 @@ class Login extends Component {
                 <TextField
                   value={this.state.email}
                   onChange={(e) => { this.setState({ email: e.target.value }); }}
+                  disabled={this.props.location.search !== ''}
                   id="email"
                   label="メールアドレス"
                   InputLabelProps={{
@@ -83,6 +91,8 @@ class Login extends Component {
                 <TextField
                   value={this.state.password}
                   onChange={(e) => { this.setState({ password: e.target.value }); }}
+                  autoFocus={this.props.location.search !== ''}
+                  autoComplete="password"
                   id="password"
                   type="password"
                   label="パスワード"
@@ -113,6 +123,7 @@ class Login extends Component {
 Login.propTypes = {
   login: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
+  location: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles)(Login);

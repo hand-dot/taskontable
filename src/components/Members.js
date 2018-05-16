@@ -87,15 +87,25 @@ class Members extends Component {
       to,
       from: constants.EMAIL,
       subject: `${constants.TITLE}へのご招待 - ${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。`,
-      body: `${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。
+      body: `
+${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.teamName}」への招待が届いています。
 
-まだ、アカウント作成がお済でない場合は ${window.location.protocol}//${window.location.host}/signup からアカウントを作成し、"ログインを済ませた状態"で
+■アカウントを既にお持ちの場合
 
-${window.location.protocol}//${window.location.host}/${this.props.teamId} から参加してください。
+${window.location.protocol}//${window.location.host}/${this.props.teamId}?email=${encodeURIComponent(to)}&team=${this.props.teamId}  をクリックして参加してください。
+
+(＊Googleログインにて既にこのメールアドレスのアカウントでログインしている場合は上記のURLからGoogleログインしてください。)
+　
+
+■アカウントをまだお持ちでない場合は
+
+${window.location.protocol}//${window.location.host}/signup?email=${encodeURIComponent(to)}&team=${this.props.teamId} 
+
+からアカウントを作成してください。
 
 ------>> Build Your WorkFlow ----------->>>--
 
-${constants.TITLE}
+${constants.TITLE}サポート
 
 e-mail: ${constants.EMAIL}
 
@@ -147,26 +157,26 @@ HP: ${window.location.protocol}//${window.location.host}
   removeMember() {
     if (this.state.target.type === constants.handleUserType.MEMBER) {
       this.setState({ processing: true });
-      database.ref(`/users/${this.state.target.uid}/teams/`).once('value').then((snapshot) => {
-        if (!snapshot.exists() && !Array.isArray(snapshot.val())) {
+      database.ref(`/users/${this.state.target.uid}/teams/`).once('value').then((myTeamIds) => {
+        if (!myTeamIds.exists() && !Array.isArray(myTeamIds.val())) {
           // メンバーが最新でない可能性がある。
           // TODO ここダサい。
           alert('メンバーの再取得が必要なためリロードします。');
           window.location.reload();
         }
-        return snapshot.val().filter(teamId => teamId !== this.props.teamId);
+        return myTeamIds.val().filter(teamId => teamId !== this.props.teamId);
       }).then((newTeamIds) => {
         if (this.props.userId === this.state.target.uid && !window.confirm(`${this.props.teamName}から自分を削除しようとしています。もう一度参加するためにはメンバーに招待してもらう必要があります。よろしいですか？`)) {
           this.setState({ isOpenRemoveMemberModal: false, processing: false });
           return;
         }
-        if (newTeamIds.length === 0 && !window.confirm(`${this.props.teamName}からメンバーがいなくなります。このチームに二度と遷移できなくなりますがよろしいですか？`)) {
+        const newMembers = this.props.members.filter(member => member.email !== this.state.target.email);
+        if (newMembers.length === 0 && !window.confirm(`${this.props.teamName}からメンバーがいなくなります。このチームに二度と遷移できなくなりますがよろしいですか？`)) {
           this.setState({ isOpenRemoveMemberModal: false, processing: false });
           return;
         }
         // TODO ここはcloudfunctionでusersのチームから値を削除し、realtimeデータベースのusers/$uid/.writeは自分しか書き込み出来ないようにしたほうがよさそう。
         database.ref(`/users/${this.state.target.uid}/teams/`).set(newTeamIds).then(() => {
-          const newMembers = this.props.members.filter(member => member.email !== this.state.target.email);
           this.props.handleMembers(newMembers);
           if (this.props.userId === this.state.target.uid) setTimeout(() => { window.location.reload(); });
           this.setState({

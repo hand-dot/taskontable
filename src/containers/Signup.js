@@ -9,6 +9,7 @@ import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import google from '../images/google.svg';
 import constants from '../constants';
+import util from '../util';
 
 const styles = {
   root: {
@@ -35,6 +36,12 @@ class Signup extends Component {
       email: '',
       password: '',
     };
+  }
+  componentWillMount() {
+    // 招待されたメールからメールアドレスを設定する処理。
+    if (this.props.location.search) {
+      this.setState({ email: util.getQueryVariable('email') });
+    }
   }
   signup(type) {
     const obj = {
@@ -64,7 +71,7 @@ class Signup extends Component {
               アカウントを新規作成
               </Typography>
               <div style={{ fontSize: 12, marginBottom: 20 }}>
-              OR<Link to="/login">アカウントにサインイン</Link>
+              OR<Link to={this.props.location.search === '' ? '/login' : `/login${this.props.location.search}`}>アカウントにサインイン</Link>
               </div>
               <Typography variant="caption" gutterBottom>
             *現在Beta版のため一部の機能を除いてアプリをお試しできます。(データがクリアさせる可能性があります。)
@@ -76,6 +83,8 @@ class Signup extends Component {
                 <TextField
                   value={this.state.username}
                   onChange={(e) => { this.setState({ username: e.target.value }); }}
+                  autoFocus={this.props.location.search !== ''}
+                  autoComplete="username"
                   id="username"
                   label="ユーザー名"
                   InputLabelProps={{
@@ -88,6 +97,8 @@ class Signup extends Component {
                 <TextField
                   value={this.state.email}
                   onChange={(e) => { this.setState({ email: e.target.value }); }}
+                  disabled={this.props.location.search !== ''}
+                  autoComplete="email"
                   id="email"
                   label="メールアドレス"
                   InputLabelProps={{
@@ -100,6 +111,7 @@ class Signup extends Component {
                 <TextField
                   value={this.state.password}
                   onChange={(e) => { this.setState({ password: e.target.value }); }}
+                  autoComplete="password"
                   id="password"
                   type="password"
                   label="パスワード"
@@ -115,7 +127,15 @@ class Signup extends Component {
               <Typography gutterBottom>
               OR
               </Typography>
-              <Button onClick={this.login.bind(this, constants.authType.GOOGLE)} variant="raised" color="primary" className={classes.button}><img src={google} alt="google" height="20" />　グーグルアカウントでログインする</Button>
+              <Button
+                onClick={this.login.bind(this, constants.authType.GOOGLE)}
+                variant="raised"
+                color="primary"
+                className={classes.button}
+                disabled={this.props.location.search !== ''}
+              >
+                <img src={google} alt="google" height="20" />　グーグルアカウントでログインする
+              </Button>
               <div style={{ fontSize: 12, marginBottom: 10 }}>
                 <Link to="/">Topに戻る</Link>
               </div>
@@ -131,6 +151,7 @@ Signup.propTypes = {
   login: PropTypes.func.isRequired,
   signup: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
+  location: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles)(Signup);

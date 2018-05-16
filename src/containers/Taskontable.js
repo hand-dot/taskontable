@@ -88,11 +88,16 @@ class Taskontable extends Component {
         database.ref(`/teams/${this.props.match.params.id}/name/`).once('value'),
       ]).then((snapshots) => {
         const [invitedEmails, userIds, teamName] = snapshots;
+        if (!userIds.exists() || !userIds.val().includes(this.props.userId)) { // 自分がいないチームには参加できない
+          this.props.history.push('/');
+          return;
+        }
         if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') {
           Promise.all(userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'))).then((members) => {
             // 通知からメッセージやアイコンを取り出す処理。
             if (this.props.location.search) {
-              this.setState({ isOpenNotificationMessage: true, notificationMessage: util.getQueryVariable('message'), notificationIcon: util.getQueryVariable('icon') });
+              const notificationMessage = util.getQueryVariable('message');
+              if (notificationMessage) this.setState({ isOpenNotificationMessage: true, notificationMessage, notificationIcon: util.getQueryVariable('icon') });
               setTimeout(() => { this.props.history.push(`/${this.props.match.params.id}`); });
             }
             this.setState({
