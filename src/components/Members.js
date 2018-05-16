@@ -211,12 +211,11 @@ HP: ${window.location.protocol}//${window.location.host}
    */
   sendNotification() {
     if (this.state.target.type === constants.handleUserType.MEMBER) {
-      const messageForURI = encodeURIComponent(`${this.props.userName}：${this.state.notificationMessage}`);
-      const iconForURI = encodeURIComponent(this.props.userPhotoURL);
+      const message = `${this.props.userName}：${this.state.notificationMessage ? `${this.state.notificationMessage}` : '予定を入れたのでチェックしてください。'}`;
       util.sendNotification({
         title: `🔔 ${this.props.userName}さんが通知を送信しました。`,
-        body: this.state.notificationMessage ? `${this.state.notificationMessage}` : `${this.props.teamName}のワークシートを開いてください。`,
-        url: `${window.location.protocol}//${window.location.host}/${this.props.teamId}${this.state.notificationMessage ? `?message=${messageForURI}&icon=${iconForURI}` : ''}`,
+        body: message,
+        url: `${window.location.protocol}//${window.location.host}/${this.props.teamId}?message=${encodeURIComponent(message)}&icon=${encodeURIComponent(this.props.userPhotoURL)}`,
         icon: this.props.userPhotoURL,
         to: this.state.target.fcmToken,
       }).then((res) => {
@@ -424,7 +423,7 @@ HP: ${window.location.protocol}//${window.location.host}
               id="message"
               type="message"
               label="一言メッセージ"
-              placeholder={`例えば${this.props.teamName}のワークシートを開いてください。とか`}
+              placeholder="例えば 予定を入れたのでチェックしてください。 とか"
               fullWidth
             />
           </DialogContent>

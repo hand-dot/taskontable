@@ -628,6 +628,7 @@ class Taskontable extends Component {
           message={this.state.snackbarText}
         />
         <Snackbar
+          key="notification"
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           ContentProps={{ 'aria-describedby': 'message-id' }}
           message={
@@ -637,9 +638,9 @@ class Taskontable extends Component {
             </span>
           }
           open={this.state.isOpenNotificationMessage}
-          onClick={() => { this.setState({ isOpenNotificationMessage: false, notificationMessage: '', notificationIcon: '' }); }}
           action={[
             <IconButton
+              key="close"
               color="inherit"
               onClick={() => { this.setState({ isOpenNotificationMessage: false, notificationMessage: '', notificationIcon: '' }); }}
             >
