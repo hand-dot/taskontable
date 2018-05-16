@@ -9,10 +9,6 @@ import Button from 'material-ui/Button';
 
 import titleGr from '../images/title_gr.png';
 import Footer from '../components/Footer';
-import plugins from '../images/plugins.png';
-import devices from '../images/devices.png';
-import collaboration from '../images/collaboration.png';
-import GPL from '../images/GPL.png';
 import constants from '../constants';
 import util from '../util';
 
@@ -96,7 +92,7 @@ function Top(props) {
             </Typography>
             <Grid spacing={0} container alignItems="stretch" justify="center">
               <Grid item xs={12} md={5}>
-                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={plugins} alt="taskontable" />
+                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fplugins.png?alt=media&token=8228e64e-36f0-43ef-bc4b-8e4e027e4bae" alt="taskontable" />
               </Grid>
               <Grid item xs={12} md={7}>
                 <Typography align="center" style={{ marginBottom: '2em' }}>
@@ -122,7 +118,7 @@ function Top(props) {
                 </Typography>
               </Grid>
               <Grid item xs={12} md={5}>
-                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={collaboration} alt="taskontable" />
+                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fcollaboration.png?alt=media&token=e58901e6-f3c1-42f4-a5bd-85a079d5741b" alt="taskontable" />
               </Grid>
             </Grid>
           </div>
@@ -137,7 +133,7 @@ function Top(props) {
             <Typography align="center" style={{ marginBottom: '2em' }}>
                 いつ、どこにいてもあらゆるデバイスのChromeで快適なタスク管理が可能です。
             </Typography>
-            <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={devices} alt="taskontable" />
+            <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fdevices.png?alt=media&token=2cf665e4-87ac-4c3e-8bd9-5c555f9b653e" alt="taskontable" />
           </div>
         </Paper>
       </Grid>
@@ -150,7 +146,7 @@ function Top(props) {
             <Typography align="center" style={{ marginBottom: '2em' }}>
               ソースコードをGNU General Public License (GPL) の下、<a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">github</a>で公開・配布しています。
             </Typography>
-            <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src={GPL} alt="taskontable" />
+            <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2FGPL.png?alt=media&token=6e0c8418-c002-47e9-a445-6d1559c8a436" alt="taskontable" />
           </div>
         </Paper>
       </Grid>

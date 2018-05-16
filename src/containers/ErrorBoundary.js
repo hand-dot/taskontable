@@ -10,7 +10,6 @@ import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
-import cat from '../images/cat.png';
 
 const styles = {
   root: {
@@ -52,7 +51,7 @@ class ErrorBoundary extends Component {
                 <Typography variant="title" gutterBottom>
                 すみません。エラーが発生しちゃいました。
                 </Typography>
-                <img src={cat} style={{ width: '100%' }} alt="cat" />
+                <img src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fcat.png?alt=media&token=ad2ea5c2-1a0b-4261-92ee-5d99dbe6c4da" style={{ width: '100%' }} alt="cat" />
                 <Typography variant="caption" gutterBottom>
                 エラーが発生した手順、状態を詳しく報告してくださるとなるべくはやく頑張って対応します。
                 </Typography>
