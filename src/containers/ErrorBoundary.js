@@ -1,8 +1,6 @@
 // https://docs.sentry.io/clients/javascript/integrations/react/#expanded-usage
 // https://reactjs.org/blog/2017/07/26/error-handling-in-react-16.html
 import Raven from 'raven-js';
-import { firebase } from '@firebase/app';
-import '@firebase/auth';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withStyles } from 'material-ui/styles';
@@ -10,6 +8,9 @@ import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
+import util from '../util';
+
+const auth = util.getAuth();
 
 const styles = {
   root: {
@@ -57,7 +58,7 @@ class ErrorBoundary extends Component {
                 </Typography>
                 <Button onClick={() => Raven.lastEventId() && Raven.showReportDialog()} variant="raised" color="primary" className={classes.button}>エラーを報告する</Button>
                 <div style={{ fontSize: 12, marginBottom: 10 }}>
-                  <a href="" onClick={() => { firebase.auth().signOut().then(() => { window.location.reload(); }); return false; }}>Topに戻る</a>
+                  <a href="" onClick={() => { auth.signOut().then(() => { window.location.reload(); }); return false; }}>Topに戻る</a>
                 </div>
               </div>
             </Paper>

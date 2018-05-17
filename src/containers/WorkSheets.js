@@ -1,5 +1,3 @@
-import { firebase } from '@firebase/app';
-import '@firebase/database';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -12,6 +10,9 @@ import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 import constants from '../constants';
+import util from '../util';
+
+const database = util.getDatabase();
 
 const styles = {
   root: {
@@ -29,7 +30,6 @@ const styles = {
   },
 };
 
-const database = firebase.database();
 
 class WorkSheets extends Component {
   constructor(props) {

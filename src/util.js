@@ -1,16 +1,59 @@
+import { firebase } from '@firebase/app';
+import '@firebase/database';
+import '@firebase/messaging';
+import '@firebase/auth';
 import moment from 'moment';
 import uuid from 'uuid';
 import fastclone from 'fast-clone';
 import { deepEqual } from 'fast-equals';
 import UAParser from 'ua-parser-js';
 import constants from './constants';
+import firebaseConf from './configs/firebase';
 
 const parser = new UAParser();
 const browserName = parser.getBrowser().name;
 const osName = parser.getOS().name;
 const deviceType = parser.getDevice().type;
 
+firebase.initializeApp(firebaseConf);
+const database = firebase.database();
+const auth = firebase.auth();
+let messaging;
+
+// iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこの処理が必要。
+// https://github.com/hand-dot/taskontable/issues/380
+if (osName !== 'iOS') {
+  messaging = firebase.messaging();
+  messaging.onMessage((payload) => {
+    const { notification } = payload;
+    const notifi = new Notification(notification.title, { icon: notification.icon, body: notification.body });
+    notifi.onclick = () => {
+      notifi.close();
+      window.location.replace(notification.click_action);
+    };
+  });
+}
+
 export default {
+  /**
+   * firebaseのdatabaseを返します。
+   */
+  getDatabase() {
+    return database;
+  },
+  /**
+   * firebaseのauthを返します。
+   */
+  getAuth() {
+    return auth;
+  },
+  /**
+   * firebaseのmessagingを返します。
+   * iOS端末の場合はundefinedが返ってきます。
+   */
+  getMessaging() {
+    return messaging;
+  },
   /**
    * constants.DATEFMT形式の文字列が今日か判断します。
    * @param  {String} constants.DATEFMT形式の文字列

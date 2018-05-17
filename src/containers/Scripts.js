@@ -1,5 +1,3 @@
-import { firebase } from '@firebase/app';
-import '@firebase/database';
 import React, { Component } from 'react';
 import debounce from 'lodash.debounce';
 import PropTypes from 'prop-types';
@@ -27,6 +25,8 @@ import exampleExportScript from '../exampleDatas/exampleExportScript';
 import tableTaskSchema from '../schemas/tableTaskSchema';
 import util from '../util';
 
+const database = util.getDatabase();
+
 const editorOptions = {
   mode: 'javascript',
   theme: 'material',
@@ -50,8 +50,6 @@ const styles = {
     margin: '0 1rem',
   },
 };
-
-const database = firebase.database();
 
 class Scripts extends Component {
   constructor(props) {

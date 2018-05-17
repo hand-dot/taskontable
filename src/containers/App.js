@@ -1,6 +1,4 @@
 import { firebase } from '@firebase/app';
-import '@firebase/database';
-import '@firebase/messaging';
 import React, { Component } from 'react';
 import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
@@ -15,24 +13,24 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 import Button from 'material-ui/Button';
-import AsyncContainer from './AsyncContainer';
 
-import firebaseConf from '../configs/firebase';
 import '../styles/keyframes.css';
 import util from '../util';
 import constants from '../constants';
 
-firebase.initializeApp(firebaseConf);
+import GlobalHeader from './GlobalHeader';
+import Top from './Top';
+import Login from './Login';
+import Logout from './Logout';
+import Signup from './Signup';
+import Scripts from './Scripts';
+import Settings from './Settings';
+import Taskontable from './Taskontable';
+import WorkSheets from './WorkSheets';
 
-const GlobalHeader = AsyncContainer(() => import('./GlobalHeader').then(module => module.default), {});
-const Top = AsyncContainer(() => import('./Top').then(module => module.default), {});
-const Login = AsyncContainer(() => import('./Login').then(module => module.default), {});
-const Logout = AsyncContainer(() => import('./Logout').then(module => module.default), {});
-const Signup = AsyncContainer(() => import('./Signup').then(module => module.default), {});
-const Scripts = AsyncContainer(() => import('./Scripts').then(module => module.default), {});
-const Settings = AsyncContainer(() => import('./Settings').then(module => module.default), {});
-const Taskontable = AsyncContainer(() => import('./Taskontable').then(module => module.default), {});
-const WorkSheets = AsyncContainer(() => import('./WorkSheets').then(module => module.default), {});
+const messaging = util.getMessaging();
+const auth = util.getAuth();
+const database = util.getDatabase();
 
 const styles = {
   root: {
@@ -47,23 +45,6 @@ const styles = {
 // constants.authType.EMAIL_AND_PASSWORDの方法でユーザーを登録すると
 // displayNameが設定されないため一次的にこの変数に格納する。
 let tmpDisplayName = '';
-
-const database = firebase.database();
-let messaging;
-
-// iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこの処理が必要。
-// https://github.com/hand-dot/taskontable/issues/380
-if (!util.isiOS()) {
-  messaging = firebase.messaging();
-  messaging.onMessage((payload) => {
-    const { notification } = payload;
-    const notifi = new Notification(notification.title, { icon: notification.icon, body: notification.body });
-    notifi.onclick = () => {
-      notifi.close();
-      window.location.replace(notification.click_action);
-    };
-  });
-}
 
 class App extends Component {
   constructor(props) {
@@ -84,7 +65,7 @@ class App extends Component {
     const url = process.env.NODE_ENV === 'production' ? [constants.URL] : [constants.DEVURL1, constants.DEVURL2];
     if (url.indexOf(window.location.origin) === -1) window.location.href = constants.URL;
 
-    firebase.auth().onAuthStateChanged((user) => {
+    auth.onAuthStateChanged((user) => {
       if (user) {
         // dimension1はgaではuidとしている
         ReactGA.set({ dimension1: user.uid });
@@ -188,7 +169,7 @@ class App extends Component {
         return;
       }
       tmpDisplayName = username;
-      firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
+      auth.createUserWithEmailAndPassword(email, password).then(() => {
         this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウントを作成しました。' });
       }, (e) => {
         this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウント作成に失敗しました。' });
@@ -201,13 +182,13 @@ class App extends Component {
     if (util.isSupportBrowser()) {
       this.setState({ processing: true });
       if (type === constants.authType.GOOGLE) {
-        firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+        auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
       } else if (type === constants.authType.EMAIL_AND_PASSWORD) {
         if (!util.validateEmail(email) || password.length < 6) {
           this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'メールアドレスとパスワードを正しく入力してください。' });
           return;
         }
-        firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
+        auth.signInWithEmailAndPassword(email, password).then(() => {
           this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'ログインしました。' });
         }, () => {
           this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'ログインに失敗しました。' });
@@ -219,7 +200,7 @@ class App extends Component {
   }
 
   logout() {
-    firebase.auth().signOut().then(() => {
+    auth.signOut().then(() => {
       // userの初期化
       this.setState({
         user: {

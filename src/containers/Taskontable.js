@@ -1,5 +1,3 @@
-import { firebase } from '@firebase/app';
-import '@firebase/database';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
@@ -31,14 +29,14 @@ import constants from '../constants';
 import tasksUtil from '../tasksUtil';
 import util from '../util';
 
+const database = util.getDatabase();
+
 const styles = {
   root: {
     width: constants.APPWIDTH,
     margin: '0 auto',
   },
 };
-
-const database = firebase.database();
 
 class Taskontable extends Component {
   constructor(props) {

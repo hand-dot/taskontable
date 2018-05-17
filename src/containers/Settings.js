@@ -1,6 +1,3 @@
-import { firebase } from '@firebase/app';
-import '@firebase/auth';
-import '@firebase/database';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
@@ -17,6 +14,9 @@ import constants from '../constants';
 import google from '../images/google.svg';
 import email from '../images/email.svg';
 import util from '../util';
+
+const database = util.getDatabase();
+const auth = util.getAuth();
 
 const styles = {
   root: {
@@ -49,8 +49,6 @@ const styles = {
   },
 };
 
-const database = firebase.database();
-
 // TODO プロフィール写真の変更の実装
 
 class Settings extends Component {
@@ -71,7 +69,7 @@ class Settings extends Component {
 
   componentWillMount() {
     // 入力フォームの初期化と制御
-    const authUser = firebase.auth().currentUser;
+    const authUser = auth.currentUser;
     if (authUser != null && authUser.providerData.length === 1) {
       const { providerId } = authUser.providerData[0];
       if (providerId === constants.loginProviderId.PASSWORD) {
@@ -105,7 +103,7 @@ class Settings extends Component {
     this.setState({ processing: true });
     const { user } = this.props;
     const propsUser = user;
-    const authUser = firebase.auth().currentUser;
+    const authUser = auth.currentUser;
     if (propsUser.uid !== authUser.uid) {
       throw new Error('認証ユーザーと現在のユーザーのIDが違います。');
     } else {

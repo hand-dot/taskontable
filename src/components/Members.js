@@ -1,5 +1,3 @@
-import { firebase } from '@firebase/app';
-import '@firebase/database';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
@@ -12,6 +10,8 @@ import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/D
 import { CircularProgress } from 'material-ui/Progress';
 import util from '../util';
 import constants from '../constants';
+
+const database = util.getDatabase();
 
 const styles = theme => ({
   actionIcon: {
@@ -48,8 +48,6 @@ const styles = theme => ({
     padding: 0,
   },
 });
-
-const database = firebase.database();
 
 const getBlankTarget = () => util.cloneDeep({
   type: '',
