@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Dialog, { DialogContent, DialogTitle } from 'material-ui/Dialog';
-import Typography from 'material-ui/Typography';
-import Grid from 'material-ui/Grid';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import IconButton from 'material-ui/IconButton';
+import { withStyles } from '@material-ui/core/styles';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
 
 import '../styles/helpdialog.css';
 import constants from '../constants';

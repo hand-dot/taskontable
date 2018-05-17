@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';

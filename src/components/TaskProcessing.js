@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Typography from 'material-ui/Typography';
-import { LinearProgress } from 'material-ui/Progress';
-import { withStyles } from 'material-ui/styles';
+import Typography from '@material-ui/core/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { withStyles } from '@material-ui/core/styles';
 import util from '../util';
 import tasksUtil from '../tasksUtil';
 import constants from '../constants';

@@ -1,7 +1,7 @@
-import { createMuiTheme } from 'material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 import constants from '../constants';
-// https://material-ui-next.com/customization/themes/
-// https://material-ui-next.com/customization/default-theme/
+// https://@material-ui/core-next.com/customization/themes/
+// https://@material-ui/core-next.com/customization/default-theme/
 const theme = createMuiTheme({
   palette: {
     primary: {

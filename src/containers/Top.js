@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 
 import titleGr from '../images/title_gr.png';
 import Footer from '../components/Footer';

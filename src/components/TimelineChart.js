@@ -3,7 +3,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import uuid from 'uuid';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import constants from '../constants';
 import util from '../util';
 

@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import debounce from 'lodash.debounce';
 
-import Tabs, { Tab } from 'material-ui/Tabs';
-import TextField from 'material-ui/TextField';
-import Divider from 'material-ui/Divider';
-import IconButton from 'material-ui/IconButton';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
-import Snackbar from 'material-ui/Snackbar';
-import Avatar from 'material-ui/Avatar';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import TextField from '@material-ui/core/TextField';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Snackbar from '@material-ui/core/Snackbar';
+import Avatar from '@material-ui/core/Avatar';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';

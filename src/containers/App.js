@@ -2,17 +2,16 @@ import { firebase } from '@firebase/app';
 import React, { Component } from 'react';
 import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { Switch, Route, withRouter } from 'react-router-dom';
-import { CircularProgress } from 'material-ui/Progress';
-import Snackbar from 'material-ui/Snackbar';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from 'material-ui/Dialog';
-import Button from 'material-ui/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
 
 import '../styles/keyframes.css';
 import util from '../util';

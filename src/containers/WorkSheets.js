@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import uuid from 'uuid';
-import Dialog, { DialogContent, DialogTitle, DialogActions } from 'material-ui/Dialog';
-import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
 import constants from '../constants';
 import util from '../util';
 

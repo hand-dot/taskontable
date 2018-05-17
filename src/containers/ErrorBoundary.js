@@ -3,11 +3,11 @@
 import Raven from 'raven-js';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { withStyles } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import Paper from 'material-ui/Paper';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 import util from '../util';
 
 const auth = util.getAuth();
@@ -58,7 +58,7 @@ class ErrorBoundary extends Component {
                 </Typography>
                 <Button onClick={() => Raven.lastEventId() && Raven.showReportDialog()} variant="raised" color="primary" className={classes.button}>エラーを報告する</Button>
                 <div style={{ fontSize: 12, marginBottom: 10 }}>
-                  <a href="" onClick={() => { auth.signOut().then(() => { window.location.reload(); }); return false; }}>Topに戻る</a>
+                  <a href="" onClick={() => { auth.signOut().then(() => { window.location.replace(`${window.location.protocol}//${window.location.host}/`); }); return false; }}>Topに戻る</a>
                 </div>
               </div>
             </Paper>
