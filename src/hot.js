@@ -19,13 +19,13 @@ const columns = [
     data: 'estimate',
     type: 'numeric',
     allowInvalid: false,
-    colWidths: 30,
+    colWidths: 40,
   },
   {
     title: `開始時刻(${constants.TIMEFMT})`,
     data: 'startTime',
     type: 'time',
-    colWidths: 60,
+    colWidths: 70,
     timeFormat: constants.TIMEFMT,
     allowInvalid: false,
     correctFormat: true,
@@ -38,7 +38,7 @@ const columns = [
     title: `終了時刻(${constants.TIMEFMT})`,
     data: 'endTime',
     type: 'time',
-    colWidths: 60,
+    colWidths: 70,
     timeFormat: constants.TIMEFMT,
     allowInvalid: false,
     correctFormat: true,
@@ -76,7 +76,7 @@ const columns = [
     type: 'numeric',
     readOnly: true,
     validator: false,
-    colWidths: 35,
+    colWidths: 45,
     /* eslint no-param-reassign: ["error", { "props": false }] */
     renderer(instance, td, row, col, prop, value) {
       td.classList.add('htDimmed');

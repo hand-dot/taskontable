@@ -107,12 +107,6 @@ class TaskProcessing extends Component {
     }
     return (
       <div style={{ paddingLeft: theme.spacing.unit * 2, paddingRight: theme.spacing.unit * 2 }}>
-        <LinearProgress
-          style={{ marginBottom: theme.spacing.unit }}
-          classes={{ root: classes.progress, barColorPrimary: classes[color], colorPrimary: classes.grey }}
-          variant="determinate"
-          value={100 - remainPercent <= 0 ? 100 : 100 - remainPercent}
-        />
         <Typography variant="caption" align="center">
           <i
             style={{
@@ -125,6 +119,11 @@ class TaskProcessing extends Component {
           />
           {getTitle(this.state.openTask, '開始しているタスクはありません。', true)}
         </Typography>
+        <LinearProgress
+          classes={{ root: classes.progress, barColorPrimary: classes[color], colorPrimary: classes.grey }}
+          variant="determinate"
+          value={100 - remainPercent <= 0 ? 100 : 100 - remainPercent}
+        />
       </div>
     );
   }
