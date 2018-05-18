@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import Close from '@material-ui/icons/Close';
 
 import '../styles/helpdialog.css';
 import constants from '../constants';
@@ -41,12 +42,9 @@ function HelpDialog(props) {
     >
       <AppBar position="static" color="default">
         <Toolbar>
-          <Typography variant="title" color="inherit" className={classes.flex}>
-            <i className="fa fa-question-circle-o" aria-hidden="true" />
-            　ヘルプ
-          </Typography>
+          <Typography variant="title" color="inherit" className={classes.flex}>ヘルプ</Typography>
           <IconButton className={classes.closeBtn} onClick={onClose}>
-            <i className="fa fa-times" aria-hidden="true" />
+            <Close />
           </IconButton>
         </Toolbar>
       </AppBar>

@@ -13,6 +13,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import util from '../util';
 import constants from '../constants';
+import Delete from '@material-ui/icons/Delete';
+import Sms from '@material-ui/icons/Sms';
+import Person from '@material-ui/icons/Person';
+import Email from '@material-ui/icons/Email';
+import PersonAdd from '@material-ui/icons/PersonAdd';
 
 const database = util.getDatabase();
 
@@ -269,7 +274,7 @@ HP: ${window.location.protocol}//${window.location.host}
                   });
                 }}
                 >
-                  <i style={{ fontSize: 15 }} className="fa fa-trash" aria-hidden="true" />
+                  <Delete/>
                 </IconButton>
                 /
                 <span title={(!member.fcmToken ? `${member.displayName}さんは通知を拒否しているようです。` : '') || (member.uid === this.props.userId ? '自分に通知を送ることはできません' : '')}>
@@ -291,11 +296,11 @@ HP: ${window.location.protocol}//${window.location.host}
                     });
                   }}
                   >
-                    <i style={{ fontSize: 15 }} className="fa fa-commenting" aria-hidden="true" />
+                    <Sms/>
                   </IconButton>
                 </span>
                 <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
-                {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
+                {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><Person/></div>}
                 <Typography title={member.email} className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
               </div>
           ))}
@@ -322,7 +327,7 @@ HP: ${window.location.protocol}//${window.location.host}
                   });
                 }}
                 >
-                  <i style={{ fontSize: 15 }} className="fa fa-trash" aria-hidden="true" />
+                  <Delete/>
                 </IconButton>
                 /
                 <IconButton
@@ -338,10 +343,10 @@ HP: ${window.location.protocol}//${window.location.host}
                     });
                   }}
                 >
-                  <i style={{ fontSize: 15 }} className="fa fa-envelope" aria-hidden="true" />
+                 <Email/>
                 </IconButton>
                 <Typography className={classes.memberText} align="center" variant="caption">招待中</Typography>
-                <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>
+                <div className={classes.userPhoto}><Person/></div>
                 <Typography className={classes.memberText} align="center" variant="caption">{invitedEmail}</Typography>
               </div>
           ))}
@@ -350,7 +355,7 @@ HP: ${window.location.protocol}//${window.location.host}
         <div style={{ marginTop: '2em' }}>
           <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
           <IconButton color="default" onClick={() => { this.setState({ isOpenAddMemberModal: true }); }}>
-            <i className="fa fa-plus" />
+            <PersonAdd/>
           </IconButton>
         </div>
         {/* メンバーの追加モーダル */}

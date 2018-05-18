@@ -10,6 +10,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Avatar from '@material-ui/core/Avatar';
+import Person from '@material-ui/icons/Person';
+import Info from '@material-ui/icons/Info';
+import Help from '@material-ui/icons/Help';
+import Notifications from '@material-ui/icons/Notifications';
 
 import HelpDialog from '../components/HelpDialog';
 
@@ -139,7 +143,7 @@ class GlobalHeader extends Component {
                   <div style={{ display: 'inline-flex' }}>
                     <div>
                       <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
-                        {user.photoURL ? <Avatar className={classes.userPhoto} src={user.photoURL} /> : <i className="fa fa-user-circle" />}
+                        {user.photoURL ? <Avatar className={classes.userPhoto} src={user.photoURL} /> : <Person/>}
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
@@ -147,64 +151,39 @@ class GlobalHeader extends Component {
                         onClose={this.closeMenu.bind(this)}
                       >
                         <MenuItem title={user.email}>アカウント名: {user.displayName}</MenuItem>
-                        {!util.isMobile() && (
-                          <MenuItem onClick={this.goScripts.bind(this)}>
-                            <i className="fa fa-code" aria-hidden="true" />　スクリプト設定
-                          </MenuItem>
-                        )}
-                        <MenuItem onClick={this.goWorkSheets.bind(this)}>
-                          <i className="fa fa-files-o" aria-hidden="true" />ワークシートの選択
-                        </MenuItem>
-                        <MenuItem onClick={this.goSettings.bind(this)}>
-                          <i className="fa fa-cog" aria-hidden="true" />　アカウント設定
-                        </MenuItem>
-                        <MenuItem onClick={this.logout.bind(this)}>
-                          <i className="fa fa-sign-out" aria-hidden="true" />　ログアウト
-                        </MenuItem>
+                        <MenuItem onClick={this.goWorkSheets.bind(this)}>ワークシートの選択</MenuItem>
+                        {!util.isMobile() && (<MenuItem onClick={this.goScripts.bind(this)}>スクリプト設定</MenuItem>)}
+                        <MenuItem onClick={this.goSettings.bind(this)}>アカウント設定</MenuItem>
+                        <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
                       </Menu>
                     </div>
                     <div>
                       <IconButton className={classes.iconButton} onClick={openHelpDialog}>
-                        <i className="fa fa-question-circle" />
+                        <Help/>
                       </IconButton>
                     </div>
                     <div>
                       <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
-                        <i className="fa fa-info-circle" />
+                        <Info/>
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
                         open={this.state.openMenuKey === 'info'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>
-                          <i className="fa fa-envelope-o" aria-hidden="true" />　お問い合わせ
-                        </MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>
-                          <i className="fa fa-trello" aria-hidden="true" />　ロードマップ
-                        </MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>
-                          <i className="fa fa-medium" aria-hidden="true" />　ブログ
-                        </MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>
-                          <i className="fa fa-slack" aria-hidden="true" />　コミュニティー
-                        </MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>
-                          <i className="fa fa-github" aria-hidden="true" />　ソースコード
-                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>お問い合わせ</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>ロードマップ</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>ブログ</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>コミュニティー</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>ソースコード</MenuItem>
                       </Menu>
                     </div>
                   </div>);
               })()}
               <div style={{ display: 'inline-flex' }}>
                 <IconButton className={classes.iconButton}>
-                  <i
-                    style={{
-                      position: 'absolute', left: 10, top: 15, fontSize: 20,
-                    }}
-                    className="fa fa-bell-o"
-                  />
-                  <span style={{ position: 'absolute', left: 10, top: 15 }} id="changelog" />
+                  <Notifications/>                  
+                  <span style={{ position: 'absolute', left: 15, top: 15 }} id="changelog" />
                 </IconButton>
               </div>
             </Toolbar>
