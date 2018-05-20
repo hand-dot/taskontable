@@ -272,7 +272,7 @@ class App extends Component {
           <Route exact strict path="/:id/settings" render={(props) => { if (this.state.user.uid !== '') { return <Settings user={this.state.user} handleUser={this.handleUser.bind(this)} {...props} />; } return null; }} />
         </Switch>
         <Dialog open={this.state.processing}>
-          <CircularProgress className={classes.circularProgress} size={60} />
+          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
         </Dialog>
         <Dialog open={this.state.isOpenSupportBrowserDialog}>
           <DialogTitle>サポート対象外ブラウザです</DialogTitle>
@@ -310,8 +310,9 @@ App.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line
   history: PropTypes.object.isRequired, // eslint-disable-line
   location: PropTypes.object.isRequired, // eslint-disable-line
+  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 
-export default withRouter(withStyles(styles)(App));
+export default withRouter(withStyles(styles, { withTheme: true })(App));
 

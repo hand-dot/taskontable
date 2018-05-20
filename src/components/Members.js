@@ -454,7 +454,7 @@ HP: ${window.location.protocol}//${window.location.host}
           </DialogActions>
         </Dialog>
         <Dialog open={this.state.processing}>
-          <CircularProgress className={classes.circularProgress} size={60} />
+          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
         </Dialog>
       </div>
     );

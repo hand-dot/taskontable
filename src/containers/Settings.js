@@ -236,7 +236,7 @@ class Settings extends Component {
           message="保存しました。"
         />
         <Dialog open={this.state.processing}>
-          <CircularProgress className={classes.circularProgress} size={60} />
+          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
         </Dialog>
       </Grid>
     );
