@@ -22,7 +22,7 @@ let messaging;
 
 // iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこの処理が必要。
 // https://github.com/hand-dot/taskontable/issues/380
-if (browserName !== 'WebKit' && osName !== 'iOS') {
+if (browserName === 'Chrome' && osName !== 'iOS') {
   messaging = firebase.messaging();
   messaging.onMessage((payload) => {
     const { notification } = payload;
