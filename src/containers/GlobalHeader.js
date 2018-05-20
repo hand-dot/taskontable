@@ -143,7 +143,7 @@ class GlobalHeader extends Component {
                   <div style={{ display: 'inline-flex' }}>
                     <div>
                       <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
-                        {user.photoURL ? <Avatar className={classes.userPhoto} src={user.photoURL} /> : <Person/>}
+                        {user.photoURL ? <Avatar className={classes.userPhoto} src={user.photoURL} /> : <Person className={classes.userPhoto} />}
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
@@ -159,12 +159,12 @@ class GlobalHeader extends Component {
                     </div>
                     <div>
                       <IconButton className={classes.iconButton} onClick={openHelpDialog}>
-                        <Help/>
+                        <Help />
                       </IconButton>
                     </div>
                     <div>
                       <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="info">
-                        <Info/>
+                        <Info />
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
@@ -182,7 +182,7 @@ class GlobalHeader extends Component {
               })()}
               <div style={{ display: 'inline-flex' }}>
                 <IconButton className={classes.iconButton}>
-                  <Notifications/>                  
+                  <Notifications />
                   <span style={{ position: 'absolute', left: 15, top: 15 }} id="changelog" />
                 </IconButton>
               </div>

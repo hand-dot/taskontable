@@ -12,6 +12,9 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import Person from '@material-ui/icons/Person';
+import People from '@material-ui/icons/People';
+
 import constants from '../constants';
 import util from '../util';
 
@@ -89,13 +92,13 @@ class WorkSheets extends Component {
               </div>
               <div style={{ marginTop: 30 }}>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="subheading">
-                  <i className="fa fa-user" aria-hidden="true" />　パーソナルワークシート
+                  <Person />　パーソナルワークシート
                 </Typography>
                 <Link to={`/${this.props.user.uid}`} style={{ margin: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{this.props.user.displayName}</Button></Link>
               </div>
               <div style={{ marginTop: 30 }}>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="subheading">
-                  <i className="fa fa-users" aria-hidden="true" />　チームワークシート
+                  <People />　チームワークシート
                 </Typography>
                 {this.state.teams.map(team => (
                   <Link key={team.id} to={`/${team.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>

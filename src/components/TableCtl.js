@@ -8,6 +8,12 @@ import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
+import ThumbUp from '@material-ui/icons/ThumbUp';
+import Error from '@material-ui/icons/Error';
+import CheckCircle from '@material-ui/icons/CheckCircle';
+import NavigateBefore from '@material-ui/icons/NavigateBefore';
+import NavigateNext from '@material-ui/icons/NavigateNext';
+import Save from '@material-ui/icons/Save';
 import DatePicker from './DatePicker';
 import TaskProcessing from './TaskProcessing';
 import constants from '../constants';
@@ -55,37 +61,42 @@ class TableCtl extends Component {
   }
 
   render() {
-    const { tableTasks, date, lastSaveTime, saveable, saveWorkSheet, classes, theme } = this.props;
+    const {
+      tableTasks, date, lastSaveTime, saveable, saveWorkSheet, classes, theme,
+    } = this.props;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
       <div>
         <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} variant="determinate" value={progressPer} />
-        <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems={'center'} justify={'center'} spacing={0}>
+        <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems="center" justify="center" spacing={0}>
           <Hidden xsDown>
             <Grid item xs={3}>
               <TaskProcessing tableTasks={tableTasks} date={date} />
             </Grid>
           </Hidden>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
-            <DatePicker value={date} changeDate={this.changeDate.bind(this)} label={''} />
+            <DatePicker value={date} changeDate={this.changeDate.bind(this)} label="" />
           </Grid>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
             {(() => {
               if (tableTasks.length === 0) {
                 return (
-                  <Typography style={{ marginTop: 10 }} variant="caption"><i className="fa fa-asterisk" />タスクがありません</Typography>
+                  <Typography style={{ marginTop: 10 }} variant="caption">タスクがありません</Typography>
                 );
               } else if (tableTasks.length === tasksUtil.getDoneTasks(tableTasks).length) {
                 return (
-                  <Typography style={{ animation: 'good 1s linear 0s 1', marginTop: 10, color: constants.brandColor.base.BLUE }} variant="caption"><i className="fa fa-thumbs-up" />Complete!</Typography>
+                  <Typography style={{ animation: 'good 1s linear 0s 1', marginTop: 10, color: constants.brandColor.base.BLUE }} variant="caption">
+                    <ThumbUp style={{ fontSize: 16 }} />
+                  Complete!
+                  </Typography>
                 );
               }
               return (
                 <Typography style={{ marginTop: 10 }} variant="caption">
-                  <i className="fa fa-exclamation-circle" />
+                  <Error style={{ fontSize: 16 }} />
                   {tasksUtil.getOpenTasks(tableTasks).length}Open
                   <span>&nbsp;</span>
-                  <i className="fa fa-check" />
+                  <CheckCircle style={{ fontSize: 16 }} />
                   {tasksUtil.getDoneTasks(tableTasks).length}Close
                 </Typography>
               );
@@ -94,19 +105,19 @@ class TableCtl extends Component {
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
             <Tooltip title={moment(date, constants.DATEFMT).add(-1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><i className="fa fa-angle-left fa-lg" /></Button>
+                <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><NavigateBefore style={{ fontSize: 16 }} /></Button>
               </div>
             </Tooltip>
             {!util.isMobile() && (
-                  <Tooltip title={`最終保存時刻 : ${lastSaveTime}`} placement="top">
-                  <div style={{ display: 'inline-block' }}>
-                    <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><i className="fa fa-floppy-o fa-lg" /></Button>
-                  </div>
-                </Tooltip>
+            <Tooltip title={`最終保存時刻 : ${lastSaveTime}`} placement="top">
+              <div style={{ display: 'inline-block' }}>
+                <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><Save style={{ fontSize: 16 }} /></Button>
+              </div>
+            </Tooltip>
             )}
             <Tooltip title={moment(date, constants.DATEFMT).add(1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><i className="fa fa-angle-right fa-lg" /></Button>
+                <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><NavigateNext style={{ fontSize: 16 }} /></Button>
               </div>
             </Tooltip>
           </Grid>

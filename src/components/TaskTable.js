@@ -82,7 +82,7 @@ class TaskTable extends Component {
     if (!util.equal(hotTasks.map(task => tasksUtil.deleteUselessTaskProp(task)), this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)))) {
       this.props.handleSaveable(true);
       this.props.handleTableTasks(hotTasks);
-      this.hot.render();
+      if (this.hot) this.hot.render();
     }
   }
 

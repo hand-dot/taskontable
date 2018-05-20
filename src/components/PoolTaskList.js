@@ -12,6 +12,11 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import MoreHoriz from '@material-ui/icons/MoreHoriz';
+import Edit from '@material-ui/icons/Edit';
+import Save from '@material-ui/icons/Save';
+import Add from '@material-ui/icons/Add';
+
 import MultipleSelect from './MultipleSelect';
 import poolTaskSchema from '../schemas/poolTaskSchema';
 import constants from '../constants';
@@ -217,11 +222,11 @@ class TaskList extends Component {
                 <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                   <div className={classes.actionIcons}>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
-                      <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
+                      {this.state.editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
                     </IconButton>
                     <span>/</span>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
-                      <i className="fa fa-ellipsis-v" />
+                      <MoreHoriz style={{ fontSize: 16 }} />
                     </IconButton>
                     <Menu
                       anchorEl={this.state.anchorEl[index]}
@@ -229,27 +234,21 @@ class TaskList extends Component {
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
                       <MenuItem key="moveTable" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_TABLE)}>
-                        <i className="fa fa-download" />
                         <Typography variant="caption">テーブルに移動</Typography>
                       </MenuItem>
                       <MenuItem key="topToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
-                        <i className="fa fa-angle-double-up" />
                         <Typography variant="caption">先頭に移動</Typography>
                       </MenuItem>
                       <MenuItem key="upTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
-                        <i className="fa fa-angle-up" />
                         <Typography variant="caption">1つ上に移動</Typography>
                       </MenuItem>
                       <MenuItem key="downTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
-                        <i className="fa fa-angle-down" />
                         <Typography variant="caption">1つ下に移動</Typography>
                       </MenuItem>
                       <MenuItem key="bottomToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
-                        <i className="fa fa-angle-double-down" />
                         <Typography variant="caption">末尾に移動</Typography>
                       </MenuItem>
                       <MenuItem key="removeTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
-                        <i className="fa fa-trash-o" />
                         <Typography variant="caption">削除</Typography>
                       </MenuItem>
                     </Menu>
@@ -328,7 +327,7 @@ class TaskList extends Component {
               )}
               <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                 <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={this.state.editingTaskIndex !== -1}>
-                  <i className="fa fa-plus" />
+                  <Add style={{ fontSize: 16 }} />
                 </IconButton>
               </CustomTableCell>
             </TableRow>

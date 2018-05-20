@@ -11,13 +11,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import util from '../util';
-import constants from '../constants';
 import Delete from '@material-ui/icons/Delete';
 import Sms from '@material-ui/icons/Sms';
 import Person from '@material-ui/icons/Person';
 import Email from '@material-ui/icons/Email';
 import PersonAdd from '@material-ui/icons/PersonAdd';
+import util from '../util';
+import constants from '../constants';
 
 const database = util.getDatabase();
 
@@ -274,7 +274,7 @@ HP: ${window.location.protocol}//${window.location.host}
                   });
                 }}
                 >
-                  <Delete/>
+                  <Delete style={{ fontSize: 16 }} />
                 </IconButton>
                 /
                 <span title={(!member.fcmToken ? `${member.displayName}さんは通知を拒否しているようです。` : '') || (member.uid === this.props.userId ? '自分に通知を送ることはできません' : '')}>
@@ -296,11 +296,11 @@ HP: ${window.location.protocol}//${window.location.host}
                     });
                   }}
                   >
-                    <Sms/>
+                    <Sms style={{ fontSize: 16 }} />
                   </IconButton>
                 </span>
                 <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
-                {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><Person/></div>}
+                {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <Person className={classes.userPhoto} />}
                 <Typography title={member.email} className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
               </div>
           ))}
@@ -327,7 +327,7 @@ HP: ${window.location.protocol}//${window.location.host}
                   });
                 }}
                 >
-                  <Delete/>
+                  <Delete style={{ fontSize: 16 }} />
                 </IconButton>
                 /
                 <IconButton
@@ -343,10 +343,10 @@ HP: ${window.location.protocol}//${window.location.host}
                     });
                   }}
                 >
-                 <Email/>
+                  <Email />
                 </IconButton>
                 <Typography className={classes.memberText} align="center" variant="caption">招待中</Typography>
-                <div className={classes.userPhoto}><Person/></div>
+                <div className={classes.userPhoto}><Person /></div>
                 <Typography className={classes.memberText} align="center" variant="caption">{invitedEmail}</Typography>
               </div>
           ))}
@@ -355,7 +355,7 @@ HP: ${window.location.protocol}//${window.location.host}
         <div style={{ marginTop: '2em' }}>
           <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
           <IconButton color="default" onClick={() => { this.setState({ isOpenAddMemberModal: true }); }}>
-            <PersonAdd/>
+            <PersonAdd />
           </IconButton>
         </div>
         {/* メンバーの追加モーダル */}

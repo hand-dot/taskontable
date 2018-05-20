@@ -6,6 +6,11 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import Save from '@material-ui/icons/Save';
+import Undo from '@material-ui/icons/Undo';
+import FlashOn from '@material-ui/icons/FlashOn';
+import CloudDownload from '@material-ui/icons/CloudDownload';
+
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
@@ -22,7 +27,9 @@ const styles = {
 };
 
 function ScriptsEditor(props) {
-  const { scriptType, script, scriptBk, exampleScript, editorOptions, resetScript, saveScript, fireScript, loadExampleScript, handleScript, classes } = props;
+  const {
+    scriptType, script, scriptBk, exampleScript, editorOptions, resetScript, saveScript, fireScript, loadExampleScript, handleScript, classes,
+  } = props;
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -35,27 +42,27 @@ function ScriptsEditor(props) {
               return 'エクスポートスクリプト';
             })()}
             <span className={classes.divider}>/</span>
-            <Tooltip title={'保存前に戻す'} placement="top">
+            <Tooltip title="保存前に戻す" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === scriptBk} onClick={resetScript} variant="raised"><i className="fa fa-undo" /></Button>
+                <Button className={classes.button} disabled={script === scriptBk} onClick={resetScript} variant="raised"><Undo style={{ fontSize: 13 }} /></Button>
               </div>
             </Tooltip>
             <span className={classes.divider}>/</span>
-            <Tooltip title={'保存する'} placement="top">
+            <Tooltip title="保存する" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === scriptBk} onClick={saveScript} variant="raised"><i className="fa fa-floppy-o" /></Button>
+                <Button className={classes.button} disabled={script === scriptBk} onClick={saveScript} variant="raised"><Save style={{ fontSize: 13 }} /></Button>
               </div>
             </Tooltip>
             <span className={classes.divider}>/</span>
-            <Tooltip title={'実行'} placement="top">
+            <Tooltip title="実行" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === ''} onClick={fireScript} variant="raised"><i className="fa fa-bolt" /></Button>
+                <Button className={classes.button} disabled={script === ''} onClick={fireScript} variant="raised"><FlashOn style={{ fontSize: 13 }} /></Button>
               </div>
             </Tooltip>
             <span className={classes.divider}>/</span>
-            <Tooltip title={'サンプルを読み込む'} placement="top">
+            <Tooltip title="サンプルを読み込む" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === exampleScript.toString()} onClick={loadExampleScript} variant="raised"><i className="fa fa-cloud-download" /></Button>
+                <Button className={classes.button} disabled={script === exampleScript.toString()} onClick={loadExampleScript} variant="raised"><CloudDownload style={{ fontSize: 13 }} /></Button>
               </div>
             </Tooltip>
           </Typography>
@@ -82,7 +89,7 @@ function ScriptsEditor(props) {
           </Typography>
           <br />
           <Typography gutterBottom variant="caption">
-            <i className="fa fa-exclamation-circle" />サンプルのスクリプトを読み込んでみてください。<br />
+            ＊サンプルのスクリプトを読み込んでみてください。<br />
             {(() => {
               if (scriptType === 'importScript') {
                 return 'githubの特定のラベルが付いたissueをインポートしている例です。';
@@ -90,7 +97,7 @@ function ScriptsEditor(props) {
               return '完了したタスクをgithubのissueでクローズしている例です。';
             })()}
             <Typography gutterBottom variant="caption">
-            参考:<a href={'https://developer.github.com/v3/issues/#list-issues-for-a-repository'} target="_blank">https://developer.github.com/v3/issues/#list-issues-for-a-repository</a>
+            参考:<a href="https://developer.github.com/v3/issues/#list-issues-for-a-repository" target="_blank">https://developer.github.com/v3/issues/#list-issues-for-a-repository</a>
             </Typography>
           </Typography>
         </Paper>

@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Switch from '@material-ui/core/Switch';
+import Refresh from '@material-ui/icons/Refresh';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 import { Controlled as CodeMirror } from 'react-codemirror2';
@@ -89,7 +90,7 @@ class Scripts extends Component {
       data: util.cloneDeep(exampleTaskData),
       afterRender() { self.syncStateByRender(); },
     }));
-    setTimeout(() => this.exampleHot.render());
+    setTimeout(() => { if (this.exampleHot) this.exampleHot.render(); });
   }
 
   componentWillUnmount() {
@@ -143,7 +144,7 @@ class Scripts extends Component {
     const script = this.state[scriptType];
     util.runWorker(script, data).then((result) => {
       setDataForHot(this.exampleHot, result);
-      setTimeout(() => { this.exampleHot.render(); });
+      setTimeout(() => { if (this.exampleHot) this.exampleHot.render(); });
       this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
     }, (reason) => {
       const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
@@ -208,7 +209,7 @@ class Scripts extends Component {
               <span className={classes.divider}>/</span>
               <Tooltip title="リセット" placement="top">
                 <div style={{ display: 'inline-block' }}>
-                  <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><i className="fa fa-refresh" /></Button>
+                  <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><Refresh style={{ fontSize: 13 }} /></Button>
                 </div>
               </Tooltip>
             </Typography>

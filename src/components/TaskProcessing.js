@@ -4,6 +4,7 @@ import moment from 'moment';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
+import Favorite from '@material-ui/icons/Favorite';
 import util from '../util';
 import tasksUtil from '../tasksUtil';
 import constants from '../constants';
@@ -106,16 +107,15 @@ class TaskProcessing extends Component {
       color = 'grey';
     }
     return (
-      <div style={{ paddingLeft: theme.spacing.unit * 2, paddingRight: theme.spacing.unit * 2 }}>
+      <div style={{ paddingLeft: theme.spacing.unit * 2, paddingRight: theme.spacing.unit * 2 }} title={this.state.openTask.title}>
         <Typography variant="caption" align="center">
-          <i
+          <Favorite
             style={{
+              fontSize: 10,
               marginRight: theme.spacing.unit,
               color: this.state.openTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
               animation: this.state.openTask.id ? 'blink 1s infinite' : '',
             }}
-            className="fa fa-heartbeat"
-            aria-hidden="true"
           />
           {getTitle(this.state.openTask, '開始しているタスクはありません。', true)}
         </Typography>

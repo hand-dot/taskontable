@@ -17,6 +17,12 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Snackbar from '@material-ui/core/Snackbar';
 import Avatar from '@material-ui/core/Avatar';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import People from '@material-ui/icons/People';
+import FormatListBulleted from '@material-ui/icons/FormatListBulleted';
+import AvTimer from '@material-ui/icons/AvTimer';
+import Close from '@material-ui/icons/Close';
+import Person from '@material-ui/icons/Person';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';
@@ -533,7 +539,7 @@ class Taskontable extends Component {
       <Grid container spacing={0} className={classes.root} style={{ paddingTop: theme.mixins.toolbar.minHeight }}>
         <Grid item xs={12}>
           <ExpansionPanel expanded={this.state.isOpenDashboard} style={{ margin: 0 }} elevation={1}>
-            <ExpansionPanelSummary expandIcon={<IconButton onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><i className="fa fa-angle-down fa-lg" /></IconButton>}>
+            <ExpansionPanelSummary expandIcon={<IconButton onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><ExpandMore /></IconButton>}>
               <Tabs
                 value={this.state.tab}
                 onChange={(e, tab) => {
@@ -544,10 +550,10 @@ class Taskontable extends Component {
                 scrollButtons="off"
                 indicatorColor="primary"
               >
-                <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-tachometer fa-lg" />ダッシュボード</span>} />
-                <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-tasks fa-lg" />タスクプール</span>} />
+                <Tab label={<span><AvTimer style={{ fontSize: 16, marginRight: '0.5em' }} />ダッシュボード</span>} />
+                <Tab label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />タスクプール</span>} />
                 {this.state.mode === constants.taskontableMode.TEAMS && (
-                  <Tab label={<span><i style={{ marginRight: '0.5em' }} className="fa fa-users fa-lg" />メンバー</span>} />
+                  <Tab label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
                 )}
               </Tabs>
             </ExpansionPanelSummary>
@@ -636,7 +642,7 @@ class Taskontable extends Component {
           ContentProps={{ 'aria-describedby': 'message-id' }}
           message={
             <span id="message-id" style={{ display: 'flex', alignItems: 'center' }}>
-              {this.state.notificationIcon ? <Avatar className={classes.userPhoto} src={this.state.notificationIcon} /> : <div className={classes.userPhoto}><i style={{ fontSize: 25 }} className="fa fa-user-circle fa-2" /></div>}
+              {this.state.notificationIcon ? <Avatar className={classes.userPhoto} src={this.state.notificationIcon} /> : <Person className={classes.userPhoto} />}
               <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.notificationMessage}</span>
             </span>
           }
@@ -647,7 +653,7 @@ class Taskontable extends Component {
               color="inherit"
               onClick={() => { this.setState({ isOpenNotificationMessage: false, notificationMessage: '', notificationIcon: '' }); }}
             >
-              <i className="fa fa-times" aria-hidden="true" />
+              <Close />
             </IconButton>,
           ]}
         />

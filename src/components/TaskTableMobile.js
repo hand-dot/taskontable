@@ -4,7 +4,8 @@ import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import Menu, { MenuItem } from '@material-ui/core/Menu';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Input from '@material-ui/core/Input';
 import Table from '@material-ui/core/Table';
@@ -12,6 +13,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import MoreHoriz from '@material-ui/icons/MoreHoriz';
+import Edit from '@material-ui/icons/Edit';
+import Save from '@material-ui/icons/Save';
+import Add from '@material-ui/icons/Add';
 import tableTaskSchema from '../schemas/tableTaskSchema';
 import constants from '../constants';
 import style from '../assets/style';
@@ -196,43 +201,36 @@ class TaskTableMobile extends Component {
                 <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                   <div className={classes.actionIcons}>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
-                      <i className={this.state.editingTaskIndex !== index ? 'fa fa-pencil' : 'fa fa-floppy-o'} />
+                      {this.state.editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
                     </IconButton>
                     <span>/</span>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
-                      <i className="fa fa-ellipsis-v" />
+                      <MoreHoriz style={{ fontSize: 16 }} />
                     </IconButton>
                     <Menu
                       anchorEl={this.state.anchorEl[index]}
                       open={Boolean(this.state.anchorEl[index] || false)}
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
-                      <MenuItem key={'movePoolHighPriority'} disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_HIGHPRIORITY)}>
-                        <i className="fa fa-upload" />
+                      <MenuItem key="movePoolHighPriority" disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_HIGHPRIORITY)}>
                         <Typography variant="caption">[すぐにやる]に戻す</Typography>
                       </MenuItem>
-                      <MenuItem key={'movePoolLowPriority'} disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_LOWPRIORITY)}>
-                        <i className="fa fa-upload" />
+                      <MenuItem key="movePoolLowPriority" disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_LOWPRIORITY)}>
                         <Typography variant="caption">[いつかやる]に戻す</Typography>
                       </MenuItem>
-                      <MenuItem key={'topToTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
-                        <i className="fa fa-angle-double-up" />
+                      <MenuItem key="topToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
                         <Typography variant="caption">先頭に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'upTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
-                        <i className="fa fa-angle-up" />
+                      <MenuItem key="upTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
                         <Typography variant="caption">1つ上に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'downTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
-                        <i className="fa fa-angle-down" />
+                      <MenuItem key="downTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
                         <Typography variant="caption">1つ下に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'bottomToTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
-                        <i className="fa fa-angle-double-down" />
+                      <MenuItem key="bottomToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
                         <Typography variant="caption">末尾に移動</Typography>
                       </MenuItem>
-                      <MenuItem key={'removeTask'} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
-                        <i className="fa fa-trash-o" />
+                      <MenuItem key="removeTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
                         <Typography variant="caption">削除</Typography>
                       </MenuItem>
                     </Menu>
@@ -287,7 +285,7 @@ class TaskTableMobile extends Component {
               </CustomTableCell>
               <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                 <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={this.state.editingTaskIndex !== -1}>
-                  <i className="fa fa-plus" />
+                  <Add style={{ fontSize: 16 }} />
                 </IconButton>
               </CustomTableCell>
             </TableRow>
