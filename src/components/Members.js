@@ -18,6 +18,7 @@ import Email from '@material-ui/icons/Email';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import util from '../util';
 import constants from '../constants';
+import notifiIcon from '../images/notifiIcon.png';
 
 const database = util.getDatabase();
 
@@ -232,7 +233,7 @@ HP: ${window.location.protocol}//${window.location.host}
         title: `🔔 ${this.props.userName}さんが通知を送信しました。`,
         body: message,
         url: `${window.location.protocol}//${window.location.host}/${this.props.teamId}?message=${encodeURIComponent(message)}&icon=${encodeURIComponent(this.props.userPhotoURL)}`,
-        icon: this.props.userPhotoURL,
+        icon: this.props.userPhotoURL || notifiIcon,
         to: this.state.target.fcmToken,
       }).then((res) => {
         alert(res.ok ? '通知を送信しました。' : '通知の送信に失敗しました。');
@@ -300,7 +301,7 @@ HP: ${window.location.protocol}//${window.location.host}
                   </IconButton>
                 </span>
                 <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
-                {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <Person className={classes.userPhoto} />}
+                {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><Person /></div>}
                 <Typography title={member.email} className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
               </div>
           ))}
@@ -343,7 +344,7 @@ HP: ${window.location.protocol}//${window.location.host}
                     });
                   }}
                 >
-                  <Email />
+                  <Email style={{ fontSize: 16 }} />
                 </IconButton>
                 <Typography className={classes.memberText} align="center" variant="caption">招待中</Typography>
                 <div className={classes.userPhoto}><Person /></div>

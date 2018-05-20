@@ -15,14 +15,18 @@ const browserName = parser.getBrowser().name;
 const osName = parser.getOS().name;
 const deviceType = parser.getDevice().type;
 
-firebase.initializeApp(firebaseConf);
-const database = firebase.database();
-const auth = firebase.auth();
+let database;
+let auth;
 let messaging;
+if (process.env.NODE_ENV !== 'test') {
+  firebase.initializeApp(firebaseConf);
+  database = firebase.database();
+  auth = firebase.auth();
+}
 
 // iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこの処理が必要。
 // https://github.com/hand-dot/taskontable/issues/380
-if (browserName === 'Chrome' && osName !== 'iOS') {
+if (process.env.NODE_ENV !== 'test' && osName !== 'iOS') {
   messaging = firebase.messaging();
   messaging.onMessage((payload) => {
     const { notification } = payload;
