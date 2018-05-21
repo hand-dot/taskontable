@@ -35,6 +35,8 @@ import constants from '../constants';
 import tasksUtil from '../tasksUtil';
 import util from '../util';
 
+import notifiIcon from '../images/notifiIcon.png';
+
 const database = util.getDatabase();
 
 const styles = {
@@ -93,6 +95,8 @@ class Taskontable extends Component {
       ]).then((snapshots) => {
         const [invitedEmails, userIds, teamName] = snapshots;
         if (!userIds.exists() || !userIds.val().includes(this.props.userId)) { // 自分がいないチームには参加できない
+          // https://github.com/hand-dot/taskontable/issues/359
+          // 下記のルーターの遷移をコメントアウトすると簡易的にオープンワークシーにになる。
           this.props.history.push('/');
           return;
         }
@@ -101,7 +105,7 @@ class Taskontable extends Component {
             // 通知からメッセージやアイコンを取り出す処理。
             if (this.props.location.search) {
               const notificationMessage = util.getQueryVariable('message');
-              if (notificationMessage) this.setState({ isOpenNotificationMessage: true, notificationMessage, notificationIcon: util.getQueryVariable('icon') });
+              if (notificationMessage) this.setState({ isOpenNotificationMessage: true, notificationMessage, notificationIcon: util.getQueryVariable('icon') || notifiIcon });
               setTimeout(() => { this.props.history.push(`/${this.props.match.params.id}`); });
             }
             this.setState({

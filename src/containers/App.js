@@ -111,18 +111,20 @@ class App extends Component {
         }).then((myWorkSheetsIds) => {
           const pathname = this.props.location.pathname.replace('/', '');
           const fromInviteEmail = util.getQueryVariable('team') !== '';
-          if (!fromInviteEmail && (pathname === 'login' || pathname === 'signup' || pathname === 'index.html')) { // ■ログイン時はワークシートの選択(urlルート)に飛ばす
+          if (!fromInviteEmail && ['login', 'signup', 'index.html'].includes(pathname)) { // ■ログイン時
             this.props.history.push('/');
-          } else if (pathname !== '' && (fromInviteEmail || !myWorkSheetsIds.includes(pathname))) { // ■招待の可能性がある場合の処理
+          } else if (myWorkSheetsIds.includes(pathname)) { // ■既に参加しているチームの場合
+            this.props.history.push(`/${pathname}`);
+          } else if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
             const teamId = fromInviteEmail ? util.getQueryVariable('team') : pathname;
-            database.ref(`/teams/${teamId}/invitedEmails/`).once('value').then((invitedEmails) => {
+            return database.ref(`/teams/${teamId}/invitedEmails/`).once('value').then((invitedEmails) => {
               // 自分のメールアドレスがチームの招待中メールアドレスリストに存在するかチェックする。
-              if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || invitedEmails.val() === [] || !invitedEmails.val().includes(user.email)) { // 違った場合はワークシートの選択に飛ばす
-                this.props.history.push('/');
-                return;
+              if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || invitedEmails.val() === [] || !invitedEmails.val().includes(user.email)) {
+                this.props.history.push('/'); // 違った場合はワークシートの選択に飛ばす
+                return Promise.resolve();
               }
               // 自分が招待されていた場合は自分のチームに加え、チームのメンバーに自分を加える
-              Promise.all([database.ref(`/users/${user.uid}/teams/`).once('value'), database.ref(`/teams/${teamId}/users/`).once('value')]).then((snapshots) => {
+              return Promise.all([database.ref(`/users/${user.uid}/teams/`).once('value'), database.ref(`/teams/${teamId}/users/`).once('value')]).then((snapshots) => {
                 const [myTeamIds, teamUserIds] = snapshots;
                 const promises = [
                   database.ref(`/users/${user.uid}/teams/`).set((myTeamIds.exists() ? myTeamIds.val() : []).concat([teamId])), // 自分の参加しているチームにチームのidを追加
@@ -131,19 +133,17 @@ class App extends Component {
                 ];
                 return Promise.all(promises);
               }).then(() => {
-                database.ref(`/teams/${teamId}/users/`).once('value').then((teamUserIds) => {
-                  if (teamUserIds.exists() && Array.isArray(teamUserIds.val()) && teamUserIds.val().includes(user.uid)) { // 参加しているチームのユーザーに自分のidが含まれていたら目的のチームidに遷移できる
-                    this.props.history.push(`/${teamId}`);
-                  } else {
-                    this.props.history.push('/');
-                  }
-                });
+                this.props.history.push(`/${teamId}`);
+                return Promise.resolve();
               });
             });
           } // else ■自分の所属しているチームへの直遷移
+        }).then(() => {
+          this.setState({ processing: false });
         });
+      } else {
+        this.setState({ processing: false });
       }
-      this.setState({ processing: false });
     });
   }
 
