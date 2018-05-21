@@ -17,6 +17,8 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Snackbar from '@material-ui/core/Snackbar';
 import Avatar from '@material-ui/core/Avatar';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import People from '@material-ui/icons/People';
 import FormatListBulleted from '@material-ui/icons/FormatListBulleted';
@@ -368,8 +370,6 @@ class Taskontable extends Component {
         const lastSaveTime = moment().format(constants.TIMEFMT);
         if (this.state.isSyncedTableTasks) { // ほかのユーザーの更新
           snackbarText = `テーブルが更新されました。（${lastSaveTime}）`;
-        } else { // 初期化
-          this.setState({ isSyncedTableTasks: true });
         }
         tableTasks = snapshot.val();
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
@@ -385,12 +385,12 @@ class Taskontable extends Component {
       this.fireScript(tableTasks, 'importScript').then(
         (data) => {
           this.setSortedTableTasks(data);
-          this.setState({ isOpenSnackbar: true, snackbarText: `インポートスクリプトを実行しました。(success)${snackbarText ? ` - ${snackbarText}` : ''}` });
+          this.setState({ isSyncedTableTasks: true, isOpenSnackbar: true, snackbarText: `インポートスクリプトを実行しました。(success)${snackbarText ? ` - ${snackbarText}` : ''}` });
         },
         (reason) => {
           this.setSortedTableTasks(tableTasks);
           if (reason) snackbarText = `インポートスクリプトを実行しました。(error)：${reason}${snackbarText ? ` - ${snackbarText}` : ''}`;
-          this.setState({ isOpenSnackbar: snackbarText !== '', snackbarText });
+          this.setState({ isSyncedTableTasks: true, isOpenSnackbar: snackbarText !== '', snackbarText });
         },
       );
       this.setState({ saveable: false });
@@ -590,25 +590,19 @@ class Taskontable extends Component {
               changeDate={this.changeDate.bind(this)}
               saveWorkSheet={this.saveWorkSheet.bind(this)}
             />
-            {(() => {
-              if (this.state.isMobile) {
-                return (<TaskTableMobile
-                  tableTasks={this.state.tableTasks}
-                  changeTableTasks={this.changeTableTasksByMobile.bind(this)}
-                  isActive={util.isToday(this.state.date)}
-                />);
-              }
-              return (<TaskTable
-                onRef={ref => (this.taskTable = ref)} // eslint-disable-line
-                tableTasks={this.state.tableTasks}
-                handleTableTasks={(newTableTasks) => {
-                  this.setState({ tableTasks: newTableTasks });
-                }}
-                handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
-                isActive={util.isToday(this.state.date)}
-                moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
-              />);
-            })()}
+            {this.state.isMobile && (<TaskTableMobile
+              tableTasks={this.state.tableTasks}
+              changeTableTasks={this.changeTableTasksByMobile.bind(this)}
+              isActive={util.isToday(this.state.date)}
+            />)}
+            {!this.state.isMobile && (<TaskTable
+              onRef={ref => (this.taskTable = ref)} // eslint-disable-line
+              tableTasks={this.state.tableTasks}
+              handleTableTasks={(newTableTasks) => { this.setState({ tableTasks: newTableTasks }); }}
+              handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
+              isActive={util.isToday(this.state.date)}
+              moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
+            />)}
             <Divider />
             <TextField
               fullWidth
@@ -616,8 +610,7 @@ class Taskontable extends Component {
               onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
               onBlur={() => {
                 if (this.state.isMobile && this.state.saveable) {
-                  this.saveMemo()
-                  .then(() => {
+                  this.saveMemo().then(() => {
                     this.setState({
                       isOpenSnackbar: true,
                       snackbarText: 'メモを保存しました。',
@@ -651,16 +644,11 @@ class Taskontable extends Component {
             </span>
           }
           open={this.state.isOpenNotificationMessage}
-          action={[
-            <IconButton
-              key="close"
-              color="inherit"
-              onClick={() => { this.setState({ isOpenNotificationMessage: false, notificationMessage: '', notificationIcon: '' }); }}
-            >
-              <Close />
-            </IconButton>,
-          ]}
+          action={[<IconButton key="close" color="inherit" onClick={() => { this.setState({ isOpenNotificationMessage: false, notificationMessage: '', notificationIcon: '' }); }}><Close /></IconButton>]}
         />
+        <Dialog open={!this.state.isSyncedTableTasks}>
+          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
+        </Dialog>
       </Grid>
     );
   }
