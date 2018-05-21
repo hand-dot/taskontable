@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
+import ChipInput from 'material-ui-chip-input';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,6 +12,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import Delete from '@material-ui/icons/Delete';
 import Sms from '@material-ui/icons/Sms';
 import Person from '@material-ui/icons/Person';
@@ -71,8 +75,9 @@ class Members extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      invitationEmail: '',
+      invitationEmails: [],
       notificationMessage: '',
+      isNotificateAllMember: false,
       target: {
         type: '',
         uid: '',
@@ -123,38 +128,30 @@ HP: ${window.location.protocol}//${window.location.host}
   }
 
   addMember() {
-    if (util.validateEmail(this.state.invitationEmail)) {
-      if (this.props.members.map(member => member.email).includes(this.state.invitationEmail)) {
-        alert('このメールアドレスは既にメンバーに存在します。');
-        this.setState({ invitationEmail: '' });
-        return;
+    this.setState({ processing: true });
+    // teamのデータベースのinvitedにメールアドレスがない場合メールアドレスを追加する。
+    database.ref(`/teams/${this.props.teamId}/invitedEmails/`).once('value').then((snapshot) => {
+      const invitedEmails = [];
+      if (snapshot.exists() && snapshot.val() !== []) {
+        this.state.invitationEmails.forEach((invitationEmail) => {
+          if (!snapshot.val().includes(invitationEmail)) invitedEmails.push(...(snapshot.val().concat([invitationEmail])));
+        });
+      } else {
+        invitedEmails.push(...this.state.invitationEmails);
       }
-      this.setState({ processing: true });
-      // teamのデータベースのinvitedにメールアドレスがない場合メールアドレスを追加する。
-      database.ref(`/teams/${this.props.teamId}/invitedEmails/`).once('value').then((snapshot) => {
-        const invitedEmails = [];
-        if (snapshot.exists() && snapshot.val() !== [] && !snapshot.val().includes(this.state.invitationEmail)) {
-          invitedEmails.push(...(snapshot.val().concat([this.state.invitationEmail])));
-        } else {
-          invitedEmails.push(this.state.invitationEmail);
-        }
-        database.ref(`/teams/${this.props.teamId}/invitedEmails/`).set(invitedEmails);
-      });
-      // 招待メールの送信
-      this.sendInviteEmail(this.state.invitationEmail).then(
+      return database.ref(`/teams/${this.props.teamId}/invitedEmails/`).set(invitedEmails);
+    }).then(() => Promise.all(this.state.invitationEmails.map(invitationEmail => this.sendInviteEmail(invitationEmail))))
+      .then(
         () => {
           alert('招待メールを送信しました。');
-          this.props.handleInvitedEmails(this.props.invitedEmails.concat([this.state.invitationEmail]).filter((x, i, self) => self.indexOf(x) === i));
-          this.setState({ invitationEmail: '', isOpenAddMemberModal: false, processing: false });
+          this.props.handleInvitedEmails(this.props.invitedEmails.concat(this.state.invitationEmails).filter((x, i, self) => self.indexOf(x) === i));
+          this.setState({ invitationEmails: [], isOpenAddMemberModal: false, processing: false });
         },
         () => {
           alert('招待メールの送信に失敗しました。');
           this.setState({ processing: false });
         },
       );
-    } else {
-      alert('メールアドレスとして正しくありません。');
-    }
   }
 
 
@@ -228,15 +225,30 @@ HP: ${window.location.protocol}//${window.location.host}
    */
   sendNotification() {
     if (this.state.target.type === constants.handleUserType.MEMBER) {
+      const promises = [];
+      const title = `🔔 ${this.props.userName}さんが通知を送信しました。`;
       const message = `${this.props.userName}：${this.state.notificationMessage ? `${this.state.notificationMessage}` : '予定を入れたのでチェックしてください。'}`;
-      util.sendNotification({
-        title: `🔔 ${this.props.userName}さんが通知を送信しました。`,
-        body: message,
-        url: `${window.location.protocol}//${window.location.host}/${this.props.teamId}?message=${encodeURIComponent(message)}&icon=${encodeURIComponent(this.props.userPhotoURL)}`,
-        icon: this.props.userPhotoURL || notifiIcon,
-        to: this.state.target.fcmToken,
-      }).then((res) => {
-        alert(res.ok ? '通知を送信しました。' : '通知の送信に失敗しました。');
+      const url = `${window.location.protocol}//${window.location.host}/${this.props.teamId}?message=${encodeURIComponent(message)}&icon=${encodeURIComponent(this.props.userPhotoURL)}`;
+      const icon = this.props.userPhotoURL || notifiIcon;
+      promises.push(util.sendNotification({
+        title, body: message, url, icon, to: this.state.target.fcmToken,
+      }).then(res => res.ok));
+      if (this.state.isNotificateAllMember) {
+        const otherFcmTokens = this.props.members.filter(member => member.uid !== this.props.userId && member.fcmToken !== this.state.target.fcmToken && member.fcmToken).map(member => member.fcmToken);
+        promises.push(...otherFcmTokens.map(otherFcmToken => util.sendNotification({
+          title, body: message, url, icon, to: otherFcmToken,
+        }).then(res => res.ok)));
+      }
+      Promise.all(promises).then((res) => {
+        let text;
+        if (res.every(r => r)) {
+          text = '通知を送信しました。';
+        } else if (res.every(r => !r)) {
+          text = '通知の送信に失敗しました。';
+        } else {
+          text = '通知の送信に一部失敗しました。';
+        }
+        alert(text);
         this.setState({ isOpenSendNotificationModal: false, notificationMessage: '' });
       });
     }
@@ -362,24 +374,28 @@ HP: ${window.location.protocol}//${window.location.host}
         {/* メンバーの追加モーダル */}
         <Dialog
           open={this.state.isOpenAddMemberModal}
-          onClose={() => { this.setState({ invitationEmail: '', isOpenAddMemberModal: false }); }}
+          onClose={() => { this.setState({ isOpenAddMemberModal: false }); }}
           aria-labelledby="add-member-dialog-title"
+          fullWidth
         >
           <DialogTitle id="add-member-dialog-title">メンバーを追加する</DialogTitle>
           <DialogContent>
-            <TextField
-              onChange={(e) => { this.setState({ invitationEmail: e.target.value }); }}
-              value={this.state.invitationEmail}
+            <ChipInput
               autoFocus
-              margin="dense"
-              id="email"
-              type="email"
+              value={this.state.invitationEmails}
+              onAdd={(email) => {
+                if (util.validateEmail(email)) {
+                  return this.props.members.map(member => member.email).includes(email) ? alert('このメールアドレスは既にメンバーに存在します。') : this.state.invitationEmails.push(email);
+                }
+                alert('メールアドレスとして不正です。');
+              }}
+              onDelete={(email) => { this.setState({ invitationEmails: this.state.invitationEmails.filter(invitationEmail => invitationEmail !== email) }); }}
               label="メールアドレス"
               fullWidth
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => { this.setState({ isOpenAddMemberModal: false }); }} color="primary">キャンセル</Button>
+            <Button onClick={() => { this.setState({ invitationEmails: [], isOpenAddMemberModal: false }); }} color="primary">キャンセル</Button>
             <Button onClick={this.addMember.bind(this)} color="primary">招待メールを送信</Button>
           </DialogActions>
         </Dialog>
@@ -443,6 +459,20 @@ HP: ${window.location.protocol}//${window.location.host}
               placeholder="例えば 予定を入れたのでチェックしてください。 とか"
               fullWidth
             />
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color="primary"
+                    checked={this.state.isNotificateAllMember}
+                    onChange={() => { this.setState({ isNotificateAllMember: !this.state.isNotificateAllMember }); }}
+                    value="isNotificateAllMember"
+                  />
+                }
+                label="ほかのメンバーにも通知する"
+              />
+              <Typography variant="caption" gutterBottom>(*自分と通知を拒否しているメンバーには通知されません。)</Typography>
+            </FormGroup>
           </DialogContent>
           <DialogActions>
             <Button
