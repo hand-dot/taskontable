@@ -29,12 +29,8 @@ if (process.env.NODE_ENV !== 'test') {
 if (process.env.NODE_ENV !== 'test' && osName !== 'iOS') {
   messaging = firebase.messaging();
   messaging.onMessage((payload) => {
-    const { notification } = payload;
-    const notifi = new Notification(notification.title, { icon: notification.icon, body: notification.body });
-    notifi.onclick = () => {
-      notifi.close();
-      window.location.replace(notification.click_action);
-    };
+    const { data } = payload;
+    window.location.replace(data.click_action);
   });
 }
 
@@ -229,7 +225,7 @@ export default {
       method: 'POST',
       headers: { 'content-type': 'application/json; charset=utf-8', Authorization: `key=${constants.FCM_KEY}` },
       body: JSON.stringify({
-        notification: {
+        data: {
           title,
           body,
           url,

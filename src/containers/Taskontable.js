@@ -86,10 +86,10 @@ class Taskontable extends Component {
 
   componentWillMount() {
     // urlのidからmode(teams or users)を決定する
-    if (this.props.match.params.id === this.props.userId) {
+    if (this.props.match.params.id === this.props.userId) { // ■ユーザー専用のワークシートの場合
       this.setState({ mode: constants.taskontableMode.USERS, id: this.props.userId });
       setTimeout(() => { this.fetchScripts().then(() => { this.syncTaskontable(); }); });
-    } else {
+    } else { // ■チームのワークシートの場合
       Promise.all([
         database.ref(`/teams/${this.props.match.params.id}/invitedEmails/`).once('value'),
         database.ref(`/teams/${this.props.match.params.id}/users/`).once('value'),
@@ -98,18 +98,17 @@ class Taskontable extends Component {
         const [invitedEmails, userIds, teamName] = snapshots;
         if (!userIds.exists() || !userIds.val().includes(this.props.userId)) { // 自分がいないチームには参加できない
           // https://github.com/hand-dot/taskontable/issues/359
-          // 下記のルーターの遷移をコメントアウトすると簡易的にオープンワークシーにになる。
+          // 下記のルーターの遷移をコメントアウトすると簡易的にオープンワークシートになる。
           this.props.history.push('/');
           return;
         }
-        if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') {
+        if (this.props.location.search) { // 通知からメッセージやアイコンを取り出す処理。
+          const notificationMessage = util.getQueryVariable('message');
+          if (notificationMessage) this.setState({ isOpenNotificationMessage: true, notificationMessage, notificationIcon: util.getQueryVariable('icon') || notifiIcon });
+          setTimeout(() => { this.props.history.push(`/${this.props.match.params.id}`); }); // URLからメッセージの情報を削除
+        }
+        if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') { // メンバーの情報を取得する処理
           Promise.all(userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'))).then((members) => {
-            // 通知からメッセージやアイコンを取り出す処理。
-            if (this.props.location.search) {
-              const notificationMessage = util.getQueryVariable('message');
-              if (notificationMessage) this.setState({ isOpenNotificationMessage: true, notificationMessage, notificationIcon: util.getQueryVariable('icon') || notifiIcon });
-              setTimeout(() => { this.props.history.push(`/${this.props.match.params.id}`); });
-            }
             this.setState({
               mode: constants.taskontableMode.TEAMS,
               teamName: teamName.val(),

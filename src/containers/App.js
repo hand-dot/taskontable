@@ -110,7 +110,6 @@ class App extends Component {
             this.props.history.push('/');
             return Promise.resolve();
           } else if (myWorkSheetsIds.includes(pathname)) { // ■既に参加しているチームの場合
-            this.props.history.push(`/${pathname}`);
             return Promise.resolve();
           } else if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
             const teamId = fromInviteEmail ? util.getQueryVariable('team') : pathname;
