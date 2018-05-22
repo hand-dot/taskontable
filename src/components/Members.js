@@ -135,18 +135,7 @@ HP: ${window.location.protocol}//${window.location.host}
       return;
     }
     this.setState({ processing: true });
-    // teamのデータベースのinvitedにメールアドレスがない場合メールアドレスを追加する。
-    database.ref(`/teams/${this.props.teamId}/invitedEmails/`).once('value').then((snapshot) => {
-      const invitedEmails = [];
-      if (snapshot.exists() && snapshot.val() !== []) {
-        this.state.invitationEmails.forEach((invitationEmail) => {
-          if (!snapshot.val().includes(invitationEmail)) invitedEmails.push(...(snapshot.val().concat([invitationEmail])));
-        });
-      } else {
-        invitedEmails.push(...this.state.invitationEmails);
-      }
-      return database.ref(`/teams/${this.props.teamId}/invitedEmails/`).set(invitedEmails);
-    }).then(() => Promise.all(this.state.invitationEmails.map(invitationEmail => this.sendInviteEmail(invitationEmail))))
+    Promise.all(this.state.invitationEmails.map(invitationEmail => this.sendInviteEmail(invitationEmail)))
       .then(
         () => {
           alert('招待メールを送信しました。');
@@ -261,6 +250,9 @@ HP: ${window.location.protocol}//${window.location.host}
   }
 
   addEmail(email) {
+    if (email === '') {
+      return;
+    }
     if (util.validateEmail(email)) {
       if (this.props.members.map(member => member.email).includes(email)) {
         alert('このメールアドレスは既にメンバーに存在します。');
