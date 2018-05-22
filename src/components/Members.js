@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import debounce from 'lodash.debounce';
 import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import ChipInput from 'material-ui-chip-input';
@@ -74,6 +75,7 @@ const getBlankTarget = () => util.cloneDeep({
 class Members extends Component {
   constructor(props) {
     super(props);
+    this.addMember = debounce(this.addMember, constants.RENDER_DELAY);
     this.state = {
       invitationEmails: [],
       notificationMessage: '',
@@ -128,6 +130,10 @@ HP: ${window.location.protocol}//${window.location.host}
   }
 
   addMember() {
+    if (this.state.invitationEmails.length === 0) {
+      alert('メールアドレスを入力してください。');
+      return;
+    }
     this.setState({ processing: true });
     // teamのデータベースのinvitedにメールアドレスがない場合メールアドレスを追加する。
     database.ref(`/teams/${this.props.teamId}/invitedEmails/`).once('value').then((snapshot) => {
@@ -251,6 +257,18 @@ HP: ${window.location.protocol}//${window.location.host}
         alert(text);
         this.setState({ isOpenSendNotificationModal: false, notificationMessage: '' });
       });
+    }
+  }
+
+  addEmail(email) {
+    if (util.validateEmail(email)) {
+      if (this.props.members.map(member => member.email).includes(email)) {
+        alert('このメールアドレスは既にメンバーに存在します。');
+      } else {
+        this.state.invitationEmails.push(email);
+      }
+    } else {
+      alert('メールアドレスとして不正です。');
     }
   }
 
@@ -383,12 +401,8 @@ HP: ${window.location.protocol}//${window.location.host}
             <ChipInput
               autoFocus
               value={this.state.invitationEmails}
-              onAdd={(email) => {
-                if (util.validateEmail(email)) {
-                  return this.props.members.map(member => member.email).includes(email) ? alert('このメールアドレスは既にメンバーに存在します。') : this.state.invitationEmails.push(email);
-                }
-                alert('メールアドレスとして不正です。');
-              }}
+              onAdd={(email) => { this.addEmail(email); }}
+              onBlur={(e) => { this.addEmail(e.target.value); }}
               onDelete={(email) => { this.setState({ invitationEmails: this.state.invitationEmails.filter(invitationEmail => invitationEmail !== email) }); }}
               label="メールアドレス"
               fullWidth
