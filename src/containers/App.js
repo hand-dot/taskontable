@@ -82,6 +82,7 @@ class App extends Component {
 
         // ログイン後にどこのページからスタートするかをハンドリングする。
         // また、招待されている場合、この処理でチームに参加する。
+        let mySettings;
         Promise.all([
           database.ref(`/users/${user.uid}/settings/`).once('value'),
           database.ref(`/users/${user.uid}/teams/`).once('value'),
@@ -89,20 +90,14 @@ class App extends Component {
         ]).then((snapshots) => {
           const [settings, teams, fcmToken] = snapshots;
           if (settings.exists()) {
-            const mySettings = settings.val();
-            this.setState({
-              user: {
-                displayName: mySettings.displayName, photoURL: mySettings.photoURL, uid: mySettings.uid, email: mySettings.email, fcmToken,
-              },
-            });
+            mySettings = settings.val();
             // fcmTokenは更新されている可能性を考えて空じゃない場合ログイン後、必ず更新する。
             if (fcmToken) database.ref(`/users/${user.uid}/settings/fcmToken`).set(fcmToken);
           } else {
             // アカウント作成後の処理
-            const mySettings = {
+            mySettings = {
               displayName: user.displayName || tmpDisplayName, photoURL: user.photoURL || '', uid: user.uid, email: user.email, fcmToken,
             };
-            this.setState({ user: mySettings });
             // EMAIL_AND_PASSWORDでユーザーを作成した場合、displayNameがnullなので、firebaseのauthで管理しているユーザーのプロフィールを更新する
             if (!user.displayName) user.updateProfile({ displayName: tmpDisplayName });
             database.ref(`/users/${user.uid}/settings/`).set(mySettings);
@@ -113,13 +108,15 @@ class App extends Component {
           const fromInviteEmail = util.getQueryVariable('team') !== '';
           if (!fromInviteEmail && ['login', 'signup', 'index.html'].includes(pathname)) { // ■ログイン時
             this.props.history.push('/');
+            return Promise.resolve();
           } else if (myWorkSheetsIds.includes(pathname)) { // ■既に参加しているチームの場合
             this.props.history.push(`/${pathname}`);
+            return Promise.resolve();
           } else if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
             const teamId = fromInviteEmail ? util.getQueryVariable('team') : pathname;
             return database.ref(`/teams/${teamId}/invitedEmails/`).once('value').then((invitedEmails) => {
               // 自分のメールアドレスがチームの招待中メールアドレスリストに存在するかチェックする。
-              if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || invitedEmails.val() === [] || !invitedEmails.val().includes(user.email)) {
+              if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || !invitedEmails.val().includes(user.email)) {
                 this.props.history.push('/'); // 違った場合はワークシートの選択に飛ばす
                 return Promise.resolve();
               }
@@ -137,10 +134,9 @@ class App extends Component {
                 return Promise.resolve();
               });
             });
-          } // else ■自分の所属しているチームへの直遷移
-        }).then(() => {
-          this.setState({ processing: false });
-        });
+          }
+          return Promise.resolve();
+        }).then(() => { this.setState({ processing: false, user: mySettings }); });
       } else {
         this.setState({ processing: false });
       }
