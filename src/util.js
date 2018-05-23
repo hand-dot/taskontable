@@ -22,16 +22,7 @@ if (process.env.NODE_ENV !== 'test') {
   firebase.initializeApp(firebaseConf);
   database = firebase.database();
   auth = firebase.auth();
-}
-
-// iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこの処理が必要。
-// https://github.com/hand-dot/taskontable/issues/380
-if (process.env.NODE_ENV !== 'test' && osName !== 'iOS') {
   messaging = firebase.messaging();
-  messaging.onMessage((payload) => {
-    const { data } = payload;
-    window.location.replace(data.click_action);
-  });
 }
 
 export default {
@@ -229,7 +220,6 @@ export default {
           title,
           body,
           url,
-          click_action: url,
           icon,
         },
         to,
@@ -243,7 +233,7 @@ export default {
   getQueryVariable(variable) {
     const query = window.location.search.substring(1);
     const vars = query.split('&');
-    for (let i = 0; i < vars.length; i++) {
+    for (let i = 0; i < vars.length; i += 1) {
       const pair = vars[i].split('=');
       if (decodeURIComponent(pair[0]) === variable) {
         return decodeURIComponent(pair[1]);

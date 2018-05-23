@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import debounce from 'lodash.debounce';
+import localforage from 'localforage';
 
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
@@ -36,8 +37,6 @@ import TaskTableMobile from '../components/TaskTableMobile';
 import constants from '../constants';
 import tasksUtil from '../tasksUtil';
 import util from '../util';
-
-import notifiIcon from '../images/notifiIcon.png';
 
 const database = util.getDatabase();
 
@@ -78,9 +77,11 @@ class Taskontable extends Component {
       importScript: '',
       exportScript: '',
       isSyncedTableTasks: false,
-      isOpenNotificationMessage: false,
-      notificationMessage: '',
-      notificationIcon: '',
+      isOpenReceiveMessage: false,
+      receiveMessage: {
+        body: '',
+        icon: '',
+      },
     };
   }
 
@@ -102,11 +103,6 @@ class Taskontable extends Component {
           this.props.history.push('/');
           return;
         }
-        if (this.props.location.search) { // 通知からメッセージやアイコンを取り出す処理。
-          const notificationMessage = util.getQueryVariable('message');
-          if (notificationMessage) this.setState({ isOpenNotificationMessage: true, notificationMessage, notificationIcon: util.getQueryVariable('icon') || notifiIcon });
-          setTimeout(() => { this.props.history.push(`/${this.props.match.params.id}`); }); // URLからメッセージの情報を削除
-        }
         if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') { // メンバーの情報を取得する処理
           Promise.all(userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'))).then((members) => {
             this.setState({
@@ -121,6 +117,10 @@ class Taskontable extends Component {
         }
       });
     }
+    // 消えてしまった通知を取得する処理。
+    this.getRecentMessage(this.props.match.params.id);
+    window.onfocus = () => { this.getRecentMessage(this.props.match.params.id); };
+
     if (!this.state.isMobile) window.onkeydown = (e) => { this.fireShortcut(e); };
     window.onbeforeunload = (e) => {
       if (this.state.saveable) {
@@ -139,10 +139,23 @@ class Taskontable extends Component {
   componentWillUnmount() {
     if (!this.state.isMobile) window.onkeydown = '';
     window.onbeforeunload = '';
+    window.onfocus = '';
     database.ref(`/${this.state.mode}/${this.state.id}/poolTasks`).off();
     database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).off();
     database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).off();
   }
+
+  getRecentMessage(id) {
+    return localforage.getItem(`recentMessage.${id}`).then((message) => {
+      if (message) {
+        this.setState({ isOpenReceiveMessage: true, receiveMessage: { body: message.body, icon: message.icon } });
+      }
+      return Promise.resolve();
+    }).then(() => localforage.removeItem(`recentMessage.${id}`)).catch((err) => {
+      throw new Error(`消えてしまった通知の取得に失敗しました:${err}`);
+    });
+  }
+
   /**
    * テーブルタスクを開始時刻順にソートしstateに設定します。
    * ソートしたテーブルタスクを返却します。
@@ -638,12 +651,12 @@ class Taskontable extends Component {
           ContentProps={{ 'aria-describedby': 'message-id' }}
           message={
             <span id="message-id" style={{ display: 'flex', alignItems: 'center' }}>
-              {this.state.notificationIcon ? <Avatar className={classes.userPhoto} src={this.state.notificationIcon} /> : <Person className={classes.userPhoto} />}
-              <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.notificationMessage}</span>
+              {this.state.receiveMessage.icon ? <Avatar className={classes.userPhoto} src={this.state.receiveMessage.icon} /> : <Person className={classes.userPhoto} />}
+              <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.receiveMessage.body}</span>
             </span>
           }
-          open={this.state.isOpenNotificationMessage}
-          action={[<IconButton key="close" color="inherit" onClick={() => { this.setState({ isOpenNotificationMessage: false, notificationMessage: '', notificationIcon: '' }); }}><Close /></IconButton>]}
+          open={this.state.isOpenReceiveMessage}
+          action={[<IconButton key="close" color="inherit" onClick={() => { this.setState({ isOpenReceiveMessage: false, receiveMessage: { body: '', icon: '' } }); }}><Close /></IconButton>]}
         />
         <Dialog open={!this.state.isSyncedTableTasks}>
           <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>

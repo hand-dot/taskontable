@@ -24,6 +24,7 @@
     "fast-clone": "^1.5.3",
     "fast-equals": "^1.5.2",
     "handsontable": "^3.0.0",
+    "localforage": "^1.7.1",
     "lodash.debounce": "^4.0.8",
     "material-ui-chip-input": "^1.0.0-beta.5",
     "moment": "^2.22.1",

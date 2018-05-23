@@ -2,6 +2,7 @@ import { firebase } from '@firebase/app';
 import React, { Component } from 'react';
 import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
+import localforage from 'localforage';
 import { withStyles } from '@material-ui/core/styles';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -61,8 +62,9 @@ class App extends Component {
   componentWillMount() {
     // 認証でfirebaseのdefaultのhosturl(https://myapp.firebaseapp.com)にリダイレクトされた場合にURLを書き換える処理
     // https:// stackoverflow.com/questions/34212039/redirect-to-firebase-hosting-custom-domain
-    const url = process.env.NODE_ENV === 'production' ? [constants.URL] : [constants.DEVURL1, constants.DEVURL2];
-    if (url.indexOf(window.location.origin) === -1) window.location.href = constants.URL;
+    if (process.env.NODE_ENV === 'production' ? [constants.URL] : [constants.DEVURL1, constants.DEVURL2].indexOf(window.location.origin) === -1) {
+      window.location.href = constants.URL;
+    }
 
     auth.onAuthStateChanged((user) => {
       if (user) {
@@ -70,13 +72,26 @@ class App extends Component {
         ReactGA.set({ dimension1: user.uid });
 
         // トークン更新のモニタリング
-        if (messaging) {
+        if (messaging) { // iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこのifが必要。
           messaging.onTokenRefresh(() => {
             messaging.getToken().then((refreshedToken) => {
               database.ref(`/users/${user.uid}/settings/fcmToken`).set(refreshedToken);
             }).catch((err) => {
               throw new Error(`トークン更新のモニタリングに失敗: ${err}`);
             });
+          });
+          // フォアグラウンド時に通知をハンドリングする処理
+          messaging.onMessage((payload) => {
+            const { data } = payload;
+            const url = new URL(payload.data.url);
+            localforage.setItem(`recentMessage.${url.pathname.replace('/', '')}`, { icon: payload.data.icon, body: payload.data.body });
+            const notifi = new Notification(data.title, { icon: data.icon, body: data.body });
+            notifi.onclick = () => {
+              notifi.close();
+              // url.pathnameに直に飛ばしたいがルーターがうまく動かないので一度ルートに飛ばす
+              this.props.history.push('/');
+              setTimeout(() => { this.props.history.push(`${url.pathname}`); });
+            };
           });
         }
 
