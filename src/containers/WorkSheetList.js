@@ -37,7 +37,7 @@ const styles = {
 };
 
 
-class WorkSheets extends Component {
+class WorkSheetList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -74,7 +74,7 @@ class WorkSheets extends Component {
           <div style={{ minHeight: '100vh' }}>
             <div className={this.props.classes.content}>
               <div style={{ marginBottom: 30 }}>
-                <Typography style={{ color: '#fff' }} gutterBottom variant="title">Taskontable({constants.APP_VERSION})へようこそ！</Typography>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="title">{constants.TITLE}({constants.APP_VERSION})へようこそ！</Typography>
                 <Typography style={{ color: '#fff' }} variant="body2">
                   Tips<span role="img" aria-label="Tips">💡</span>
                 </Typography>
@@ -82,7 +82,7 @@ class WorkSheets extends Component {
                   もしまだコミュニティに参加されていなければ是非
                   　<a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>　に参加してみてください！<br />
                   クローズドβ版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜<br />
-                  Taskontableの話以外にもいろいろな雑談☕がゆる～く行われています。
+                  {constants.TITLE}の話以外にもいろいろな雑談☕がゆる～く行われています。
                 </Typography>
               </div>
               <Divider />
@@ -137,7 +137,7 @@ class WorkSheets extends Component {
   }
 }
 
-WorkSheets.propTypes = {
+WorkSheetList.propTypes = {
   user: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     photoURL: PropTypes.string.isRequired,
@@ -147,5 +147,5 @@ WorkSheets.propTypes = {
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles, { withTheme: true })(WorkSheets);
+export default withStyles(styles, { withTheme: true })(WorkSheetList);
 

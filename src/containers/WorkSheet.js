@@ -47,7 +47,7 @@ const styles = {
   },
 };
 
-class Taskontable extends Component {
+class WorkSheet extends Component {
   constructor(props) {
     super(props);
     this.saveWorkSheet = debounce(this.saveWorkSheet, constants.REQEST_DELAY);
@@ -89,7 +89,7 @@ class Taskontable extends Component {
     // urlのidからmode(teams or users)を決定する
     if (this.props.match.params.id === this.props.userId) { // ■ユーザー専用のワークシートの場合
       this.setState({ mode: constants.taskontableMode.USERS, id: this.props.userId });
-      setTimeout(() => { this.fetchScripts().then(() => { this.syncTaskontable(); }); });
+      setTimeout(() => { this.fetchScripts().then(() => { this.syncWorkSheet(); }); });
     } else { // ■チームのワークシートの場合
       Promise.all([
         database.ref(`/${constants.API_VERSION}/teams/${this.props.match.params.id}/invitedEmails/`).once('value'),
@@ -112,7 +112,7 @@ class Taskontable extends Component {
               members: members.filter(member => member.exists()).map(member => member.val()),
               invitedEmails: invitedEmails.exists() ? invitedEmails.val() : [],
             });
-            this.fetchScripts().then(() => { this.syncTaskontable(); });
+            this.fetchScripts().then(() => { this.syncWorkSheet(); });
           });
         }
       });
@@ -365,15 +365,16 @@ class Taskontable extends Component {
   }
 
   /**
-   * Taskontable全体の同期を開始します。
+   * WorkSheet全体の同期を開始します。
    */
-  syncTaskontable() {
+  syncWorkSheet() {
     // テーブルを同期開始&初期化
     this.attachTableTasks();
     // タスクプールをサーバーと同期開始
     this.attachPoolTasks();
     // メモを同期開始
     this.attachMemo();
+    // TODO メンバーも同期したほうがいいかも
   }
 
   /**
@@ -677,7 +678,7 @@ class Taskontable extends Component {
   }
 }
 
-Taskontable.propTypes = {
+WorkSheet.propTypes = {
   userId: PropTypes.string.isRequired,
   userName: PropTypes.string.isRequired,
   userPhotoURL: PropTypes.string.isRequired,
@@ -689,4 +690,4 @@ Taskontable.propTypes = {
   location: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withRouter(withStyles(styles, { withTheme: true })(Taskontable));
+export default withRouter(withStyles(styles, { withTheme: true })(WorkSheet));

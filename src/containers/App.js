@@ -25,8 +25,8 @@ import Logout from './Logout';
 import Signup from './Signup';
 import Scripts from './Scripts';
 import Settings from './Settings';
-import Taskontable from './Taskontable';
-import WorkSheets from './WorkSheets';
+import WorkSheet from './WorkSheet';
+import WorkSheetList from './WorkSheetList';
 
 const messaging = util.getMessaging();
 const auth = util.getAuth();
@@ -118,13 +118,13 @@ class App extends Component {
             database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).set(mySettings);
           }
           return (teams.exists() && teams.val() !== []) ? teams.val().concat([user.uid]) : [user.uid]; // 自分のidと自分のチームのid or 自分のid
-        }).then((myWorkSheetsIds) => {
+        }).then((myWorkSheetListIds) => {
           const pathname = this.props.location.pathname.replace('/', '');
           const fromInviteEmail = util.getQueryVariable('team') !== '';
           if (!fromInviteEmail && ['login', 'signup', 'index.html'].includes(pathname)) { // ■ログイン時
             this.props.history.push('/');
             return Promise.resolve();
-          } else if (myWorkSheetsIds.includes(pathname)) { // ■既に参加しているチームの場合
+          } else if (myWorkSheetListIds.includes(pathname)) { // ■既に参加しているチームの場合
             return Promise.resolve();
           } else if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
             const teamId = fromInviteEmail ? util.getQueryVariable('team') : pathname;
@@ -230,7 +230,7 @@ class App extends Component {
     this.props.history.push(`/${this.state.user.uid}/scripts`);
   }
 
-  goWorkSheets() {
+  goWorkSheetList() {
     this.props.history.push('/');
   }
 
@@ -246,10 +246,10 @@ class App extends Component {
           logout={this.logout.bind(this)}
           goSettings={this.goSettings.bind(this)}
           goScripts={this.goScripts.bind(this)}
-          goWorkSheets={this.goWorkSheets.bind(this)}
+          goWorkSheetList={this.goWorkSheetList.bind(this)}
         />
         <Switch>
-          <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <WorkSheets user={this.state.user} {...props} />; } return (<Top {...props} />); }} />
+          <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <WorkSheetList user={this.state.user} {...props} />; } return (<Top {...props} />); }} />
           <Route exact strict path="/signup" render={props => <Signup signup={this.signup.bind(this)} login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
           <Route exact strict path="/logout" render={props => <Logout {...props} />} />
@@ -260,7 +260,7 @@ class App extends Component {
             render={(props) => {
               if (this.state.user.uid !== '') {
                 return (
-                  <Taskontable
+                  <WorkSheet
                     userId={this.state.user.uid}
                     userName={this.state.user.displayName}
                     userPhotoURL={this.state.user.photoURL}

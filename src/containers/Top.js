@@ -59,7 +59,7 @@ function Top(props) {
             </Typography>
             <img style={{ margin: '2em 2em 2em 1.7em' }} src={titleGr} alt="taskontable" height="40" />
             <Typography align="center" style={{ marginBottom: '2em' }}>
-            TaskontableはExcelライクなタスク管理ツールです。
+              {constants.TITLE}はExcelライクなタスク管理ツールです。
             </Typography>
             <Typography align="center" style={{ marginBottom: '2em' }}>
             タスクをシーケンシャルにすることで生産性を向上させ一日をスムーズに進行することができます。<br />
@@ -74,7 +74,7 @@ function Top(props) {
         <Paper square className={classes.bgTransparent} elevation={0}>
           <div className={classes.content}>
             <Typography align="center" style={{ color: '#fff', marginBottom: '2em' }}>
-              TaskontableはExcelを扱うようにタスクを管理できるツールです。<br />高速に入力でき、タスクの整理に使う時間をできる限り減らし、実行する時間を増やすことができます。
+              {constants.TITLE}はExcelを扱うようにタスクを管理できるツールです。<br />高速に入力でき、タスクの整理に使う時間をできる限り減らし、実行する時間を増やすことができます。
             </Typography>
             {/* TODO ここは動画にする予定 */}
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src="https://user-images.githubusercontent.com/24843808/40023209-44d12cd0-5805-11e8-8b77-77a1f2f5ba37.gif" alt="taskontable" />

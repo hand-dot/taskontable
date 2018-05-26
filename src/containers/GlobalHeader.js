@@ -114,9 +114,9 @@ class GlobalHeader extends Component {
     setTimeout(() => this.props.goScripts());
   }
 
-  goWorkSheets() {
+  goWorkSheetList() {
     this.closeMenu();
-    setTimeout(() => this.props.goWorkSheets());
+    setTimeout(() => this.props.goWorkSheetList());
   }
 
   render() {
@@ -151,7 +151,7 @@ class GlobalHeader extends Component {
                         onClose={this.closeMenu.bind(this)}
                       >
                         <MenuItem title={user.email}>アカウント名: {user.displayName}</MenuItem>
-                        <MenuItem onClick={this.goWorkSheets.bind(this)}>ワークシートの選択</MenuItem>
+                        <MenuItem onClick={this.goWorkSheetList.bind(this)}>ワークシートの選択</MenuItem>
                         {!util.isMobile() && (<MenuItem onClick={this.goScripts.bind(this)}>スクリプト設定</MenuItem>)}
                         <MenuItem onClick={this.goSettings.bind(this)}>アカウント設定</MenuItem>
                         <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
@@ -212,7 +212,7 @@ GlobalHeader.propTypes = {
   logout: PropTypes.func.isRequired,
   goSettings: PropTypes.func.isRequired,
   goScripts: PropTypes.func.isRequired,
-  goWorkSheets: PropTypes.func.isRequired,
+  goWorkSheetList: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
