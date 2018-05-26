@@ -84,7 +84,7 @@ class App extends Component {
           messaging.onMessage((payload) => {
             const { data } = payload;
             const url = new URL(payload.data.url);
-            localforage.setItem(`recentMessage.${url.pathname.replace('/', '')}`, { icon: payload.data.icon, body: payload.data.body });
+            localforage.setItem(`recentMessage.${url.pathname.replace('/', '')}`, { icon: payload.data.icon, body: payload.data.body, createdAt: new Date() });
             const notifi = new Notification(data.title, { icon: data.icon, body: data.body });
             notifi.onclick = () => {
               notifi.close();

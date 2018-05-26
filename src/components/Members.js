@@ -222,7 +222,7 @@ HP: ${window.location.protocol}//${window.location.host}
     if (this.state.target.type === constants.handleUserType.MEMBER) {
       const promises = [];
       const title = `🔔 ${this.props.userName}さんが通知を送信しました。`;
-      const message = `${this.props.userName}：${this.state.notificationMessage ? `${this.state.notificationMessage}` : '予定を入れたのでチェックしてください。'}`;
+      const message = `${this.props.userName}: ${this.state.notificationMessage ? `${this.state.notificationMessage}` : '予定を入れたのでチェックしてください。'}`;
       const url = `${window.location.protocol}//${window.location.host}/${this.props.teamId}`;
       const icon = this.props.userPhotoURL || notifiIcon;
       promises.push(util.sendNotification({

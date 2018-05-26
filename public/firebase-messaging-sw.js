@@ -18,6 +18,6 @@ firebase.initializeApp({ messagingSenderId: '27989839492' });
 const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler((payload) => {
   // バックグラウンドで通知を受け取ったらlocalforageに保存
-  localforage.setItem(`recentMessage.${new URL(payload.data.url).pathname.replace('/', '')}`, { icon: payload.data.icon, body: payload.data.body });
+  localforage.setItem(`recentMessage.${new URL(payload.data.url).pathname.replace('/', '')}`, { icon: payload.data.icon, body: payload.data.body, createdAt: new Date() });
   self.registration.showNotification(payload.data.title, { icon: payload.data.icon, body: payload.data.body, data: { url: payload.data.url } });
 });

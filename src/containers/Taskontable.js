@@ -66,7 +66,7 @@ class Taskontable extends Component {
       tab: 0,
       isOpenDashboard: false,
       date: moment().format(constants.DATEFMT),
-      lastSaveTime: moment().format(constants.TIMEFMT),
+      savedAt: moment().format(constants.TIMEFMT),
       tableTasks: [],
       poolTasks: {
         highPriorityTasks: [],
@@ -148,7 +148,17 @@ class Taskontable extends Component {
   getRecentMessage(id) {
     return localforage.getItem(`recentMessage.${id}`).then((message) => {
       if (message) {
-        this.setState({ isOpenReceiveMessage: true, receiveMessage: { body: message.body, icon: message.icon } });
+        // メッセージが作成された時間が本日だったら時刻を出すが、本日のメッセージじゃなかったら日付+時刻を出す
+        const createdDateStr = moment(message.createdAt).format(constants.DATEFMT);
+        const createdTimeStr = moment(message.createdAt).format(constants.TIMEFMT);
+        const createdAt = util.isToday(createdDateStr) ? createdTimeStr : `${createdDateStr}-${createdTimeStr}`;
+        this.setState({
+          isOpenReceiveMessage: true,
+          receiveMessage: {
+            body: `${message.body} (${createdAt})`,
+            icon: message.icon,
+          },
+        });
       }
       return Promise.resolve();
     }).then(() => localforage.removeItem(`recentMessage.${id}`)).catch((err) => {
@@ -205,11 +215,11 @@ class Taskontable extends Component {
     }
     setTimeout(() => {
       this.saveTableTasks().then((snackbarText) => {
-        const lastSaveTime = moment().format(constants.TIMEFMT);
+        const savedAt = moment().format(constants.TIMEFMT);
         this.setState({
           isOpenSnackbar: true,
-          snackbarText: `${snackbarText}テーブルタスクを保存しました。(${lastSaveTime})`,
-          lastSaveTime,
+          snackbarText: `${snackbarText}テーブルタスクを保存しました。(${savedAt})`,
+          savedAt,
           saveable: false,
         });
       });
@@ -234,7 +244,7 @@ class Taskontable extends Component {
         this.setState({
           isOpenSnackbar: true,
           snackbarText: 'テーブルタスクをタスクプールに移動しました。',
-          lastSaveTime: moment().format(constants.TIMEFMT),
+          savedAt: moment().format(constants.TIMEFMT),
           saveable: false,
         });
       });
@@ -321,11 +331,11 @@ class Taskontable extends Component {
    */
   saveWorkSheet() {
     Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
-      const lastSaveTime = moment().format(constants.TIMEFMT);
+      const savedAt = moment().format(constants.TIMEFMT);
       this.setState({
         isOpenSnackbar: true,
-        snackbarText: `${snackbarTexts[0]}ワークシートを保存しました。(${lastSaveTime})`,
-        lastSaveTime,
+        snackbarText: `${snackbarTexts[0]}ワークシートを保存しました。(${savedAt})`,
+        savedAt,
         saveable: false,
       });
     });
@@ -381,9 +391,9 @@ class Taskontable extends Component {
       // 初期化もしくは自分のテーブル以外の更新
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
-        const lastSaveTime = moment().format(constants.TIMEFMT);
+        const savedAt = moment().format(constants.TIMEFMT);
         if (this.state.isSyncedTableTasks) { // ほかのユーザーの更新
-          snackbarText = `テーブルが更新されました。(${lastSaveTime})`;
+          snackbarText = `テーブルが更新されました。(${savedAt})`;
         }
         tableTasks = snapshot.val();
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
@@ -599,7 +609,7 @@ class Taskontable extends Component {
             <TableCtl
               tableTasks={this.state.tableTasks}
               date={this.state.date}
-              lastSaveTime={this.state.lastSaveTime}
+              savedAt={this.state.savedAt}
               saveable={this.state.saveable}
               changeDate={this.changeDate.bind(this)}
               saveWorkSheet={this.saveWorkSheet.bind(this)}

@@ -62,7 +62,7 @@ class TableCtl extends Component {
 
   render() {
     const {
-      tableTasks, date, lastSaveTime, saveable, saveWorkSheet, classes, theme,
+      tableTasks, date, savedAt, saveable, saveWorkSheet, classes, theme,
     } = this.props;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
@@ -109,7 +109,7 @@ class TableCtl extends Component {
               </div>
             </Tooltip>
             {!util.isMobile() && (
-            <Tooltip title={`最終保存時刻 : ${lastSaveTime}`} placement="top">
+            <Tooltip title={`最終保存時刻 : ${savedAt}`} placement="top">
               <div style={{ display: 'inline-block' }}>
                 <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><Save style={{ fontSize: 16 }} /></Button>
               </div>
@@ -137,7 +137,7 @@ TableCtl.propTypes = {
     memo: PropTypes.string.isRequired,
   })).isRequired,
   date: PropTypes.string.isRequired,
-  lastSaveTime: PropTypes.string.isRequired,
+  savedAt: PropTypes.string.isRequired,
   saveable: PropTypes.bool.isRequired,
   changeDate: PropTypes.func.isRequired,
   saveWorkSheet: PropTypes.func.isRequired,
