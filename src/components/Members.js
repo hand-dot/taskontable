@@ -330,7 +330,7 @@ HP: ${window.location.protocol}//${window.location.host}
           </div>
         </div>
         <div>
-          <Typography variant="subheading">
+          <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit * 4 }}>
             招待中メンバー
           </Typography>
           <div className={classes.membersContainer}>
@@ -397,6 +397,7 @@ HP: ${window.location.protocol}//${window.location.host}
               onBlur={(e) => { this.addEmail(e.target.value); }}
               onDelete={(email) => { this.setState({ invitationEmails: this.state.invitationEmails.filter(invitationEmail => invitationEmail !== email) }); }}
               label="メールアドレス"
+              fullWidthInput
               fullWidth
             />
           </DialogContent>
