@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import GoogleAnalytics from 'react-ga';
+import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
 import constants from '../constants';
 
-GoogleAnalytics.initialize(constants.GA_ID, {
+ReactGA.initialize(constants.GA_ID, {
   debug: process.env.NODE_ENV === 'development',
   titleCase: false,
 });
@@ -11,11 +11,11 @@ GoogleAnalytics.initialize(constants.GA_ID, {
 
 const withTracker = (WrappedComponent, options = {}) => {
   const trackPage = (page) => {
-    GoogleAnalytics.set({
+    ReactGA.set({
       page,
       ...options,
     });
-    GoogleAnalytics.pageview(page);
+    ReactGA.pageview(page);
   };
 
   const HOC = class extends Component {
