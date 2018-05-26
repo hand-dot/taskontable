@@ -74,7 +74,7 @@ class WorkSheets extends Component {
           <div style={{ minHeight: '100vh' }}>
             <div className={this.props.classes.content}>
               <div style={{ marginBottom: 30 }}>
-                <Typography style={{ color: '#fff' }} gutterBottom variant="title">Taskontable(Beta)へようこそ！</Typography>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="title">Taskontable({constants.VERSION})へようこそ！</Typography>
                 <Typography style={{ color: '#fff' }} variant="body2">
                   Tips<span role="img" aria-label="Tips">💡</span>
                 </Typography>

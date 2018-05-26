@@ -15,7 +15,7 @@ import theme from './assets/theme';
 console.log(`%c ${quotations[Math.floor(Math.random() * quotations.length)]} `, 'font-size: 40px; background: #222; color: #bada55;');
 
 Raven.config(constants.SENTRY_URL, {
-  release: constants.RELEASE,
+  release: constants.VERSION,
   environment: process.env.NODE_ENV,
   shouldSendCallback: () => ['production', 'staging'].indexOf(process.env.NODE_ENV) !== -1,
 }).install();

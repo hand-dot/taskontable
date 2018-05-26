@@ -10,8 +10,8 @@ self.addEventListener('notificationclick', (event) => {
   }));
 });
 
-importScripts('https://www.gstatic.com/firebasejs/5.0.2/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/5.0.2/firebase-messaging.js');
+importScripts('https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/5.0.4/firebase-messaging.js');
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.1/localforage.min.js');
 
 firebase.initializeApp({ messagingSenderId: '27989839492' });

@@ -16,7 +16,7 @@ const rgb = {
   GREY: '201, 203, 207',
 };
 export default {
-  RELEASE: '0.0.0-beta',
+  VERSION: '1.0.0-beta',
   TITLE: 'Taskontable',
   EMAIL: 'info@taskontable.com',
   SUPPORTEDBROWSERS: ['Chrome'],
