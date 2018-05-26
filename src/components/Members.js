@@ -117,6 +117,8 @@ ${window.location.protocol}//${window.location.host}/signup?email=${encodeURICom
 
 からアカウントを作成してください。
 
+${constants.TITLE}とは--TaskontableはExcelライクなタスク管理ツールです。タスクをシーケンシャルにすることで生産性を向上させ一日をスムーズに進行することができます。
+
 ------>> Build Your WorkFlow ----------->>>--
 
 ${constants.TITLE}サポート
