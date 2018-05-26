@@ -16,7 +16,8 @@ const rgb = {
   GREY: '201, 203, 207',
 };
 export default {
-  VERSION: '1.0.0-beta',
+  APP_VERSION: '1.0.0-closedβ',
+  API_VERSION: process.env.NODE_ENV === 'development' ? 'development' : 'v0',
   TITLE: 'Taskontable',
   EMAIL: 'info@taskontable.com',
   SUPPORTEDBROWSERS: ['Chrome'],

@@ -92,9 +92,9 @@ class Taskontable extends Component {
       setTimeout(() => { this.fetchScripts().then(() => { this.syncTaskontable(); }); });
     } else { // ■チームのワークシートの場合
       Promise.all([
-        database.ref(`/teams/${this.props.match.params.id}/invitedEmails/`).once('value'),
-        database.ref(`/teams/${this.props.match.params.id}/users/`).once('value'),
-        database.ref(`/teams/${this.props.match.params.id}/name/`).once('value'),
+        database.ref(`/${constants.API_VERSION}/teams/${this.props.match.params.id}/invitedEmails/`).once('value'),
+        database.ref(`/${constants.API_VERSION}/teams/${this.props.match.params.id}/users/`).once('value'),
+        database.ref(`/${constants.API_VERSION}/teams/${this.props.match.params.id}/name/`).once('value'),
       ]).then((snapshots) => {
         const [invitedEmails, userIds, teamName] = snapshots;
         if (!userIds.exists() || !userIds.val().includes(this.props.userId)) { // 自分がいないチームには参加できない
@@ -104,7 +104,7 @@ class Taskontable extends Component {
           return;
         }
         if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') { // メンバーの情報を取得する処理
-          Promise.all(userIds.val().map(uid => database.ref(`/users/${uid}/settings/`).once('value'))).then((members) => {
+          Promise.all(userIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
             this.setState({
               mode: constants.taskontableMode.TEAMS,
               teamName: teamName.val(),
@@ -140,9 +140,9 @@ class Taskontable extends Component {
     if (!this.state.isMobile) window.onkeydown = '';
     window.onbeforeunload = '';
     window.onfocus = '';
-    database.ref(`/${this.state.mode}/${this.state.id}/poolTasks`).off();
-    database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).off();
-    database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).off();
+    database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/poolTasks`).off();
+    database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).off();
+    database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).off();
   }
 
   getRecentMessage(id) {
@@ -323,7 +323,7 @@ class Taskontable extends Component {
         return copyTask;
       });
     }
-    return database.ref(`/${this.state.mode}/${this.state.id}/poolTasks`).set(this.state.poolTasks);
+    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/poolTasks`).set(this.state.poolTasks);
   }
 
   /**
@@ -351,9 +351,9 @@ class Taskontable extends Component {
     const sortedTableTask = this.setSortedTableTasks(tableTasks);
     return this.fireScript(sortedTableTask, 'exportScript')
       .then(
-        data => database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(data)
+        data => database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(data)
           .then(() => 'エクスポートスクリプトを実行しました。(success) - '),
-        reason => database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(sortedTableTask)
+        reason => database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(sortedTableTask)
           .then(() => (reason ? `エクスポートスクリプトを実行しました。(error)：${reason} - ` : '')),
       );
   }
@@ -361,7 +361,7 @@ class Taskontable extends Component {
    * stateのmemoをサーバーに保存します。
    */
   saveMemo() {
-    return database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).set(this.state.memo);
+    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).set(this.state.memo);
   }
 
   /**
@@ -380,7 +380,7 @@ class Taskontable extends Component {
    * テーブルタスクを同期します。
    */
   attachTableTasks() {
-    return database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
+    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       if (snapshot.exists() && util.equal(this.state.tableTasks, snapshot.val())) {
         // 同期したがテーブルのデータと差分がなかった場合(自分の更新)
         this.setState({ saveable: false });
@@ -424,7 +424,7 @@ class Taskontable extends Component {
    * プールタスクを同期します。
    */
   attachPoolTasks() {
-    return database.ref(`/${this.state.mode}/${this.state.id}/poolTasks`).on('value', (snapshot) => {
+    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
         const poolTasks = snapshot.val();
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
@@ -458,7 +458,7 @@ class Taskontable extends Component {
    * プールタスクを同期します。
    */
   attachMemo() {
-    return database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).on('value', (snapshot) => {
+    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).on('value', (snapshot) => {
       const memo = snapshot.val();
       if (snapshot.exists() && memo) {
         if (this.state.memo !== memo) this.setState({ memo });
@@ -494,13 +494,13 @@ class Taskontable extends Component {
    * スクリプトを取得します。
    */
   fetchScripts() {
-    return database.ref(`/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
+    return database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val()) return true;
       return false;
     }).then((enable) => {
       if (!enable) return Promise.resolve();
       const scriptsPath = `/users/${this.props.userId}/scripts/`;
-      const promises = [database.ref(`${scriptsPath}importScript`).once('value'), database.ref(`${scriptsPath}exportScript`).once('value')];
+      const promises = [database.ref(`/${constants.API_VERSION}${scriptsPath}importScript`).once('value'), database.ref(`/${constants.API_VERSION}${scriptsPath}exportScript`).once('value')];
       return Promise.all(promises).then((snapshots) => {
         const [importScriptSnapshot, exportScriptSnapshot] = snapshots;
         if (importScriptSnapshot.exists() && importScriptSnapshot.val() !== '') {
@@ -537,8 +537,8 @@ class Taskontable extends Component {
    */
   changeDate(newDate) {
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
-      database.ref(`/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).off();
-      database.ref(`/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).off();
+      database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).off();
+      database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).off();
       this.setState({ date: newDate, isSyncedTableTasks: false });
       if (!this.state.isMobile) {
         this.taskTable.updateIsActive(util.isToday(newDate));
@@ -553,12 +553,12 @@ class Taskontable extends Component {
   handleMembers(newMembers) {
     if (this.state.mode !== constants.taskontableMode.TEAMS) return;
     this.setState({ members: newMembers });
-    database.ref(`/teams/${this.state.id}/users/`).set(newMembers.map(newMember => newMember.uid));
+    database.ref(`/${constants.API_VERSION}/teams/${this.state.id}/users/`).set(newMembers.map(newMember => newMember.uid));
   }
   handleInvitedEmails(newEmails) {
     if (this.state.mode !== constants.taskontableMode.TEAMS) return;
     this.setState({ invitedEmails: newEmails });
-    database.ref(`/teams/${this.state.id}/invitedEmails/`).set(newEmails);
+    database.ref(`/${constants.API_VERSION}/teams/${this.state.id}/invitedEmails/`).set(newEmails);
   }
 
   render() {

@@ -75,7 +75,7 @@ class App extends Component {
         if (messaging) { // iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこのifが必要。
           messaging.onTokenRefresh(() => {
             messaging.getToken().then((refreshedToken) => {
-              database.ref(`/users/${user.uid}/settings/fcmToken`).set(refreshedToken);
+              database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/fcmToken`).set(refreshedToken);
             }).catch((err) => {
               throw new Error(`トークン更新のモニタリングに失敗: ${err}`);
             });
@@ -99,15 +99,15 @@ class App extends Component {
         // また、招待されている場合、この処理でチームに参加する。
         let mySettings;
         Promise.all([
-          database.ref(`/users/${user.uid}/settings/`).once('value'),
-          database.ref(`/users/${user.uid}/teams/`).once('value'),
+          database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).once('value'),
+          database.ref(`/${constants.API_VERSION}/users/${user.uid}/teams/`).once('value'),
           messaging ? messaging.requestPermission().then(() => messaging.getToken()).catch(() => '') : '',
         ]).then((snapshots) => {
           const [settings, teams, fcmToken] = snapshots;
           if (settings.exists()) {
             mySettings = settings.val();
             // fcmTokenは更新されている可能性を考えて空じゃない場合ログイン後、必ず更新する。
-            if (fcmToken) database.ref(`/users/${user.uid}/settings/fcmToken`).set(fcmToken);
+            if (fcmToken) database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/fcmToken`).set(fcmToken);
           } else {
             // アカウント作成後の処理
             mySettings = {
@@ -115,7 +115,7 @@ class App extends Component {
             };
             // EMAIL_AND_PASSWORDでユーザーを作成した場合、displayNameがnullなので、firebaseのauthで管理しているユーザーのプロフィールを更新する
             if (!user.displayName) user.updateProfile({ displayName: tmpDisplayName });
-            database.ref(`/users/${user.uid}/settings/`).set(mySettings);
+            database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).set(mySettings);
           }
           return (teams.exists() && teams.val() !== []) ? teams.val().concat([user.uid]) : [user.uid]; // 自分のidと自分のチームのid or 自分のid
         }).then((myWorkSheetsIds) => {
@@ -128,19 +128,19 @@ class App extends Component {
             return Promise.resolve();
           } else if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
             const teamId = fromInviteEmail ? util.getQueryVariable('team') : pathname;
-            return database.ref(`/teams/${teamId}/invitedEmails/`).once('value').then((invitedEmails) => {
+            return database.ref(`/${constants.API_VERSION}/teams/${teamId}/invitedEmails/`).once('value').then((invitedEmails) => {
               // 自分のメールアドレスがチームの招待中メールアドレスリストに存在するかチェックする。
               if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || !invitedEmails.val().includes(user.email)) {
                 this.props.history.push('/'); // 違った場合はワークシートの選択に飛ばす
                 return Promise.resolve();
               }
               // 自分が招待されていた場合は自分のチームに加え、チームのメンバーに自分を加える
-              return Promise.all([database.ref(`/users/${user.uid}/teams/`).once('value'), database.ref(`/teams/${teamId}/users/`).once('value')]).then((snapshots) => {
+              return Promise.all([database.ref(`/${constants.API_VERSION}/users/${user.uid}/teams/`).once('value'), database.ref(`/${constants.API_VERSION}/teams/${teamId}/users/`).once('value')]).then((snapshots) => {
                 const [myTeamIds, teamUserIds] = snapshots;
                 const promises = [
-                  database.ref(`/users/${user.uid}/teams/`).set((myTeamIds.exists() ? myTeamIds.val() : []).concat([teamId])), // 自分の参加しているチームにチームのidを追加
-                  database.ref(`/teams/${teamId}/users/`).set((teamUserIds.exists() ? teamUserIds.val() : []).concat([user.uid])), // 参加しているチームのユーザーに自分のidを追加
-                  database.ref(`/teams/${teamId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているチーム招待中メールアドレスリストから削除
+                  database.ref(`/${constants.API_VERSION}/users/${user.uid}/teams/`).set((myTeamIds.exists() ? myTeamIds.val() : []).concat([teamId])), // 自分の参加しているチームにチームのidを追加
+                  database.ref(`/${constants.API_VERSION}/teams/${teamId}/users/`).set((teamUserIds.exists() ? teamUserIds.val() : []).concat([user.uid])), // 参加しているチームのユーザーに自分のidを追加
+                  database.ref(`/${constants.API_VERSION}/teams/${teamId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているチーム招待中メールアドレスリストから削除
                 ];
                 return Promise.all(promises);
               }).then(() => {

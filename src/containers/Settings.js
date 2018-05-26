@@ -121,7 +121,7 @@ class Settings extends Component {
       if (propsUser.displayName !== this.state.displayName) {
         if (this.state.displayName !== '') {
           promises.push(
-            database.ref(`/users/${propsUser.uid}/settings/displayName/`).set(this.state.displayName),
+            database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/displayName/`).set(this.state.displayName),
             authUser.updateProfile({ displayName: this.state.displayName }),
           );
         } else {
@@ -133,7 +133,7 @@ class Settings extends Component {
       if (propsUser.email !== this.state.email) {
         if (util.validateEmail(this.state.email)) {
           promises.push(
-            database.ref(`/users/${propsUser.uid}/settings/email/`).set(this.state.email),
+            database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/email/`).set(this.state.email),
             authUser.updateEmail(this.state.email),
           );
         } else {

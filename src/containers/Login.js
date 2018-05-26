@@ -69,7 +69,7 @@ class Login extends Component {
               OR<Link to={this.props.location.search === '' ? '/signup' : `/signup${this.props.location.search}`}>アカウント作成</Link>
               </div>
               <Typography variant="caption" gutterBottom>
-            *現在Beta版のため一部の機能を除いてアプリをお試しできます。(データがクリアさせる可能性があります。)
+            *現在β版のため一部の機能を除いてアプリをお試しできます。(データがクリアさせる可能性があります。)
               </Typography>
               <Typography variant="caption" gutterBottom>
               *現在ログインしていただくと2018年7~8月の正式リリース時にお知らせメールを送信させていただきます。

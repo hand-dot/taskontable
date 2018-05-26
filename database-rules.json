@@ -1,14 +1,40 @@
 {
     "rules": {
-        "users": {
-            "$uid": {
+        "v0": {
+            "users": {
+                "$uid": {
+                    ".read": "auth != null",
+                    ".write": "auth != null"
+                }
+            },
+            "teams": {
                 ".read": "auth != null",
                 ".write": "auth != null"
             }
         },
-        "teams": {
-            ".read": "auth != null",
-            ".write": "auth != null"
+        "v1": {
+            "users": {
+                "$uid": {
+                    ".read": "auth != null",
+                    ".write": "auth != null"
+                }
+            },
+            "teams": {
+                ".read": "auth != null",
+                ".write": "auth != null"
+            }
+        },
+        "development": {
+            "users": {
+                "$uid": {
+                    ".read": "auth != null",
+                    ".write": "auth != null"
+                }
+            },
+            "teams": {
+                ".read": "auth != null",
+                ".write": "auth != null"
+            }
         }
     }
 }

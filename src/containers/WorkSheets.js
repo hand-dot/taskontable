@@ -48,9 +48,9 @@ class WorkSheets extends Component {
   }
 
   componentWillMount() {
-    database.ref(`/users/${this.props.user.uid}/teams/`).once('value').then((myTeamIds) => {
+    database.ref(`/${constants.API_VERSION}/users/${this.props.user.uid}/teams/`).once('value').then((myTeamIds) => {
       if (myTeamIds.exists() && myTeamIds.val() !== []) {
-        Promise.all(myTeamIds.val().map(id => database.ref(`/teams/${id}/name/`).once('value'))).then((myTeamNames) => {
+        Promise.all(myTeamIds.val().map(id => database.ref(`/${constants.API_VERSION}/teams/${id}/name/`).once('value'))).then((myTeamNames) => {
           this.setState({ teams: myTeamNames.map((myTeamName, index) => ({ id: myTeamIds.val()[index], name: myTeamName.exists() && myTeamName.val() ? myTeamName.val() : 'Unknown' })) });
         });
       }
@@ -62,8 +62,8 @@ class WorkSheets extends Component {
       return;
     }
     const newTeamId = uuid();
-    database.ref(`/users/${this.props.user.uid}/teams/`).set(this.state.teams.map(team => team.id).concat([newTeamId]));
-    database.ref(`/teams/${newTeamId}/`).set({ users: [this.props.user.uid], name: this.state.newTeamName });
+    database.ref(`/${constants.API_VERSION}/users/${this.props.user.uid}/teams/`).set(this.state.teams.map(team => team.id).concat([newTeamId]));
+    database.ref(`/${constants.API_VERSION}/teams/${newTeamId}/`).set({ users: [this.props.user.uid], name: this.state.newTeamName });
     this.setState({ teams: this.state.teams.concat([{ id: newTeamId, name: this.state.newTeamName }]), newTeamName: '', isOpenCreateTeamModal: false });
   }
 
@@ -74,14 +74,14 @@ class WorkSheets extends Component {
           <div style={{ minHeight: '100vh' }}>
             <div className={this.props.classes.content}>
               <div style={{ marginBottom: 30 }}>
-                <Typography style={{ color: '#fff' }} gutterBottom variant="title">Taskontable({constants.VERSION})へようこそ！</Typography>
+                <Typography style={{ color: '#fff' }} gutterBottom variant="title">Taskontable({constants.APP_VERSION})へようこそ！</Typography>
                 <Typography style={{ color: '#fff' }} variant="body2">
                   Tips<span role="img" aria-label="Tips">💡</span>
                 </Typography>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="body1">
                   もしまだコミュニティに参加されていなければ是非
                   　<a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>　に参加してみてください！<br />
-                  Beta版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜<br />
+                  クローズドβ版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜<br />
                   Taskontableの話以外にもいろいろな雑談☕がゆる～く行われています。
                 </Typography>
               </div>

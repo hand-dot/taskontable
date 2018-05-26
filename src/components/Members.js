@@ -156,7 +156,7 @@ HP: ${window.location.protocol}//${window.location.host}
   removeMember() {
     if (this.state.target.type === constants.handleUserType.MEMBER) {
       this.setState({ processing: true });
-      database.ref(`/users/${this.state.target.uid}/teams/`).once('value').then((myTeamIds) => {
+      database.ref(`/${constants.API_VERSION}/users/${this.state.target.uid}/teams/`).once('value').then((myTeamIds) => {
         if (!myTeamIds.exists() && !Array.isArray(myTeamIds.val())) {
           // メンバーが最新でない可能性がある。
           // TODO ここダサい。
@@ -175,7 +175,7 @@ HP: ${window.location.protocol}//${window.location.host}
           return;
         }
         // TODO ここはcloudfunctionでusersのチームから値を削除し、realtimeデータベースのusers/$uid/.writeは自分しか書き込み出来ないようにしたほうがよさそう。
-        database.ref(`/users/${this.state.target.uid}/teams/`).set(newTeamIds).then(() => {
+        database.ref(`/${constants.API_VERSION}/users/${this.state.target.uid}/teams/`).set(newTeamIds).then(() => {
           this.props.handleMembers(newMembers);
           if (this.props.userId === this.state.target.uid) setTimeout(() => { window.location.reload(); });
           this.setState({

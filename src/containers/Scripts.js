@@ -71,7 +71,7 @@ class Scripts extends Component {
   }
 
   componentWillMount() {
-    database.ref(`/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
+    database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val()) this.setState({ scriptEnable: true });
     });
   }
@@ -123,7 +123,7 @@ class Scripts extends Component {
   resetScript(scriptType = 'exportScript', noConfirm) {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!noConfirm && !window.confirm(`${scriptType}を保存前に戻してもよろしいですか？`)) return;
-    database.ref(`/users/${this.props.userId}/scripts/${scriptType}`).once('value').then((snapshot) => {
+    database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/${scriptType}`).once('value').then((snapshot) => {
       const script = snapshot.exists() && snapshot.val() ? snapshot.val() : '';
       this.setState({ [scriptType]: script, [`${scriptType}Bk`]: script });
     });
@@ -132,7 +132,7 @@ class Scripts extends Component {
   saveScript(scriptType = 'exportScript') {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!window.confirm(`${scriptType}を保存してもよろしいですか？`)) return;
-    database.ref(`/users/${this.props.userId}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
+    database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
       this.setState({ isOpenSaveSnackbar: true, [`${scriptType}Bk`]: this.state[scriptType] });
     });
   }
@@ -169,7 +169,7 @@ class Scripts extends Component {
   handleScriptEnable(event) {
     event.persist();
     this.setState({ scriptEnable: event.target.checked });
-    database.ref(`/users/${this.props.userId}/scripts/enable`).set(event.target.checked).then(() => {
+    database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/enable`).set(event.target.checked).then(() => {
       this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `スクリプトを${event.target.checked ? '有効' : '無効'}にしました。` });
     });
   }
