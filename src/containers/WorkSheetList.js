@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import uuid from 'uuid';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -12,7 +11,6 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import Person from '@material-ui/icons/Person';
 import People from '@material-ui/icons/People';
 
 import constants from '../constants';
@@ -34,6 +32,9 @@ const styles = {
     marginBottom: 15,
     width: '100%',
   },
+  link: {
+    textDecoration: 'none',
+  },
 };
 
 
@@ -41,38 +42,47 @@ class WorkSheetList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      teams: [], // 自分の所属しているチームの一覧
-      newTeamName: '',
-      isOpenCreateTeamModal: false,
+      worksheets: [], // 自分の所属しているワークシートの一覧
+      newWorksheetName: '',
+      isOpenCreateWorksheetModal: false,
     };
   }
 
   componentWillMount() {
-    database.ref(`/${constants.API_VERSION}/users/${this.props.user.uid}/teams/`).once('value').then((myTeamIds) => {
-      if (myTeamIds.exists() && myTeamIds.val() !== []) {
-        Promise.all(myTeamIds.val().map(id => database.ref(`/${constants.API_VERSION}/teams/${id}/name/`).once('value'))).then((myTeamNames) => {
-          this.setState({ teams: myTeamNames.map((myTeamName, index) => ({ id: myTeamIds.val()[index], name: myTeamName.exists() && myTeamName.val() ? myTeamName.val() : 'Unknown' })) });
+    database.ref(`/${constants.API_VERSION}/users/${this.props.user.uid}/worksheets/`).once('value').then((myWorksheetsIds) => {
+      if (myWorksheetsIds.exists() && myWorksheetsIds.val() !== []) {
+        Promise.all(myWorksheetsIds.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((myWorksheetNames) => {
+          this.setState({ worksheets: myWorksheetNames.map((myWorksheetName, index) => ({ id: myWorksheetsIds.val()[index], name: myWorksheetName.exists() && myWorksheetName.val() ? myWorksheetName.val() : 'Unknown' })) });
         });
       }
     });
   }
-  createTeam() {
-    if (this.state.newTeamName === '') {
-      alert('チーム名が未入力です。');
+  createWorksheet() {
+    if (this.state.newWorksheetName === '') {
+      alert('ワークシート名が未入力です。');
       return;
     }
-    const newTeamId = uuid();
-    database.ref(`/${constants.API_VERSION}/users/${this.props.user.uid}/teams/`).set(this.state.teams.map(team => team.id).concat([newTeamId]));
-    database.ref(`/${constants.API_VERSION}/teams/${newTeamId}/`).set({ users: [this.props.user.uid], name: this.state.newTeamName });
-    this.setState({ teams: this.state.teams.concat([{ id: newTeamId, name: this.state.newTeamName }]), newTeamName: '', isOpenCreateTeamModal: false });
+    // ワークシートのIDはシート名をtoLowerCaseしてencodeURIしたものにするシート名はシート名で別管理する
+    const newWorksheetId = encodeURI(this.state.newWorksheetName.toLowerCase());
+    // ワークシートのIDが存在しない場合は作成できる。
+    database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        alert('そのワークシート名は作成できません。');
+      } else {
+        database.ref(`/${constants.API_VERSION}/users/${this.props.user.uid}/worksheets/`).set(this.state.worksheets.map(worksheet => worksheet.id).concat([newWorksheetId]));
+        database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ users: [this.props.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PUBLIC });
+        this.setState({ worksheets: this.state.worksheets.concat([{ id: newWorksheetId, name: this.state.newWorksheetName }]), newWorksheetName: '', isOpenCreateWorksheetModal: false });
+      }
+    });
   }
 
   render() {
+    const { classes } = this.props;
     return (
-      <Grid className={this.props.classes.root} container spacing={0} alignItems="stretch">
+      <Grid className={classes.root} container spacing={0} alignItems="stretch">
         <Grid item xs={12}>
           <div style={{ minHeight: '100vh' }}>
-            <div className={this.props.classes.content}>
+            <div className={classes.content}>
               <div style={{ marginBottom: 30 }}>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="title">{constants.TITLE}({constants.APP_VERSION})へようこそ！</Typography>
                 <Typography style={{ color: '#fff' }} variant="body2">
@@ -92,40 +102,34 @@ class WorkSheetList extends Component {
               </div>
               <div style={{ marginTop: 30 }}>
                 <Typography style={{ color: '#fff' }} gutterBottom variant="subheading">
-                  <Person />　パーソナルワークシート
+                  <People />　ワークシート
                 </Typography>
-                <Link to={`/${this.props.user.uid}`} style={{ margin: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{this.props.user.displayName}</Button></Link>
-              </div>
-              <div style={{ marginTop: 30 }}>
-                <Typography style={{ color: '#fff' }} gutterBottom variant="subheading">
-                  <People />　チームワークシート
-                </Typography>
-                {this.state.teams.map(team => (
-                  <Link key={team.id} to={`/${team.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{team.name}</Button></Link>
+                {this.state.worksheets.map(worksheet => (
+                  <Link className={classes.link} key={worksheet.id} to={`/${worksheet.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{worksheet.name}</Button></Link>
                 ))}
                 <div style={{ display: 'inline-block', margin: this.props.theme.spacing.unit }}>
-                  <Button size="small" variant="raised" onClick={() => { this.setState({ isOpenCreateTeamModal: true }); }}>+</Button>
+                  <Button size="small" variant="raised" onClick={() => { this.setState({ isOpenCreateWorksheetModal: true }); }}>+</Button>
                 </div>
                 <Dialog
-                  open={this.state.isOpenCreateTeamModal}
-                  onClose={() => { this.setState({ newTeamName: '', isOpenCreateTeamModal: false }); }}
+                  open={this.state.isOpenCreateWorksheetModal}
+                  onClose={() => { this.setState({ newWorksheetName: '', isOpenCreateWorksheetModal: false }); }}
                   aria-labelledby="form-dialog-title"
                 >
-                  <DialogTitle id="form-dialog-title">チームを作成</DialogTitle>
+                  <DialogTitle id="form-dialog-title">ワークシートを作成</DialogTitle>
                   <DialogContent>
                     <TextField
-                      onChange={(e) => { this.setState({ newTeamName: e.target.value }); }}
-                      value={this.state.newTeamName}
+                      onChange={(e) => { this.setState({ newWorksheetName: e.target.value }); }}
+                      value={this.state.newWorksheetName}
                       autoFocus
                       margin="dense"
                       id="name"
-                      label="チーム名"
+                      label="ワークシート名"
                       fullWidth
                     />
                   </DialogContent>
                   <DialogActions>
-                    <Button size="small" onClick={() => { this.setState({ isOpenCreateTeamModal: false }); }} color="primary">キャンセル</Button>
-                    <Button size="small" onClick={this.createTeam.bind(this)} color="primary">作成</Button>
+                    <Button size="small" onClick={() => { this.setState({ isOpenCreateWorksheetModal: false }); }} color="primary">キャンセル</Button>
+                    <Button size="small" onClick={this.createWorksheet.bind(this)} color="primary">作成</Button>
                   </DialogActions>
                 </Dialog>
               </div>

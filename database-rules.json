@@ -15,24 +15,24 @@
         "v1": {
             "users": {
                 "$uid": {
-                    ".read": "auth != null",
+                    ".read": true,
                     ".write": "auth != null"
                 }
             },
-            "teams": {
-                ".read": "auth != null",
+            "worksheets": {
+                ".read": true,
                 ".write": "auth != null"
             }
         },
         "development": {
             "users": {
                 "$uid": {
-                    ".read": "auth != null",
+                    ".read": true,
                     ".write": "auth != null"
                 }
             },
-            "teams": {
-                ".read": "auth != null",
+            "worksheets": {
+                ".read": true,
                 ".write": "auth != null"
             }
         }

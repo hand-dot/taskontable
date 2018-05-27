@@ -65,9 +65,9 @@ export default {
     BLOG: 'blog',
     COMMUNITY: 'community',
   },
-  taskontableMode: {
-    TEAMS: 'teams',
-    USERS: 'users',
+  worksheetOpenRange: {
+    PRIVATE: 'private',
+    PUBLIC: 'public',
   },
   taskPoolType: {
     HIGHPRIORITY: 'highPriorityTasks',

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import moment from 'moment';
 import debounce from 'lodash.debounce';
 import localforage from 'localforage';
@@ -10,8 +10,10 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -45,6 +47,9 @@ const styles = {
     width: constants.APPWIDTH,
     margin: '0 auto',
   },
+  link: {
+    textDecoration: 'none',
+  },
 };
 
 class WorkSheet extends Component {
@@ -54,14 +59,15 @@ class WorkSheet extends Component {
     this.attachTableTasks = debounce(this.attachTableTasks, constants.REQEST_DELAY);
     this.attachMemo = debounce(this.attachMemo, constants.REQEST_DELAY);
     this.state = {
-      mode: '', // teams or users
-      id: '',
-      teamName: '', // modeがteamsの時にチーム名が入る
-      members: [], // modeがteamsの時にメンバーが入る
-      invitedEmails: [], // modeがteamsの時に招待したメールが入る
+      worksheetId: '',
+      worksheetOpenRange: '', // public or private
+      worksheetName: '',
+      members: [],
+      invitedEmails: [],
       isOpenSnackbar: false,
       snackbarText: '',
       isMobile: util.isMobile(),
+      readOnly: true,
       saveable: false,
       tab: 0,
       isOpenDashboard: false,
@@ -86,40 +92,37 @@ class WorkSheet extends Component {
   }
 
   componentWillMount() {
-    // urlのidからmode(teams or users)を決定する
-    if (this.props.match.params.id === this.props.userId) { // ■ユーザー専用のワークシートの場合
-      this.setState({ mode: constants.taskontableMode.USERS, id: this.props.userId });
-      setTimeout(() => { this.fetchScripts().then(() => { this.syncWorkSheet(); }); });
-    } else { // ■チームのワークシートの場合
-      Promise.all([
-        database.ref(`/${constants.API_VERSION}/teams/${this.props.match.params.id}/invitedEmails/`).once('value'),
-        database.ref(`/${constants.API_VERSION}/teams/${this.props.match.params.id}/users/`).once('value'),
-        database.ref(`/${constants.API_VERSION}/teams/${this.props.match.params.id}/name/`).once('value'),
-      ]).then((snapshots) => {
-        const [invitedEmails, userIds, teamName] = snapshots;
-        if (!userIds.exists() || !userIds.val().includes(this.props.userId)) { // 自分がいないチームには参加できない
-          // https://github.com/hand-dot/taskontable/issues/359
-          // 下記のルーターの遷移をコメントアウトすると簡易的にオープンワークシートになる。
-          this.props.history.push('/');
-          return;
-        }
-        if (userIds.exists() && userIds.val() !== [] && teamName.exists() && teamName.val() !== '') { // メンバーの情報を取得する処理
-          Promise.all(userIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
-            this.setState({
-              mode: constants.taskontableMode.TEAMS,
-              teamName: teamName.val(),
-              id: this.props.match.params.id,
-              members: members.filter(member => member.exists()).map(member => member.val()),
-              invitedEmails: invitedEmails.exists() ? invitedEmails.val() : [],
-            });
-            this.fetchScripts().then(() => { this.syncWorkSheet(); });
+    const worksheetId = encodeURI(this.props.match.params.id);
+    Promise.all([
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).once('value'),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/users/`).once('value'),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/name/`).once('value'),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/openRange/`).once('value'),
+    ]).then((snapshots) => {
+      const [invitedEmails, userIds, worksheetName, worksheetOpenRange] = snapshots;
+      if (worksheetOpenRange.exists() && worksheetOpenRange.val() === constants.worksheetOpenRange.PRIVATE &&
+      (!userIds.exists() || !userIds.val().includes(this.props.userId))) {
+        // 自分がいないプライベートワークシートには参加できない
+        this.props.history.push('/');
+        return;
+      }
+      if (userIds.exists() && userIds.val() !== [] && worksheetName.exists() && worksheetName.val() !== '') { // メンバーの情報を取得する処理
+        Promise.all(userIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
+          this.setState({
+            readOnly: !userIds.val().includes(this.props.userId),
+            worksheetId,
+            worksheetOpenRange: worksheetOpenRange.exists() ? worksheetOpenRange.val() : constants.worksheetOpenRange.PUBLIC,
+            worksheetName: worksheetName.exists() ? worksheetName.val() : 'Unknown',
+            members: members.filter(member => member.exists()).map(member => member.val()),
+            invitedEmails: invitedEmails.exists() ? invitedEmails.val() : [],
           });
-        }
-      });
-    }
+          this.fetchScripts().then(() => { this.syncWorkSheet(); });
+        });
+      }
+    });
     // 消えてしまった通知を取得する処理。
-    this.getRecentMessage(this.props.match.params.id);
-    window.onfocus = () => { this.getRecentMessage(this.props.match.params.id); };
+    this.getRecentMessage(worksheetId);
+    window.onfocus = () => { this.getRecentMessage(worksheetId); };
 
     if (!this.state.isMobile) window.onkeydown = (e) => { this.fireShortcut(e); };
     window.onbeforeunload = (e) => {
@@ -136,17 +139,27 @@ class WorkSheet extends Component {
     if ('Notification' in window && Notification.permission !== 'granted') Notification.requestPermission();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.userId) {
+      database.ref(`/${constants.API_VERSION}/worksheets/${encodeURI(this.props.match.params.id)}/users/`).once('value').then((userIds) => {
+        if (userIds.exists() && userIds.val() !== []) {
+          this.setState({ readOnly: !userIds.val().includes(this.props.userId) });
+        }
+      });
+    }
+  }
+
   componentWillUnmount() {
     if (!this.state.isMobile) window.onkeydown = '';
     window.onbeforeunload = '';
     window.onfocus = '';
-    database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/poolTasks`).off();
-    database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).off();
-    database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/poolTasks`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).off();
   }
 
-  getRecentMessage(id) {
-    return localforage.getItem(`recentMessage.${id}`).then((message) => {
+  getRecentMessage(worksheetId) {
+    return localforage.getItem(`recentMessage.${worksheetId}`).then((message) => {
       if (message) {
         // メッセージが作成された時間が本日だったら時刻を出すが、本日のメッセージじゃなかったら日付+時刻を出す
         const createdDateStr = moment(message.createdAt).format(constants.DATEFMT);
@@ -161,7 +174,7 @@ class WorkSheet extends Component {
         });
       }
       return Promise.resolve();
-    }).then(() => localforage.removeItem(`recentMessage.${id}`)).catch((err) => {
+    }).then(() => localforage.removeItem(`recentMessage.${worksheetId}`)).catch((err) => {
       throw new Error(`消えてしまった通知の取得に失敗しました:${err}`);
     });
   }
@@ -306,6 +319,7 @@ class WorkSheet extends Component {
    * stateのpoolTasksをサーバーに保存します。
    */
   savePoolTasks() {
+    if (this.state.readOnly) return Promise.resolve();
     // IDの生成処理
     Object.keys(this.state.poolTasks).forEach((poolTaskKey) => {
       const { poolTasks } = this.state;
@@ -323,14 +337,15 @@ class WorkSheet extends Component {
         return copyTask;
       });
     }
-    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/poolTasks`).set(this.state.poolTasks);
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/poolTasks`).set(this.state.poolTasks);
   }
 
   /**
    * stateのtableTasksとmemoをサーバーに保存します。
    */
   saveWorkSheet() {
-    Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
+    if (this.state.readOnly) return Promise.resolve();
+    return Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
       const savedAt = moment().format(constants.TIMEFMT);
       this.setState({
         isOpenSnackbar: true,
@@ -345,15 +360,16 @@ class WorkSheet extends Component {
    * stateのtableTasksをサーバーに保存します。
    */
   saveTableTasks() {
+    if (this.state.readOnly) return Promise.resolve();
     // IDを生成し無駄なプロパティを削除する。また、hotで並び変えられたデータを取得するために処理が入っている。
     const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(util.setIdIfNotExist(tableTask)));
     // 開始時刻順に並び替える
     const sortedTableTask = this.setSortedTableTasks(tableTasks);
     return this.fireScript(sortedTableTask, 'exportScript')
       .then(
-        data => database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(data)
+        data => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).set(data)
           .then(() => 'エクスポートスクリプトを実行しました。(success) - '),
-        reason => database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).set(sortedTableTask)
+        reason => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).set(sortedTableTask)
           .then(() => (reason ? `エクスポートスクリプトを実行しました。(error)：${reason} - ` : '')),
       );
   }
@@ -361,7 +377,8 @@ class WorkSheet extends Component {
    * stateのmemoをサーバーに保存します。
    */
   saveMemo() {
-    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).set(this.state.memo);
+    if (this.state.readOnly) return Promise.resolve();
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).set(this.state.memo);
   }
 
   /**
@@ -381,7 +398,7 @@ class WorkSheet extends Component {
    * テーブルタスクを同期します。
    */
   attachTableTasks() {
-    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
       if (snapshot.exists() && util.equal(this.state.tableTasks, snapshot.val())) {
         // 同期したがテーブルのデータと差分がなかった場合(自分の更新)
         this.setState({ saveable: false });
@@ -425,7 +442,7 @@ class WorkSheet extends Component {
    * プールタスクを同期します。
    */
   attachPoolTasks() {
-    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/poolTasks`).on('value', (snapshot) => {
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/poolTasks`).on('value', (snapshot) => {
       if (snapshot.exists()) {
         const poolTasks = snapshot.val();
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
@@ -459,7 +476,7 @@ class WorkSheet extends Component {
    * プールタスクを同期します。
    */
   attachMemo() {
-    return database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).on('value', (snapshot) => {
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).on('value', (snapshot) => {
       const memo = snapshot.val();
       if (snapshot.exists() && memo) {
         if (this.state.memo !== memo) this.setState({ memo });
@@ -495,6 +512,7 @@ class WorkSheet extends Component {
    * スクリプトを取得します。
    */
   fetchScripts() {
+    if (this.state.readOnly) return Promise.resolve();
     return database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val()) return true;
       return false;
@@ -538,8 +556,8 @@ class WorkSheet extends Component {
    */
   changeDate(newDate) {
     if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
-      database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/tableTasks/${this.state.date}`).off();
-      database.ref(`/${constants.API_VERSION}/${this.state.mode}/${this.state.id}/memos/${this.state.date}`).off();
+      database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).off();
+      database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).off();
       this.setState({ date: newDate, isSyncedTableTasks: false });
       if (!this.state.isMobile) {
         this.taskTable.updateIsActive(util.isToday(newDate));
@@ -552,20 +570,34 @@ class WorkSheet extends Component {
   }
 
   handleMembers(newMembers) {
-    if (this.state.mode !== constants.taskontableMode.TEAMS) return;
     this.setState({ members: newMembers });
-    database.ref(`/${constants.API_VERSION}/teams/${this.state.id}/users/`).set(newMembers.map(newMember => newMember.uid));
+    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/users/`).set(newMembers.map(newMember => newMember.uid));
   }
   handleInvitedEmails(newEmails) {
-    if (this.state.mode !== constants.taskontableMode.TEAMS) return;
     this.setState({ invitedEmails: newEmails });
-    database.ref(`/${constants.API_VERSION}/teams/${this.state.id}/invitedEmails/`).set(newEmails);
+    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/invitedEmails/`).set(newEmails);
+  }
+  handleWorksheetOpenRange(worksheetOpenRange) {
+    this.setState({ worksheetOpenRange });
+    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/openRange/`).set(worksheetOpenRange);
   }
 
   render() {
     const { classes, theme } = this.props;
     return (
       <Grid container spacing={0} className={classes.root} style={{ paddingTop: theme.mixins.toolbar.minHeight }}>
+        <Grid item xs={12}>
+          <Paper
+            elevation={1}
+            style={{
+            marginTop: 10, padding: theme.spacing.unit, backgroundColor: constants.brandColor.base.YELLOW, display: this.props.userId ? 'none' : 'block',
+            }}
+          >
+            <Typography align="center" variant="subheading">
+              {constants.TITLE}のアカウントはお持ちですか？<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >アカウント作成</Button></Link>または<Link to="/">{constants.TITLE}について詳しくみる</Link>
+            </Typography>
+          </Paper>
+        </Grid>
         <Grid item xs={12}>
           <ExpansionPanel expanded={this.state.isOpenDashboard} style={{ margin: 0 }} elevation={1}>
             <ExpansionPanelSummary expandIcon={<IconButton onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><ExpandMore /></IconButton>}>
@@ -580,10 +612,8 @@ class WorkSheet extends Component {
                 indicatorColor="primary"
               >
                 <Tab label={<span><AvTimer style={{ fontSize: 16, marginRight: '0.5em' }} />ダッシュボード</span>} />
-                <Tab label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />タスクプール</span>} />
-                {this.state.mode === constants.taskontableMode.TEAMS && (
-                  <Tab label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
-                )}
+                <Tab disabled={this.state.readOnly} label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />タスクプール</span>} />
+                <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
@@ -595,12 +625,14 @@ class WorkSheet extends Component {
                     userId={this.props.userId}
                     userName={this.props.userName}
                     userPhotoURL={this.props.userPhotoURL}
-                    teamId={this.state.id}
-                    teamName={this.state.teamName}
+                    worksheetId={this.state.worksheetId}
+                    worksheetOpenRange={this.state.worksheetOpenRange}
+                    worksheetName={this.state.worksheetName}
                     members={this.state.members}
                     invitedEmails={this.state.invitedEmails}
                     handleMembers={this.handleMembers.bind(this)}
                     handleInvitedEmails={this.handleInvitedEmails.bind(this)}
+                    handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
                   />
                 </div>
               )}
@@ -611,7 +643,7 @@ class WorkSheet extends Component {
               tableTasks={this.state.tableTasks}
               date={this.state.date}
               savedAt={this.state.savedAt}
-              saveable={this.state.saveable}
+              saveable={Boolean(this.props.userId && this.state.saveable)}
               changeDate={this.changeDate.bind(this)}
               saveWorkSheet={this.saveWorkSheet.bind(this)}
             />
@@ -619,6 +651,7 @@ class WorkSheet extends Component {
               tableTasks={this.state.tableTasks}
               changeTableTasks={this.changeTableTasksByMobile.bind(this)}
               isActive={util.isToday(this.state.date)}
+              readOnly={this.state.readOnly}
             />)}
             {!this.state.isMobile && (<TaskTable
               onRef={ref => (this.taskTable = ref)} // eslint-disable-line

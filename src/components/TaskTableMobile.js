@@ -120,7 +120,7 @@ class TaskTableMobile extends Component {
   }
 
   render() {
-    const { tableTasks, classes } = this.props;
+    const { tableTasks, readOnly, classes } = this.props;
     return (
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
@@ -200,11 +200,11 @@ class TaskTableMobile extends Component {
                 </CustomTableCell>
                 <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                   <div className={classes.actionIcons}>
-                    <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
+                    <IconButton disabled={readOnly} className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
                       {this.state.editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
                     </IconButton>
                     <span>/</span>
-                    <IconButton className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
+                    <IconButton disabled={readOnly} className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
                       <MoreHoriz style={{ fontSize: 16 }} />
                     </IconButton>
                     <Menu
@@ -284,7 +284,7 @@ class TaskTableMobile extends Component {
                 />
               </CustomTableCell>
               <CustomTableCell style={{ textAlign: 'center' }} padding="none">
-                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={this.state.editingTaskIndex !== -1}>
+                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={readOnly || this.state.editingTaskIndex !== -1}>
                   <Add style={{ fontSize: 16 }} />
                 </IconButton>
               </CustomTableCell>
@@ -307,6 +307,7 @@ TaskTableMobile.propTypes = {
   })).isRequired,
   changeTableTasks: PropTypes.func.isRequired,
   isActive: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

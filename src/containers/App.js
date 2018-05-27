@@ -96,14 +96,14 @@ class App extends Component {
         }
 
         // ログイン後にどこのページからスタートするかをハンドリングする。
-        // また、招待されている場合、この処理でチームに参加する。
+        // また、招待されている場合、この処理でワークシートに参加する。
         let mySettings;
         Promise.all([
           database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).once('value'),
-          database.ref(`/${constants.API_VERSION}/users/${user.uid}/teams/`).once('value'),
+          database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'),
           messaging ? messaging.requestPermission().then(() => messaging.getToken()).catch(() => '') : '',
         ]).then((snapshots) => {
-          const [settings, teams, fcmToken] = snapshots;
+          const [settings, worksheets, fcmToken] = snapshots;
           if (settings.exists()) {
             mySettings = settings.val();
             // fcmTokenは更新されている可能性を考えて空じゃない場合ログイン後、必ず更新する。
@@ -117,34 +117,34 @@ class App extends Component {
             if (!user.displayName) user.updateProfile({ displayName: tmpDisplayName });
             database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).set(mySettings);
           }
-          return (teams.exists() && teams.val() !== []) ? teams.val().concat([user.uid]) : [user.uid]; // 自分のidと自分のチームのid or 自分のid
+          return (worksheets.exists() && worksheets.val() !== []) ? worksheets.val().concat([user.uid]) : [user.uid]; // 自分のidと自分のワークシートのid or 自分のid
         }).then((myWorkSheetListIds) => {
-          const pathname = this.props.location.pathname.replace('/', '');
-          const fromInviteEmail = util.getQueryVariable('team') !== '';
+          const pathname = encodeURI(this.props.location.pathname.replace('/', ''));
+          const fromInviteEmail = util.getQueryVariable('worksheet') !== '';
           if (!fromInviteEmail && ['login', 'signup', 'index.html'].includes(pathname)) { // ■ログイン時
             this.props.history.push('/');
             return Promise.resolve();
-          } else if (myWorkSheetListIds.includes(pathname)) { // ■既に参加しているチームの場合
+          } else if (myWorkSheetListIds.includes(pathname)) { // ■既に参加しているワークシートの場合
             return Promise.resolve();
           } else if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
-            const teamId = fromInviteEmail ? util.getQueryVariable('team') : pathname;
-            return database.ref(`/${constants.API_VERSION}/teams/${teamId}/invitedEmails/`).once('value').then((invitedEmails) => {
-              // 自分のメールアドレスがチームの招待中メールアドレスリストに存在するかチェックする。
-              if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || !invitedEmails.val().includes(user.email)) {
+            const worksheetId = fromInviteEmail ? encodeURI(util.getQueryVariable('worksheet')) : pathname;
+            return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).once('value').then((invitedEmails) => {
+              // 自分のメールアドレスがワークシートの招待中メールアドレスリストに存在するかチェックする。
+              if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || !(invitedEmails.val().includes(user.email))) {
                 this.props.history.push('/'); // 違った場合はワークシートの選択に飛ばす
                 return Promise.resolve();
               }
-              // 自分が招待されていた場合は自分のチームに加え、チームのメンバーに自分を加える
-              return Promise.all([database.ref(`/${constants.API_VERSION}/users/${user.uid}/teams/`).once('value'), database.ref(`/${constants.API_VERSION}/teams/${teamId}/users/`).once('value')]).then((snapshots) => {
-                const [myTeamIds, teamUserIds] = snapshots;
+              // 自分が招待されていた場合は自分のワークシートに加え、ワークシートのメンバーに自分を加える
+              return Promise.all([database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'), database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/users/`).once('value')]).then((snapshots) => {
+                const [myWorksheetIds, worksheetUserIds] = snapshots;
                 const promises = [
-                  database.ref(`/${constants.API_VERSION}/users/${user.uid}/teams/`).set((myTeamIds.exists() ? myTeamIds.val() : []).concat([teamId])), // 自分の参加しているチームにチームのidを追加
-                  database.ref(`/${constants.API_VERSION}/teams/${teamId}/users/`).set((teamUserIds.exists() ? teamUserIds.val() : []).concat([user.uid])), // 参加しているチームのユーザーに自分のidを追加
-                  database.ref(`/${constants.API_VERSION}/teams/${teamId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているチーム招待中メールアドレスリストから削除
+                  database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set((myWorksheetIds.exists() ? myWorksheetIds.val() : []).concat([worksheetId])), // 自分の参加しているワークシートにワークシートのidを追加
+                  database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/users/`).set((worksheetUserIds.exists() ? worksheetUserIds.val() : []).concat([user.uid])), // 参加しているワークシートのユーザーに自分のidを追加
+                  database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているワークシート招待中メールアドレスリストから削除
                 ];
                 return Promise.all(promises);
               }).then(() => {
-                this.props.history.push(`/${teamId}`);
+                this.props.history.push(`/${worksheetId}`);
                 return Promise.resolve();
               });
             });
@@ -257,26 +257,13 @@ class App extends Component {
             exact
             strict
             path="/:id"
-            render={(props) => {
-              if (this.state.user.uid !== '') {
-                return (
-                  <WorkSheet
-                    userId={this.state.user.uid}
-                    userName={this.state.user.displayName}
-                    userPhotoURL={this.state.user.photoURL}
-                    toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
-                    {...props}
-                  />
-              );
-              }
-              // TODO ここでうまくlogin or signup にリダイレクトすることで
-              // https://github.com/hand-dot/taskontable/issues/358 このチケットを消化できそう
-              // ネックになっている部分が、loginではなく、signupに遷移されたときに"/:id"が消えてしまう。
-              // また、トップページに遷移されたときも/:idが消えてしまう。
-              // トップページに遷移されたときは仕方ないにしろ、login → signupの遷移などでは/:idを引き継ぎたい。
-              // クエリパラメーターが引き回し可能ならそれにしてもいいかもしれない。
-              return <Login login={this.login.bind(this)} {...props} />;
-            }}
+            render={props => (<WorkSheet
+              userId={this.state.user.uid}
+              userName={this.state.user.displayName}
+              userPhotoURL={this.state.user.photoURL}
+              toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
+              {...props}
+            />)}
           />
           <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
           <Route exact strict path="/:id/settings" render={(props) => { if (this.state.user.uid !== '') { return <Settings user={this.state.user} handleUser={this.handleUser.bind(this)} {...props} />; } return null; }} />

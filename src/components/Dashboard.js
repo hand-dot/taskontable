@@ -57,7 +57,8 @@ class Dashboard extends Component {
         minute: currentMoment.minute(),
         second: currentMoment.second(),
       },
-      endTime: { hour: endMoment.hour(),
+      endTime: {
+        hour: endMoment.hour(),
         minute: endMoment.minute(),
         second: endMoment.second(),
       },
@@ -86,10 +87,10 @@ class Dashboard extends Component {
             <Typography gutterBottom variant="subheading">時刻</Typography>
             <Grid container>
               <Grid item xs={6}>
-                <Clock title={'現在時刻'} time={this.state.currentTime} />
+                <Clock title="現在時刻" time={this.state.currentTime} />
               </Grid>
               <Grid item xs={6}>
-                <Clock title={'終了時刻'} time={this.state.endTime} />
+                <Clock title="終了時刻" time={this.state.endTime} />
               </Grid>
             </Grid>
           </Grid>
