@@ -28,11 +28,16 @@ import FormatListBulleted from '@material-ui/icons/FormatListBulleted';
 import AvTimer from '@material-ui/icons/AvTimer';
 import Close from '@material-ui/icons/Close';
 import Person from '@material-ui/icons/Person';
+import Lock from '@material-ui/icons/Lock';
+import LockOpen from '@material-ui/icons/LockOpen';
+import Power from '@material-ui/icons/Power';
+import ShowChart from '@material-ui/icons/ShowChart';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';
 import TaskPool from '../components/TaskPool';
 import Members from '../components/Members';
+import OpenRange from '../components/OpenRange';
 import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
 
@@ -100,8 +105,11 @@ class WorkSheet extends Component {
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/openRange/`).once('value'),
     ]).then((snapshots) => {
       const [invitedEmails, userIds, worksheetName, worksheetOpenRange] = snapshots;
-      if (worksheetOpenRange.exists() && worksheetOpenRange.val() === constants.worksheetOpenRange.PRIVATE &&
-      (!userIds.exists() || !userIds.val().includes(this.props.userId))) {
+      if (!worksheetOpenRange.exists()) {
+        // 公開範囲が存在しない(そもそもワークシートが存在しない)ワークシートには参加できない
+        this.props.history.push('/');
+        return;
+      } else if (worksheetOpenRange.val() === constants.worksheetOpenRange.PRIVATE && (!userIds.exists() || !userIds.val().includes(this.props.userId))) {
         // 自分がいないプライベートワークシートには参加できない
         this.props.history.push('/');
         return;
@@ -319,7 +327,10 @@ class WorkSheet extends Component {
    * stateのpoolTasksをサーバーに保存します。
    */
   savePoolTasks() {
-    if (this.state.readOnly) return Promise.resolve();
+    if (this.state.readOnly) {
+      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
+      return Promise.resolve();
+    }
     // IDの生成処理
     Object.keys(this.state.poolTasks).forEach((poolTaskKey) => {
       const { poolTasks } = this.state;
@@ -344,7 +355,10 @@ class WorkSheet extends Component {
    * stateのtableTasksとmemoをサーバーに保存します。
    */
   saveWorkSheet() {
-    if (this.state.readOnly) return Promise.resolve();
+    if (this.state.readOnly) {
+      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
+      return Promise.resolve();
+    }
     return Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
       const savedAt = moment().format(constants.TIMEFMT);
       this.setState({
@@ -360,7 +374,10 @@ class WorkSheet extends Component {
    * stateのtableTasksをサーバーに保存します。
    */
   saveTableTasks() {
-    if (this.state.readOnly) return Promise.resolve();
+    if (this.state.readOnly) {
+      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
+      return Promise.resolve();
+    }
     // IDを生成し無駄なプロパティを削除する。また、hotで並び変えられたデータを取得するために処理が入っている。
     const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(util.setIdIfNotExist(tableTask)));
     // 開始時刻順に並び替える
@@ -377,7 +394,10 @@ class WorkSheet extends Component {
    * stateのmemoをサーバーに保存します。
    */
   saveMemo() {
-    if (this.state.readOnly) return Promise.resolve();
+    if (this.state.readOnly) {
+      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
+      return Promise.resolve();
+    }
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).set(this.state.memo);
   }
 
@@ -571,15 +591,21 @@ class WorkSheet extends Component {
 
   handleMembers(newMembers) {
     this.setState({ members: newMembers });
-    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/users/`).set(newMembers.map(newMember => newMember.uid));
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/users/`).set(newMembers.map(newMember => newMember.uid)).then(() => {
+      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーを更新しました。' });
+      return Promise.resolve();
+    });
   }
   handleInvitedEmails(newEmails) {
     this.setState({ invitedEmails: newEmails });
-    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/invitedEmails/`).set(newEmails);
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/invitedEmails/`).set(newEmails);
   }
   handleWorksheetOpenRange(worksheetOpenRange) {
     this.setState({ worksheetOpenRange });
-    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/openRange/`).set(worksheetOpenRange);
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/openRange/`).set(worksheetOpenRange).then(() => {
+      this.setState({ isOpenSnackbar: true, snackbarText: `公開範囲を${worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? '公開' : '非公開'}に設定しました。` });
+      return Promise.resolve();
+    });
   }
 
   render() {
@@ -590,7 +616,7 @@ class WorkSheet extends Component {
           <Paper
             elevation={1}
             style={{
-            marginTop: 10, padding: theme.spacing.unit, backgroundColor: constants.brandColor.base.YELLOW, display: this.props.userId ? 'none' : 'block',
+            marginTop: 10, padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.base.YELLOW, display: this.props.userId ? 'none' : 'block',
             }}
           >
             <Typography align="center" variant="subheading">
@@ -614,6 +640,9 @@ class WorkSheet extends Component {
                 <Tab label={<span><AvTimer style={{ fontSize: 16, marginRight: '0.5em' }} />ダッシュボード</span>} />
                 <Tab disabled={this.state.readOnly} label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />タスクプール</span>} />
                 <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
+                <Tab disabled={this.state.readOnly} label={<span>{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? <LockOpen style={{ fontSize: 16, marginRight: '0.5em' }} /> : <Lock style={{ fontSize: 16, marginRight: '0.5em' }} />}公開範囲</span>} />
+                <Tab disabled label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />プラグイン(開発中)</span>} />
+                <Tab disabled label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(開発中)</span>} />
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
@@ -626,15 +655,21 @@ class WorkSheet extends Component {
                     userName={this.props.userName}
                     userPhotoURL={this.props.userPhotoURL}
                     worksheetId={this.state.worksheetId}
-                    worksheetOpenRange={this.state.worksheetOpenRange}
                     worksheetName={this.state.worksheetName}
                     members={this.state.members}
                     invitedEmails={this.state.invitedEmails}
                     handleMembers={this.handleMembers.bind(this)}
                     handleInvitedEmails={this.handleInvitedEmails.bind(this)}
-                    handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
                   />
                 </div>
+              )}
+              {this.state.tab === 3 && (
+              <div style={{ overflow: 'auto' }}>
+                <OpenRange
+                  worksheetOpenRange={this.state.worksheetOpenRange}
+                  handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
+                />
+              </div>
               )}
             </ExpansionPanelDetails>
           </ExpansionPanel>

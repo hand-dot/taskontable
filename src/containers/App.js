@@ -68,6 +68,11 @@ class App extends Component {
 
     auth.onAuthStateChanged((user) => {
       if (user) {
+        this.setState({
+          user: {
+            displayName: '', photoURL: '', uid: user.uid, email: '', fcmToken: '',
+          },
+        });
         // dimension1はgaではuidとしている
         ReactGA.set({ dimension1: user.uid });
 

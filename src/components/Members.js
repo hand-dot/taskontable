@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -16,10 +17,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControl from '@material-ui/core/FormControl';
-import Divider from '@material-ui/core/Divider';
 import Delete from '@material-ui/icons/Delete';
 import Sms from '@material-ui/icons/Sms';
 import Person from '@material-ui/icons/Person';
@@ -101,6 +98,8 @@ class Members extends Component {
         photoURL: '',
         fcmToken: '',
       },
+      snackbarText: '',
+      isOpenSnackbar: false,
       isOpenAddMemberModal: false,
       isOpenRemoveMemberModal: false,
       isOpenResendEmailModal: false,
@@ -120,7 +119,6 @@ ${this.props.userName} さんから、${constants.TITLE}のワークシート「
 ■アカウントを既にお持ちの場合
 
 ${window.location.protocol}//${window.location.host}/login?email=${encodeURIComponent(to)}&worksheet=${this.props.worksheetId}  をクリックして参加してください。
-
 (＊Googleログインにて既にこのメールアドレスのアカウントでログインしている場合は上記のURLからGoogleログインしてください。)
 　
 
@@ -153,13 +151,14 @@ HP: ${window.location.protocol}//${window.location.host}
     Promise.all(this.state.invitationEmails.map(invitationEmail => this.sendInviteEmail(invitationEmail)))
       .then(
         () => {
-          alert('招待メールを送信しました。');
-          this.props.handleInvitedEmails(this.props.invitedEmails.concat(this.state.invitationEmails).filter((x, i, self) => self.indexOf(x) === i));
-          this.setState({ invitationEmails: [], isOpenAddMemberModal: false, processing: false });
+          this.props.handleInvitedEmails(this.props.invitedEmails.concat(this.state.invitationEmails).filter((x, i, self) => self.indexOf(x) === i)).then(() => {
+            this.setState({
+              isOpenSnackbar: true, snackbarText: '招待メールを送信しました。', invitationEmails: [], isOpenAddMemberModal: false, processing: false,
+            });
+          });
         },
         () => {
-          alert('招待メールの送信に失敗しました。');
-          this.setState({ processing: false });
+          this.setState({ isOpenSnackbar: true, snackbarText: '招待メールの送信に失敗しました。', processing: false });
         },
       );
   }
@@ -219,12 +218,12 @@ HP: ${window.location.protocol}//${window.location.host}
       // 招待メールの再送信
       this.sendInviteEmail(this.state.target.email).then(
         () => {
-          alert('招待メールを再送信しました。');
-          this.setState({ processing: false, isOpenResendEmailModal: false });
+          this.setState({
+            isOpenSnackbar: true, snackbarText: '招待メールを再送信しました。', processing: false, isOpenResendEmailModal: false,
+          });
         },
         () => {
-          alert('招待メールの再送信に失敗しました。');
-          this.setState({ processing: false });
+          this.setState({ isOpenSnackbar: true, snackbarText: '招待メールの再送信に失敗しました。', processing: false });
         },
       );
     }
@@ -250,16 +249,17 @@ HP: ${window.location.protocol}//${window.location.host}
         }).then(res => res.ok)));
       }
       Promise.all(promises).then((res) => {
-        let text;
+        let snackbarText;
         if (res.every(r => r)) {
-          text = '通知を送信しました。';
+          snackbarText = '通知を送信しました。';
         } else if (res.every(r => !r)) {
-          text = '通知の送信に失敗しました。';
+          snackbarText = '通知の送信に失敗しました。';
         } else {
-          text = '通知の送信に一部失敗しました。';
+          snackbarText = '通知の送信に一部失敗しました。';
         }
-        alert(text);
-        this.setState({ isOpenSendNotificationModal: false, notificationMessage: '' });
+        this.setState({
+          isOpenSnackbar: true, snackbarText, isOpenSendNotificationModal: false, notificationMessage: '',
+        });
       });
     }
   }
@@ -270,22 +270,18 @@ HP: ${window.location.protocol}//${window.location.host}
     }
     if (util.validateEmail(email)) {
       if (this.props.members.map(member => member.email).includes(email)) {
-        alert('このメールアドレスは既にメンバーに存在します。');
+        this.setState({ isOpenSnackbar: true, snackbarText: 'このメールアドレスは既にメンバーに存在します。' });
       } else {
         this.state.invitationEmails.push(email);
       }
     } else {
-      alert('メールアドレスとして不正です。');
+      this.setState({ isOpenSnackbar: true, snackbarText: 'メールアドレスとして不正です。' });
     }
-  }
-
-  handleWorksheetOpenRange(event) {
-    this.props.handleWorksheetOpenRange(event.target.value);
   }
 
   render() {
     const {
-      worksheetName, worksheetOpenRange, members, invitedEmails, classes, theme,
+      worksheetName, members, invitedEmails, classes, theme,
     } = this.props;
     return (
       <div>
@@ -514,24 +510,12 @@ HP: ${window.location.protocol}//${window.location.host}
             <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
           </Dialog>
         </div>
-        <Divider />
-        <div style={{ padding: theme.spacing.unit }}>
-          <Typography variant="subheading">
-            公開範囲を変更
-          </Typography>
-          <FormControl component="fieldset" required className={classes.formControl}>
-            <RadioGroup
-              aria-label="worksheetOpenRange"
-              name="worksheetOpenRange"
-              className={classes.group}
-              value={worksheetOpenRange}
-              onChange={this.handleWorksheetOpenRange.bind(this)}
-            >
-              <FormControlLabel value={constants.worksheetOpenRange.PUBLIC} control={<Radio color="default" />} label="公開:URLを知っている人は誰でも閲覧でき、Googleのような検索エンジンにも表示されます。編集可能なのはワークシートのメンバーのみです。" />
-              <FormControlLabel value={constants.worksheetOpenRange.PRIVATE} control={<Radio color="default" />} label="非公開:ワークシートのメンバーのみ、閲覧、編集できます。" />
-            </RadioGroup>
-          </FormControl>
-        </div>
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={this.state.isOpenSnackbar}
+          onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
+          message={this.state.snackbarText}
+        />
       </div>
     );
   }
@@ -550,11 +534,9 @@ Members.propTypes = {
   })).isRequired,
   invitedEmails: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   worksheetId: PropTypes.string.isRequired,
-  worksheetOpenRange: PropTypes.string.isRequired,
   worksheetName: PropTypes.string.isRequired,
   handleMembers: PropTypes.func.isRequired,
   handleInvitedEmails: PropTypes.func.isRequired,
-  handleWorksheetOpenRange: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

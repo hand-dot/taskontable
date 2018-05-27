@@ -11,7 +11,6 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import People from '@material-ui/icons/People';
 
 import constants from '../constants';
 import util from '../util';
@@ -101,9 +100,6 @@ class WorkSheetList extends Component {
                 <Typography style={{ color: '#fff' }} gutterBottom variant="caption">ワークシートを選択してください。</Typography>
               </div>
               <div style={{ marginTop: 30 }}>
-                <Typography style={{ color: '#fff' }} gutterBottom variant="subheading">
-                  <People />　ワークシート
-                </Typography>
                 {this.state.worksheets.map(worksheet => (
                   <Link className={classes.link} key={worksheet.id} to={`/${worksheet.id}`} style={{ padding: this.props.theme.spacing.unit }}><Button size="small" variant="raised">{worksheet.name}</Button></Link>
                 ))}

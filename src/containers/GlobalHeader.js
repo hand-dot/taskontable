@@ -151,8 +151,8 @@ class GlobalHeader extends Component {
                         onClose={this.closeMenu.bind(this)}
                       >
                         <MenuItem title={user.email}>アカウント名: {user.displayName}</MenuItem>
-                        <MenuItem onClick={this.goWorkSheetList.bind(this)}>ワークシートの選択</MenuItem>
-                        {!util.isMobile() && (<MenuItem onClick={this.goScripts.bind(this)}>スクリプト設定</MenuItem>)}
+                        <MenuItem onClick={this.goWorkSheetList.bind(this)}>ワークシート選択</MenuItem>
+                        {!util.isMobile() && (<MenuItem onClick={this.goScripts.bind(this)}>スクリプト設定(α版)</MenuItem>)}
                         <MenuItem onClick={this.goSettings.bind(this)}>アカウント設定</MenuItem>
                         <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
                       </Menu>

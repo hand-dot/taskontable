@@ -180,7 +180,7 @@ class Scripts extends Component {
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
         <Grid item xs={12}>
           <Typography variant="title">
-              スクリプト設定
+              スクリプト設定(α版)
           </Typography>
           <Typography gutterBottom variant="caption">
             本日のタスクテーブルのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。
