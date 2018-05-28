@@ -1,18 +1,6 @@
 {
     "rules": {
-        "v0": {
-            "users": {
-                "$uid": {
-                    ".read": "auth != null",
-                    ".write": "auth != null"
-                }
-            },
-            "teams": {
-                ".read": "auth != null",
-                ".write": "auth != null"
-            }
-        },
-        "v1": {
+        "beta": {
             "users": {
                 "$uid": {
                     ".read": true,
