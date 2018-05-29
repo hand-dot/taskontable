@@ -100,7 +100,7 @@ class WorkSheet extends Component {
     const worksheetId = encodeURI(this.props.match.params.id);
     Promise.all([
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).once('value'),
-      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/users/`).once('value'),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value'),
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/name/`).once('value'),
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/openRange/`).once('value'),
     ]).then((snapshots) => {
@@ -149,7 +149,7 @@ class WorkSheet extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.userId) {
-      database.ref(`/${constants.API_VERSION}/worksheets/${encodeURI(this.props.match.params.id)}/users/`).once('value').then((userIds) => {
+      database.ref(`/${constants.API_VERSION}/worksheets/${encodeURI(this.props.match.params.id)}/members/`).once('value').then((userIds) => {
         if (userIds.exists() && userIds.val() !== []) {
           this.setState({ readOnly: !userIds.val().includes(this.props.userId) });
         }
@@ -411,7 +411,8 @@ class WorkSheet extends Component {
     this.attachPoolTasks();
     // メモを同期開始
     this.attachMemo();
-    // TODO メンバーも同期したほうがいいかも
+    // メンバー,招待中のメールアドレスを同期開始
+    this.attachMembers();
   }
 
   /**
@@ -493,17 +494,43 @@ class WorkSheet extends Component {
     });
   }
   /**
-   * プールタスクを同期します。
+   * メモを同期します。
    */
   attachMemo() {
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).on('value', (snapshot) => {
-      const memo = snapshot.val();
-      if (snapshot.exists() && memo) {
-        if (this.state.memo !== memo) this.setState({ memo });
+      if (snapshot.exists() && snapshot.val()) {
+        if (this.state.memo !== snapshot.val()) this.setState({ memo: snapshot.val() });
       } else {
         this.setState({ memo: '' });
       }
     });
+  }
+  /**
+   * メンバー,招待中のメールアドレスを同期します。
+   */
+  attachMembers() {
+    return [
+      database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/members`).on('value', (userIds) => {
+        if (userIds.exists() && userIds.val() !== []) { // メンバーの情報を取得する処理
+          return Promise.all(userIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
+            const memberSettings = members.filter(member => member.exists()).map(member => member.val());
+            if (memberSettings !== []) {
+              if (!util.equal(this.state.members, memberSettings)) this.setState({ members: memberSettings });
+            } else {
+              this.setState({ members: [] });
+            }
+          });
+        }
+        return Promise.resolve();
+      }),
+      database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/invitedEmails`).on('value', (invitedEmails) => {
+        if (invitedEmails.exists() && invitedEmails.val() !== []) {
+          if (this.state.invitedEmails !== invitedEmails.val()) this.setState({ invitedEmails: invitedEmails.val() });
+        } else {
+          this.setState({ invitedEmails: [] });
+        }
+      }),
+    ];
   }
   /**
    * ショートカットを実行します。
@@ -591,7 +618,7 @@ class WorkSheet extends Component {
 
   handleMembers(newMembers) {
     this.setState({ members: newMembers });
-    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/users/`).set(newMembers.map(newMember => newMember.uid)).then(() => {
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/members/`).set(newMembers.map(newMember => newMember.uid)).then(() => {
       this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーを更新しました。' });
       return Promise.resolve();
     });

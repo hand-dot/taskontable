@@ -140,11 +140,14 @@ class App extends Component {
                 return Promise.resolve();
               }
               // 自分が招待されていた場合は自分のワークシートに加え、ワークシートのメンバーに自分を加える
-              return Promise.all([database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'), database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/users/`).once('value')]).then((snapshots) => {
+              return Promise.all([
+                database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'),
+                database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value'),
+              ]).then((snapshots) => {
                 const [myWorksheetIds, worksheetUserIds] = snapshots;
                 const promises = [
                   database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set((myWorksheetIds.exists() ? myWorksheetIds.val() : []).concat([worksheetId])), // 自分の参加しているワークシートにワークシートのidを追加
-                  database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/users/`).set((worksheetUserIds.exists() ? worksheetUserIds.val() : []).concat([user.uid])), // 参加しているワークシートのユーザーに自分のidを追加
+                  database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).set((worksheetUserIds.exists() ? worksheetUserIds.val() : []).concat([user.uid])), // 参加しているワークシートのユーザーに自分のidを追加
                   database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているワークシート招待中メールアドレスリストから削除
                 ];
                 return Promise.all(promises);
