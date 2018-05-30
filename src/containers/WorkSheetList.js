@@ -61,6 +61,10 @@ class WorkSheetList extends Component {
       alert('ワークシート名が未入力です。');
       return;
     }
+    if (!util.validateDatabaseKey(this.state.newWorksheetName)) {
+      alert('ワークシート名として禁止されている文字列が含まれています。');
+      return;
+    }
     // ワークシートのIDはシート名をtoLowerCaseしてencodeURIしたものにするシート名はシート名で別管理する
     const newWorksheetId = encodeURI(this.state.newWorksheetName.toLowerCase());
     // ワークシートのIDが存在しない場合は作成できる。
@@ -69,7 +73,7 @@ class WorkSheetList extends Component {
         alert('そのワークシート名は作成できません。');
       } else {
         database.ref(`/${constants.API_VERSION}/users/${this.props.user.uid}/worksheets/`).set(this.state.worksheets.map(worksheet => worksheet.id).concat([newWorksheetId]));
-        database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ users: [this.props.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PUBLIC });
+        database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.props.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PUBLIC });
         this.setState({ worksheets: this.state.worksheets.concat([{ id: newWorksheetId, name: this.state.newWorksheetName }]), newWorksheetName: '', isOpenCreateWorksheetModal: false });
       }
     });

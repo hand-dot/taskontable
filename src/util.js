@@ -62,7 +62,7 @@ export default {
     const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) &&
-    Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute)) {
+      Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute)) {
       const end = `${endTimeHour}:${endTimeMinute}`;
       const start = `${startTimeHour}:${startTimeMinute}`;
       return moment(end, constants.TIMEFMT).diff(moment(start, constants.TIMEFMT), 'minutes');
@@ -79,7 +79,7 @@ export default {
     const [startTimeHour, startTimeMinute, startTimeSec] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute, endTimeSec] = endTimeVal.split(':');
     if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSec) &&
-    Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSec)) {
+      Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSec)) {
       const end = `${endTimeHour}:${endTimeMinute}:${endTimeSec}`;
       const start = `${startTimeHour}:${startTimeMinute}:${startTimeSec}`;
       return moment(end, 'HH:mm:ss').diff(moment(start, 'HH:mm:ss'), 'seconds');
@@ -175,6 +175,23 @@ export default {
   validateEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+  },
+  /**
+   * リアルタイムデータベースのキーとして正しい値か検証します。
+     * @param  {String} key
+   */
+  validateDatabaseKey(key) {
+    // Paths must be non-empty strings and can't contain ".", "#", "$", "[", or "]"
+    if (key.indexOf(' ') !== -1 ||
+      key.indexOf('/') !== -1 ||
+      key.indexOf('.') !== -1 ||
+      key.indexOf('#') !== -1 ||
+      key.indexOf('[') !== -1 ||
+      key.indexOf(']') !== -1
+    ) {
+      return false;
+    }
+    return true;
   },
   /**
    * メールを送信します。
