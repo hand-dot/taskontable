@@ -12,6 +12,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControl from '@material-ui/core/FormControl';
 import AssignmentReturn from '@material-ui/icons/AssignmentReturn';
 import constants from '../constants';
+import util from '../util';
 
 const styles = theme => ({
   root: {
@@ -68,11 +69,7 @@ class OpenRange extends Component {
               <IconButton
                 aria-label="URL"
                 onClick={() => {
-                    const target = document.getElementById('urlInput');
-                    const range = document.createRange();
-                    range.selectNode(target);
-                    window.getSelection().addRange(range);
-                    document.execCommand('copy');
+                    util.copyTextToClipboard(window.location.href);
                     this.setState({ isOpenSnackbar: true, snackbarText: 'クリップボードにURLをコピーしました。' });
                 }}
                 onMouseDown={(e) => { e.preventDefault(); }}
