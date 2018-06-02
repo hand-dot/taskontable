@@ -55,6 +55,10 @@ const styles = {
   link: {
     textDecoration: 'none',
   },
+  circularProgress: {
+    overflow: 'hidden',
+    padding: 0,
+  },
 };
 
 class WorkSheet extends Component {
