@@ -3,6 +3,7 @@ import uuid from 'uuid';
 export default[
   {
     id: uuid(),
+    assign: '',
     title: '可燃ごみ',
     estimate: 5,
     startTime: '08:00',
@@ -11,6 +12,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: 'メールチェック',
     estimate: 5,
     startTime: '10:17',
@@ -19,6 +21,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: '予定表のチェック',
     estimate: 5,
     startTime: '10:17',
@@ -27,6 +30,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: '日報',
     estimate: 10,
     startTime: '10:21',
@@ -35,6 +39,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: '勤怠入力',
     estimate: 3,
     startTime: '10:52',
@@ -43,6 +48,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: '朝会',
     estimate: 15,
     startTime: '11:10',
@@ -51,6 +57,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: '#123 の対応',
     estimate: 20,
     startTime: '11:55',
@@ -59,6 +66,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: '昼飯',
     estimate: 60,
     startTime: '13:00',
@@ -67,6 +75,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: '開発MTG',
     estimate: 60,
     startTime: '',
@@ -75,6 +84,7 @@ export default[
   },
   {
     id: uuid(),
+    assign: '',
     title: 'コードレビュー',
     estimate: 40,
     startTime: '',
