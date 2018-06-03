@@ -27,6 +27,7 @@ import People from '@material-ui/icons/People';
 import FormatListBulleted from '@material-ui/icons/FormatListBulleted';
 import AvTimer from '@material-ui/icons/AvTimer';
 import Close from '@material-ui/icons/Close';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Person from '@material-ui/icons/Person';
 import Lock from '@material-ui/icons/Lock';
 import LockOpen from '@material-ui/icons/LockOpen';
@@ -756,7 +757,13 @@ class WorkSheet extends Component {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSnackbar}
           onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
-          message={this.state.snackbarText}
+          ContentProps={{ 'aria-describedby': 'info-id' }}
+          message={
+            <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
+              <CheckCircleIcon />
+              <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.snackbarText}</span>
+            </span>
+          }
         />
         <Snackbar
           key="notification"
