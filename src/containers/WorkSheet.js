@@ -613,7 +613,7 @@ class WorkSheet extends Component {
       if (!this.state.isMobile) {
         this.taskTable.updateIsActive(util.isToday(newDate));
         this.taskTable.setDataForHot([{
-          id: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
+          id: '', assign: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
         }]);
       }
       setTimeout(() => { this.attachTableTasks(); this.attachMemo(); });
