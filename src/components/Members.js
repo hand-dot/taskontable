@@ -281,7 +281,7 @@ HP: ${window.location.protocol}//${window.location.host}
 
   render() {
     const {
-      worksheetName, members, invitedEmails, classes, theme,
+      members, invitedEmails, classes, theme,
     } = this.props;
     return (
       <div>
@@ -291,7 +291,7 @@ HP: ${window.location.protocol}//${window.location.host}
         >
           <div>
             <Typography variant="subheading">
-              {worksheetName}のメンバー
+              メンバー
             </Typography>
             <div className={classes.membersContainer}>
               {members.length === 0 ? <Typography align="center" variant="caption">メンバーがいません</Typography> : members.map(member => (

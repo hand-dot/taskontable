@@ -29,7 +29,9 @@ class TaskTable extends Component {
     const self = this;
     const isActiveNotifi = this.props.isActive;
     this.hot = new Handsontable(this.hotDom, Object.assign(hotConf, {
-      data: [],
+      data: [{
+        id: '', assign: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
+      }],
       isActiveNotifi,
       contextMenu: {
         callback(key, selections) {
@@ -50,6 +52,15 @@ class TaskTable extends Component {
       afterRender() { self.syncPropByRender(); },
       afterUpdateSettings() { self.syncPropByUpdate(); },
     }));
+  }
+  componentDidUpdate(prevProps) {
+    if (!util.equal(this.props.members, prevProps.members)) {
+      hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = this.props.members.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
+      this.hot.updateSettings(Object.assign(hotConf, {
+        userId: this.props.userId,
+        members: this.props.members,
+      }));
+    }
   }
   componentWillUnmount() {
     this.props.onRef(undefined);
@@ -105,8 +116,15 @@ class TaskTable extends Component {
 }
 
 TaskTable.propTypes = {
+  userId: PropTypes.string.isRequired,
+  members: PropTypes.arrayOf(PropTypes.shape({
+    displayName: PropTypes.string.isRequired,
+    photoURL: PropTypes.string.isRequired,
+    uid: PropTypes.string.isRequired,
+  })).isRequired,
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
+    assign: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     estimate: PropTypes.any.isRequired,
     endTime: PropTypes.string.isRequired,

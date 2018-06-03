@@ -1,1 +1,3 @@
-export default { id: '', title: '', estimate: '', startTime: '', endTime: '', memo: '' };
+export default {
+  id: '', assign: '', title: '', estimate: '', startTime: '', endTime: '', memo: '',
+};

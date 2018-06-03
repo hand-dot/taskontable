@@ -672,13 +672,13 @@ class WorkSheet extends Component {
                 <Tab disabled={this.state.readOnly} label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />タスクプール</span>} />
                 <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
                 <Tab disabled={this.state.readOnly} label={<span>{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? <LockOpen style={{ fontSize: 16, marginRight: '0.5em' }} /> : <Lock style={{ fontSize: 16, marginRight: '0.5em' }} />}公開範囲</span>} />
-                <Tab disabled label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />プラグイン(開発中)</span>} />
-                <Tab disabled label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(開発中)</span>} />
+                {!this.state.isMobile && (<Tab disabled label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />プラグイン(開発中)</span>} />)}
+                {!this.state.isMobile && (<Tab disabled label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(開発中)</span>} />)}
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
-              {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} /></div>}
-              {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
+              {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} userId={this.props.userId} members={this.state.members} /></div>}
+              {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} members={this.state.members} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
               {this.state.tab === 2 && (
                 <div style={{ overflow: 'auto' }}>
                   <Members
@@ -721,6 +721,8 @@ class WorkSheet extends Component {
             />)}
             {!this.state.isMobile && (<TaskTable
               onRef={ref => (this.taskTable = ref)} // eslint-disable-line
+              userId={this.props.userId}
+              members={this.state.members}
               tableTasks={this.state.tableTasks}
               handleTableTasks={(newTableTasks) => { this.setState({ tableTasks: newTableTasks }); }}
               handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}

@@ -74,6 +74,7 @@ class TaskPool extends Component {
             editTask={this.editTask.bind(this)}
             doTaskAction={this.doTaskAction.bind(this)}
             tasks={tasks}
+            members={this.props.members}
             isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
           />);
         })()}
@@ -88,6 +89,10 @@ TaskPool.propTypes = {
     lowPriorityTasks: PropTypes.array.isRequired,
     regularTasks: PropTypes.array.isRequired,
   }).isRequired,
+  members: PropTypes.arrayOf(PropTypes.shape({
+    displayName: PropTypes.string.isRequired,
+    uid: PropTypes.string.isRequired,
+  })).isRequired,
   changePoolTasks: PropTypes.func.isRequired,
 };
 

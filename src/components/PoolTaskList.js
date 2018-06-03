@@ -12,6 +12,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
 import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import Edit from '@material-ui/icons/Edit';
 import Save from '@material-ui/icons/Save';
@@ -60,6 +62,7 @@ class TaskList extends Component {
     if (this.state.editingTaskIndex !== nextState.editingTaskIndex) return true;
     if (this.props.isRegularTask !== nextProps.isRegularTask) return true;
     if (util.equal(this.props.tasks, nextProps.tasks)) return false;
+    if (util.equal(this.props.members, nextProps.members)) return false;
     return true;
   }
 
@@ -136,7 +139,9 @@ class TaskList extends Component {
   }
 
   render() {
-    const { tasks, isRegularTask, classes } = this.props;
+    const {
+      tasks, isRegularTask, members, classes,
+    } = this.props;
     return (
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
@@ -145,6 +150,7 @@ class TaskList extends Component {
               <CustomTableCell className={classes.cellInput} padding="none">作業内容</CustomTableCell>
               <CustomTableCell className={classes.cellInput} padding="none">備考</CustomTableCell>
               <CustomTableCell className={classes.miniCellInput} padding="none">見積(分)</CustomTableCell>
+              {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">割当</CustomTableCell>)}
               {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">開始時刻</CustomTableCell>)}
               {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">第何週</CustomTableCell>)}
               {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">何曜日</CustomTableCell>)}
@@ -184,6 +190,35 @@ class TaskList extends Component {
                     disableUnderline={this.state.editingTaskIndex !== index}
                   />
                 </CustomTableCell>
+                {isRegularTask && (
+                <CustomTableCell padding="none">
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <FormControl>
+                      <Select
+                        style={{ fontSize: 12 }}
+                        native
+                        value={this.state.editingTaskIndex !== index ? task.assign : this.state[constants.taskStateType.edit].assign}
+                        onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'assign')}
+                        disabled={this.state.editingTaskIndex !== index}
+                        disableUnderline={this.state.editingTaskIndex !== index}
+                      >
+                        <option value="" />
+                        {members.map(member => (
+                          <option
+                            key={member.uid}
+                            value={member.uid}
+                            style={{
+                                fontSize: 12,
+                              }}
+                          >
+                            {member.displayName}
+                          </option>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                </CustomTableCell>
+                )}
                 {isRegularTask && (
                 <CustomTableCell padding="none">
                   <TextField
@@ -292,6 +327,33 @@ class TaskList extends Component {
               </CustomTableCell>
               {isRegularTask && (
                 <CustomTableCell padding="none">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', fontSize: 12 }}>
+                    <FormControl>
+                      <Select
+                        style={{ fontSize: 12 }}
+                        native
+                        value={this.state[constants.taskStateType.add].assign}
+                        onChange={this.changeTask.bind(this, constants.taskStateType.add, 'assign')}
+                        disabled={this.state.editingTaskIndex !== -1}
+                        disableUnderline={this.state.editingTaskIndex !== -1}
+                      >
+                        <option value="" />
+                        {members.map(member => (
+                          <option
+                            key={member.uid}
+                            value={member.uid}
+                            style={{ fontSize: 12 }}
+                          >
+                            {member.displayName}
+                          </option>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  </div>
+                </CustomTableCell>
+                )}
+              {isRegularTask && (
+                <CustomTableCell padding="none">
                   <TextField
                     type="time"
                     className={classes.miniCellInput}
@@ -341,11 +403,16 @@ class TaskList extends Component {
 TaskList.propTypes = {
   tasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
+    assign: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     estimate: PropTypes.any.isRequired,
     endTime: PropTypes.string.isRequired,
     startTime: PropTypes.string.isRequired,
     memo: PropTypes.string.isRequired,
+  })).isRequired,
+  members: PropTypes.arrayOf(PropTypes.shape({
+    displayName: PropTypes.string.isRequired,
+    uid: PropTypes.string.isRequired,
   })).isRequired,
   addTask: PropTypes.func.isRequired,
   editTask: PropTypes.func.isRequired,

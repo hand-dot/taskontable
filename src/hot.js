@@ -5,10 +5,49 @@ import tableTaskSchema from './schemas/tableTaskSchema';
 import constants from './constants';
 import util from './util';
 import notifiIcon from './images/notifiIcon.png';
+import person from './images/person.svg';
+import logoMini from './images/logo_mini.png';
+import unknown from './images/unknown.png';
 
 let notifiIds = [];
 
 const columns = [
+  {
+    title: '割当',
+    data: 'assign',
+    editor: 'select',
+    selectOptions: [],
+    colWidths: 20,
+    renderer(instance, td, row, col, prop, value) {
+      if (instance.isEmptyRow(row)) {
+        td.innerHTML = null;
+        return td;
+      }
+      const { members } = instance.getSettings();
+      if (!members) {
+        td.innerHTML = null;
+        return td;
+      }
+      const assingedUser = members[instance.getSettings().members.findIndex(member => member.uid === value)];
+      td.className = 'htCenter htMiddle';
+      td.style.paddingTop = '5px';
+      Handsontable.dom.empty(td);
+      const img = document.createElement('IMG');
+      img.style.width = '20px';
+      img.style.height = '20px';
+      img.style.borderRadius = '50%';
+      if (assingedUser) {
+        img.src = assingedUser.photoURL || person;
+        img.title = `@${assingedUser.displayName}` || '@unknown';
+      } else {
+        img.src = value ? unknown : logoMini; // unknownは削除されたユーザー
+        img.title = value ? '@unknown' : '@every';
+      }
+
+      td.appendChild(img);
+      return td;
+    },
+  },
   {
     title: '作業内容',
     data: 'title',
@@ -140,6 +179,9 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
     // タイマーが削除されていた場合には何もしない
     if (!hotInstance.getCellMeta(row, col)[targetNotifiId]) return;
     removeNotifiCell(hotInstance, row, [prop]);
+    // 他人に割り当てられた通知の場合は何もしない(空の場合は通知する)
+    const assign = hotInstance.getDataAtRowProp(row, 'assign');
+    if (assign !== '' && assign !== hotInstance.getSettings().userId) return;
     let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
     let taskTitleLabel;
     if (snooz) {
@@ -181,6 +223,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
  * case2 [削除]・終了時刻が入力された→通知を破棄する
  * case3 [削除・更新]・終了時刻が空になった→通知を破棄し、新しい通知を設定する
  * case4 [更新]・見積・開始時刻のペアが成立した状態で見積or開始時刻が新しい値として入力された→既存の通知
+ * case5 [削除]・割り当てに自分以外(空白は含まない)を入力された→通知を破棄する
  * 通知の情報は開始時刻の通知はstartTime,終了時刻はendTimeのcellMetaに設定する
  * @param  {Object} hotInstance
  * @param  {Integer} row
@@ -188,12 +231,19 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
  * @param  {any} newVal
  */
 const manageNotifi = (hotInstance, row, prop, newVal) => {
-  // 通知を設定するセルはstartTimeのカラム
-  if (prop === 'estimate' || prop === 'startTime' || prop === 'endTime') {
+  if (prop === 'estimate' || prop === 'startTime' || prop === 'endTime' || prop === 'assign') {
+    // case5 他人に割り当てられた通知の場合は削除(空の場合は通知する)
+    const assignVal = prop === 'assign' ? newVal : hotInstance.getDataAtRowProp(row, 'assign');
+    if (assignVal !== '' && assignVal !== hotInstance.getSettings().userId) {
+      removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
+      return;
+    }
+
     // ガードと値の組み立て
     const estimateVal = prop === 'estimate' ? newVal : hotInstance.getDataAtRowProp(row, 'estimate');
     const startTimeVal = prop === 'startTime' ? newVal : hotInstance.getDataAtRowProp(row, 'startTime');
     const endTimeVal = prop === 'endTime' ? newVal : hotInstance.getDataAtRowProp(row, 'endTime');
+
     // case1 見積が空か0,もしくは開始時刻が空の場合、既に登録されている通知を削除
     if (estimateVal === '' || estimateVal === 0 || startTimeVal === '') {
       removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
@@ -431,7 +481,7 @@ export const hotConf = Object.assign({}, hotBaseConf, {
     const changesLength = changes.length;
     for (let i = 0; i < changesLength; i += 1) {
       const [row, prop, oldVal, newVal] = changes[i];
-      if ((prop === 'startTime' || prop === 'endTime' || prop === 'estimate') && oldVal !== newVal) {
+      if ((prop === 'startTime' || prop === 'endTime' || prop === 'estimate' || prop === 'assign') && oldVal !== newVal) {
         manageNotifi(this, row, prop, newVal);
       }
     }

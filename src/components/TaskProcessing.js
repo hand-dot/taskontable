@@ -132,6 +132,7 @@ class TaskProcessing extends Component {
 TaskProcessing.propTypes = {
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
+    assign: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     estimate: PropTypes.any.isRequired,
     endTime: PropTypes.string.isRequired,
