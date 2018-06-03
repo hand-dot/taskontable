@@ -707,6 +707,7 @@ class WorkSheet extends Component {
           </ExpansionPanel>
           <Paper elevation={1}>
             <TableCtl
+              userId={this.props.userId}
               tableTasks={this.state.tableTasks}
               date={this.state.date}
               savedAt={this.state.savedAt}

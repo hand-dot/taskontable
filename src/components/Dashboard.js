@@ -76,8 +76,8 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { theme, members } = this.props;
-    const targetTask = this.state.target === '' ? this.props.tableTasks : this.props.tableTasks.filter(task => task.assign === '' || task.assign === this.state.target);
+    const { theme, tableTasks, members } = this.props;
+    const targetTask = this.state.target === '' ? tableTasks : tableTasks.filter(task => task.assign === '' || task.assign === this.state.target);
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} style={{ marginBottom: theme.spacing.unit }}>
@@ -89,7 +89,7 @@ class Dashboard extends Component {
               style={{ fontSize: 12 }}
               native
               value={this.state.target}
-              onChange={(e) => { this.setState({ target: e.target.value }); setTimeout(() => this.updateStateByTableTasks(this.props.tableTasks)); }}
+              onChange={(e) => { this.setState({ target: e.target.value }); setTimeout(() => this.updateStateByTableTasks(tableTasks)); }}
             >
               <option value="">
                 @every

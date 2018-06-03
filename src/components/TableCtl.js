@@ -62,7 +62,7 @@ class TableCtl extends Component {
 
   render() {
     const {
-      tableTasks, date, savedAt, saveable, saveWorkSheet, classes, theme,
+      userId, tableTasks, date, savedAt, saveable, saveWorkSheet, classes, theme,
     } = this.props;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
@@ -71,7 +71,7 @@ class TableCtl extends Component {
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems="center" justify="center" spacing={0}>
           <Hidden xsDown>
             <Grid item xs={3}>
-              <TaskProcessing tableTasks={tableTasks} date={date} />
+              <TaskProcessing tableTasks={tableTasks.filter(task => task.assign === '' || task.assign === userId)} date={date} />
             </Grid>
           </Hidden>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
@@ -128,6 +128,7 @@ class TableCtl extends Component {
 }
 
 TableCtl.propTypes = {
+  userId: PropTypes.string.isRequired,
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     assign: PropTypes.string.isRequired,
