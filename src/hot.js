@@ -30,7 +30,7 @@ const columns = [
     allowInvalid: false,
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
-      const isActiveNotifi = instance.getSettings().isActiveNotifi;
+      const { isActiveNotifi } = instance.getSettings();
       td.innerHTML = `${value} ${isActiveNotifi && cellProperties.startTimeNotifiId ? '⌚' : ''}`; // eslint-disable-line no-param-reassign
     },
   },
@@ -48,7 +48,7 @@ const columns = [
       const endTimeVal = value;
       const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
       const estimateVal = instance.getDataAtRowProp(row, 'estimate');
-      const isActiveNotifi = instance.getSettings().isActiveNotifi;
+      const { isActiveNotifi } = instance.getSettings();
       if (endTimeVal !== '' && startTimeVal !== '') {
         // 完了しているタスク
         td.parentNode.style.backgroundColor = constants.cellColor.DONE;
@@ -130,7 +130,7 @@ const removeNotifiCell = (hotInstance, row, props) => {
 
 const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
   // 権限を取得し通知を登録
-  const permission = Notification.permission;
+  const { permission } = Notification;
   const targetNotifiId = `${prop}NotifiId`;
   // タイマーの2重登録にならないように既に登録されているタイマーを削除
   removeNotifiCell(hotInstance, row, [prop]);
@@ -264,22 +264,22 @@ export const contextMenuCallback = (key, selections, hotInstance) => {
   selections.forEach((selection) => {
     if (key === 'start_task') {
       let confirm = false;
-      for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+      for (let { row } = selection.start; row <= selection.end.row; row += 1) {
         if (hotInstance.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
         if (hotInstance.getDataAtRowProp(row, 'startTime') !== '') confirm = true;
       }
       if (confirm && !window.confirm('終了時刻もしくは開始時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
-      for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+      for (let { row } = selection.start; row <= selection.end.row; row += 1) {
         hotInstance.setDataAtRowProp(row, 'endTime', '');
         hotInstance.setDataAtRowProp(row, 'startTime', moment().format(constants.TIMEFMT));
       }
     } else if (key === 'done_task') {
       let confirm = false;
-      for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+      for (let { row } = selection.start; row <= selection.end.row; row += 1) {
         if (hotInstance.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
       }
       if (confirm && !window.confirm('終了時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
-      for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+      for (let { row } = selection.start; row <= selection.end.row; row += 1) {
         // 開始時刻が空だった場合は現在時刻を設定する
         if (hotInstance.getDataAtRowProp(row, 'startTime') === '') hotInstance.setDataAtRowProp(row, 'startTime', moment().format(constants.TIMEFMT));
         hotInstance.setDataAtRowProp(row, 'endTime', moment().format(constants.TIMEFMT));
@@ -340,7 +340,9 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   const hotData = [];
   const rowCount = hotInstance.countSourceRows();
   for (let index = 0; index < rowCount; index += 1) {
-    if (!hotInstance.isEmptyRow(index)) hotData.push(hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
+    if (!hotInstance.isEmptyRow(index)) {
+      hotData.push(hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
+    }
   }
   return util.cloneDeep(hotData.filter(data => !util.equal(tableTaskSchema, data)));
 };
