@@ -38,7 +38,15 @@ class TaskPool extends Component {
   }
 
   render() {
-    const { poolTasks } = this.props;
+    const { userId, poolTasks } = this.props;
+    let tasks = null;
+    if (this.state.tab === constants.taskPoolType.HIGHPRIORITY) {
+      tasks = poolTasks.highPriorityTasks;
+    } else if (this.state.tab === constants.taskPoolType.LOWPRIORITY) {
+      tasks = poolTasks.lowPriorityTasks;
+    } else if (this.state.tab === constants.taskPoolType.REGULAR) {
+      tasks = poolTasks.regularTasks;
+    }
     return (
       <div>
         <AppBar style={{ boxShadow: 'none', borderBottom: '1px solid #ccc' }} color="inherit" position="static">
@@ -60,30 +68,22 @@ class TaskPool extends Component {
             );
           })()}
         </AppBar>
-        {(() => {
-          let tasks = null;
-          if (this.state.tab === constants.taskPoolType.HIGHPRIORITY) {
-            tasks = poolTasks.highPriorityTasks;
-          } else if (this.state.tab === constants.taskPoolType.LOWPRIORITY) {
-            tasks = poolTasks.lowPriorityTasks;
-          } else if (this.state.tab === constants.taskPoolType.REGULAR) {
-            tasks = poolTasks.regularTasks;
-          }
-          return (<PoolTaskList
-            addTask={this.addTask.bind(this)}
-            editTask={this.editTask.bind(this)}
-            doTaskAction={this.doTaskAction.bind(this)}
-            tasks={tasks}
-            members={this.props.members}
-            isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
-          />);
-        })()}
+        <PoolTaskList
+          userId={userId}
+          addTask={this.addTask.bind(this)}
+          editTask={this.editTask.bind(this)}
+          doTaskAction={this.doTaskAction.bind(this)}
+          tasks={tasks}
+          members={this.props.members}
+          isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
+        />
       </div>
     );
   }
 }
 
 TaskPool.propTypes = {
+  userId: PropTypes.string.isRequired,
   poolTasks: PropTypes.shape({
     highPriorityTasks: PropTypes.array.isRequired,
     lowPriorityTasks: PropTypes.array.isRequired,

@@ -93,6 +93,8 @@ class TaskTableMobile extends Component {
       alert('作業内容が空の状態では保存できません。');
       return;
     }
+    // タスクを追加した場合には割当を自動的に自分にする
+    this.state[constants.taskStateType.add].assign = this.props.userId;
     this.props.changeTableTasks(constants.taskActionType.ADD, this.state[constants.taskStateType.add]);
     this.setState({ [constants.taskStateType.add]: getTableTaskSchema() });
     setTimeout(() => { this.root.scrollTop = this.root.scrollHeight; });
@@ -297,6 +299,7 @@ class TaskTableMobile extends Component {
 }
 
 TaskTableMobile.propTypes = {
+  userId: PropTypes.string.isRequired,
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     assign: PropTypes.string.isRequired,

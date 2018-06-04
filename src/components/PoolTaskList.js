@@ -55,17 +55,6 @@ class TaskList extends Component {
     this.setState({ editingTaskIndex: -1 });
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (!util.equal(this.state.anchorEl, nextState.anchorEl)) return true;
-    if (!util.equal(this.state[constants.taskStateType.add], nextState[constants.taskStateType.add])) return true;
-    if (!util.equal(this.state[constants.taskStateType.edit], nextState[constants.taskStateType.edit])) return true;
-    if (this.state.editingTaskIndex !== nextState.editingTaskIndex) return true;
-    if (this.props.isRegularTask !== nextProps.isRegularTask) return true;
-    if (util.equal(this.props.tasks, nextProps.tasks)) return false;
-    if (util.equal(this.props.members, nextProps.members)) return false;
-    return true;
-  }
-
   openTaskAction(index, e) {
     const anchorEl = Object.assign([], this.state.anchorEl);
     anchorEl[index] = e.currentTarget;
@@ -133,6 +122,8 @@ class TaskList extends Component {
         return;
       }
     }
+    // タスクを追加した場合には割当を自動的に自分にする
+    this.state[constants.taskStateType.add].assign = this.props.userId;
     this.props.addTask(this.state[constants.taskStateType.add]);
     this.setState({ [constants.taskStateType.add]: getPoolTaskSchema() });
     setTimeout(() => { this.root.scrollTop = this.root.scrollHeight; });
@@ -401,6 +392,7 @@ class TaskList extends Component {
 }
 
 TaskList.propTypes = {
+  userId: PropTypes.string.isRequired,
   tasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     assign: PropTypes.string.isRequired,

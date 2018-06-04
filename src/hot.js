@@ -475,14 +475,36 @@ export const hotConf = Object.assign({}, hotBaseConf, {
     // 行がずれるので通知を再設定
     resetNotifi(this);
   },
-  afterChange(changes) {
+  beforeChange(changes) {
     if (!changes) return;
-    if (!this.getSettings().isActiveNotifi) return;
+    const { userId } = this.getSettings();
+    if (!userId) return;
     const changesLength = changes.length;
     for (let i = 0; i < changesLength; i += 1) {
       const [row, prop, oldVal, newVal] = changes[i];
-      if ((prop === 'startTime' || prop === 'endTime' || prop === 'estimate' || prop === 'assign') && oldVal !== newVal) {
-        manageNotifi(this, row, prop, newVal);
+      // 新規にタスクを作成した場合に下記の処理で割当を自分に自動で設定する
+      if (newVal && (prop !== 'assign') && this.isEmptyRow(row)) {
+        this.setDataAtRowProp(row, 'assign', userId);
+      }
+    }
+  },
+  afterChange(changes) {
+    if (!changes) return;
+    const { isActiveNotifi } = this.getSettings();
+    const changesLength = changes.length;
+    const assignIndex = columns.findIndex(column => column.data === 'assign');
+    for (let i = 0; i < changesLength; i += 1) {
+      const [row, prop, oldVal, newVal] = changes[i];
+      if (oldVal !== newVal) {
+        // 下記の処理で割当以外が全て空だった場合に割当を自動的に削除する
+        if (prop !== 'assign') {
+          if (!newVal && !this.isEmptyRow(row) && this.getDataAtRow(row).every((data, index) => (index === assignIndex ? data : !data))) {
+            this.setDataAtRowProp(row, 'assign', '');
+          }
+        }
+        if (isActiveNotifi && (prop === 'startTime' || prop === 'endTime' || prop === 'estimate' || prop === 'assign')) {
+          manageNotifi(this, row, prop, newVal);
+        }
       }
     }
   },
