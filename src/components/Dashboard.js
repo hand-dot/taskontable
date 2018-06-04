@@ -76,20 +76,23 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { theme, tableTasks, members } = this.props;
+    const {
+      theme, tableTasks, members, worksheetName,
+    } = this.props;
     const targetTask = this.state.target === '' ? tableTasks : tasksUtil.getTasksByAssign(tableTasks, this.state.target);
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} style={{ marginBottom: theme.spacing.unit }}>
           <Typography variant="subheading">
-            対象
+            ワークシート / メンバー
           </Typography>
+          <div style={{ fontSize: '1rem', marginRight: theme.spacing.unit, display: 'inline-block' }}>{worksheetName} / </div>
           <FormControl>
             <Select
-              style={{ fontSize: 12 }}
               native
               value={this.state.target}
               onChange={(e) => { this.setState({ target: e.target.value }); setTimeout(() => this.updateStateByTableTasks(tableTasks)); }}
+              style={{ fontSize: '1rem' }}
             >
               <option value="">
                 @every
@@ -98,7 +101,6 @@ class Dashboard extends Component {
                 <option
                   key={member.uid}
                   value={member.uid}
-                  style={{ fontSize: 12 }}
                 >
                   @{member.displayName}
                 </option>
@@ -147,6 +149,7 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
+  worksheetName: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,

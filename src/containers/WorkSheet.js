@@ -678,7 +678,7 @@ class WorkSheet extends Component {
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
-              {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.tableTasks} userId={this.props.userId} members={this.state.members} /></div>}
+              {this.state.tab === 0 && <div><Dashboard worksheetName={this.state.worksheetName} tableTasks={this.state.tableTasks} userId={this.props.userId} members={this.state.members} /></div>}
               {this.state.tab === 1 && <div><TaskPool poolTasks={this.state.poolTasks} members={this.state.members} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
               {this.state.tab === 2 && (
                 <div style={{ overflow: 'auto' }}>
