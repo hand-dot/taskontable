@@ -86,4 +86,14 @@ export default {
     });
     return obj;
   },
+
+  /**
+   * タスクの配列を受け取り、assignプロパティが空もしくは指定したassignと一致したタスクを返します。
+   * @param  {Array} tasks
+   * @param  {String} assign
+   */
+  getTasksByAssign(tasks, assign) {
+    const assignedTask = t => t.assign === '' || t.assign === assign;
+    return R.compose(R.filter(assignedTask, R))(tasks);
+  },
 };

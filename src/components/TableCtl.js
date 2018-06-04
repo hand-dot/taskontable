@@ -71,7 +71,7 @@ class TableCtl extends Component {
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems="center" justify="center" spacing={0}>
           <Hidden xsDown>
             <Grid item xs={3}>
-              <TaskProcessing tableTasks={tableTasks.filter(task => task.assign === '' || task.assign === userId)} date={date} />
+              <TaskProcessing tableTasks={tasksUtil.getTasksByAssign(tableTasks, userId)} date={date} />
             </Grid>
           </Hidden>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
@@ -87,7 +87,7 @@ class TableCtl extends Component {
                 return (
                   <Typography style={{ animation: 'good 1s linear 0s 1', marginTop: 10, color: constants.brandColor.base.BLUE }} variant="caption">
                     <ThumbUp style={{ fontSize: 16 }} />
-                  Complete!
+                    Complete!
                   </Typography>
                 );
               }
@@ -109,11 +109,11 @@ class TableCtl extends Component {
               </div>
             </Tooltip>
             {!util.isMobile() && (
-            <Tooltip title={`最終保存時刻 : ${savedAt}`} placement="top">
-              <div style={{ display: 'inline-block' }}>
-                <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><Save style={{ fontSize: 16 }} /></Button>
-              </div>
-            </Tooltip>
+              <Tooltip title={`最終保存時刻 : ${savedAt}`} placement="top">
+                <div style={{ display: 'inline-block' }}>
+                  <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><Save style={{ fontSize: 16 }} /></Button>
+                </div>
+              </Tooltip>
             )}
             <Tooltip title={moment(date, constants.DATEFMT).add(1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>

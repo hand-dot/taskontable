@@ -51,7 +51,7 @@ class Dashboard extends Component {
   }
 
   updateStateByTableTasks(tableTasks) {
-    const targetTask = this.state.target === '' ? tableTasks : tableTasks.filter(task => task.assign === '' || task.assign === this.state.target);
+    const targetTask = this.state.target === '' ? tableTasks : tasksUtil.getTasksByAssign(tableTasks, this.state.target);
     const remainingData = targetTask.filter(data => !data.startTime || !data.endTime);
     const remainingMinute = tasksUtil.getTotalEstimateMinute(remainingData);
     const doneData = targetTask.filter(data => data.startTime && data.endTime);
@@ -77,7 +77,7 @@ class Dashboard extends Component {
 
   render() {
     const { theme, tableTasks, members } = this.props;
-    const targetTask = this.state.target === '' ? tableTasks : tableTasks.filter(task => task.assign === '' || task.assign === this.state.target);
+    const targetTask = this.state.target === '' ? tableTasks : tasksUtil.getTasksByAssign(tableTasks, this.state.target);
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} style={{ marginBottom: theme.spacing.unit }}>
