@@ -8,7 +8,7 @@ import Favorite from '@material-ui/icons/Favorite';
 import util from '../util';
 import tasksUtil from '../tasksUtil';
 import constants from '../constants';
-import openTaskSchema from '../schemas/openTaskSchema';
+import processingTaskSchema from '../schemas/processingTaskSchema';
 
 
 const styles = theme => ({
@@ -20,23 +20,27 @@ const styles = theme => ({
   grey: { background: constants.brandColor.base.GREY },
 });
 
-function getOpenTaskSchema() {
-  return util.cloneDeep(openTaskSchema);
+function getProcessingTaskSchema() {
+  return util.cloneDeep(processingTaskSchema);
 }
 
-function getTitle(openTask, defaultTitle, isShortTitle) {
-  const actuallyMinute = util.getTimeDiffMinute(openTask.startTime, openTask.now);
+function getTitle(processingTask, defaultTitle, isShortTitle) {
+  const actuallyMinute = util.getTimeDiffMinute(processingTask.startTime, processingTask.now);
   let title = '';
-  if (openTask.id) {
-    title = isShortTitle ? `${(openTask.title.length < 18 ? openTask.title || '' : `${openTask.title.substring(0, 15)}...`) || '無名タスク'}` : openTask.title || '無名タスク';
-    const isOver = actuallyMinute >= openTask.estimate;
-    if (openTask.estimate - actuallyMinute === 1 || actuallyMinute - openTask.estimate === 0) {
-      const sec = moment(openTask.now, 'HH:mm:ss').format('s');
-      title = `${isOver ? `${sec}秒オーバー` : `残${60 - sec}秒`} - ${title}`;
-    } else if (isOver) {
-      title = `${`${actuallyMinute - openTask.estimate}分オーバー`} - ${title}`;
+  if (processingTask.id) {
+    title = isShortTitle ? `${(processingTask.title.length < 18 ? processingTask.title || '' : `${processingTask.title.substring(0, 15)}...`) || '無名タスク'}` : processingTask.title || '無名タスク';
+    if (processingTask.estimate) {
+      const isOver = actuallyMinute >= processingTask.estimate;
+      if (processingTask.estimate - actuallyMinute === 1 || actuallyMinute - processingTask.estimate === 0) {
+        const sec = moment(processingTask.now, 'HH:mm:ss').format('s');
+        title = `${isOver ? `${sec}秒オーバー` : `残${60 - sec}秒`} - ${title}`;
+      } else if (isOver) {
+        title = `${`${actuallyMinute - processingTask.estimate}分オーバー`} - ${title}`;
+      } else {
+        title = actuallyMinute < 0 ? defaultTitle : `残${processingTask.estimate - actuallyMinute}分- ${title}`;
+      }
     } else {
-      title = actuallyMinute < 0 ? defaultTitle : `残${openTask.estimate - actuallyMinute}分- ${title}`;
+      title = `${actuallyMinute <= 0 ? `${moment(processingTask.now, 'HH:mm:ss').format('s')}秒` : `${actuallyMinute}分`}経過 - ${title}`;
     }
   } else {
     title = defaultTitle;
@@ -47,20 +51,20 @@ function getTitle(openTask, defaultTitle, isShortTitle) {
 class TaskProcessing extends Component {
   constructor(props) {
     super(props);
-    this.bindOpenTaskIntervalID = '';
+    this.bindProcessingTaskIntervalID = '';
     this.oldTimeDiffMinute = '';
     this.state = {
       isMobile: util.isMobile(),
-      openTask: getOpenTaskSchema(),
+      processingTask: getProcessingTaskSchema(),
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.bindOpenTaskProcessing(nextProps.tableTasks);
+    this.bindProcessingTaskProcessing(nextProps.tableTasks);
   }
 
   componentWillUnmount() {
-    if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
+    if (this.bindProcessingTaskIntervalID) clearInterval(this.bindProcessingTaskIntervalID);
     document.title = constants.TITLE;
   }
 
@@ -68,25 +72,27 @@ class TaskProcessing extends Component {
    * 開始しているタスクを見つけ、経過時間をタイトルに反映する
    * @param  {Array} tasks タスクの配列
    */
-  bindOpenTaskProcessing(tasks) {
+  bindProcessingTaskProcessing(tasks) {
     if (this.state.isMobile) return;
-    if (this.bindOpenTaskIntervalID) clearInterval(this.bindOpenTaskIntervalID);
-    const openTask = tasksUtil.getSortedTasks(tasks).find(task => task.startTime && task.endTime === '' && task.estimate);
-    if (util.isToday(this.props.date) && openTask) {
-      this.bindOpenTaskIntervalID = setInterval(() => {
+    if (this.bindProcessingTaskIntervalID) clearInterval(this.bindProcessingTaskIntervalID);
+    const processingTask = tasksUtil.getSortedTasks(tasks).find(task => task.startTime && task.endTime === '');
+    if (util.isToday(this.props.date) && processingTask) {
+      this.bindProcessingTaskIntervalID = setInterval(() => {
         const now = moment();
-        const newTimeDiffMinute = util.getTimeDiffMinute(openTask.startTime, now.format(constants.TIMEFMT));
+        const newTimeDiffMinute = util.getTimeDiffMinute(processingTask.startTime, now.format(constants.TIMEFMT));
         if (newTimeDiffMinute >= 0) {
-          openTask.now = now.format('HH:mm:ss');
-          this.setState({ openTask: util.setIdIfNotExist(openTask) });
-        } else if (!util.equal(this.state.openTask, openTaskSchema)) this.setState({ openTask: getOpenTaskSchema() });
-        document.title = getTitle(openTask, constants.TITLE, false);
+          processingTask.now = now.format('HH:mm:ss');
+          this.setState({ processingTask: util.setIdIfNotExist(processingTask) });
+        } else if (!util.equal(this.state.processingTask, getProcessingTaskSchema)) {
+          this.setState({ processingTask: getProcessingTaskSchema() });
+        }
+        document.title = getTitle(processingTask, constants.TITLE, false);
         this.oldTimeDiffMinute = newTimeDiffMinute;
       }, 1000);
     } else {
-      this.bindOpenTaskIntervalID = '';
+      this.bindProcessingTaskIntervalID = '';
       document.title = constants.TITLE;
-      if (!util.equal(this.state.openTask, openTaskSchema)) this.setState({ openTask: getOpenTaskSchema() });
+      if (!util.equal(this.state.processingTask, processingTaskSchema)) this.setState({ processingTask: getProcessingTaskSchema() });
     }
   }
 
@@ -94,30 +100,34 @@ class TaskProcessing extends Component {
     const { classes, theme } = this.props;
     let remainPercent = 0;
     let color = '';
-    if (this.state.openTask.id) {
-      remainPercent = Math.floor(util.getTimeDiffSec(`${this.state.openTask.startTime}:00`, this.state.openTask.now) * (100 / (this.state.openTask.estimate * 60)));
-      if (remainPercent < 50) {
-        color = 'green';
-      } else if (remainPercent >= 50 && remainPercent < 75) {
-        color = 'yellow';
+    if (this.state.processingTask.id) {
+      if (this.state.processingTask.estimate) {
+        remainPercent = Math.floor(util.getTimeDiffSec(`${this.state.processingTask.startTime}:00`, this.state.processingTask.now) * (100 / (this.state.processingTask.estimate * 60)));
+        if (remainPercent < 50) {
+          color = 'green';
+        } else if (remainPercent >= 50 && remainPercent < 75) {
+          color = 'yellow';
+        } else {
+          color = 'red';
+        }
       } else {
-        color = 'red';
+        color = 'yellow';
       }
     } else {
       color = 'grey';
     }
     return (
-      <div style={{ paddingLeft: theme.spacing.unit * 2, paddingRight: theme.spacing.unit * 2 }} title={this.state.openTask.title}>
+      <div style={{ paddingLeft: theme.spacing.unit * 2, paddingRight: theme.spacing.unit * 2 }} title={this.state.processingTask.title}>
         <Typography variant="caption" align="center">
           <Favorite
             style={{
               fontSize: 10,
               marginRight: theme.spacing.unit,
-              color: this.state.openTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
-              animation: this.state.openTask.id ? 'blink 1s infinite' : '',
+              color: this.state.processingTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
+              animation: this.state.processingTask.id ? 'blink 1s infinite' : '',
             }}
           />
-          {getTitle(this.state.openTask, '開始しているタスクはありません。', true)}
+          {getTitle(this.state.processingTask, '開始しているタスクはありません。', true)}
         </Typography>
         <LinearProgress
           classes={{ root: classes.progress, barColorPrimary: classes[color], colorPrimary: classes.grey }}
