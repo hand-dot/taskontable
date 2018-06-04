@@ -70,7 +70,7 @@ const columns = [
     correctFormat: true,
     renderer(instance, td, row, col, prop, value, cellProperties) {
       const { isActiveNotifi } = instance.getSettings();
-      td.innerHTML = `${value} ${isActiveNotifi && cellProperties.startTimeNotifiId ? '⌚' : ''}`; // eslint-disable-line no-param-reassign
+      td.innerHTML = `${value} ${isActiveNotifi && cellProperties.startTimeNotifiId ? '⏰' : ''}`; // eslint-disable-line no-param-reassign
     },
   },
   {
@@ -95,7 +95,7 @@ const columns = [
         // 見積もりが空なので警告にする
         td.parentNode.style.backgroundColor = constants.cellColor.WARNING;
       } else if (isActiveNotifi && startTimeVal !== '' && estimateVal !== '') {
-      // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
+        // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
         const nowTimeVal = moment().format(constants.TIMEFMT);
         const expectedEndTimeVal = moment(startTimeVal, constants.TIMEFMT).add(estimateVal, 'minutes').format(constants.TIMEFMT);
         const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
