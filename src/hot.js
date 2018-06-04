@@ -104,7 +104,7 @@ const columns = [
         } else {
           td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
         }
-        td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${isActiveNotifi && cellProperties.endTimeNotifiId ? '⌚' : ''}</span>`; // eslint-disable-line no-param-reassign
+        td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${isActiveNotifi && cellProperties.endTimeNotifiId ? '⏰' : ''}</span>`; // eslint-disable-line no-param-reassign
       }
       return td;
     },

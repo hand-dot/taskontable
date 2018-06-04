@@ -663,7 +663,6 @@ class WorkSheet extends Component {
                 value={this.state.tab}
                 onChange={(e, tab) => {
                   this.setState({ tab, isOpenDashboard: !(this.state.isOpenDashboard && this.state.tab === tab) });
-                  setTimeout(() => this.forceUpdate());
                 }}
                 scrollable
                 scrollButtons="off"
