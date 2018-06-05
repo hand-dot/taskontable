@@ -22,7 +22,7 @@ const styles = {
     minWidth: 25,
   },
   divider: {
-    margin: '0 1rem',
+    margin: '0 0.5rem',
   },
 };
 
@@ -32,7 +32,7 @@ function ScriptsEditor(props) {
   } = props;
   return (
     <Grid container>
-      <Grid item xs={6}>
+      <Grid item xs={5}>
         <Paper square elevation={0}>
           <Typography gutterBottom variant="subheading">
             {(() => {
@@ -102,7 +102,7 @@ function ScriptsEditor(props) {
           </Typography>
         </Paper>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={7}>
         <CodeMirror
           value={script || '// not set scripts. please load sample scripts!'}
           options={editorOptions}

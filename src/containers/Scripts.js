@@ -18,7 +18,7 @@ import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
-import { hotBaseConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import ScriptsEditor from '../components/ScriptsEditor';
 import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
@@ -58,6 +58,7 @@ class Scripts extends Component {
     this.exampleHot = null;
     this.syncStateByRender = debounce(this.syncStateByRender, constants.RENDER_DELAY);
     this.state = {
+      worksheetId: '',
       isOpenSaveSnackbar: false,
       isOpenScriptSnackbar: false,
       scriptSnackbarText: '',
@@ -71,18 +72,47 @@ class Scripts extends Component {
   }
 
   componentWillMount() {
-    database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
-      if (snapshot.exists() && snapshot.val()) this.setState({ scriptEnable: true });
-    });
+    // 認証していないユーザーとメンバー以外をルートに返す
+    const worksheetId = encodeURI(this.props.match.params.id);
+    if (this.props.userId && worksheetId) {
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value').then((memberIds) => {
+        if (memberIds.exists() && Array.isArray(memberIds.val()) && memberIds.val().includes(this.props.userId)) {
+          this.setState({ worksheetId });
+          // メンバーを取得する処理
+          Promise.all(memberIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
+            const memberDatas = members.filter(member => member.exists()).map(member => member.val());
+            setTimeout(() => {
+              hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = memberDatas.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
+              this.exampleHot.updateSettings(Object.assign(this.exampleHot.getSettings, {
+                userId: this.props.userId,
+                members: memberDatas,
+              }));
+            });
+          });
+          // スクリプトのオンオフを取得する処理
+          database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/scripts/enable`).once('value').then((enable) => {
+            if (enable.exists() && enable.val()) this.setState({ scriptEnable: true });
+          });
+          // 各スクリプトを取得する処理
+          setTimeout(() => {
+            this.loadScript('importScript');
+            this.loadScript('exportScript');
+          });
+        } else {
+          this.props.history.push('/');
+        }
+      });
+    } else {
+      this.props.history.push('/');
+    }
   }
 
   componentDidMount() {
-    const noConfirm = true;
-    this.resetScript('importScript', noConfirm);
-    this.resetScript('exportScript', noConfirm);
+    if (!this.props.userId) return;
     const self = this;
-    this.exampleHot = new Handsontable(this.exampleHotDom, Object.assign({}, hotBaseConf, {
-      isActiveNotifi: true,
+    this.exampleHot = new Handsontable(this.exampleHotDom, Object.assign({}, hotConf, {
+      userId: this.props.userId,
+      isActiveNotifi: false,
       renderAllRows: true,
       height: 300,
       colWidths: 'auto',
@@ -107,11 +137,11 @@ class Scripts extends Component {
     }
   }
 
-  backToApp() {
+  backToWorkSheet() {
     if (this.state.importScript !== this.state.importScriptBk || this.state.exportScript !== this.state.exportScriptBk) {
-      if (!window.confirm('保存していない内容がありますが、アプリに戻ってもよろしいですか？')) return;
+      if (!window.confirm('保存していない内容がありますが、ワークシートに戻ってもよろしいですか？')) return;
     }
-    this.props.history.goBack();
+    this.props.history.push(`/${this.state.worksheetId}`);
   }
 
   resetExampleHot() {
@@ -120,24 +150,28 @@ class Scripts extends Component {
     setTimeout(() => { if (this.exampleHot) this.exampleHot.render(); });
   }
 
-  resetScript(scriptType = 'exportScript', noConfirm) {
-    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
-    if (!noConfirm && !window.confirm(`${scriptType}を保存前に戻してもよろしいですか？`)) return;
-    database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/${scriptType}`).once('value').then((snapshot) => {
-      const script = snapshot.exists() && snapshot.val() ? snapshot.val() : '';
+  loadScript(scriptType) {
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/scripts/${scriptType}`).once('value').then((snapshot) => {
+      const script = snapshot.exists() && snapshot.val() ? snapshot.val() : '// not set scripts. please load sample scripts!';
       this.setState({ [scriptType]: script, [`${scriptType}Bk`]: script });
     });
   }
 
-  saveScript(scriptType = 'exportScript') {
+  resetScript(scriptType) {
+    if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
+    if (!window.confirm(`${scriptType}を保存前に戻してもよろしいですか？`)) return;
+    this.loadScript(scriptType);
+  }
+
+  saveScript(scriptType) {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!window.confirm(`${scriptType}を保存してもよろしいですか？`)) return;
-    database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
+    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/scripts/${scriptType}`).set(this.state[scriptType]).then(() => {
       this.setState({ isOpenSaveSnackbar: true, [`${scriptType}Bk`]: this.state[scriptType] });
     });
   }
 
-  fireScript(scriptType = 'exportScript') {
+  fireScript(scriptType) {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!window.confirm(`${scriptType}を実行してもよろしいですか？`)) return;
     const data = getHotTasksIgnoreEmptyTask(this.exampleHot);
@@ -152,7 +186,7 @@ class Scripts extends Component {
     });
   }
 
-  loadExampleScript(scriptType = 'exportScript') {
+  loadExampleScript(scriptType) {
     if (scriptType !== 'exportScript' && scriptType !== 'importScript') return;
     if (!window.confirm(`${scriptType}のサンプルをロードしてもよろしいですか？`)) return;
     this.setState({ [scriptType]: scriptType === 'exportScript' ? exampleExportScript.toString() : exampleImportScript.toString() });
@@ -169,7 +203,7 @@ class Scripts extends Component {
   handleScriptEnable(event) {
     event.persist();
     this.setState({ scriptEnable: event.target.checked });
-    database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/enable`).set(event.target.checked).then(() => {
+    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/scripts/enable`).set(event.target.checked).then(() => {
       this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `スクリプトを${event.target.checked ? '有効' : '無効'}にしました。` });
     });
   }
@@ -221,12 +255,12 @@ class Scripts extends Component {
             </Typography>
           </Paper>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={8}>
           <Paper square elevation={0}>
             <div ref={(node) => { this.exampleHotDom = node; }} />
           </Paper>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <CodeMirror
             value={this.state.exampleTaskData}
             options={Object.assign({}, editorOptions, { readOnly: true })}
@@ -239,7 +273,7 @@ class Scripts extends Component {
             scriptBk={this.state.importScriptBk}
             exampleScript={exampleImportScript.toString()}
             editorOptions={editorOptions}
-            resetScript={this.resetScript.bind(this, 'importScript', false)}
+            resetScript={this.resetScript.bind(this, 'importScript')}
             saveScript={this.saveScript.bind(this, 'importScript')}
             fireScript={this.fireScript.bind(this, 'importScript')}
             loadExampleScript={this.loadExampleScript.bind(this, 'importScript')}
@@ -253,7 +287,7 @@ class Scripts extends Component {
             scriptBk={this.state.exportScriptBk}
             exampleScript={exampleExportScript.toString()}
             editorOptions={editorOptions}
-            resetScript={this.resetScript.bind(this, 'exportScript', false)}
+            resetScript={this.resetScript.bind(this, 'exportScript')}
             saveScript={this.saveScript.bind(this, 'exportScript')}
             fireScript={this.fireScript.bind(this, 'exportScript')}
             loadExampleScript={this.loadExampleScript.bind(this, 'exportScript')}
@@ -261,7 +295,7 @@ class Scripts extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button size="small" onClick={this.backToApp.bind(this)} variant="raised">アプリに戻る</Button>
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">ワークシートに戻る</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -283,6 +317,7 @@ Scripts.propTypes = {
   userId: PropTypes.string.isRequired,
   history: PropTypes.object.isRequired, // eslint-disable-line
   classes: PropTypes.object.isRequired, // eslint-disable-line
+  match: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 

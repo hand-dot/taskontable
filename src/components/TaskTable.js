@@ -38,7 +38,7 @@ class TaskTable extends Component {
           if (key === 'reverse_taskpool_hight' || key === 'reverse_taskpool_low') {
             const taskPoolType = key === 'reverse_taskpool_hight' ? constants.taskPoolType.HIGHPRIORITY : constants.taskPoolType.LOWPRIORITY;
             selections.forEach((selection) => {
-              for (let row = selection.start.row; row <= selection.end.row; row += 1) {
+              for (let { row } = selection.start; row <= selection.end.row; row += 1) {
                 // テーブルタスクからタスクプールに移すタイミングでテーブルが1行減るので常に選択開始行を処理する
                 self.moveTableTaskToPoolTask(taskPoolType, selection.start.row, this);
               }

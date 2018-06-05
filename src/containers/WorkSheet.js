@@ -109,20 +109,20 @@ class WorkSheet extends Component {
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/name/`).once('value'),
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/openRange/`).once('value'),
     ]).then((snapshots) => {
-      const [invitedEmails, userIds, worksheetName, worksheetOpenRange] = snapshots;
+      const [invitedEmails, memberIds, worksheetName, worksheetOpenRange] = snapshots;
       if (!worksheetOpenRange.exists()) {
         // 公開範囲が存在しない(そもそもワークシートが存在しない)ワークシートには参加できない
         this.props.history.push('/');
         return;
-      } else if (worksheetOpenRange.val() === constants.worksheetOpenRange.PRIVATE && (!userIds.exists() || !userIds.val().includes(this.props.userId))) {
+      } else if (worksheetOpenRange.val() === constants.worksheetOpenRange.PRIVATE && (!memberIds.exists() || !memberIds.val().includes(this.props.userId))) {
         // 自分がいないプライベートワークシートには参加できない
         this.props.history.push('/');
         return;
       }
-      if (userIds.exists() && userIds.val() !== [] && worksheetName.exists() && worksheetName.val() !== '') { // メンバーの情報を取得する処理
-        Promise.all(userIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
+      if (memberIds.exists() && memberIds.val() !== [] && worksheetName.exists() && worksheetName.val() !== '') { // メンバーの情報を取得する処理
+        Promise.all(memberIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
           this.setState({
-            readOnly: !userIds.val().includes(this.props.userId),
+            readOnly: !memberIds.val().includes(this.props.userId),
             worksheetId,
             worksheetOpenRange: worksheetOpenRange.exists() ? worksheetOpenRange.val() : constants.worksheetOpenRange.PUBLIC,
             worksheetName: worksheetName.exists() ? worksheetName.val() : 'Unknown',
@@ -565,12 +565,12 @@ class WorkSheet extends Component {
    */
   fetchScripts() {
     if (this.state.readOnly) return Promise.resolve();
-    return database.ref(`/${constants.API_VERSION}/users/${this.props.userId}/scripts/enable`).once('value').then((snapshot) => {
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/scripts/enable`).once('value').then((snapshot) => {
       if (snapshot.exists() && snapshot.val()) return true;
       return false;
     }).then((enable) => {
       if (!enable) return Promise.resolve();
-      const scriptsPath = `/users/${this.props.userId}/scripts/`;
+      const scriptsPath = `/worksheets/${this.state.worksheetId}/scripts/`;
       const promises = [database.ref(`/${constants.API_VERSION}${scriptsPath}importScript`).once('value'), database.ref(`/${constants.API_VERSION}${scriptsPath}exportScript`).once('value')];
       return Promise.all(promises).then((snapshots) => {
         const [importScriptSnapshot, exportScriptSnapshot] = snapshots;
@@ -620,7 +620,12 @@ class WorkSheet extends Component {
       setTimeout(() => { this.attachTableTasks(); this.attachMemo(); });
     }
   }
-
+  handleTab(e, tab) {
+    // 0,1,2,3以外のタブはページ遷移
+    if ([0, 1, 2, 3].includes(tab)) {
+      this.setState({ tab, isOpenDashboard: !(this.state.isOpenDashboard && this.state.tab === tab) });
+    }
+  }
   handleMembers(newMembers) {
     this.setState({ members: newMembers });
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/members/`).set(newMembers.map(newMember => newMember.uid)).then(() => {
@@ -641,14 +646,16 @@ class WorkSheet extends Component {
   }
 
   render() {
-    const { classes, theme } = this.props;
+    const {
+      userId, classes, history, theme,
+    } = this.props;
     return (
       <Grid container spacing={0} className={classes.root} style={{ paddingTop: theme.mixins.toolbar.minHeight }}>
         <Grid item xs={12}>
           <Paper
             elevation={1}
             style={{
-            marginTop: 10, padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.base.YELLOW, display: this.props.userId ? 'none' : 'block',
+            marginTop: 10, padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.base.YELLOW, display: userId ? 'none' : 'block',
             }}
           >
             <Typography align="center" variant="subheading">
@@ -661,9 +668,7 @@ class WorkSheet extends Component {
             <ExpansionPanelSummary expandIcon={<IconButton onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><ExpandMore /></IconButton>}>
               <Tabs
                 value={this.state.tab}
-                onChange={(e, tab) => {
-                  this.setState({ tab, isOpenDashboard: !(this.state.isOpenDashboard && this.state.tab === tab) });
-                }}
+                onChange={this.handleTab.bind(this)}
                 scrollable
                 scrollButtons="off"
                 indicatorColor="primary"
@@ -672,17 +677,17 @@ class WorkSheet extends Component {
                 <Tab disabled={this.state.readOnly} label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />タスクプール</span>} />
                 <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
                 <Tab disabled={this.state.readOnly} label={<span>{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? <LockOpen style={{ fontSize: 16, marginRight: '0.5em' }} /> : <Lock style={{ fontSize: 16, marginRight: '0.5em' }} />}公開範囲</span>} />
-                {!this.state.isMobile && (<Tab disabled label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />プラグイン(開発中)</span>} />)}
+                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }} label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />プラグイン(α版)</span>} />)}
                 {!this.state.isMobile && (<Tab disabled label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(開発中)</span>} />)}
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
-              {this.state.tab === 0 && <div><Dashboard userId={this.props.userId} worksheetName={this.state.worksheetName} tableTasks={this.state.tableTasks} members={this.state.members} /></div>}
-              {this.state.tab === 1 && <div><TaskPool userId={this.props.userId} poolTasks={this.state.poolTasks} members={this.state.members} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
+              {this.state.tab === 0 && <div><Dashboard userId={userId} worksheetName={this.state.worksheetName} tableTasks={this.state.tableTasks} members={this.state.members} /></div>}
+              {this.state.tab === 1 && <div><TaskPool userId={userId} poolTasks={this.state.poolTasks} members={this.state.members} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
               {this.state.tab === 2 && (
                 <div style={{ overflow: 'auto' }}>
                   <Members
-                    userId={this.props.userId}
+                    userId={userId}
                     userName={this.props.userName}
                     userPhotoURL={this.props.userPhotoURL}
                     worksheetId={this.state.worksheetId}
@@ -706,16 +711,16 @@ class WorkSheet extends Component {
           </ExpansionPanel>
           <Paper elevation={1}>
             <TableCtl
-              userId={this.props.userId}
+              userId={userId}
               tableTasks={this.state.tableTasks}
               date={this.state.date}
               savedAt={this.state.savedAt}
-              saveable={Boolean(this.props.userId && this.state.saveable)}
+              saveable={Boolean(userId && this.state.saveable)}
               changeDate={this.changeDate.bind(this)}
               saveWorkSheet={this.saveWorkSheet.bind(this)}
             />
             {this.state.isMobile && (<TaskTableMobile
-              userId={this.props.userId}
+              userId={userId}
               tableTasks={this.state.tableTasks}
               changeTableTasks={this.changeTableTasksByMobile.bind(this)}
               isActive={util.isToday(this.state.date)}
@@ -723,7 +728,7 @@ class WorkSheet extends Component {
             />)}
             {!this.state.isMobile && (<TaskTable
               onRef={ref => (this.taskTable = ref)} // eslint-disable-line
-              userId={this.props.userId}
+              userId={userId}
               members={this.state.members}
               tableTasks={this.state.tableTasks}
               handleTableTasks={(newTableTasks) => { this.setState({ tableTasks: newTableTasks }); }}

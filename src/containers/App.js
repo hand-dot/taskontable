@@ -234,10 +234,6 @@ class App extends Component {
     this.props.history.push(`/${this.state.user.uid}/settings`);
   }
 
-  goScripts() {
-    this.props.history.push(`/${this.state.user.uid}/scripts`);
-  }
-
   goWorkSheetList() {
     this.props.history.push('/');
   }
@@ -253,7 +249,6 @@ class App extends Component {
           closeHelpDialog={() => { this.setState({ isOpenHelpDialog: false }); }}
           logout={this.logout.bind(this)}
           goSettings={this.goSettings.bind(this)}
-          goScripts={this.goScripts.bind(this)}
           goWorkSheetList={this.goWorkSheetList.bind(this)}
         />
         <Switch>

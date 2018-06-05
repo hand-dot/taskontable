@@ -434,7 +434,6 @@ export const hotBaseConf = {
   minRows: constants.HOT_MINROW,
   colWidths: Math.round(constants.APPWIDTH / columns.length),
   columns,
-  data: [],
   dataSchema: tableTaskSchema,
   beforeInit() {
     Handsontable.hooks.register('clearAllNotifi');
