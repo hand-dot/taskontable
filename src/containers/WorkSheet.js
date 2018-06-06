@@ -417,7 +417,7 @@ class WorkSheet extends Component {
     // メモを同期開始
     this.attachMemo();
     // メンバー,招待中のメールアドレスを同期開始
-    this.attachMembers();
+    this.attachMembersAndInvitedEmails();
   }
 
   /**
@@ -513,7 +513,7 @@ class WorkSheet extends Component {
   /**
    * メンバー,招待中のメールアドレスを同期します。
    */
-  attachMembers() {
+  attachMembersAndInvitedEmails() {
     return [
       database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/members`).on('value', (userIds) => {
         if (userIds.exists() && userIds.val() !== []) { // メンバーの情報を取得する処理

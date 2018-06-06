@@ -171,12 +171,7 @@ HP: ${window.location.protocol}//${window.location.host}
     if (this.state.target.type === constants.handleUserType.MEMBER) {
       this.setState({ processing: true });
       database.ref(`/${constants.API_VERSION}/users/${this.state.target.uid}/worksheets/`).once('value').then((myWorksheetIds) => {
-        if (!myWorksheetIds.exists() && !Array.isArray(myWorksheetIds.val())) {
-          // メンバーが最新でない可能性がある。
-          // TODO ここダサい。
-          alert('メンバーの再取得が必要なためリロードします。');
-          window.location.reload();
-        }
+        if (!myWorksheetIds.exists() && !Array.isArray(myWorksheetIds.val())) throw new Error('削除しようとしたメンバーが存在しませんでした。');
         return myWorksheetIds.val().filter(worksheetId => worksheetId !== this.props.worksheetId);
       }).then((newWorksheetIds) => {
         if (this.props.userId === this.state.target.uid && !window.confirm(`${this.props.worksheetName}から自分を削除しようとしています。もう一度参加するためにはメンバーに招待してもらう必要があります。よろしいですか？`)) {
