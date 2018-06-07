@@ -403,7 +403,7 @@ class WorkSheet extends Component {
       this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
       return Promise.resolve();
     }
-    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).set(this.state.memo);
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).set(this.state.memo ? this.state.memo : null);
   }
 
   /**
