@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Handsontable from 'handsontable';
-import 'handsontable/dist/handsontable.full.css';
+import 'handsontable/dist/handsontable.full.min.css';
 import { withStyles } from '@material-ui/core/styles';
 import debounce from 'lodash.debounce';
 
