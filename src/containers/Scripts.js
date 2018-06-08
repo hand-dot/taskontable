@@ -18,7 +18,7 @@ import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
-import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { getHotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import ScriptsEditor from '../components/ScriptsEditor';
 import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
@@ -27,6 +27,8 @@ import tableTaskSchema from '../schemas/tableTaskSchema';
 import util from '../util';
 
 const database = util.getDatabase();
+
+const hotConf = getHotConf();
 
 const editorOptions = {
   mode: 'javascript',
@@ -82,11 +84,15 @@ class Scripts extends Component {
           Promise.all(memberIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
             const memberDatas = members.filter(member => member.exists()).map(member => member.val());
             setTimeout(() => {
-              hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = memberDatas.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
-              this.exampleHot.updateSettings(Object.assign(this.exampleHot.getSettings, {
-                userId: this.props.userId,
-                members: memberDatas,
-              }));
+              if (this.exampleHot) {
+                hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = memberDatas.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
+                this.exampleHot.updateSettings(Object.assign(this.exampleHot.getSettings, {
+                  userId: this.props.userId,
+                  members: memberDatas,
+                }));
+              } else {
+                this.props.history.push('/');
+              }
             });
           });
           // スクリプトのオンオフを取得する処理

@@ -421,8 +421,20 @@ export const setDataForHot = (hotInstance, datas) => {
   hotInstance.runHooks('afterUpdateSettings');
 };
 
+const resetNotifi = debounce((hotInstance) => {
+  // 通知をすべてクリアし、再設定(estimateで)
+  if (!hotInstance.container) return;
+  hotInstance.runHooks('clearAllNotifi');
+  const rowCount = hotInstance.countSourceRows();
+  for (let index = 0; index < rowCount; index += 1) {
+    if (!hotInstance.isEmptyRow(index)) {
+      const estimate = hotInstance.getDataAtRowProp(index, 'estimate');
+      if (estimate) manageNotifi(hotInstance, index, 'estimate', estimate);
+    }
+  }
+}, 1000);
 
-export const hotBaseConf = {
+export const getHotConf = () => Object.assign({}, {
   selectionMode: 'range',
   autoRowSize: false,
   autoColumnSize: false,
@@ -448,20 +460,6 @@ export const hotBaseConf = {
     if (this.hotIntervalID) clearInterval(this.hotIntervalID);
     Handsontable.hooks.deregister('clearAllNotifi');
   },
-};
-const resetNotifi = debounce((hotInstance) => {
-  // 通知をすべてクリアし、再設定(estimateで)
-  if (!hotInstance.container) return;
-  hotInstance.runHooks('clearAllNotifi');
-  const rowCount = hotInstance.countSourceRows();
-  for (let index = 0; index < rowCount; index += 1) {
-    if (!hotInstance.isEmptyRow(index)) {
-      const estimate = hotInstance.getDataAtRowProp(index, 'estimate');
-      if (estimate) manageNotifi(hotInstance, index, 'estimate', estimate);
-    }
-  }
-}, 1000);
-export const hotConf = Object.assign({}, hotBaseConf, {
   afterRowMove() {
     // 行がずれるので通知を再設定
     resetNotifi(this);

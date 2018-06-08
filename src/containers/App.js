@@ -24,6 +24,7 @@ import Login from './Login';
 import Logout from './Logout';
 import Signup from './Signup';
 import Scripts from './Scripts';
+import Activity from './Activity';
 import Settings from './Settings';
 import WorkSheet from './WorkSheet';
 import WorkSheetList from './WorkSheetList';
@@ -269,6 +270,7 @@ class App extends Component {
             />)}
           />
           <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
+          <Route exact strict path="/:id/activity" render={(props) => { if (this.state.user.uid !== '') { return <Activity userId={this.state.user.uid} {...props} />; } return null; }} />
           <Route exact strict path="/:id/settings" render={(props) => { if (this.state.user.uid !== '') { return <Settings user={this.state.user} handleUser={this.handleUser.bind(this)} {...props} />; } return null; }} />
         </Switch>
         <Dialog open={this.state.processing}>
@@ -278,8 +280,8 @@ class App extends Component {
           <DialogTitle>サポート対象外ブラウザです</DialogTitle>
           <DialogContent>
             <DialogContentText>
-            本サービスは現在{constants.SUPPORTEDBROWSERS}での動作をサポートしております。<br />
-            お手数ですが、{constants.SUPPORTEDBROWSERS}で開きなおすか、下記のボタンを押してダウンロードして下さい。
+              本サービスは現在{constants.SUPPORTEDBROWSERS}での動作をサポートしております。<br />
+              お手数ですが、{constants.SUPPORTEDBROWSERS}で開きなおすか、下記のボタンを押してダウンロードして下さい。
             </DialogContentText>
           </DialogContent>
           <DialogActions>

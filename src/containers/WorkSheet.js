@@ -678,7 +678,7 @@ class WorkSheet extends Component {
                 <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
                 <Tab disabled={this.state.readOnly} label={<span>{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? <LockOpen style={{ fontSize: 16, marginRight: '0.5em' }} /> : <Lock style={{ fontSize: 16, marginRight: '0.5em' }} />}公開範囲</span>} />
                 {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }} label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />プラグイン(α版)</span>} />)}
-                {!this.state.isMobile && (<Tab disabled onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }} label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(α版)</span>} />)}
+                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }} label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(α版)</span>} />)}
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
