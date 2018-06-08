@@ -214,16 +214,16 @@ class Scripts extends Component {
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
         <Grid item xs={12}>
           <Typography variant="title">
-              スクリプト設定(α版)
+            スクリプト設定(α版)
           </Typography>
           <Typography gutterBottom variant="caption">
-            本日のタスクテーブルのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。
+            本日のワークシートのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。
           </Typography>
         </Grid>
         <Grid item xs={12}>
           <Paper square elevation={0}>
             <Typography gutterBottom variant="subheading">
-            スクリプトの利用(ON/OFF)
+              スクリプトの利用(ON/OFF)
               <span className={classes.divider}>/</span>
               <div style={{ display: 'inline-block' }}>
                 <Switch
@@ -239,7 +239,7 @@ class Scripts extends Component {
         <Grid item xs={12}>
           <Paper square elevation={0}>
             <Typography gutterBottom variant="subheading">
-            タスクテーブルのデータの例
+              ワークシートのデータの例
               <span className={classes.divider}>/</span>
               <Tooltip title="リセット" placement="top">
                 <div style={{ display: 'inline-block' }}>
@@ -251,7 +251,7 @@ class Scripts extends Component {
               タスクのスキーマは　{JSON.stringify(tableTaskSchema)}　このようになっております。
             </Typography>
             <Typography gutterBottom variant="caption">
-                タスクテーブルのデータは左のテーブルに対して右のJSON形式(配列)で保存されます。
+              ワークシートのデータは左のテーブルに対して右のJSON形式(配列)で保存されます。
             </Typography>
           </Paper>
         </Grid>

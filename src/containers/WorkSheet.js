@@ -205,7 +205,7 @@ class WorkSheet extends Component {
   }
 
   /**
-   * モバイルのタスクテーブルを変更したときにここでハンドリングを行う
+   * モバイルのワークシートを変更したときにここでハンドリングを行う
    * @param  {String} taskActionType 操作種別
    * @param  {any} value 値
    */
@@ -310,7 +310,7 @@ class WorkSheet extends Component {
       const tableTasks = util.cloneDeep(this.state.tableTasks);
       tableTasks.push(Object.assign({}, this.state.poolTasks[taskPoolType][value]));
       if (taskPoolType === constants.taskPoolType.HIGHPRIORITY ||
-         taskPoolType === constants.taskPoolType.LOWPRIORITY) {
+        taskPoolType === constants.taskPoolType.LOWPRIORITY) {
         this.state.poolTasks[taskPoolType].splice(value, 1);
       }
       // タスクプールからテーブルタスクに移動したらテーブルタスクを保存する
@@ -393,7 +393,7 @@ class WorkSheet extends Component {
           .then(() => 'エクスポートスクリプトを実行しました。(success) - '),
         reason => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).set(sortedTableTask)
           .then(() => (reason ? `エクスポートスクリプトを実行しました。(error)：${reason} - ` : '')),
-      );
+    );
   }
   /**
    * stateのmemoをサーバーに保存します。
@@ -596,7 +596,7 @@ class WorkSheet extends Component {
         reject();
         return;
       }
-      // スクリプトを発火するのはスクリプトが存在する かつ 本日のタスクテーブルのみ
+      // スクリプトを発火するのはスクリプトが存在する かつ 本日のワークシートのみ
       util.runWorker(script, data).then((result) => { resolve(result); }, (reason) => { reject(reason); });
     });
   }
@@ -655,7 +655,7 @@ class WorkSheet extends Component {
           <Paper
             elevation={1}
             style={{
-            marginTop: 10, padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.base.YELLOW, display: userId ? 'none' : 'block',
+              marginTop: 10, padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.base.YELLOW, display: userId ? 'none' : 'block',
             }}
           >
             <Typography align="center" variant="subheading">
@@ -678,7 +678,7 @@ class WorkSheet extends Component {
                 <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
                 <Tab disabled={this.state.readOnly} label={<span>{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? <LockOpen style={{ fontSize: 16, marginRight: '0.5em' }} /> : <Lock style={{ fontSize: 16, marginRight: '0.5em' }} />}公開範囲</span>} />
                 {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }} label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />プラグイン(α版)</span>} />)}
-                {!this.state.isMobile && (<Tab disabled label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(開発中)</span>} />)}
+                {!this.state.isMobile && (<Tab disabled onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }} label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(α版)</span>} />)}
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
@@ -700,12 +700,12 @@ class WorkSheet extends Component {
                 </div>
               )}
               {this.state.tab === 3 && (
-              <div style={{ overflow: 'auto' }}>
-                <OpenRange
-                  worksheetOpenRange={this.state.worksheetOpenRange}
-                  handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
-                />
-              </div>
+                <div style={{ overflow: 'auto' }}>
+                  <OpenRange
+                    worksheetOpenRange={this.state.worksheetOpenRange}
+                    handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
+                  />
+                </div>
               )}
             </ExpansionPanelDetails>
           </ExpansionPanel>

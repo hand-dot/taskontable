@@ -69,22 +69,22 @@ function ScriptsEditor(props) {
           <Typography gutterBottom variant="caption">
             {(() => {
               if (scriptType === 'importScript') {
-                return '本日のタスクテーブルのデータの取得時に実行される処理を追加することができます。';
+                return '本日のワークシートのデータの取得時に実行される処理を追加することができます。';
               }
-              return '本日のタスクテーブルのデータの保存時に実行される処理を追加することができます。';
+              return '本日のワークシートのデータの保存時に実行される処理を追加することができます。';
             })()}
           </Typography>
           <br />
           <Typography gutterBottom variant="caption">
-            タスクテーブルのデータにアクセスするにはscriptの引数のe.dataにアクセスしてください。
+            ワークシートのデータにアクセスするにはscriptの引数のe.dataにアクセスしてください。
           </Typography>
           <br />
           <Typography gutterBottom variant="caption">
             {(() => {
               if (scriptType === 'importScript') {
-                return '外部サービスからのタスクのフェッチやタスクの文字列操作を終えたら、postMessage関数にタスクテーブルのデータを渡してください。postMessage関数に渡されたデータを使ってタスクテーブルを構成します。';
+                return '外部サービスからのタスクのフェッチやタスクの文字列操作を終えたら、postMessage関数にワークシートのデータを渡してください。postMessage関数に渡されたデータを使ってワークシートを構成します。';
               }
-              return '外部サービスへのタスクの連携やタスクの文字列操作を終えたら、postMessage関数にタスクテーブルのデータを渡してください。postMessage関数に渡されたデータを使ってタスクテーブルを構成します。';
+              return '外部サービスへのタスクの連携やタスクの文字列操作を終えたら、postMessage関数にワークシートのデータを渡してください。postMessage関数に渡されたデータを使ってワークシートを構成します。';
             })()}
           </Typography>
           <br />
@@ -97,7 +97,7 @@ function ScriptsEditor(props) {
               return '完了したタスクをgithubのissueでクローズしている例です。';
             })()}
             <Typography gutterBottom variant="caption">
-            参考:<a href="https://developer.github.com/v3/issues/#list-issues-for-a-repository" target="_blank">https://developer.github.com/v3/issues/#list-issues-for-a-repository</a>
+              参考:<a href="https://developer.github.com/v3/issues/#list-issues-for-a-repository" target="_blank">https://developer.github.com/v3/issues/#list-issues-for-a-repository</a>
             </Typography>
           </Typography>
         </Paper>
