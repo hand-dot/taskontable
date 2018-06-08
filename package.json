@@ -20,6 +20,7 @@
     "@material-ui/core": "^1.2.0",
     "@material-ui/icons": "^1.1.0",
     "codemirror": "^5.38.0",
+    "cropperjs": "^1.4.0",
     "d3": "^5.4.0",
     "fast-clone": "^1.5.3",
     "fast-equals": "^1.5.3",

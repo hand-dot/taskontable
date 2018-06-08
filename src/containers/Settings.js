@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import Cropper from 'cropperjs';
+import 'cropperjs/dist/cropper.min.css';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
-import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import Person from '@material-ui/icons/Person';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import constants from '../constants';
 import google from '../images/google.svg';
 import email from '../images/email.svg';
@@ -65,6 +71,7 @@ class Settings extends Component {
       loginProviderId: '',
       isOpenSaveSnackbar: false,
       processing: false,
+      isOpenEditPhotoDialog: false,
     };
   }
 
@@ -182,9 +189,30 @@ class Settings extends Component {
               return null;
             })()}
             <div>
-              <IconButton className={classes.iconButton} data-menu-key="user">
+              <IconButton className={classes.iconButton} data-menu-key="user" onClick={() => { this.setState({ isOpenEditPhotoDialog: true }); }}>
                 {this.state.photoURL ? <Avatar className={classes.userPhoto} src={this.state.photoURL} /> : <Person style={{ fontSize: 100 }} />}
               </IconButton>
+              <Dialog
+                disableBackdropClick
+                disableEscapeKeyDown
+                open={this.state.isOpenEditPhotoDialog}
+                onClose={() => { this.setState({ isOpenEditPhotoDialog: false }); }}
+                aria-labelledby="edit-photo-dialog"
+              >
+                <DialogTitle id="edit-photo-dialog">プロフィール写真を変更</DialogTitle>
+                <DialogContent>
+                  <DialogContentText />
+                    実装中
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => { this.setState({ isOpenEditPhotoDialog: false }); }} color="primary">
+                    キャンセル
+                  </Button>
+                  <Button onClick={this.handleClose} color="primary">
+                    変更
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </div>
             <TextField
               value={this.state.displayName}
