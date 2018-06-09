@@ -434,7 +434,10 @@ const resetNotifi = debounce((hotInstance) => {
   }
 }, 1000);
 
-export const getHotConf = () => Object.assign({}, {
+export const hotConf = {
+  userId: '', // 独自プロパティ
+  members: [], // 独自プロパティ
+  isActiveNotifi: false, // 独自プロパティ
   selectionMode: 'range',
   autoRowSize: false,
   autoColumnSize: false,
@@ -505,4 +508,4 @@ export const getHotConf = () => Object.assign({}, {
       }
     }
   },
-});
+};

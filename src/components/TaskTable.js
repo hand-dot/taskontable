@@ -5,7 +5,7 @@ import 'handsontable/dist/handsontable.full.min.css';
 import { withStyles } from '@material-ui/core/styles';
 import debounce from 'lodash.debounce';
 
-import { getHotConf, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { hotConf, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import constants from '../constants';
 import util from '../util';
 
@@ -14,8 +14,6 @@ import tasksUtil from '../tasksUtil';
 
 const styles = {
 };
-
-const hotConf = getHotConf();
 
 class TaskTable extends Component {
   constructor(props) {

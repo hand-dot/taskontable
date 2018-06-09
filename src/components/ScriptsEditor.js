@@ -28,11 +28,11 @@ const styles = {
 
 function ScriptsEditor(props) {
   const {
-    scriptType, script, scriptBk, exampleScript, editorOptions, resetScript, saveScript, fireScript, loadExampleScript, handleScript, classes,
+    scriptType, script, scriptBk, exampleScript, editorOptions, resetScript, saveScript, fireScript, loadExampleScript, handleScript, theme, classes,
   } = props;
   return (
     <Grid container>
-      <Grid item xs={5}>
+      <Grid item xs={5} style={{ padding: theme.spacing.unit }}>
         <Paper square elevation={0}>
           <Typography gutterBottom variant="subheading">
             {(() => {
@@ -128,8 +128,9 @@ ScriptsEditor.propTypes = {
   fireScript: PropTypes.func.isRequired,
   loadExampleScript: PropTypes.func.isRequired,
   handleScript: PropTypes.func.isRequired,
+  theme: PropTypes.object.isRequired, // eslint-disable-line
   classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles)(ScriptsEditor);
+export default withStyles(styles, { withTheme: true })(ScriptsEditor);
 

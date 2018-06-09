@@ -18,7 +18,7 @@ import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
-import { getHotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import ScriptsEditor from '../components/ScriptsEditor';
 import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
@@ -27,8 +27,6 @@ import tableTaskSchema from '../schemas/tableTaskSchema';
 import util from '../util';
 
 const database = util.getDatabase();
-
-const hotConf = getHotConf();
 
 const editorOptions = {
   mode: 'javascript',
@@ -121,7 +119,6 @@ class Scripts extends Component {
       isActiveNotifi: false,
       renderAllRows: true,
       height: 300,
-      colWidths: 'auto',
       minRows: 10,
       data: util.cloneDeep(exampleTaskData),
       afterRender() { self.syncStateByRender(); },

@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
+import ArrowForward from '@material-ui/icons/ArrowForward';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.min.css';
 import { Controlled as CodeMirror } from 'react-codemirror2';
@@ -16,7 +17,7 @@ import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
-import { getHotConf, getHotTasksIgnoreEmptyTask } from '../hot';
+import { hotConf, getHotTasksIgnoreEmptyTask } from '../hot';
 import util from '../util';
 import DatePicker from '../components/DatePicker';
 
@@ -28,8 +29,6 @@ import DatePicker from '../components/DatePicker';
 
 const database = util.getDatabase();
 
-const hotConf = getHotConf();
-
 const editorOptions = {
   mode: 'javascript',
   theme: 'material',
@@ -39,7 +38,6 @@ const editorOptions = {
 const styles = {
   root: {
     paddingTop: '5em',
-    minHeight: '100vh',
     padding: '4em 2em 2em',
     width: constants.APPWIDTH,
     margin: '0 auto',
@@ -79,25 +77,13 @@ class Activity extends Component {
           // メンバーを取得する処理
           Promise.all(memberIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
             const memberDatas = members.filter(member => member.exists()).map(member => member.val());
-            setTimeout(() => {
-              if (this.hot) {
-                hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = memberDatas.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
-                const startTime = hotConf.columns[hotConf.columns.findIndex(column => column.data === 'startTime')];
-                startTime.timeFormat = `${constants.DATEFMT}-${constants.TIMEFMT}`;
-                startTime.title = `開始時刻(${constants.DATEFMT}-${constants.TIMEFMT})`;
-                const endTime = hotConf.columns[hotConf.columns.findIndex(column => column.data === 'endTime')];
-                endTime.timeFormat = `${constants.DATEFMT}-${constants.TIMEFMT}`;
-                endTime.title = `終了時刻(${constants.DATEFMT}-${constants.TIMEFMT})`;
-                // ①ここでデータを取得して設定する
-
-                this.hot.updateSettings(Object.assign(this.hot.getSettings, {
-                  userId: this.props.userId,
-                  members: memberDatas,
-                }));
-              } else {
-                this.props.history.push('/');
-              }
-            });
+            if (this.hot) {
+              this.hot.updateSettings({ members: memberDatas });
+              // データの取得処理
+              this.setActivityData();
+            } else {
+              this.props.history.push('/');
+            }
           });
         } else {
           this.props.history.push('/');
@@ -111,13 +97,22 @@ class Activity extends Component {
   componentDidMount() {
     if (!this.props.userId) return;
     const self = this;
+    // この画面だけで使う日付のカラムを追加
+    hotConf.columns.unshift({
+      title: `日付(${constants.DATEFMT})`,
+      data: 'date',
+      type: 'date',
+      dateFormat: constants.DATEFMT,
+      colWidths: 70,
+    });
     this.hot = new Handsontable(this.hotDom, Object.assign({}, hotConf, {
       userId: this.props.userId,
       isActiveNotifi: false,
       renderAllRows: true,
       height: 300,
-      colWidths: 'auto',
+      colWidths: Math.round(constants.APPWIDTH / hotConf.columns.length),
       minRows: 10,
+      data: [],
       afterRender() { self.syncStateByRender(); },
     }));
     setTimeout(() => { if (this.hot) this.hot.render(); });
@@ -127,11 +122,38 @@ class Activity extends Component {
     if (!this.hot) return;
     this.hot.destroy();
     this.hot = null;
+    // この画面だけで使う日付のカラムを削除
+    hotConf.columns = hotConf.columns.filter(column => column.data !== 'date');
+  }
+
+  setActivityData() {
+    const startDate = moment(this.state.startDate);
+    const endDate = moment(this.state.endDate);
+    const diff = endDate.diff(startDate, 'days');
+    if (diff < 0) {
+      this.hot.updateSettings({ data: [] });
+      return;
+    }
+    const promises = [];
+    promises.push(database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${startDate.format(constants.DATEFMT)}`).once('value'));
+    promises.push(...Array(diff).fill('dummy').map(() => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${startDate.add(1, 'days').format(constants.DATEFMT)}`).once('value')));
+    Promise.all(promises).then((datas) => {
+      const datasVals = datas.filter(data => data.exists()).map(data => data.val());
+      const datasKeys = datas.filter(data => data.exists()).map(data => data.key);
+      return datasKeys.reduce((accum, key, index) => accum.concat(datasVals[index].map((task) => {
+        task.date = key; // eslint-disable-line no-param-reassign
+        return task;
+      })), []);
+    }).then((data) => {
+      // テーブルを更新
+      this.hot.updateSettings({ data });
+    });
   }
 
   changeDate(type, newDate) {
     // ③ここでバリデーションなど、の処理を書く
     this.setState({ [type]: newDate });
+    setTimeout(() => this.setActivityData());
   }
 
   syncStateByRender() {
@@ -158,15 +180,17 @@ class Activity extends Component {
             過去に行った内容を期間指定し確認することができます。
           </Typography>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={12}>
+          <DatePicker value={this.state.startDate} changeDate={(e) => { this.changeDate('startDate', e.target.value); }} label="開始" />
+          <span style={{ margin: `0 ${theme.spacing.unit * 2}px` }}><ArrowForward /></span>
+          <DatePicker value={this.state.endDate} changeDate={(e) => { this.changeDate('endDate', e.target.value); }} label="終了" />
+        </Grid>
+        <Grid item xs={12}>
           <Paper square elevation={0}>
-            <DatePicker value={this.state.startDate} changeDate={(e) => { this.changeDate('startDate', e.target.value); }} label="開始日" />
-            <span style={{ margin: `0 ${theme.spacing.unit}px` }}>→</span>
-            <DatePicker value={this.state.endDate} changeDate={(e) => { this.changeDate('endDate', e.target.value); }} label="終了日" />
             <div style={{ marginTop: theme.spacing.unit * 2 }} ref={(node) => { this.hotDom = node; }} />
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12}>
           <CodeMirror
             value={this.state.taskData}
             options={Object.assign({}, editorOptions, { readOnly: true })}
