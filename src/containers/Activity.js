@@ -5,9 +5,19 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
+import ShowChart from '@material-ui/icons/ShowChart';
+import ViewList from '@material-ui/icons/ViewList';
+import Code from '@material-ui/icons/Code';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.min.css';
@@ -20,7 +30,7 @@ import '../styles/handsontable-custom.css';
 import { hotConf, getHotTasksIgnoreEmptyTask } from '../hot';
 import util from '../util';
 import DatePicker from '../components/DatePicker';
-
+import ActivityChart from '../components/ActivityChart';
 
 // TODO ！期間をスタート、エンドで絞り込めるようにする
 // ①画面の遷移時、デフォルトで直近の1週間のデータを取得する。
@@ -30,6 +40,7 @@ import DatePicker from '../components/DatePicker';
 const database = util.getDatabase();
 
 const editorOptions = {
+  height: '600px',
   mode: 'javascript',
   theme: 'material',
   lineNumbers: true,
@@ -38,7 +49,6 @@ const editorOptions = {
 const styles = {
   root: {
     paddingTop: '5em',
-    minHeight: '100vh',
     padding: '4em 2em 2em',
     width: constants.APPWIDTH,
     margin: '0 auto',
@@ -57,13 +67,14 @@ class Activity extends Component {
   constructor(props) {
     super(props);
     this.hot = null;
+    this.setActivityData = debounce(this.setActivityData, constants.REQEST_DELAY);
     this.syncStateByRender = debounce(this.syncStateByRender, constants.RENDER_DELAY);
     this.state = {
       worksheetId: '',
       isOpenSnackbar: false,
       snackbarText: '',
-      startDate: moment().day(0).format(`${constants.DATEFMT}`),
-      endDate: moment().day(6).format(`${constants.DATEFMT}`),
+      startDate: moment().add(-3, 'days').format(`${constants.DATEFMT}`),
+      endDate: moment().add(3, 'days').format(`${constants.DATEFMT}`),
       taskData: '',
     };
   }
@@ -131,7 +142,7 @@ class Activity extends Component {
     const startDate = moment(this.state.startDate);
     const endDate = moment(this.state.endDate);
     const diff = endDate.diff(startDate, 'days');
-    if (diff < 0) {
+    if (diff <= 0) {
       this.hot.updateSettings({ data: [] });
       return;
     }
@@ -182,16 +193,22 @@ class Activity extends Component {
           </Typography>
         </Grid>
         <Grid item xs={12}>
+          <Typography gutterBottom variant="caption">
+            本日({moment().format(constants.DATEFMT)})
+          </Typography>
           <DatePicker value={this.state.startDate} changeDate={(e) => { this.changeDate('startDate', e.target.value); }} label="開始" />
           <span style={{ margin: `0 ${theme.spacing.unit * 2}px` }}><ArrowForward /></span>
           <DatePicker value={this.state.endDate} changeDate={(e) => { this.changeDate('endDate', e.target.value); }} label="終了" />
         </Grid>
         <Grid item xs={12}>
+          {this.state.taskData !== '' && (<ActivityChart tableTasks={JSON.parse(this.state.taskData)} />)}
+        </Grid>
+        <Grid item xs={9}>
           <Paper square elevation={0}>
             <div style={{ marginTop: theme.spacing.unit * 2 }} ref={(node) => { this.hotDom = node; }} />
           </Paper>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={3}>
           <CodeMirror
             value={this.state.taskData}
             options={Object.assign({}, editorOptions, { readOnly: true })}

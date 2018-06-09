@@ -39,8 +39,8 @@ export default {
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   APPWIDTH: window.innerWidth,
   APPHEIGHT: window.innerHeight,
-  REQEST_DELAY: 50,
-  RENDER_DELAY: 100,
+  REQEST_DELAY: 150,
+  RENDER_DELAY: 200,
   HOT_MINROW: 20,
   authType: {
     GOOGLE: 'google',
