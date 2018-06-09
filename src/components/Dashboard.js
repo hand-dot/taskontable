@@ -51,14 +51,14 @@ class Dashboard extends Component {
   }
 
   updateStateByTableTasks(tableTasks) {
-    const targetTask = this.state.target === '' ? tableTasks : tasksUtil.getTasksByAssign(tableTasks, this.state.target);
-    const remainingData = targetTask.filter(data => !data.startTime || !data.endTime);
+    const targetTasks = this.state.target === '' ? tableTasks : tasksUtil.getTasksByAssign(tableTasks, this.state.target);
+    const remainingData = targetTasks.filter(data => !data.startTime || !data.endTime);
     const remainingMinute = tasksUtil.getTotalEstimateMinute(remainingData);
-    const doneData = targetTask.filter(data => data.startTime && data.endTime);
+    const doneData = targetTasks.filter(data => data.startTime && data.endTime);
     const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState({
-      estimateTasks: { minute: tasksUtil.getTotalEstimateMinute(targetTask), taskNum: targetTask.length },
+      estimateTasks: { minute: tasksUtil.getTotalEstimateMinute(targetTasks), taskNum: targetTasks.length },
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
       doneTasks: { minute: tasksUtil.getTotalEstimateMinute(doneData), taskNum: doneData.length },
       actuallyTasks: { minute: tasksUtil.getTotalActuallyMinute(doneData), taskNum: doneData.length },
