@@ -11,142 +11,6 @@ import unknown from './images/unknown.png';
 
 let notifiIds = [];
 
-const columns = [
-  {
-    title: '割当',
-    data: 'assign',
-    editor: 'select',
-    selectOptions: [],
-    colWidths: 20,
-    renderer(instance, td, row, col, prop, value) {
-      if (instance.isEmptyRow(row)) {
-        td.innerHTML = null;
-        return td;
-      }
-      const { members } = instance.getSettings();
-      if (!members) {
-        td.innerHTML = null;
-        return td;
-      }
-      const assingedUser = members[instance.getSettings().members.findIndex(member => member.uid === value)];
-      td.className = 'htCenter htMiddle';
-      td.style.paddingTop = '5px';
-      Handsontable.dom.empty(td);
-      const img = document.createElement('IMG');
-      img.style.width = '20px';
-      img.style.height = '20px';
-      img.style.borderRadius = '50%';
-      if (assingedUser) {
-        img.src = assingedUser.photoURL || person;
-        img.title = `@${assingedUser.displayName}` || '@unknown';
-      } else {
-        img.src = value ? unknown : logoMini; // unknownは削除されたユーザー
-        img.title = value ? '@unknown' : '@every';
-      }
-
-      td.appendChild(img);
-      return td;
-    },
-  },
-  {
-    title: '作業内容',
-    data: 'title',
-    type: 'text',
-  },
-  {
-    title: '見積(分)',
-    data: 'estimate',
-    type: 'numeric',
-    allowInvalid: false,
-    colWidths: 40,
-  },
-  {
-    title: `開始時刻(${constants.TIMEFMT})`,
-    data: 'startTime',
-    type: 'time',
-    colWidths: 70,
-    timeFormat: constants.TIMEFMT,
-    allowInvalid: false,
-    correctFormat: true,
-    renderer(instance, td, row, col, prop, value, cellProperties) {
-      const { isActiveNotifi } = instance.getSettings();
-      td.innerHTML = `${value} ${isActiveNotifi && cellProperties.startTimeNotifiId ? '⏰' : ''}`; // eslint-disable-line no-param-reassign
-    },
-  },
-  {
-    title: `終了時刻(${constants.TIMEFMT})`,
-    data: 'endTime',
-    type: 'time',
-    colWidths: 70,
-    timeFormat: constants.TIMEFMT,
-    allowInvalid: false,
-    correctFormat: true,
-    renderer(instance, td, row, col, prop, value, cellProperties) {
-      td.innerHTML = value;
-      td.parentNode.style.backgroundColor = '';
-      const endTimeVal = value;
-      const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
-      const estimateVal = instance.getDataAtRowProp(row, 'estimate');
-      const { isActiveNotifi } = instance.getSettings();
-      if (endTimeVal !== '' && startTimeVal !== '') {
-        // 完了しているタスク
-        td.parentNode.style.backgroundColor = constants.cellColor.DONE;
-      } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
-        // 見積もりが空なので警告にする
-        td.parentNode.style.backgroundColor = constants.cellColor.WARNING;
-      } else if (isActiveNotifi && startTimeVal !== '' && estimateVal !== '') {
-        // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
-        const nowTimeVal = moment().format(constants.TIMEFMT);
-        const expectedEndTimeVal = moment(startTimeVal, constants.TIMEFMT).add(estimateVal, 'minutes').format(constants.TIMEFMT);
-        const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
-        if (timeDiffMinute < 1) {
-          td.parentNode.style.backgroundColor = constants.cellColor.OUT;
-        } else {
-          td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
-        }
-        td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${isActiveNotifi && cellProperties.endTimeNotifiId ? '⏰' : ''}</span>`; // eslint-disable-line no-param-reassign
-      }
-      return td;
-    },
-  },
-  {
-    title: '実績(分)',
-    data: 'actually',
-    type: 'numeric',
-    readOnly: true,
-    validator: false,
-    colWidths: 45,
-    /* eslint no-param-reassign: ["error", { "props": false }] */
-    renderer(instance, td, row, col, prop, value) {
-      td.classList.add('htDimmed');
-      const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
-      const endTimeVal = instance.getDataAtRowProp(row, 'endTime');
-      if (startTimeVal && endTimeVal) {
-        const timeDiffMinute = util.getTimeDiffMinute(startTimeVal, endTimeVal);
-        const estimate = instance.getDataAtRowProp(row, 'estimate');
-        const overdue = estimate ? timeDiffMinute - instance.getDataAtRowProp(row, 'estimate') : 0;
-        if (overdue >= 1) {
-          // 見積をオーバー
-          value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
-        } else if (overdue === 0) {
-          // 見積と同じ
-          value = timeDiffMinute; // eslint-disable-line no-param-reassign
-        } else if (overdue <= -1) {
-          // 見積より少ない
-          value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
-        }
-      }
-      td.innerHTML = value;
-      return td;
-    },
-  },
-  {
-    title: '備考',
-    data: 'memo',
-    type: 'text',
-  },
-];
-
 const removeNotifi = (id) => {
   clearTimeout(id);
   const index = notifiIds.findIndex(notifiId => notifiId === id);
@@ -447,8 +311,142 @@ export const hotConf = {
   autoInsertRow: false,
   manualRowMove: true,
   minRows: constants.HOT_MINROW,
-  colWidths: Math.round(constants.APPWIDTH / columns.length),
-  columns,
+  colWidths: Math.round(constants.APPWIDTH / 7),
+  columns: [
+    {
+      title: '割当',
+      data: 'assign',
+      editor: 'select',
+      selectOptions: [],
+      colWidths: 20,
+      renderer(instance, td, row, col, prop, value) {
+        if (instance.isEmptyRow(row)) {
+          td.innerHTML = null;
+          return td;
+        }
+        const { members } = instance.getSettings();
+        if (!members) {
+          td.innerHTML = null;
+          return td;
+        }
+        const assingedUser = members[instance.getSettings().members.findIndex(member => member.uid === value)];
+        td.className = 'htCenter htMiddle';
+        td.style.paddingTop = '5px';
+        Handsontable.dom.empty(td);
+        const img = document.createElement('IMG');
+        img.style.width = '20px';
+        img.style.height = '20px';
+        img.style.borderRadius = '50%';
+        if (assingedUser) {
+          img.src = assingedUser.photoURL || person;
+          img.title = `@${assingedUser.displayName}` || '@unknown';
+        } else {
+          img.src = value ? unknown : logoMini; // unknownは削除されたユーザー
+          img.title = value ? '@unknown' : '@every';
+        }
+
+        td.appendChild(img);
+        return td;
+      },
+    },
+    {
+      title: '作業内容',
+      data: 'title',
+      type: 'text',
+    },
+    {
+      title: '見積(分)',
+      data: 'estimate',
+      type: 'numeric',
+      allowInvalid: false,
+      colWidths: 40,
+    },
+    {
+      title: `開始時刻(${constants.TIMEFMT})`,
+      data: 'startTime',
+      type: 'time',
+      colWidths: 70,
+      timeFormat: constants.TIMEFMT,
+      allowInvalid: false,
+      correctFormat: true,
+      renderer(instance, td, row, col, prop, value, cellProperties) {
+        const { isActiveNotifi } = instance.getSettings();
+        td.innerHTML = `${value} ${isActiveNotifi && cellProperties.startTimeNotifiId ? '⏰' : ''}`; // eslint-disable-line no-param-reassign
+      },
+    },
+    {
+      title: `終了時刻(${constants.TIMEFMT})`,
+      data: 'endTime',
+      type: 'time',
+      colWidths: 70,
+      timeFormat: constants.TIMEFMT,
+      allowInvalid: false,
+      correctFormat: true,
+      renderer(instance, td, row, col, prop, value, cellProperties) {
+        td.innerHTML = value;
+        td.parentNode.style.backgroundColor = '';
+        const endTimeVal = value;
+        const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
+        const estimateVal = instance.getDataAtRowProp(row, 'estimate');
+        const { isActiveNotifi } = instance.getSettings();
+        if (endTimeVal !== '' && startTimeVal !== '') {
+          // 完了しているタスク
+          td.parentNode.style.backgroundColor = constants.cellColor.DONE;
+        } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
+          // 見積もりが空なので警告にする
+          td.parentNode.style.backgroundColor = constants.cellColor.WARNING;
+        } else if (isActiveNotifi && startTimeVal !== '' && estimateVal !== '') {
+          // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
+          const nowTimeVal = moment().format(constants.TIMEFMT);
+          const expectedEndTimeVal = moment(startTimeVal, constants.TIMEFMT).add(estimateVal, 'minutes').format(constants.TIMEFMT);
+          const timeDiffMinute = util.getTimeDiffMinute(nowTimeVal, expectedEndTimeVal);
+          if (timeDiffMinute < 1) {
+            td.parentNode.style.backgroundColor = constants.cellColor.OUT;
+          } else {
+            td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
+          }
+          td.innerHTML = `<span style="color:${constants.brandColor.base.GREY}">${expectedEndTimeVal} ${isActiveNotifi && cellProperties.endTimeNotifiId ? '⏰' : ''}</span>`; // eslint-disable-line no-param-reassign
+        }
+        return td;
+      },
+    },
+    {
+      title: '実績(分)',
+      data: 'actually',
+      type: 'numeric',
+      readOnly: true,
+      validator: false,
+      colWidths: 45,
+      /* eslint no-param-reassign: ["error", { "props": false }] */
+      renderer(instance, td, row, col, prop, value) {
+        td.classList.add('htDimmed');
+        const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
+        const endTimeVal = instance.getDataAtRowProp(row, 'endTime');
+        if (startTimeVal && endTimeVal) {
+          const timeDiffMinute = util.getTimeDiffMinute(startTimeVal, endTimeVal);
+          const estimate = instance.getDataAtRowProp(row, 'estimate');
+          const overdue = estimate ? timeDiffMinute - instance.getDataAtRowProp(row, 'estimate') : 0;
+          if (overdue >= 1) {
+            // 見積をオーバー
+            value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
+          } else if (overdue === 0) {
+            // 見積と同じ
+            value = timeDiffMinute; // eslint-disable-line no-param-reassign
+          } else if (overdue <= -1) {
+            // 見積より少ない
+            value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
+          }
+        }
+        td.innerHTML = value;
+        return td;
+      },
+    },
+    {
+      title: '備考',
+      data: 'memo',
+      type: 'text',
+    },
+  ],
   dataSchema: tableTaskSchema,
   beforeInit() {
     Handsontable.hooks.register('clearAllNotifi');
@@ -490,7 +488,7 @@ export const hotConf = {
   },
   afterChange(changes) {
     if (!changes) return;
-    const { isActiveNotifi } = this.getSettings();
+    const { isActiveNotifi, columns } = this.getSettings();
     const changesLength = changes.length;
     const assignIndex = columns.findIndex(column => column.data === 'assign');
     for (let i = 0; i < changesLength; i += 1) {
