@@ -65,9 +65,9 @@ const styles = {
 class WorkSheet extends Component {
   constructor(props) {
     super(props);
-    this.saveWorkSheet = debounce(this.saveWorkSheet, constants.REQEST_DELAY);
-    this.attachTableTasks = debounce(this.attachTableTasks, constants.REQEST_DELAY);
-    this.attachMemo = debounce(this.attachMemo, constants.REQEST_DELAY);
+    this.saveWorkSheet = debounce(this.saveWorkSheet, constants.REQEST_DELAY_FAST);
+    this.attachTableTasks = debounce(this.attachTableTasks, constants.REQEST_DELAY_FAST);
+    this.attachMemo = debounce(this.attachMemo, constants.REQEST_DELAY_FAST);
     this.state = {
       worksheetId: '',
       worksheetOpenRange: '', // public or private

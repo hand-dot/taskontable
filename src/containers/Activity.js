@@ -39,6 +39,7 @@ const editorOptions = {
 const styles = {
   root: {
     paddingTop: '5em',
+    minHeight: '100vh',
     padding: '4em 2em 2em',
     width: constants.APPWIDTH,
     margin: '0 auto',
@@ -57,7 +58,7 @@ class Activity extends Component {
   constructor(props) {
     super(props);
     this.hot = null;
-    this.setActivityData = debounce(this.setActivityData, constants.REQEST_DELAY);
+    this.setActivityData = debounce(this.setActivityData, constants.REQEST_DELAY_SLOW);
     this.syncStateByRender = debounce(this.syncStateByRender, constants.RENDER_DELAY);
     this.state = {
       worksheetId: '',
@@ -132,7 +133,12 @@ class Activity extends Component {
     const startDate = moment(this.state.startDate);
     const endDate = moment(this.state.endDate);
     const diff = endDate.diff(startDate, 'days');
-    if (diff <= 0) {
+    if (!util.isNaturalNumber(diff.toString())) {
+      this.hot.updateSettings({ data: [] });
+      return;
+    }
+    if (diff >= 100) {
+      alert('一度に取得できるデータは100日までです。');
       this.hot.updateSettings({ data: [] });
       return;
     }
@@ -140,8 +146,10 @@ class Activity extends Component {
     promises.push(database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${startDate.format(constants.DATEFMT)}`).once('value'));
     promises.push(...Array(diff).fill('dummy').map(() => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${startDate.add(1, 'days').format(constants.DATEFMT)}`).once('value')));
     Promise.all(promises).then((datas) => {
-      const datasVals = datas.filter(data => data.exists()).map(data => data.val());
-      const datasKeys = datas.filter(data => data.exists()).map(data => data.key);
+      const datasVals = datas.map(data => (data.exists() ? data.val() : [{
+        id: '', assign: '', title: 'no task', estimate: '', startTime: '', endTime: '', memo: '',
+      }]));
+      const datasKeys = datas.map(data => data.key);
       return datasKeys.reduce((accum, key, index) => accum.concat(datasVals[index].map((task) => {
         task.date = key; // eslint-disable-line no-param-reassign
         return task;

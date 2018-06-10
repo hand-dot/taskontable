@@ -14,12 +14,24 @@ const activityChartTasks = [
     tableTask.date = '2018-06-10'; // eslint-disable-line no-param-reassign
     return tableTask;
   }),
+  // 2018-06-11の歯抜け
   ...util.cloneDeep(exampleTaskData).map((tableTask) => {
-    tableTask.date = '2018-06-11'; // eslint-disable-line no-param-reassign
+    tableTask.date = '2018-06-12'; // eslint-disable-line no-param-reassign
     return tableTask;
   }),
   ...util.cloneDeep(exampleTaskData).map((tableTask) => {
-    tableTask.date = '2018-06-12'; // eslint-disable-line no-param-reassign
+    tableTask.date = '2018-06-13'; // eslint-disable-line no-param-reassign
+    return tableTask;
+  }),
+  ...util.cloneDeep(exampleTaskData).map((tableTask) => {
+    // 実績をなくしてみる
+    tableTask.startTime = '00:00'; // eslint-disable-line no-param-reassign
+    tableTask.endTime = '00:00'; // eslint-disable-line no-param-reassign
+    tableTask.date = '2018-06-14'; // eslint-disable-line no-param-reassign
+    return tableTask;
+  }),
+  ...util.cloneDeep(exampleTaskData).map((tableTask) => {
+    tableTask.date = '2018-06-15'; // eslint-disable-line no-param-reassign
     return tableTask;
   }),
 ];

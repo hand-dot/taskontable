@@ -283,4 +283,15 @@ export default {
     // 処理結果を返却
     return retVal;
   },
+  /**
+ * 自然数かチェックします。
+ * @param  {String} numVal
+ */
+  isNaturalNumber(numVal) {
+  // チェック条件パターン
+    const pattern = /^([1-9]\d*)$/;
+    // 数値チェック
+    return pattern.test(numVal);
+  },
 };
+
