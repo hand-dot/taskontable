@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import debounce from 'lodash.debounce';
 import * as d3 from 'd3';
 import uuid from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
@@ -30,6 +31,7 @@ const styles = {};
 class TimelineChart extends Component {
   constructor(props) {
     super(props);
+    this.draw = debounce(this.draw, constants.RENDER_DELAY);
     this.state = {
       id: `${uuid()}`,
     };
