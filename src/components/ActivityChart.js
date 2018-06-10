@@ -10,8 +10,11 @@ import util from '../util';
 const formatDatas = tableTasks => tableTasks.reduce((result, current) => {
   const element = result.find(p => p.date === current.date);
   const actually = util.getTimeDiffMinute(current.startTime, current.endTime);
-  if (element && actually) element.actuallys.push(actually);
-  else if (actually) result.push({ date: current.date, actuallys: [actually] });
+  if (element) {
+    element.actuallys.push(actually);
+  } else {
+    result.push({ date: current.date, actuallys: [actually] });
+  }
   return result;
 }, []);
 
@@ -43,7 +46,7 @@ class ActivityChart extends Component {
 
   draw(datas) {
     d3.selectAll(`#activity-${this.state.id} > *`).remove();
-    const padding = 30;
+    const padding = 60;
     const width = constants.APPWIDTH - (padding * 2);
     const height = 300;
     const svg = d3.select(`#activity-${this.state.id}`).attr('width', width).attr('height', height);

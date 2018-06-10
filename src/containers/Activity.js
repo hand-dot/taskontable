@@ -5,19 +5,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
-import ShowChart from '@material-ui/icons/ShowChart';
-import ViewList from '@material-ui/icons/ViewList';
-import Code from '@material-ui/icons/Code';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.min.css';
@@ -73,8 +63,8 @@ class Activity extends Component {
       worksheetId: '',
       isOpenSnackbar: false,
       snackbarText: '',
-      startDate: moment().add(-3, 'days').format(`${constants.DATEFMT}`),
-      endDate: moment().add(3, 'days').format(`${constants.DATEFMT}`),
+      startDate: moment().add(-7, 'days').format(`${constants.DATEFMT}`),
+      endDate: moment().format(`${constants.DATEFMT}`),
       taskData: '',
     };
   }
@@ -203,18 +193,18 @@ class Activity extends Component {
         <Grid item xs={12}>
           {this.state.taskData !== '' && (<ActivityChart tableTasks={JSON.parse(this.state.taskData)} />)}
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           <Paper square elevation={0}>
-            <div style={{ marginTop: theme.spacing.unit * 2 }} ref={(node) => { this.hotDom = node; }} />
+            <div ref={(node) => { this.hotDom = node; }} />
           </Paper>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <CodeMirror
             value={this.state.taskData}
             options={Object.assign({}, editorOptions, { readOnly: true })}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{ marginTop: theme.spacing.unit * 2 }}>
           <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">ワークシートに戻る</Button>
         </Grid>
         <Snackbar
