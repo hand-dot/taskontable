@@ -3,19 +3,19 @@ import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
 import constants from '../constants';
 
-ReactGA.initialize(constants.GA_ID, {
-  debug: process.env.NODE_ENV === 'development',
-  titleCase: false,
-});
-
+if (process.env.NODE_ENV !== 'development') {
+  ReactGA.initialize(constants.GA_ID, {
+    debug: process.env.NODE_ENV === 'development',
+    titleCase: false,
+  });
+}
 
 const withTracker = (WrappedComponent, options = {}) => {
   const trackPage = (page) => {
-    ReactGA.set({
-      page,
-      ...options,
-    });
-    ReactGA.pageview(page);
+    if (process.env.NODE_ENV !== 'development') {
+      ReactGA.set({ page, ...options });
+      ReactGA.pageview(page);
+    }
   };
 
   const HOC = class extends Component {

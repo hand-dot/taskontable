@@ -75,7 +75,9 @@ class App extends Component {
           },
         });
         // dimension1はgaではuidとしている
-        ReactGA.set({ dimension1: user.uid });
+        if (process.env.NODE_ENV !== 'development') {
+          ReactGA.set({ dimension1: user.uid });
+        }
 
         // トークン更新のモニタリング
         if (messaging) { // iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこのifが必要。
