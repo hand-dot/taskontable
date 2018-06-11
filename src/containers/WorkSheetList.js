@@ -23,7 +23,7 @@ const styles = {
   },
   content: {
     padding: '6em 2em',
-    maxWidth: constants.APPWIDTH,
+    maxWidth: '100%',
     margin: '0 auto',
   },
   button: {

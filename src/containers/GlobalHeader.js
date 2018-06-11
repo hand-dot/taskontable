@@ -39,7 +39,7 @@ const styles = theme => ({
   iconButton: {
   },
   toolbar: {
-    maxWidth: constants.APPWIDTH,
+    maxWidth: '100%',
     margin: '0 auto',
   },
   title: {

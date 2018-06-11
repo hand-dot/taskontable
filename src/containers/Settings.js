@@ -30,7 +30,7 @@ const styles = {
     paddingTop: '5em',
     minHeight: '100vh',
     padding: '4em 2em 2em',
-    width: constants.APPWIDTH,
+    width: '100%',
     margin: '0 auto',
     backgroundColor: '#fff',
   },

@@ -65,7 +65,7 @@ class ActivityChart extends Component {
   draw(datas) {
     d3.selectAll(`#activity-${this.state.id} > *`).remove();
     const padding = 40;
-    const width = constants.APPWIDTH - (padding * 2);
+    const width = window.innerWidth - (padding * 2);
     const height = 300;
     const svg = d3.select(`#activity-${this.state.id}`).attr('width', width).attr('height', height);
     const timeparser = d3.timeParse('%Y-%m-%d');

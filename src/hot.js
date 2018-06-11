@@ -311,7 +311,7 @@ export const hotConf = {
   autoInsertRow: false,
   manualRowMove: true,
   minRows: constants.HOT_MINROW,
-  colWidths: Math.round(constants.APPWIDTH / 7),
+  colWidths: Math.round(window.innerWidth / 7),
   columns: [
     {
       title: '割当',

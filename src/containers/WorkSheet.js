@@ -50,7 +50,7 @@ const database = util.getDatabase();
 
 const styles = {
   root: {
-    width: constants.APPWIDTH,
+    width: '100%',
     margin: '0 auto',
   },
   link: {
@@ -393,7 +393,7 @@ class WorkSheet extends Component {
           .then(() => 'エクスポートスクリプトを実行しました。(success) - '),
         reason => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).set(sortedTableTask)
           .then(() => (reason ? `エクスポートスクリプトを実行しました。(error)：${reason} - ` : '')),
-    );
+      );
   }
   /**
    * stateのmemoをサーバーに保存します。
