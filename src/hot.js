@@ -340,6 +340,11 @@ export const hotConf = {
         if (assingedUser) {
           img.src = assingedUser.photoURL || person;
           img.title = `@${assingedUser.displayName}` || '@unknown';
+          if (td.parentNode.style.backgroundColor === constants.cellColor.RUNNING) {
+            img.style.animation = 'busy 3s infinite';
+          } else if (td.parentNode.style.backgroundColor === constants.cellColor.OUT) {
+            img.style.animation = 'help 1s infinite';
+          }
         } else {
           img.src = value ? unknown : logoMini; // unknownは削除されたユーザー
           img.title = value ? '@unknown' : '@every';

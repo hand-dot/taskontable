@@ -120,10 +120,10 @@ export default {
     },
   },
   cellColor: {
-    DONE: `rgba(${rgb.GREY},0.2)`,
-    RESERVATION: `rgba(${rgb.GREEN},0.2)`,
-    WARNING: `rgba(${rgb.YELLOW},0.2)`,
-    RUNNING: `rgba(${rgb.BLUE},0.2)`,
-    OUT: `rgba(${rgb.RED},0.2)`,
+    DONE: `rgba(${rgb.GREY}, 0.2)`,
+    RESERVATION: `rgba(${rgb.GREEN}, 0.2)`,
+    WARNING: `rgba(${rgb.YELLOW}, 0.2)`,
+    RUNNING: `rgba(${rgb.BLUE}, 0.2)`,
+    OUT: `rgba(${rgb.RED}, 0.2)`,
   },
 };

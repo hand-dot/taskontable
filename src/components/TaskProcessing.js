@@ -121,10 +121,10 @@ class TaskProcessing extends Component {
         <Typography variant="caption" align="center">
           <Favorite
             style={{
-              fontSize: 10,
+              fontSize: 15,
               marginRight: theme.spacing.unit,
               color: this.state.processingTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
-              animation: this.state.processingTask.id ? 'blink 1s infinite' : '',
+              animation: this.state.processingTask.id ? 'heartbeat 2s infinite' : '',
             }}
           />
           {getTitle(this.state.processingTask, '開始しているタスクはありません。', true)}
