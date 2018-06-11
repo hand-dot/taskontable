@@ -61,6 +61,8 @@ const styles = {
 class Settings extends Component {
   constructor(props) {
     super(props);
+    this.editingPhoto = null;
+    this.cropper = null;
     this.exampleHot = null;
     this.state = {
       displayName: '',
@@ -171,6 +173,24 @@ class Settings extends Component {
     this.props.history.goBack();
   }
 
+  changePhotoInput(e) {
+    if (this.cropper) this.cropper.destroy();
+    const { files } = e.target;
+    if (files && files.length > 0) {
+      this.editingPhoto.src = URL.createObjectURL(files[0]);
+      this.cropper = new Cropper(this.editingPhoto, { aspectRatio: 1 });
+    }
+  }
+
+  cropPhoto() {
+    if (this.cropper) {
+      const canvas = this.cropper.getCroppedCanvas({ width: 300, height: 300 });
+      canvas.toBlob((blob) => { this.setState({ photoURL: URL.createObjectURL(blob), isOpenEditPhotoDialog: false }); });
+      this.cropper.destroy();
+      this.cropper = null;
+    }
+  }
+
   render() {
     const { classes, theme } = this.props;
     return (
@@ -193,6 +213,7 @@ class Settings extends Component {
                 {this.state.photoURL ? <Avatar className={classes.userPhoto} src={this.state.photoURL} /> : <Person style={{ fontSize: 100 }} />}
               </IconButton>
               <Dialog
+                fullScreen
                 disableBackdropClick
                 disableEscapeKeyDown
                 open={this.state.isOpenEditPhotoDialog}
@@ -202,13 +223,14 @@ class Settings extends Component {
                 <DialogTitle id="edit-photo-dialog">プロフィール写真を変更</DialogTitle>
                 <DialogContent>
                   <DialogContentText />
-                    実装中
+                  <img ref={(node) => { this.editingPhoto = node; }} style={{ maxWidth: 300, maxHeight: 300 }} src={this.state.photoURL} crossOrigin="" alt={`${this.state.displayName}のアイコン${this.state.photoURL ? '' : '(未設定) / '}`} />
+                  <input type="file" name="image" accept="image/*" onChange={this.changePhotoInput.bind(this)} />
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={() => { this.setState({ isOpenEditPhotoDialog: false }); }} color="primary">
                     キャンセル
                   </Button>
-                  <Button onClick={this.handleClose} color="primary">
+                  <Button onClick={this.cropPhoto.bind(this)} color="primary">
                     変更
                   </Button>
                 </DialogActions>
