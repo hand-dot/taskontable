@@ -2,6 +2,7 @@ import { firebase } from '@firebase/app';
 import '@firebase/database';
 import '@firebase/messaging';
 import '@firebase/auth';
+import '@firebase/storage';
 import moment from 'moment';
 import uuid from 'uuid';
 import fastclone from 'fast-clone';
@@ -18,11 +19,13 @@ const deviceType = parser.getDevice().type;
 let database;
 let auth;
 let messaging;
+let storage;
 if (process.env.NODE_ENV !== 'test') {
   firebase.initializeApp(firebaseConf);
   database = firebase.database();
   auth = firebase.auth();
   messaging = firebase.messaging();
+  storage = firebase.storage();
 }
 
 export default {
@@ -44,6 +47,12 @@ export default {
    */
   getMessaging() {
     return messaging;
+  },
+  /**
+   * firebaseのstorageを返します。
+   */
+  getStorage() {
+    return storage;
   },
   /**
    * constants.DATEFMT形式の文字列が今日か判断します。

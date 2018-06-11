@@ -334,8 +334,8 @@ export const hotConf = {
         td.style.paddingTop = '5px';
         Handsontable.dom.empty(td);
         const img = document.createElement('IMG');
-        img.style.width = '20px';
-        img.style.height = '20px';
+        img.style.width = '25px';
+        img.style.height = '25px';
         img.style.borderRadius = '50%';
         if (assingedUser) {
           img.src = assingedUser.photoURL || person;

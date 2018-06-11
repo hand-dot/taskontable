@@ -24,6 +24,7 @@ import util from '../util';
 
 const database = util.getDatabase();
 const auth = util.getAuth();
+const storage = util.getStorage();
 
 const styles = {
   root: {
@@ -56,8 +57,6 @@ const styles = {
   },
 };
 
-// TODO プロフィール写真の変更の実装
-
 class Settings extends Component {
   constructor(props) {
     super(props);
@@ -68,6 +67,7 @@ class Settings extends Component {
       displayName: '',
       email: '',
       photoURL: '',
+      newPhotoURLBlob: null,
       newPassword: '',
       newPasswordConf: '',
       loginProviderId: '',
@@ -118,6 +118,13 @@ class Settings extends Component {
       throw new Error('認証ユーザーと現在のユーザーのIDが違います。');
     } else {
       const promises = [];
+      if (this.state.newPhotoURLBlob) {
+        storage.ref().child(`profilePhotos/${propsUser.uid}.${this.state.newPhotoURLBlob.type.replace('image/', '')}`).put(this.state.newPhotoURLBlob).then((snapshot) => {
+          snapshot.ref.getDownloadURL().then((url) => {
+            promises.push(database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/photoURL/`).set(url), authUser.updateProfile({ photoURL: url }));
+          });
+        });
+      }
       if (this.state.newPassword !== '') {
         if (this.state.newPassword.length >= 6 && this.state.newPassword === this.state.newPasswordConf) {
           promises.push(authUser.updatePassword(this.state.newPassword));
@@ -185,7 +192,7 @@ class Settings extends Component {
   cropPhoto() {
     if (this.cropper) {
       const canvas = this.cropper.getCroppedCanvas({ width: 300, height: 300 });
-      canvas.toBlob((blob) => { this.setState({ photoURL: URL.createObjectURL(blob), isOpenEditPhotoDialog: false }); });
+      canvas.toBlob((blob) => { this.setState({ photoURL: URL.createObjectURL(blob), newPhotoURLBlob: blob, isOpenEditPhotoDialog: false }); });
       this.cropper.destroy();
       this.cropper = null;
     }
