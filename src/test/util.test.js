@@ -93,4 +93,3 @@ it('isNaturalNumber - nullの場合', () => {
 it('isNaturalNumber - NaNの場合', () => {
   assert.isFalse(util.isNaturalNumber(NaN));
 });
-// isNaturalNumber

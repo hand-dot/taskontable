@@ -14,12 +14,8 @@ import Person from '@material-ui/icons/Person';
 import Info from '@material-ui/icons/Info';
 import Help from '@material-ui/icons/Help';
 import Notifications from '@material-ui/icons/Notifications';
-
 import HelpDialog from '../components/HelpDialog';
-
 import constants from '../constants';
-import util from '../util';
-
 import title from '../images/title_gr.png';
 
 const styles = theme => ({
