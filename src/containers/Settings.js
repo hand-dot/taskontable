@@ -61,13 +61,13 @@ class Settings extends Component {
   constructor(props) {
     super(props);
     this.editingPhoto = null;
+    this.newPhotoBlob = null;
     this.cropper = null;
     this.exampleHot = null;
     this.state = {
       displayName: '',
       email: '',
       photoURL: '',
-      newPhotoURLBlob: null,
       newPassword: '',
       newPasswordConf: '',
       loginProviderId: '',
@@ -118,8 +118,9 @@ class Settings extends Component {
       throw new Error('認証ユーザーと現在のユーザーのIDが違います。');
     } else {
       const promises = [];
-      if (this.state.newPhotoURLBlob) {
-        storage.ref().child(`profilePhotos/${propsUser.uid}.${this.state.newPhotoURLBlob.type.replace('image/', '')}`).put(this.state.newPhotoURLBlob).then((snapshot) => {
+      if (this.newPhotoBlob) {
+        storage.ref().child(`profilePhotos/${propsUser.uid}.${this.newPhotoBlob.type.replace('image/', '')}`).put(this.newPhotoBlob).then((snapshot) => {
+          this.newPhotoBlob = null;
           snapshot.ref.getDownloadURL().then((url) => {
             promises.push(database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/photoURL/`).set(url), authUser.updateProfile({ photoURL: url }));
           });
@@ -192,7 +193,10 @@ class Settings extends Component {
   cropPhoto() {
     if (this.cropper) {
       const canvas = this.cropper.getCroppedCanvas({ width: 300, height: 300 });
-      canvas.toBlob((blob) => { this.setState({ photoURL: URL.createObjectURL(blob), newPhotoURLBlob: blob, isOpenEditPhotoDialog: false }); });
+      canvas.toBlob((blob) => {
+        this.newPhotoBlob = blob;
+        this.setState({ photoURL: URL.createObjectURL(blob), isOpenEditPhotoDialog: false });
+      });
       this.cropper.destroy();
       this.cropper = null;
     }
@@ -204,7 +208,7 @@ class Settings extends Component {
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
         <Grid item xs={12}>
           <Typography gutterBottom variant="title" style={{ paddingBottom: '2em' }}>
-              アカウント設定
+            アカウント設定
           </Typography>
           <div className={classes.content}>
             {(() => {
