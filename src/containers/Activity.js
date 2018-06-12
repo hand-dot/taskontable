@@ -133,7 +133,7 @@ class Activity extends Component {
     const startDate = moment(this.state.startDate);
     const endDate = moment(this.state.endDate);
     const diff = endDate.diff(startDate, 'days');
-    if (!util.isNaturalNumber(diff.toString())) {
+    if (!util.isNaturalNumber(diff)) {
       this.hot.updateSettings({ data: [] });
       return;
     }

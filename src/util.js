@@ -273,34 +273,26 @@ export default {
    * @param  {String} textVal
    */
   copyTextToClipboard(textVal) {
-    // テキストエリアを用意する
     const copyFrom = document.createElement('textarea');
-    // テキストエリアへ値をセット
     copyFrom.textContent = textVal;
-
-    // bodyタグの要素を取得
     const bodyElm = document.getElementsByTagName('body')[0];
-    // 子要素にテキストエリアを配置
     bodyElm.appendChild(copyFrom);
-
-    // テキストエリアの値を選択
     copyFrom.select();
-    // コピーコマンド発行
     const retVal = document.execCommand('copy');
-    // 追加テキストエリアを削除
     bodyElm.removeChild(copyFrom);
-    // 処理結果を返却
     return retVal;
   },
+
   /**
- * 自然数かチェックします。
- * @param  {String} numVal
- */
+   * 自然数かチェックします。
+   * @param  {String} numVal
+   */
   isNaturalNumber(numVal) {
-  // チェック条件パターン
+    if (!numVal) return false;
+    // チェック条件パターン
     const pattern = /^([1-9]\d*)$/;
     // 数値チェック
-    return pattern.test(numVal);
+    return pattern.test(numVal.toString());
   },
 };
 
