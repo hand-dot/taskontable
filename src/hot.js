@@ -318,7 +318,7 @@ export const hotConf = {
       data: 'assign',
       editor: 'select',
       selectOptions: [],
-      colWidths: 20,
+      colWidths: 25,
       renderer(instance, td, row, col, prop, value) {
         if (instance.isEmptyRow(row)) {
           td.innerHTML = null;
@@ -340,10 +340,11 @@ export const hotConf = {
         if (assingedUser) {
           img.src = assingedUser.photoURL || person;
           img.title = `@${assingedUser.displayName}` || '@unknown';
+          const delay = Math.floor(Math.random() * 3) + 1;
           if (td.parentNode.style.backgroundColor === constants.cellColor.RUNNING) {
-            img.style.animation = 'busy 3s infinite';
+            img.style.animation = `busy 3s ${delay}s infinite`;
           } else if (td.parentNode.style.backgroundColor === constants.cellColor.OUT) {
-            img.style.animation = 'help 1s infinite';
+            img.style.animation = `help 1s ${delay}s infinite`;
           }
         } else {
           img.src = value ? unknown : logoMini; // unknownは削除されたユーザー
