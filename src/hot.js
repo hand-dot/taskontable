@@ -432,6 +432,7 @@ export const hotConf = {
           const timeDiffMinute = util.getTimeDiffMinute(startTimeVal, endTimeVal);
           const estimate = instance.getDataAtRowProp(row, 'estimate');
           const overdue = estimate ? timeDiffMinute - instance.getDataAtRowProp(row, 'estimate') : 0;
+          if (value !== timeDiffMinute) instance.setDataAtCell(row, col, timeDiffMinute);
           if (overdue >= 1) {
             // 見積をオーバー
             value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
