@@ -255,7 +255,9 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   const rowCount = hotInstance.countSourceRows();
   for (let index = 0; index < rowCount; index += 1) {
     if (!hotInstance.isEmptyRow(index)) {
-      hotData.push(hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index)));
+      const data = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
+      delete data.actually;
+      hotData.push(data);
     }
   }
   return util.cloneDeep(hotData.filter(data => !util.equal(tableTaskSchema, data)));
@@ -329,7 +331,7 @@ export const hotConf = {
           td.innerHTML = null;
           return td;
         }
-        const assingedUser = members[instance.getSettings().members.findIndex(member => member.uid === value)];
+        const assingedUser = members[members.findIndex(member => member.uid === value)];
         td.className = 'htCenter htMiddle';
         td.style.paddingTop = '5px';
         Handsontable.dom.empty(td);
@@ -443,6 +445,9 @@ export const hotConf = {
             // 見積より少ない
             value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
           }
+        } else if (!instance.isEmptyRow(row)) {
+          if (value !== 0) instance.setDataAtCell(row, col, 0);
+          value = 0; // eslint-disable-line no-param-reassign
         }
         td.innerHTML = value;
         return td;

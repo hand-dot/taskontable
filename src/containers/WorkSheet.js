@@ -766,7 +766,7 @@ class WorkSheet extends Component {
           ContentProps={{ 'aria-describedby': 'info-id' }}
           message={
             <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
-              <CheckCircleIcon />
+              <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
               <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.snackbarText}</span>
             </span>
           }
