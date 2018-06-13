@@ -121,8 +121,9 @@ class Settings extends Component {
       if (this.newPhotoBlob) {
         storage.ref().child(`profilePhotos/${propsUser.uid}.${this.newPhotoBlob.type.replace('image/', '')}`).put(this.newPhotoBlob).then((snapshot) => {
           this.newPhotoBlob = null;
-          snapshot.ref.getDownloadURL().then((url) => {
-            promises.push(database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/photoURL/`).set(url), authUser.updateProfile({ photoURL: url }));
+          snapshot.ref.getDownloadURL().then((photoURL) => {
+            this.setState({ photoURL });
+            promises.push(database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/photoURL/`).set(photoURL), authUser.updateProfile({ photoURL }));
           });
         });
       }

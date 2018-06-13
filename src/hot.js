@@ -488,7 +488,7 @@ export const hotConf = {
     for (let i = 0; i < changesLength; i += 1) {
       const [row, prop, oldVal, newVal] = changes[i];
       // 新規にタスクを作成した場合に下記の処理で割当を自分に自動で設定する
-      if (newVal && (prop !== 'assign') && this.isEmptyRow(row)) {
+      if (oldVal !== newVal && newVal && (prop !== 'assign') && this.isEmptyRow(row)) {
         this.setDataAtRowProp(row, 'assign', userId);
       }
     }
