@@ -399,8 +399,8 @@ export const hotConf = {
           // 完了しているタスク
           td.parentNode.style.backgroundColor = constants.cellColor.DONE;
         } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
-          // 見積もりが空なので警告にする
-          td.parentNode.style.backgroundColor = constants.cellColor.WARNING;
+          // 見積もりが空なので警告にする。開始していたら実行中の色を付ける。
+          td.parentNode.style.backgroundColor = startTimeVal === '' ? constants.cellColor.WARNING : constants.cellColor.RUNNING;
         } else if (isActiveNotifi && startTimeVal !== '' && estimateVal !== '') {
           // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
           const nowTimeVal = moment().format(constants.TIMEFMT);
