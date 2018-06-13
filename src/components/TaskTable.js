@@ -93,7 +93,6 @@ class TaskTable extends Component {
     if (!util.equal(hotTasks.map(task => tasksUtil.deleteUselessTaskProp(task)), this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)))) {
       this.props.handleSaveable(true);
       this.props.handleTableTasks(hotTasks);
-      if (this.hot) this.hot.render();
     }
   }
 
@@ -104,10 +103,6 @@ class TaskTable extends Component {
 
   updateIsActive(isActive) {
     if (this.hot) this.hot.updateSettings({ isActiveNotifi: isActive });
-  }
-
-  renderHot() {
-    if (this.hot) this.hot.render();
   }
 
   render() {

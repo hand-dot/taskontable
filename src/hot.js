@@ -76,7 +76,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
   }, timeout);
   notifiIds.push(notifiId);
   hotInstance.setCellMeta(row, col, targetNotifiId, notifiId);
-  hotInstance.render(); // メタをセットしたのでレンダラーで表示しているアイコンを移動させるためにレンダー
+  // hotInstance.render(); // メタをセットしたのでレンダラーで表示しているアイコンを移動させるためにレンダー(無駄にレンダリングされるので、一旦コメントアウト)
 };
 
 /**
@@ -256,7 +256,6 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
   for (let index = 0; index < rowCount; index += 1) {
     if (!hotInstance.isEmptyRow(index)) {
       const data = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
-      delete data.actually;
       hotData.push(data);
     }
   }
@@ -341,12 +340,10 @@ export const hotConf = {
         img.style.borderRadius = '50%';
         if (assingedUser) {
           img.src = assingedUser.photoURL || person;
-          img.title = `@${assingedUser.displayName}` || '@unknown';
-          const delay = Math.floor(Math.random() * 3) + 1;
           if (td.parentNode.style.backgroundColor === constants.cellColor.RUNNING) {
-            img.style.animation = `busy 3s ${delay}s infinite`;
+            img.style.animation = `busy 3s ${row % 2}s infinite`;
           } else if (td.parentNode.style.backgroundColor === constants.cellColor.OUT) {
-            img.style.animation = `help 1s ${delay}s infinite`;
+            img.style.animation = 'help 1s infinite';
           }
         } else {
           img.src = value ? unknown : logoMini; // unknownは削除されたユーザー
@@ -427,29 +424,21 @@ export const hotConf = {
       colWidths: 45,
       /* eslint no-param-reassign: ["error", { "props": false }] */
       renderer(instance, td, row, col, prop, value) {
-        td.classList.add('htDimmed');
-        const startTimeVal = instance.getDataAtRowProp(row, 'startTime');
-        const endTimeVal = instance.getDataAtRowProp(row, 'endTime');
-        if (startTimeVal && endTimeVal) {
-          const timeDiffMinute = util.getTimeDiffMinute(startTimeVal, endTimeVal);
-          const estimate = instance.getDataAtRowProp(row, 'estimate');
-          const overdue = estimate ? timeDiffMinute - instance.getDataAtRowProp(row, 'estimate') : 0;
-          if (value !== timeDiffMinute) instance.setDataAtCell(row, col, timeDiffMinute);
-          if (overdue >= 1) {
-            // 見積をオーバー
-            value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`; // eslint-disable-line no-param-reassign
-          } else if (overdue === 0) {
-            // 見積と同じ
-            value = timeDiffMinute; // eslint-disable-line no-param-reassign
-          } else if (overdue <= -1) {
-            // 見積より少ない
-            value = `${timeDiffMinute}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`; // eslint-disable-line no-param-reassign
-          }
-        } else if (!instance.isEmptyRow(row)) {
-          if (value !== 0) instance.setDataAtCell(row, col, 0);
-          value = 0; // eslint-disable-line no-param-reassign
-        }
         td.innerHTML = value;
+        if (value) {
+          const estimate = instance.getDataAtRowProp(row, 'estimate');
+          const overdue = estimate ? value - estimate : 0;
+          if (overdue >= 1) {
+          // 見積をオーバー
+            td.innerHTML = `${value}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`;
+          } else if (overdue === 0) {
+          // 見積と同じ
+            td.innerHTML = value;
+          } else if (overdue <= -1) {
+          // 見積より少ない
+            td.innerHTML = `${value}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`;
+          }
+        }
         return td;
       },
     },
@@ -507,10 +496,13 @@ export const hotConf = {
       const [row, prop, oldVal, newVal] = changes[i];
       if (oldVal !== newVal) {
         // 下記の処理で割当以外が全て空だった場合に割当を自動的に削除する
-        if (prop !== 'assign') {
-          if (!newVal && !this.isEmptyRow(row) && this.getDataAtRow(row).every((data, index) => (index === assignIndex ? data : !data))) {
-            this.setDataAtRowProp(row, 'assign', '');
-          }
+        if (prop !== 'assign' && !newVal && this.getDataAtRow(row).every((data, index) => (index === assignIndex ? data : !data))) {
+          this.setDataAtRowProp(row, 'assign', '');
+        }
+        if (prop === 'startTime' || prop === 'endTime' || prop === 'estimate') {
+          const startTimeVal = prop === 'startTime' ? newVal : this.getDataAtRowProp(row, 'startTime');
+          const endTimeVal = prop === 'endTime' ? newVal : this.getDataAtRowProp(row, 'endTime');
+          this.setDataAtRowProp(row, 'actually', startTimeVal && endTimeVal ? util.getTimeDiffMinute(startTimeVal, endTimeVal) : null);
         }
         if (isActiveNotifi && (prop === 'startTime' || prop === 'endTime' || prop === 'estimate' || prop === 'assign')) {
           manageNotifi(this, row, prop, newVal);

@@ -118,7 +118,6 @@ class Activity extends Component {
       data: [],
       afterRender() { self.syncStateByRender(); },
     }));
-    setTimeout(() => { if (this.hot) this.hot.render(); });
   }
 
   componentWillUnmount() {

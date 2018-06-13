@@ -123,7 +123,6 @@ class Scripts extends Component {
       data: util.cloneDeep(exampleTaskData),
       afterRender() { self.syncStateByRender(); },
     }));
-    setTimeout(() => { if (this.exampleHot) this.exampleHot.render(); });
   }
 
   componentWillUnmount() {
@@ -150,7 +149,6 @@ class Scripts extends Component {
   resetExampleHot() {
     if (!window.confirm('テーブルをリセットしてもよろしいですか？')) return;
     this.exampleHot.loadData(util.cloneDeep(exampleTaskData));
-    setTimeout(() => { if (this.exampleHot) this.exampleHot.render(); });
   }
 
   loadScript(scriptType) {
@@ -181,7 +179,6 @@ class Scripts extends Component {
     const script = this.state[scriptType];
     util.runWorker(script, data).then((result) => {
       setDataForHot(this.exampleHot, result);
-      setTimeout(() => { if (this.exampleHot) this.exampleHot.render(); });
       this.setState({ isOpenScriptSnackbar: true, scriptSnackbarText: `${scriptType}を実行しました。` });
     }, (reason) => {
       const scriptSnackbarText = reason ? `エラー[${scriptType}]：${reason}` : `${scriptType}を実行しましたがpostMessageの引数に問題があるため処理を中断しました。`;
