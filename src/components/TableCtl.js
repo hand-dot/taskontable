@@ -81,23 +81,24 @@ class TableCtl extends Component {
             {(() => {
               if (tableTasks.length === 0) {
                 return (
-                  <Typography style={{ marginTop: 10 }} variant="caption">タスクがありません</Typography>
+                  <Typography variant="caption">タスクがありません</Typography>
                 );
               } else if (tableTasks.length === tasksUtil.getDoneTasks(tableTasks).length) {
                 return (
-                  <Typography style={{ animation: 'good 1s linear 0s 1', marginTop: 10, color: constants.brandColor.base.BLUE }} variant="caption">
+                  <Typography style={{ animation: 'good 1s linear 0s 1', color: constants.brandColor.base.BLUE }} variant="caption">
                     <ThumbUp style={{ fontSize: 16 }} />
+                    <span style={{ marginRight: theme.spacing.unit }} />
                     Complete!
                   </Typography>
                 );
               }
               return (
-                <Typography style={{ marginTop: 10 }} variant="caption">
-                  <Error style={{ fontSize: 16 }} />
-                  {tasksUtil.getOpenTasks(tableTasks).length}Open
-                  <span>&nbsp;</span>
-                  <CheckCircle style={{ fontSize: 16 }} />
-                  {tasksUtil.getDoneTasks(tableTasks).length}Close
+                <Typography variant="caption">
+                  <Error style={{ verticalAlign: 'bottom', fontSize: 16, color: constants.brandColor.base.YELLOW }} />
+                  <span>{tasksUtil.getOpenTasks(tableTasks).length}Open</span>
+                  <span style={{ marginRight: theme.spacing.unit }}>&nbsp;</span>
+                  <CheckCircle style={{ verticalAlign: 'bottom', fontSize: 16, color: constants.brandColor.base.GREEN }} />
+                  <span>{tasksUtil.getDoneTasks(tableTasks).length}Close</span>
                 </Typography>
               );
             })()}

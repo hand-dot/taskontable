@@ -120,9 +120,9 @@ class Scripts extends Component {
       renderAllRows: true,
       height: 300,
       minRows: 10,
-      data: util.cloneDeep(exampleTaskData),
       afterRender() { self.syncStateByRender(); },
     }));
+    setDataForHot(this.exampleHot, util.cloneDeep(exampleTaskData));
   }
 
   componentWillUnmount() {

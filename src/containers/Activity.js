@@ -17,7 +17,7 @@ import 'codemirror/theme/material.css';
 import 'codemirror/mode/javascript/javascript';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
-import { hotConf, getHotTasksIgnoreEmptyTask } from '../hot';
+import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import util from '../util';
 import DatePicker from '../components/DatePicker';
 import ActivityChart from '../components/ActivityChart';
@@ -155,7 +155,7 @@ class Activity extends Component {
       })), []);
     }).then((data) => {
       // テーブルを更新
-      this.hot.updateSettings({ data });
+      setDataForHot(this.hot, data);
     });
   }
 
