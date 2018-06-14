@@ -266,10 +266,12 @@ export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
   const newDatas = [];
   datas.forEach((data) => {
-    const startTimeVal = data.startTime;
-    const endTimeVal = data.endTime;
-    data.actually = startTimeVal && endTimeVal ? util.getTimeDiffMinute(startTimeVal, endTimeVal) : null;
-    if (!util.equal(tableTaskSchema, data)) newDatas.push(data);
+    if (!util.equal(tableTaskSchema, data)) {
+      const startTimeVal = data.startTime;
+      const endTimeVal = data.endTime;
+      data.actually = startTimeVal && endTimeVal ? util.getTimeDiffMinute(startTimeVal, endTimeVal) : null;
+      newDatas.push(data);
+    }
   });
   hotInstance.updateSettings({ data: newDatas });
   hotInstance.render();

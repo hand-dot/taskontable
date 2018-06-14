@@ -6,6 +6,8 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
 import ThumbUp from '@material-ui/icons/ThumbUp';
@@ -40,8 +42,18 @@ class TableCtl extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      target: '',
     };
   }
+
+  componentWillMount() {
+    this.setState({ target: this.props.taskTableFilterBy });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ target: nextProps.taskTableFilterBy });
+  }
+
   /**
    * 日付の変更を変更し、propsのchangeDateに新しい日付の文字列を返します。
    * @param  {Object} e イベント
@@ -62,7 +74,7 @@ class TableCtl extends Component {
 
   render() {
     const {
-      userId, tableTasks, date, savedAt, saveable, saveWorkSheet, classes, theme,
+      userId, worksheetName, taskTableFilterBy, members, tableTasks, date, savedAt, saveable, saveWorkSheet, handleTaskTableFilter, classes, theme,
     } = this.props;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
@@ -70,14 +82,39 @@ class TableCtl extends Component {
         <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} variant="determinate" value={progressPer} />
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems="center" justify="center" spacing={0}>
           <Hidden xsDown>
-            <Grid item xs={3}>
-              <TaskProcessing tableTasks={tasksUtil.getTasksByAssign(tableTasks, userId)} date={date} />
+            <Grid item xs={2}>
+              <div style={{ fontSize: '0.8rem', margin: `0 ${theme.spacing.unit}px`, display: 'inline-block' }}>{worksheetName} / </div>
+              <FormControl>
+                <Select
+                  native
+                  value={this.state.target}
+                  onChange={(e) => {
+                    this.setState({ target: e.target.value });
+                    handleTaskTableFilter(e.target.value);
+                  }}
+                  style={{ fontSize: '0.8rem' }}
+                >
+                  <option value="">
+                    @every
+                  </option>
+                  {members.map(member => (
+                    <option key={member.uid} value={member.uid}>
+                      @{member.displayName}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
           </Hidden>
-          <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
+          <Hidden xsDown>
+            <Grid item xs={3}>
+              <TaskProcessing tableTasks={tasksUtil.getTasksByAssign(tableTasks, taskTableFilterBy || userId)} date={date} />
+            </Grid>
+          </Hidden>
+          <Grid style={{ textAlign: 'center' }} item xs={4} sm={2}>
             <DatePicker value={date} changeDate={this.changeDate.bind(this)} label="" />
           </Grid>
-          <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
+          <Grid style={{ textAlign: 'center' }} item xs={4} sm={2}>
             {(() => {
               if (tableTasks.length === 0) {
                 return (
@@ -130,6 +167,15 @@ class TableCtl extends Component {
 
 TableCtl.propTypes = {
   userId: PropTypes.string.isRequired,
+  worksheetName: PropTypes.string.isRequired,
+  taskTableFilterBy: PropTypes.string.isRequired,
+  members: PropTypes.arrayOf(PropTypes.shape({
+    displayName: PropTypes.string.isRequired,
+    photoURL: PropTypes.string.isRequired,
+    uid: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    fcmToken: PropTypes.string.isRequired,
+  })).isRequired,
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     assign: PropTypes.string.isRequired,
@@ -144,6 +190,7 @@ TableCtl.propTypes = {
   saveable: PropTypes.bool.isRequired,
   changeDate: PropTypes.func.isRequired,
   saveWorkSheet: PropTypes.func.isRequired,
+  handleTaskTableFilter: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

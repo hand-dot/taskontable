@@ -83,6 +83,7 @@ class WorkSheet extends Component {
       isOpenDashboard: false,
       date: moment().format(constants.DATEFMT),
       savedAt: moment().format(constants.TIMEFMT),
+      taskTableFilterBy: '',
       tableTasks: [],
       poolTasks: {
         highPriorityTasks: [],
@@ -384,9 +385,9 @@ class WorkSheet extends Component {
       return Promise.resolve();
     }
     // IDを生成し無駄なプロパティを削除する。また、hotで並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = (!this.state.isMobile ? this.taskTable.getTasksIgnoreEmptyTaskAndProp() : this.state.tableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(util.setIdIfNotExist(tableTask)));
+    const tableTasks = !this.state.isMobile ? this.getHotTaskIgnoreFilter(this.taskTable.getTasksIgnoreEmptyTaskAndProp()) : this.state.tableTasks;
     // 開始時刻順に並び替える
-    const sortedTableTask = this.setSortedTableTasks(tableTasks);
+    const sortedTableTask = this.setSortedTableTasks(tableTasks.map(tableTask => tasksUtil.deleteUselessTaskProp(tableTask)));
     return this.fireScript(sortedTableTask, 'exportScript')
       .then(
         data => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).set(data)
@@ -425,13 +426,14 @@ class WorkSheet extends Component {
    */
   attachTableTasks() {
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
-      if (snapshot.exists() && util.equal(this.state.tableTasks, snapshot.val())) {
+      const prevTableTasks = (!this.state.isMobile ? this.getHotTaskIgnoreFilter(this.taskTable.getTasksIgnoreEmptyTaskAndProp()) : this.state.tableTasks);
+      if (snapshot.exists() && util.equal(tasksUtil.getSortedTasks(prevTableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(tableTask)), snapshot.val())) {
         // 同期したがテーブルのデータと差分がなかった場合(自分の更新)
         this.setState({ saveable: false });
         return;
       }
       let snackbarText = '';
-      let tableTasks = [];
+      let newTableTasks = [];
       // 初期化もしくは自分のテーブル以外の更新
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
@@ -439,7 +441,7 @@ class WorkSheet extends Component {
         if (this.state.isSyncedTableTasks) { // ほかのユーザーの更新
           snackbarText = `テーブルが更新されました。(${savedAt})`;
         }
-        tableTasks = snapshot.val();
+        newTableTasks = snapshot.val();
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合(定期タスクをテーブルに設定する処理。本日以降しか動作しない)
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
@@ -447,16 +449,16 @@ class WorkSheet extends Component {
         // util.convertDayOfWeekToString(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
         // https://github.com/hand-dot/taskontable/issues/118
         const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.convertDayOfWeekToString(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-        tableTasks = regularTasks;
-        if (tableTasks.length !== 0) snackbarText = '定期タスクを読み込みました。';
+        newTableTasks = regularTasks;
+        if (newTableTasks.length !== 0) snackbarText = '定期タスクを読み込みました。';
       }
-      this.fireScript(tableTasks, 'importScript').then(
+      this.fireScript(newTableTasks, 'importScript').then(
         (data) => {
           this.setSortedTableTasks(data);
           this.setState({ isSyncedTableTasks: true, isOpenSnackbar: true, snackbarText: `インポートスクリプトを実行しました。(success)${snackbarText ? ` - ${snackbarText}` : ''}` });
         },
         (reason) => {
-          this.setSortedTableTasks(tableTasks);
+          this.setSortedTableTasks(newTableTasks);
           if (reason) snackbarText = `インポートスクリプトを実行しました。(error)：${reason}${snackbarText ? ` - ${snackbarText}` : ''}`;
           this.setState({ isSyncedTableTasks: true, isOpenSnackbar: snackbarText !== '', snackbarText });
         },
@@ -644,6 +646,9 @@ class WorkSheet extends Component {
       return Promise.resolve();
     });
   }
+  getHotTaskIgnoreFilter(hotTasks) {
+    return this.state.taskTableFilterBy ? tasksUtil.getTasksByNotAssign(this.state.tableTasks, this.state.taskTableFilterBy).concat(hotTasks).map(tableTask => util.setIdIfNotExist(tableTask)).filter((o1, i, self) => self.findIndex(o2 => o2.id === o1.id) === i) : hotTasks;
+  }
 
   render() {
     const {
@@ -682,7 +687,7 @@ class WorkSheet extends Component {
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
-              {this.state.tab === 0 && <div><Dashboard userId={userId} worksheetName={this.state.worksheetName} tableTasks={this.state.tableTasks} members={this.state.members} /></div>}
+              {this.state.tab === 0 && <div><Dashboard tableTasks={this.state.taskTableFilterBy ? tasksUtil.getTasksByAssign(this.state.tableTasks, this.state.taskTableFilterBy) : this.state.tableTasks} /></div>}
               {this.state.tab === 1 && <div><TaskPool userId={userId} poolTasks={this.state.poolTasks} members={this.state.members} changePoolTasks={this.changePoolTasks.bind(this)} /></div>}
               {this.state.tab === 2 && (
                 <div style={{ overflow: 'auto' }}>
@@ -712,12 +717,16 @@ class WorkSheet extends Component {
           <Paper elevation={1}>
             <TableCtl
               userId={userId}
+              worksheetName={this.state.worksheetName}
+              taskTableFilterBy={this.state.taskTableFilterBy}
+              members={this.state.members}
               tableTasks={this.state.tableTasks}
               date={this.state.date}
               savedAt={this.state.savedAt}
               saveable={Boolean(userId && this.state.saveable)}
               changeDate={this.changeDate.bind(this)}
               saveWorkSheet={this.saveWorkSheet.bind(this)}
+              handleTaskTableFilter={(value) => { this.setState({ taskTableFilterBy: value }); }}
             />
             {this.state.isMobile && (<TaskTableMobile
               userId={userId}
@@ -729,9 +738,12 @@ class WorkSheet extends Component {
             {!this.state.isMobile && (<TaskTable
               onRef={ref => (this.taskTable = ref)} // eslint-disable-line
               userId={userId}
+              taskTableFilterBy={this.state.taskTableFilterBy}
               members={this.state.members}
               tableTasks={this.state.tableTasks}
-              handleTableTasks={(newTableTasks) => { this.setState({ tableTasks: newTableTasks }); }}
+              handleTableTasks={(newTableTasks) => {
+                this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
+              }}
               handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
               isActive={util.isToday(this.state.date)}
               moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}

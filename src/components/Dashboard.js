@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
 import TodaySummary from './TodaySummary';
 import Clock from './Clock';
 import TimelineChart from './TimelineChart';
@@ -17,7 +15,6 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      target: '',
       estimateTasks: { minute: 0, taskNum: 0 },
       doneTasks: { minute: 0, taskNum: 0 },
       actuallyTasks: { minute: 0, taskNum: 0 },
@@ -36,7 +33,6 @@ class Dashboard extends Component {
       second: currentMoment.second(),
     };
     this.setState({
-      target: this.props.userId,
       currentTime: timeObj,
       endTime: timeObj,
     });
@@ -46,17 +42,15 @@ class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ target: nextProps.userId });
     setTimeout(() => this.updateStateByTableTasks(nextProps.tableTasks));
   }
 
   updateStateByTableTasks(tableTasks) {
-    const targetTasks = this.state.target === '' ? tableTasks : tasksUtil.getTasksByAssign(tableTasks, this.state.target);
-    const remainingData = targetTasks.filter(data => !data.startTime || !data.endTime);
+    const remainingData = tableTasks.filter(data => !data.startTime || !data.endTime);
     const remainingMinute = tasksUtil.getTotalEstimateMinute(remainingData);
-    const doneData = targetTasks.filter(data => data.startTime && data.endTime);
+    const doneData = tableTasks.filter(data => data.startTime && data.endTime);
     this.setState({
-      estimateTasks: { minute: tasksUtil.getTotalEstimateMinute(targetTasks), taskNum: targetTasks.length },
+      estimateTasks: { minute: tasksUtil.getTotalEstimateMinute(tableTasks), taskNum: tableTasks.length },
       remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
       doneTasks: { minute: tasksUtil.getTotalEstimateMinute(doneData), taskNum: doneData.length },
       actuallyTasks: { minute: tasksUtil.getTotalActuallyMinute(doneData), taskNum: doneData.length },
@@ -78,38 +72,9 @@ class Dashboard extends Component {
   }
 
   render() {
-    const {
-      theme, tableTasks, members, worksheetName,
-    } = this.props;
-    const targetTask = this.state.target === '' ? tableTasks : tasksUtil.getTasksByAssign(tableTasks, this.state.target);
+    const { tableTasks, theme } = this.props;
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
-        <Grid item xs={12} style={{ marginBottom: theme.spacing.unit }}>
-          <Typography variant="subheading">
-            ワークシート / メンバー
-          </Typography>
-          <div style={{ fontSize: '1rem', marginRight: theme.spacing.unit, display: 'inline-block' }}>{worksheetName} / </div>
-          <FormControl>
-            <Select
-              native
-              value={this.state.target}
-              onChange={(e) => { this.setState({ target: e.target.value }); setTimeout(() => this.updateStateByTableTasks(tableTasks)); }}
-              style={{ fontSize: '1rem' }}
-            >
-              <option value="">
-                @every
-              </option>
-              {members.map(member => (
-                <option
-                  key={member.uid}
-                  value={member.uid}
-                >
-                  @{member.displayName}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
         <Grid item xs={12} sm={6}>
           <Typography variant="subheading">
             サマリ
@@ -140,8 +105,8 @@ class Dashboard extends Component {
           <Typography gutterBottom variant="subheading">タイムライン</Typography>
           <Grid container>
             <Grid item xs={12}>
-              <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(targetTask)} />
-              <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(targetTask)} />
+              <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)} />
+              <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(tableTasks)} />
             </Grid>
           </Grid>
         </Grid>
@@ -151,8 +116,6 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-  worksheetName: PropTypes.string.isRequired,
-  userId: PropTypes.string.isRequired,
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     assign: PropTypes.string.isRequired,
@@ -161,13 +124,6 @@ Dashboard.propTypes = {
     endTime: PropTypes.string.isRequired,
     startTime: PropTypes.string.isRequired,
     memo: PropTypes.string.isRequired,
-  })).isRequired,
-  members: PropTypes.arrayOf(PropTypes.shape({
-    displayName: PropTypes.string.isRequired,
-    photoURL: PropTypes.string.isRequired,
-    uid: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    fcmToken: PropTypes.string.isRequired,
   })).isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line

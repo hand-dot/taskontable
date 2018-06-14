@@ -61,6 +61,9 @@ class TaskTable extends Component {
         members: this.props.members,
       }));
     }
+    if (this.props.taskTableFilterBy !== prevProps.taskTableFilterBy || !util.equal(this.props.tableTasks, prevProps.tableTasks)) {
+      this.setDataForHot(this.props.taskTableFilterBy ? tasksUtil.getTasksByAssign(this.props.tableTasks, this.props.taskTableFilterBy) : this.props.tableTasks);
+    }
   }
   componentWillUnmount() {
     this.props.onRef(undefined);
@@ -70,7 +73,7 @@ class TaskTable extends Component {
   }
 
   setDataForHot(datas) {
-    setDataForHot(this.hot, datas);
+    setDataForHot(this.hot, this.props.taskTableFilterBy ? tasksUtil.getTasksByAssign(datas, this.props.taskTableFilterBy) : datas);
   }
 
   getTasksIgnoreEmptyTaskAndProp() {
@@ -92,13 +95,12 @@ class TaskTable extends Component {
     const hotTasks = getHotTasksIgnoreEmptyTask(this.hot);
     if (!util.equal(hotTasks.map(task => tasksUtil.deleteUselessTaskProp(task)), this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)))) {
       this.props.handleSaveable(true);
-      this.props.handleTableTasks(hotTasks);
+      this.props.handleTableTasks(this.props.tableTasks);
     }
   }
 
   syncPropByUpdate() {
     this.props.handleSaveable(false);
-    this.props.handleTableTasks(getHotTasksIgnoreEmptyTask(this.hot));
   }
 
   updateIsActive(isActive) {
@@ -112,6 +114,7 @@ class TaskTable extends Component {
 
 TaskTable.propTypes = {
   userId: PropTypes.string.isRequired,
+  taskTableFilterBy: PropTypes.string.isRequired,
   members: PropTypes.arrayOf(PropTypes.shape({
     displayName: PropTypes.string.isRequired,
     photoURL: PropTypes.string.isRequired,

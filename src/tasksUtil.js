@@ -41,7 +41,9 @@ export default {
    */
   getEstimateTimelineChartTasks(tasks) {
     const hasStartTime = t => t.startTime;
-    const getTimelineChartTask = t => ({ key: '見積', start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.startTime, constants.TIMEFMT).add(t.estimate || 0, 'minutes').toDate(), title: t.title || '無名タスク' });
+    const getTimelineChartTask = t => ({
+      key: '見積', start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.startTime, constants.TIMEFMT).add(t.estimate || 0, 'minutes').toDate(), title: t.title || '無名タスク',
+    });
     return R.compose(R.map(r => getTimelineChartTask(r)), R.filter(hasStartTime, R))(tasks);
   },
   /**
@@ -49,7 +51,9 @@ export default {
    * @param  {Array} tasks
    */
   getActuallyTimelineChartTasks(tasks) {
-    const getTimelineChartTask = t => ({ key: '実績', start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.endTime, constants.TIMEFMT).toDate(), title: t.title || '無名タスク' });
+    const getTimelineChartTask = t => ({
+      key: '実績', start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.endTime, constants.TIMEFMT).toDate(), title: t.title || '無名タスク',
+    });
     return R.compose(R.map(r => getTimelineChartTask(r)), this.getDoneTasks(R))(tasks);
   },
   /**
@@ -95,5 +99,14 @@ export default {
   getTasksByAssign(tasks, assign) {
     const assignedTask = t => t.assign === '' || t.assign === assign;
     return R.compose(R.filter(assignedTask, R))(tasks);
+  },
+  /**
+   * タスクの配列を受け取り、assignプロパティが指定したassign以外のタスクを返します。
+   * @param  {Array} tasks
+   * @param  {String} assign
+   */
+  getTasksByNotAssign(tasks, assign) {
+    const notAssignedTask = t => t.assign !== assign;
+    return R.compose(R.filter(notAssignedTask, R))(tasks);
   },
 };
