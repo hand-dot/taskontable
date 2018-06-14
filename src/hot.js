@@ -76,7 +76,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
   }, timeout);
   notifiIds.push(notifiId);
   hotInstance.setCellMeta(row, col, targetNotifiId, notifiId);
-  // hotInstance.render(); // メタをセットしたのでレンダラーで表示しているアイコンを移動させるためにレンダー(無駄にレンダリングされるので、一旦コメントアウト)
+  hotInstance.render(); // メタをセットしたのでレンダラーで表示しているアイコンを移動させるためにレンダー
 };
 
 /**
@@ -264,26 +264,15 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
-  const dataForHot = [];
-  let rowIndex = 0;
-  util.cloneDeep(datas).forEach((data) => {
-    if (!util.equal(tableTaskSchema, data)) {
-      Object.entries(data).forEach(([key, value]) => {
-        dataForHot.push([rowIndex, key, value]);
-      });
-    }
-    rowIndex += 1;
+  const newDatas = [];
+  datas.forEach((data) => {
+    const startTimeVal = data.startTime;
+    const endTimeVal = data.endTime;
+    data.actually = startTimeVal && endTimeVal ? util.getTimeDiffMinute(startTimeVal, endTimeVal) : null;
+    if (!util.equal(tableTaskSchema, data)) newDatas.push(data);
   });
-  const rowCount = hotInstance.countRows();
-  // rowIndex これから入れる行数
-  // rowCount 今の行数
-  let needTrim = false;
-  if (rowIndex < rowCount) needTrim = true;
-  hotInstance.setDataAtRowProp(dataForHot);
-  // 不要な行を削除する
-  if (needTrim) hotInstance.alter('remove_row', rowIndex, rowCount);
-  // 保存ボタンが活性化するのを防ぐ
-  hotInstance.runHooks('afterUpdateSettings');
+  hotInstance.updateSettings({ data: newDatas });
+  hotInstance.render();
 };
 
 const resetNotifi = debounce((hotInstance) => {
@@ -375,8 +364,13 @@ export const hotConf = {
       allowInvalid: false,
       correctFormat: true,
       renderer(instance, td, row, col, prop, value, cellProperties) {
+        if (!value) {
+          td.innerHTML = null;
+          return td;
+        }
         const { isActiveNotifi } = instance.getSettings();
         td.innerHTML = `${value} ${isActiveNotifi && cellProperties.startTimeNotifiId ? '⏰' : ''}`; // eslint-disable-line no-param-reassign
+        return td;
       },
     },
     {
@@ -424,20 +418,21 @@ export const hotConf = {
       colWidths: 45,
       /* eslint no-param-reassign: ["error", { "props": false }] */
       renderer(instance, td, row, col, prop, value) {
-        td.innerHTML = value;
-        if (value) {
-          const estimate = instance.getDataAtRowProp(row, 'estimate');
-          const overdue = estimate ? value - estimate : 0;
-          if (overdue >= 1) {
+        if (value === null || value === '') {
+          td.innerHTML = null;
+          return td;
+        }
+        const estimate = instance.getDataAtRowProp(row, 'estimate');
+        const overdue = estimate ? value - estimate : 0;
+        if (overdue >= 1) {
           // 見積をオーバー
-            td.innerHTML = `${value}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`;
-          } else if (overdue === 0) {
+          td.innerHTML = `${value}<span style="color:${constants.brandColor.base.RED}">(+${overdue})</span>`;
+        } else if (overdue === 0) {
           // 見積と同じ
-            td.innerHTML = value;
-          } else if (overdue <= -1) {
+          td.innerHTML = value;
+        } else if (overdue <= -1) {
           // 見積より少ない
-            td.innerHTML = `${value}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`;
-          }
+          td.innerHTML = `${value}<span style="color:${constants.brandColor.base.BLUE}">(${overdue})</span>`;
         }
         return td;
       },
