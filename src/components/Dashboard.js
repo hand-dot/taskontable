@@ -42,7 +42,7 @@ class Dashboard extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    setTimeout(() => this.updateStateByTableTasks(nextProps.tableTasks));
+    this.updateStateByTableTasks(nextProps.tableTasks);
   }
 
   updateStateByTableTasks(tableTasks) {

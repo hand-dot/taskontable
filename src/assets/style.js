@@ -8,7 +8,7 @@ export default {
     actionIcon: {
       fontSize: 14,
       width: util.isMobile() ? 14 : 45,
-      height: 10,
+      height: util.isMobile() ? 10 : 45,
     },
     actionIcons: {
       margin: '0 auto',

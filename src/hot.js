@@ -332,7 +332,7 @@ export const hotConf = {
         if (assingedUser) {
           img.src = assingedUser.photoURL || person;
           if (td.parentNode.style.backgroundColor === constants.cellColor.RUNNING) {
-            img.style.animation = `busy 3s ${row % 2}s infinite`;
+            img.style.animation = `busy 3s ${row % 3}s infinite`;
           } else if (td.parentNode.style.backgroundColor === constants.cellColor.OUT) {
             img.style.animation = 'help 1s infinite';
           }
@@ -395,7 +395,12 @@ export const hotConf = {
           td.parentNode.style.backgroundColor = constants.cellColor.DONE;
         } else if (estimateVal === '' && instance.getDataAtRowProp(row, 'title') !== '') {
           // 見積もりが空なので警告にする。開始していたら実行中の色を付ける。
-          td.parentNode.style.backgroundColor = startTimeVal === '' ? constants.cellColor.WARNING : constants.cellColor.RUNNING;
+          if (startTimeVal === '') {
+            td.parentNode.style.backgroundColor = constants.cellColor.WARNING;
+          } else {
+            const nowTimeVal = moment().format(constants.TIMEFMT);
+            td.parentNode.style.backgroundColor = util.getTimeDiffMinute(nowTimeVal, startTimeVal) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
+          }
         } else if (isActiveNotifi && startTimeVal !== '' && estimateVal !== '') {
           // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
           const nowTimeVal = moment().format(constants.TIMEFMT);
