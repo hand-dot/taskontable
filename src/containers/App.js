@@ -78,7 +78,7 @@ class App extends Component {
       },
       worksheets: [], // 自分の所属しているワークシートの一覧
       newWorksheetName: '',
-      isOpenSidebar: !util.isMobile(),
+      isOpenSidebar: false,
       isOpenCreateWorksheetModal: false,
       isOpenSupportBrowserDialog: false,
       isOpenHelpDialog: false,
@@ -99,6 +99,7 @@ class App extends Component {
           user: {
             displayName: '', photoURL: '', uid: user.uid, email: '', fcmToken: '',
           },
+          isOpenSidebar: !util.isMobile(),
         });
         // dimension1はgaではuidとしている
         if (process.env.NODE_ENV !== 'development') {
@@ -128,14 +129,6 @@ class App extends Component {
             };
           });
         }
-        // ワークシートの一覧を取得
-        database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value').then((myWorksheetsIds) => {
-          if (myWorksheetsIds.exists() && myWorksheetsIds.val() !== []) {
-            Promise.all(myWorksheetsIds.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((myWorksheetNames) => {
-              this.setState({ worksheets: myWorksheetNames.map((myWorksheetName, index) => ({ id: myWorksheetsIds.val()[index], name: myWorksheetName.exists() && myWorksheetName.val() ? myWorksheetName.val() : 'Unknown' })) });
-            });
-          }
-        });
         // ログイン後にどこのページからスタートするかをハンドリングする。
         // また、招待されている場合、この処理でワークシートに参加する。
         let mySettings;
@@ -158,7 +151,13 @@ class App extends Component {
             if (!user.displayName) user.updateProfile({ displayName: tmpDisplayName });
             database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).set(mySettings);
           }
-          return (worksheets.exists() && worksheets.val() !== []) ? worksheets.val().concat([user.uid]) : [user.uid]; // 自分のidと自分のワークシートのid or 自分のid
+          // ワークシートの一覧を取得
+          if (worksheets.exists() && worksheets.val() !== []) {
+            Promise.all(worksheets.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((myWorksheetNames) => {
+              this.setState({ worksheets: myWorksheetNames.map((myWorksheetName, index) => ({ id: worksheets.val()[index], name: myWorksheetName.exists() && myWorksheetName.val() ? myWorksheetName.val() : 'Unknown' })) });
+            });
+          }
+          return (worksheets.exists() && worksheets.val() !== []) ? worksheets.val() : []; // 自分のワークシートのid
         }).then((myWorkSheetListIds) => {
           const pathname = encodeURI(this.props.location.pathname.replace('/', ''));
           const fromInviteEmail = util.getQueryVariable('worksheet') !== '';
@@ -257,8 +256,9 @@ class App extends Component {
       // userの初期化
       this.setState({
         user: {
-          displayName: '', photoURL: '', uid: '', email: '',
+          displayName: '', photoURL: '', uid: '', email: '', fcmToken: '',
         },
+        worksheets: [],
         isOpenSidebar: false,
       });
       this.props.history.push('/logout');
@@ -308,7 +308,7 @@ class App extends Component {
           logout={this.logout.bind(this)}
           goSettings={() => { this.props.history.push(`/${this.state.user.uid}/settings`); }}
         />
-        <Drawer variant="persistent" open={this.state.isOpenSidebar} style={{ display: this.state.isOpenSidebar && this.state.user.uid ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }} >
+        <Drawer variant="persistent" open={this.state.isOpenSidebar} style={{ display: this.state.isOpenSidebar ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }} >
           <div style={{ height: theme.spacing.unit }} />
           <div className={classes.toolbar} />
           <List component="nav">
