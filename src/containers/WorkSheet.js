@@ -132,6 +132,9 @@ class WorkSheet extends Component {
           });
           this.fetchScripts().then(() => { this.syncWorkSheet(); });
         });
+      } else {
+        // メンバーがいないワークシートには遷移できない
+        this.props.history.push('/');
       }
     });
     // 消えてしまった通知を取得する処理。

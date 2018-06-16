@@ -318,17 +318,17 @@ class App extends Component {
               </ListItemIcon>
               <ListItemText primary="閉じる" />
             </ListItem>
-            <ListItem divider button disabled={location.pathname === '/'} style={{ backgroundColor: location.pathname === '/' ? 'rgba(0, 0, 0, 0.08)' : '' }}>
+            <ListItem divider button onClick={this.goWorkSheet.bind(this, '')} disabled={location.pathname === '/'} style={{ backgroundColor: location.pathname === '/' ? 'rgba(0, 0, 0, 0.08)' : '' }}>
               <ListItemIcon>
                 <span role="img" aria-label="Tips" >💡</span>
               </ListItemIcon>
-              <ListItemText primary="Tips" onClick={this.goWorkSheet.bind(this, '')} />
+              <ListItemText primary="Tips" />
             </ListItem>
             {this.state.worksheets.map((worksheet) => {
               const isActive = encodeURI(location.pathname.replace('/', '')) === encodeURI(worksheet.name);
               return (
-                <ListItem divider key={worksheet.id} button disabled={isActive} style={{ backgroundColor: isActive ? 'rgba(0, 0, 0, 0.08)' : '' }}>
-                  <ListItemText key={worksheet.id} primary={worksheet.name} onClick={this.goWorkSheet.bind(this, worksheet.id)} />
+                <ListItem divider key={worksheet.id} button onClick={this.goWorkSheet.bind(this, worksheet.id)} disabled={isActive} style={{ backgroundColor: isActive ? 'rgba(0, 0, 0, 0.08)' : '' }}>
+                  <ListItemText key={worksheet.id} primary={worksheet.name} />
                 </ListItem>
               );
             })}

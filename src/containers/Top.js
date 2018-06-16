@@ -77,7 +77,7 @@ function Top(props) {
               {constants.TITLE}はExcelを扱うようにタスクを管理できるツールです。<br />高速に入力でき、タスクの整理に使う時間をできる限り減らし、実行する時間を増やすことができます。
             </Typography>
             {/* TODO ここは動画にする予定 */}
-            <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src="https://user-images.githubusercontent.com/24843808/40023209-44d12cd0-5805-11e8-8b77-77a1f2f5ba37.gif" alt="taskontable" />
+            <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fscreencapture.gif?alt=media&token=35183429-df91-490a-82e7-7f38a3ac127b" alt="taskontable" />
             <Typography align="center" style={{ color: '#fff', marginBottom: '2em' }}>
               複雑な設定は一切必要なく、すぐに使い始められます。
             </Typography>
