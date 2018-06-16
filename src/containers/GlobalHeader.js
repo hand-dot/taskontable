@@ -22,6 +22,9 @@ const styles = theme => ({
   root: {
     minHeight: theme.mixins.toolbar.minHeight,
   },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
   button: {
     minWidth: 70,
     padding: 3,
@@ -105,23 +108,23 @@ class GlobalHeader extends Component {
     setTimeout(() => this.props.goSettings());
   }
 
-  goWorkSheetList() {
-    this.closeMenu();
-    setTimeout(() => this.props.goWorkSheetList());
-  }
-
   render() {
     const {
-      user, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes,
+      user, openSideBar, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes,
     } = this.props;
     const { anchorEl } = this.state;
 
     return (
-      <AppBar color="default" position="fixed">
+      <AppBar color="default" className={classes.appBar}>
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
           <Grid item xs={12}>
             <Toolbar className={classes.root}>
-              <Link className={classes.title} to="/"><img src={title} style={{ marginTop: 5 }} alt="taskontable" height="18" /></Link>
+              {(() => {
+                  if (this.state.login) {
+                    return (<Button className={classes.title} onClick={openSideBar} ><img src={title} style={{ marginTop: 5 }} alt="taskontable" height="18" /></Button>);
+                  }
+                  return (<Link className={classes.title} to="/"><img src={title} style={{ marginTop: 5 }} alt="taskontable" height="18" /></Link>);
+              })()}
               {(() => {
                 if (!this.state.login) {
                   return (
@@ -142,7 +145,6 @@ class GlobalHeader extends Component {
                         onClose={this.closeMenu.bind(this)}
                       >
                         <MenuItem title={user.email}>アカウント名: {user.displayName}</MenuItem>
-                        <MenuItem onClick={this.goWorkSheetList.bind(this)}>ワークシート選択</MenuItem>
                         <MenuItem onClick={this.goSettings.bind(this)}>アカウント設定</MenuItem>
                         <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
                       </Menu>
@@ -196,12 +198,12 @@ GlobalHeader.propTypes = {
     photoURL: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
   }).isRequired,
+  openSideBar: PropTypes.func.isRequired,
   isOpenHelpDialog: PropTypes.bool.isRequired,
   openHelpDialog: PropTypes.func.isRequired,
   closeHelpDialog: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   goSettings: PropTypes.func.isRequired,
-  goWorkSheetList: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

@@ -236,7 +236,7 @@ class Settings extends Component {
                 <DialogContent>
                   <DialogContentText />
                   <img ref={(node) => { this.editingPhoto = node; }} style={{ maxWidth: 300, maxHeight: 300 }} src={this.state.photoURL} crossOrigin="" alt={`${this.state.displayName}のアイコン${this.state.photoURL ? '' : '(未設定) / '}`} />
-                  <input type="file" name="image" accept="image/*" onChange={this.changePhotoInput.bind(this)} />
+                  <div><input type="file" name="image" accept="image/*" onChange={this.changePhotoInput.bind(this)} /></div>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={() => { this.setState({ isOpenEditPhotoDialog: false }); }} color="primary">

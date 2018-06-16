@@ -205,6 +205,11 @@ class WorkSheet extends Component {
     return sortedTableTask;
   }
 
+
+  getHotTaskIgnoreFilter(hotTasks) {
+    return this.state.taskTableFilterBy ? tasksUtil.getTasksByNotAssign(this.state.tableTasks, this.state.taskTableFilterBy).concat(hotTasks).map(tableTask => util.setIdIfNotExist(tableTask)).filter((o1, i, self) => self.findIndex(o2 => o2.id === o1.id) === i) : hotTasks;
+  }
+
   /**
    * モバイルのワークシートを変更したときにここでハンドリングを行う
    * @param  {String} taskActionType 操作種別
@@ -622,12 +627,14 @@ class WorkSheet extends Component {
       setTimeout(() => { this.attachTableTasks(); this.attachMemo(); });
     }
   }
+
   handleTab(e, tab) {
     // 0,1,2,3以外のタブはページ遷移
     if ([0, 1, 2, 3].includes(tab)) {
       this.setState({ tab, isOpenDashboard: !(this.state.isOpenDashboard && this.state.tab === tab) });
     }
   }
+
   handleMembers(newMembers) {
     this.setState({ members: newMembers });
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/members/`).set(newMembers.map(newMember => newMember.uid)).then(() => {
@@ -635,10 +642,12 @@ class WorkSheet extends Component {
       return Promise.resolve();
     });
   }
+
   handleInvitedEmails(newEmails) {
     this.setState({ invitedEmails: newEmails });
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/invitedEmails/`).set(newEmails);
   }
+
   handleWorksheetOpenRange(worksheetOpenRange) {
     this.setState({ worksheetOpenRange });
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/openRange/`).set(worksheetOpenRange).then(() => {
@@ -646,9 +655,7 @@ class WorkSheet extends Component {
       return Promise.resolve();
     });
   }
-  getHotTaskIgnoreFilter(hotTasks) {
-    return this.state.taskTableFilterBy ? tasksUtil.getTasksByNotAssign(this.state.tableTasks, this.state.taskTableFilterBy).concat(hotTasks).map(tableTask => util.setIdIfNotExist(tableTask)).filter((o1, i, self) => self.findIndex(o2 => o2.id === o1.id) === i) : hotTasks;
-  }
+
 
   render() {
     const {
@@ -717,7 +724,6 @@ class WorkSheet extends Component {
           <Paper elevation={1}>
             <TableCtl
               userId={userId}
-              worksheetName={this.state.worksheetName}
               taskTableFilterBy={this.state.taskTableFilterBy}
               members={this.state.members}
               tableTasks={this.state.tableTasks}

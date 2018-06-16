@@ -37,6 +37,7 @@ export default {
   COMMUNITY_URL: 'https://join.slack.com/t/taskontable/shared_invite/enQtMzQwMDQ0MjcwOTE1LTZiODZjYmY4OTczNzJjZTU2NDM1NTlmODIyNDdlNTY3MGIzYzE0YTNjZjU0NmM2MzRhOGQ1ZTIyYTA3NmNiODE',
   HEADWAY_ACCOUNT: '7zwPXJ',
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
+  SIDEBAR_WIDTH: 240,
   REQEST_DELAY_FAST: 100,
   REQEST_DELAY_SLOW: 500,
   RENDER_DELAY: 150,

@@ -74,7 +74,7 @@ class TableCtl extends Component {
 
   render() {
     const {
-      userId, worksheetName, taskTableFilterBy, members, tableTasks, date, savedAt, saveable, saveWorkSheet, handleTaskTableFilter, classes, theme,
+      userId, taskTableFilterBy, members, tableTasks, date, savedAt, saveable, saveWorkSheet, handleTaskTableFilter, classes, theme,
     } = this.props;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
@@ -82,8 +82,7 @@ class TableCtl extends Component {
         <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} variant="determinate" value={progressPer} />
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems="center" justify="center" spacing={0}>
           <Hidden xsDown>
-            <Grid item xs={2}>
-              <div style={{ fontSize: '0.8rem', margin: `0 ${theme.spacing.unit}px`, display: 'inline-block' }}>{worksheetName} / </div>
+            <Grid item xs={2} style={{ textAlign: 'center' }}>
               <FormControl>
                 <Select
                   native
@@ -106,14 +105,14 @@ class TableCtl extends Component {
               </FormControl>
             </Grid>
           </Hidden>
+          <Grid style={{ textAlign: 'center' }} item xs={4} sm={2}>
+            <DatePicker value={date} changeDate={this.changeDate.bind(this)} label="" />
+          </Grid>
           <Hidden xsDown>
             <Grid item xs={3}>
               <TaskProcessing tableTasks={tasksUtil.getTasksByAssign(tableTasks, taskTableFilterBy || userId)} date={date} />
             </Grid>
           </Hidden>
-          <Grid style={{ textAlign: 'center' }} item xs={4} sm={2}>
-            <DatePicker value={date} changeDate={this.changeDate.bind(this)} label="" />
-          </Grid>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={2}>
             {(() => {
               if (tableTasks.length === 0) {
@@ -167,7 +166,6 @@ class TableCtl extends Component {
 
 TableCtl.propTypes = {
   userId: PropTypes.string.isRequired,
-  worksheetName: PropTypes.string.isRequired,
   taskTableFilterBy: PropTypes.string.isRequired,
   members: PropTypes.arrayOf(PropTypes.shape({
     displayName: PropTypes.string.isRequired,

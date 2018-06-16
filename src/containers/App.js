@@ -4,15 +4,23 @@ import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
 import localforage from 'localforage';
 import { withStyles } from '@material-ui/core/styles';
-import { Switch, Route, withRouter } from 'react-router-dom';
+import { Switch, Route, Link, withRouter } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
+import TextField from '@material-ui/core/TextField';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Drawer from '@material-ui/core/Drawer';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
+import Add from '@material-ui/icons/Add';
+import Close from '@material-ui/icons/Close';
 
 import '../styles/keyframes.css';
 import util from '../util';
@@ -27,21 +35,35 @@ import Scripts from './Scripts';
 import Activity from './Activity';
 import Settings from './Settings';
 import WorkSheet from './WorkSheet';
-import WorkSheetList from './WorkSheetList';
+import Tips from './Tips';
 
 const messaging = util.getMessaging();
 const auth = util.getAuth();
 const database = util.getDatabase();
 
-const styles = {
+const styles = theme => ({
   root: {
     minHeight: '100vh',
+    flexGrow: 1,
+    zIndex: 1,
+    position: 'relative',
+    display: 'flex',
+  },
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    position: 'relative',
+    minHeight: '100vh',
+    width: constants.SIDEBAR_WIDTH,
   },
   circularProgress: {
     overflow: 'hidden',
     padding: 0,
   },
-};
+  content: {
+    flexGrow: 1,
+    minWidth: 0, // So the Typography noWrap works
+  },
+});
 
 // constants.authType.EMAIL_AND_PASSWORDの方法でユーザーを登録すると
 // displayNameが設定されないため一次的にこの変数に格納する。
@@ -54,6 +76,10 @@ class App extends Component {
       user: {
         displayName: '', photoURL: '', uid: '', email: '', fcmToken: '',
       },
+      worksheets: [], // 自分の所属しているワークシートの一覧
+      newWorksheetName: '',
+      isOpenSidebar: !util.isMobile(),
+      isOpenCreateWorksheetModal: false,
       isOpenSupportBrowserDialog: false,
       isOpenHelpDialog: false,
       processing: true,
@@ -102,7 +128,14 @@ class App extends Component {
             };
           });
         }
-
+        // ワークシートの一覧を取得
+        database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value').then((myWorksheetsIds) => {
+          if (myWorksheetsIds.exists() && myWorksheetsIds.val() !== []) {
+            Promise.all(myWorksheetsIds.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((myWorksheetNames) => {
+              this.setState({ worksheets: myWorksheetNames.map((myWorksheetName, index) => ({ id: myWorksheetsIds.val()[index], name: myWorksheetName.exists() && myWorksheetName.val() ? myWorksheetName.val() : 'Unknown' })) });
+            });
+          }
+        });
         // ログイン後にどこのページからスタートするかをハンドリングする。
         // また、招待されている場合、この処理でワークシートに参加する。
         let mySettings;
@@ -226,6 +259,7 @@ class App extends Component {
         user: {
           displayName: '', photoURL: '', uid: '', email: '',
         },
+        isOpenSidebar: false,
       });
       this.props.history.push('/logout');
     }).catch((error) => {
@@ -233,48 +267,102 @@ class App extends Component {
     });
   }
 
-  goSettings() {
-    this.props.history.push(`/${this.state.user.uid}/settings`);
+  createWorksheet() {
+    if (this.state.newWorksheetName === '') {
+      alert('ワークシート名が未入力です。');
+      return;
+    }
+    if (!util.validateDatabaseKey(this.state.newWorksheetName)) {
+      alert('ワークシート名として禁止されている文字列が含まれています。');
+      return;
+    }
+    // ワークシートのIDはシート名をtoLowerCaseしてencodeURIしたものにするシート名はシート名で別管理する
+    const newWorksheetId = encodeURI(this.state.newWorksheetName.toLowerCase());
+    // ワークシートのIDが存在しない場合は作成できる。
+    database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).once('value').then((snapshot) => {
+      if (snapshot.exists()) {
+        alert('そのワークシート名は作成できません。');
+      } else {
+        database.ref(`/${constants.API_VERSION}/users/${this.state.user.uid}/worksheets/`).set(this.state.worksheets.map(worksheet => worksheet.id).concat([newWorksheetId]));
+        database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.state.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PUBLIC });
+        this.setState({ worksheets: this.state.worksheets.concat([{ id: newWorksheetId, name: this.state.newWorksheetName }]), newWorksheetName: '', isOpenCreateWorksheetModal: false });
+      }
+    });
   }
 
-  goWorkSheetList() {
+  goWorkSheet(id) {
     this.props.history.push('/');
+    setTimeout(() => { this.props.history.push(`/${id}`); });
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, theme, location } = this.props;
     return (
       <div className={classes.root}>
         <GlobalHeader
           user={this.state.user}
+          openSideBar={() => { this.setState({ isOpenSidebar: true }); }}
           isOpenHelpDialog={this.state.isOpenHelpDialog}
           openHelpDialog={() => { this.setState({ isOpenHelpDialog: true }); }}
           closeHelpDialog={() => { this.setState({ isOpenHelpDialog: false }); }}
           logout={this.logout.bind(this)}
-          goSettings={this.goSettings.bind(this)}
-          goWorkSheetList={this.goWorkSheetList.bind(this)}
+          goSettings={() => { this.props.history.push(`/${this.state.user.uid}/settings`); }}
         />
-        <Switch>
-          <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <WorkSheetList user={this.state.user} {...props} />; } return (<Top {...props} />); }} />
-          <Route exact strict path="/signup" render={props => <Signup signup={this.signup.bind(this)} login={this.login.bind(this)} {...props} />} />
-          <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
-          <Route exact strict path="/logout" render={props => <Logout {...props} />} />
-          <Route
-            exact
-            strict
-            path="/:id"
-            render={props => (<WorkSheet
-              userId={this.state.user.uid}
-              userName={this.state.user.displayName}
-              userPhotoURL={this.state.user.photoURL}
-              toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
-              {...props}
-            />)}
-          />
-          <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
-          <Route exact strict path="/:id/activity" render={(props) => { if (this.state.user.uid !== '') { return <Activity userId={this.state.user.uid} {...props} />; } return null; }} />
-          <Route exact strict path="/:id/settings" render={(props) => { if (this.state.user.uid !== '') { return <Settings user={this.state.user} handleUser={this.handleUser.bind(this)} {...props} />; } return null; }} />
-        </Switch>
+        <Drawer variant="persistent" open={this.state.isOpenSidebar} style={{ display: this.state.isOpenSidebar && this.state.user.uid ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }} >
+          <div style={{ height: theme.spacing.unit }} />
+          <div className={classes.toolbar} />
+          <List component="nav">
+            <ListItem divider button onClick={() => { this.setState({ isOpenSidebar: false }); }}>
+              <ListItemIcon>
+                <Close />
+              </ListItemIcon>
+              <ListItemText primary="閉じる" />
+            </ListItem>
+            <ListItem divider button disabled={location.pathname === '/'} style={{ backgroundColor: location.pathname === '/' ? 'rgba(0, 0, 0, 0.08)' : '' }}>
+              <ListItemIcon>
+                <span role="img" aria-label="Tips" >💡</span>
+              </ListItemIcon>
+              <ListItemText primary="Tips" onClick={this.goWorkSheet.bind(this, '')} />
+            </ListItem>
+            {this.state.worksheets.map((worksheet) => {
+              const isActive = encodeURI(location.pathname.replace('/', '')) === encodeURI(worksheet.name);
+              return (
+                <ListItem divider key={worksheet.id} button disabled={isActive} style={{ backgroundColor: isActive ? 'rgba(0, 0, 0, 0.08)' : '' }}>
+                  <ListItemText key={worksheet.id} primary={worksheet.name} onClick={this.goWorkSheet.bind(this, worksheet.id)} />
+                </ListItem>
+              );
+            })}
+            <ListItem divider button onClick={() => { this.setState({ isOpenCreateWorksheetModal: true }); }}>
+              <ListItemIcon>
+                <Add />
+              </ListItemIcon>
+              <ListItemText primary="新規作成" />
+            </ListItem>
+          </List>
+        </Drawer>
+        <main className={classes.content}>
+          <Switch>
+            <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <Tips user={this.state.user} {...props} />; } return (<Top {...props} />); }} />
+            <Route exact strict path="/signup" render={props => <Signup signup={this.signup.bind(this)} login={this.login.bind(this)} {...props} />} />
+            <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
+            <Route exact strict path="/logout" render={props => <Logout {...props} />} />
+            <Route
+              exact
+              strict
+              path="/:id"
+              render={props => (<WorkSheet
+                userId={this.state.user.uid}
+                userName={this.state.user.displayName}
+                userPhotoURL={this.state.user.photoURL}
+                toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
+                {...props}
+              />)}
+            />
+            <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
+            <Route exact strict path="/:id/activity" render={(props) => { if (this.state.user.uid !== '') { return <Activity userId={this.state.user.uid} {...props} />; } return null; }} />
+            <Route exact strict path="/:id/settings" render={(props) => { if (this.state.user.uid !== '') { return <Settings user={this.state.user} handleUser={this.handleUser.bind(this)} {...props} />; } return null; }} />
+          </Switch>
+        </main>
         <Dialog open={this.state.processing}>
           <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
         </Dialog>
@@ -297,6 +385,28 @@ class App extends Component {
             >
               ダウンロードする
             </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={this.state.isOpenCreateWorksheetModal}
+          onClose={() => { this.setState({ newWorksheetName: '', isOpenCreateWorksheetModal: false }); }}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">ワークシートを作成</DialogTitle>
+          <DialogContent>
+            <TextField
+              onChange={(e) => { this.setState({ newWorksheetName: e.target.value }); }}
+              value={this.state.newWorksheetName}
+              autoFocus
+              margin="dense"
+              id="name"
+              label="ワークシート名"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button size="small" onClick={() => { this.setState({ isOpenCreateWorksheetModal: false }); }} color="primary">キャンセル</Button>
+            <Button size="small" onClick={this.createWorksheet.bind(this)} color="primary">作成</Button>
           </DialogActions>
         </Dialog>
         <Snackbar
