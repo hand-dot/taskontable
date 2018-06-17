@@ -289,9 +289,19 @@ class App extends Component {
       if (snapshot.exists()) {
         alert('そのワークシート名は作成できません。');
       } else {
-        database.ref(`/${constants.API_VERSION}/users/${this.state.user.uid}/worksheets/`).set(this.state.worksheets.map(worksheet => worksheet.id).concat([newWorksheetId]));
-        database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.state.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PUBLIC });
-        this.setState({ worksheets: this.state.worksheets.concat([{ id: newWorksheetId, name: this.state.newWorksheetName }]), newWorksheetName: '', isOpenCreateWorksheetModal: false });
+        Promise.all([
+          database.ref(`/${constants.API_VERSION}/users/${this.state.user.uid}/worksheets/`).set(this.state.worksheets.map(worksheet => worksheet.id).concat([newWorksheetId])),
+          database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.state.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PUBLIC }),
+        ]).then(() => {
+          this.setState({
+            worksheets: this.state.worksheets.concat([{ id: newWorksheetId, name: this.state.newWorksheetName }]),
+            newWorksheetName: '',
+            isOpenCreateWorksheetModal: false,
+            isOpenSnackbar: true,
+            snackbarText: `${this.state.newWorksheetName}を作成しました。`,
+          });
+          this.goWorkSheet(newWorksheetId);
+        });
       }
     });
   }
