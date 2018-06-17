@@ -123,7 +123,7 @@ class GlobalHeader extends Component {
                   if (this.state.login) {
                     return (<Button className={classes.title} onClick={openSideBar} ><img src={title} style={{ marginTop: 5 }} alt="taskontable" height="18" /></Button>);
                   }
-                  return (<Link className={classes.title} to="/"><img src={title} style={{ marginTop: 5 }} alt="taskontable" height="18" /></Link>);
+                  return (<Link className={classes.title} to="/"><img src={title} alt="taskontable" height="18" /></Link>);
               })()}
               {(() => {
                 if (!this.state.login) {
