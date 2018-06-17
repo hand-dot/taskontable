@@ -203,7 +203,7 @@ class WorkSheet extends Component {
    */
   setSortedTableTasks(tableTasks) {
     const sortedTableTask = tasksUtil.getSortedTasks(tableTasks);
-    if (!this.state.isMobile && this.taskTable) this.taskTable.setDataForHot(sortedTableTask);
+    if (!this.state.isMobile && this.taskTable) this.taskTable.setDataForHot(this.state.taskTableFilterBy ? tasksUtil.getTasksByAssign(sortedTableTask, this.state.taskTableFilterBy) : sortedTableTask);
     this.setState({ tableTasks: sortedTableTask });
     return sortedTableTask;
   }
@@ -324,7 +324,7 @@ class WorkSheet extends Component {
       }
       // タスクプールからテーブルタスクに移動したらテーブルタスクを保存する
       this.setState({ tableTasks });
-      if (!this.state.isMobile) this.taskTable.setDataForHot(tableTasks);
+      if (!this.state.isMobile) this.taskTable.setDataForHot(this.state.taskTableFilterBy ? tasksUtil.getTasksByAssign(tableTasks, this.state.taskTableFilterBy) : tableTasks);
       setTimeout(() => { this.saveTableTasks(); });
     }
     setTimeout(() => {

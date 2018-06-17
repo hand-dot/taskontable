@@ -53,6 +53,11 @@ class TaskTable extends Component {
       afterUpdateSettings() { self.syncPropByUpdate(); },
     }));
   }
+  componentWillReceiveProps(nextProps) {
+    if (this.props.taskTableFilterBy !== nextProps.taskTableFilterBy || !util.equal(this.props.tableTasks, nextProps.tableTasks)) {
+      this.setDataForHot(nextProps.taskTableFilterBy ? tasksUtil.getTasksByAssign(nextProps.tableTasks, nextProps.taskTableFilterBy) : nextProps.tableTasks);
+    }
+  }
   componentDidUpdate(prevProps) {
     if (!util.equal(this.props.members, prevProps.members)) {
       hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = this.props.members.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
@@ -60,9 +65,6 @@ class TaskTable extends Component {
         userId: this.props.userId,
         members: this.props.members,
       }));
-    }
-    if (this.props.taskTableFilterBy !== prevProps.taskTableFilterBy || !util.equal(this.props.tableTasks, prevProps.tableTasks)) {
-      this.setDataForHot(this.props.taskTableFilterBy ? tasksUtil.getTasksByAssign(this.props.tableTasks, this.props.taskTableFilterBy) : this.props.tableTasks);
     }
   }
   componentWillUnmount() {
@@ -73,7 +75,7 @@ class TaskTable extends Component {
   }
 
   setDataForHot(datas) {
-    setDataForHot(this.hot, this.props.taskTableFilterBy ? tasksUtil.getTasksByAssign(datas, this.props.taskTableFilterBy) : datas);
+    setDataForHot(this.hot, datas);
   }
 
   getTasksIgnoreEmptyTaskAndProp() {
