@@ -153,21 +153,21 @@ class App extends Component {
           }
           // ワークシートの一覧を取得
           if (worksheets.exists() && worksheets.val() !== []) {
-            Promise.all(worksheets.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((myWorksheetNames) => {
-              this.setState({ worksheets: myWorksheetNames.map((myWorksheetName, index) => ({ id: worksheets.val()[index], name: myWorksheetName.exists() && myWorksheetName.val() ? myWorksheetName.val() : 'Unknown' })) });
+            Promise.all(worksheets.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((worksheetNames) => {
+              this.setState({ worksheets: worksheetNames.map((worksheetName, index) => ({ id: worksheets.val()[index], name: worksheetName.exists() && worksheetName.val() ? worksheetName.val() : 'Unknown' })) });
             });
           }
           return (worksheets.exists() && worksheets.val() !== []) ? worksheets.val() : []; // 自分のワークシートのid
-        }).then((myWorkSheetListIds) => {
-          const pathname = encodeURI(this.props.location.pathname.replace('/', ''));
+        }).then((workSheetListIds) => {
+          const pathname = util.formatURLString(this.props.location.pathname.replace('/', ''));
           const fromInviteEmail = util.getQueryVariable('worksheet') !== '';
           if (!fromInviteEmail && ['login', 'signup', 'index.html'].includes(pathname)) { // ■ログイン時
             this.props.history.push('/');
             return Promise.resolve();
-          } else if (myWorkSheetListIds.includes(pathname)) { // ■既に参加しているワークシートの場合
+          } else if (workSheetListIds.includes(pathname)) { // ■既に参加しているワークシートの場合
             return Promise.resolve();
           } else if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
-            const worksheetId = fromInviteEmail ? encodeURI(util.getQueryVariable('worksheet')) : pathname;
+            const worksheetId = fromInviteEmail ? util.formatURLString(util.getQueryVariable('worksheet')) : pathname;
             return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).once('value').then((invitedEmails) => {
               // 自分のメールアドレスがワークシートの招待中メールアドレスリストに存在するかチェックする。
               if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || !(invitedEmails.val().includes(user.email))) {
@@ -179,9 +179,9 @@ class App extends Component {
                 database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'),
                 database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value'),
               ]).then((snapshots) => {
-                const [myWorksheetIds, worksheetUserIds] = snapshots;
+                const [worksheetIds, worksheetUserIds] = snapshots;
                 const promises = [
-                  database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set((myWorksheetIds.exists() ? myWorksheetIds.val() : []).concat([worksheetId])), // 自分の参加しているワークシートにワークシートのidを追加
+                  database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set((worksheetIds.exists() ? worksheetIds.val() : []).concat([worksheetId])), // 自分の参加しているワークシートにワークシートのidを追加
                   database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).set((worksheetUserIds.exists() ? worksheetUserIds.val() : []).concat([user.uid])), // 参加しているワークシートのユーザーに自分のidを追加
                   database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているワークシート招待中メールアドレスリストから削除
                 ];
@@ -277,7 +277,7 @@ class App extends Component {
       return;
     }
     // ワークシートのIDはシート名をtoLowerCaseしてencodeURIしたものにするシート名はシート名で別管理する
-    const newWorksheetId = encodeURI(this.state.newWorksheetName.toLowerCase());
+    const newWorksheetId = util.formatURLString(this.state.newWorksheetName);
     // ワークシートのIDが存在しない場合は作成できる。
     database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).once('value').then((snapshot) => {
       if (snapshot.exists()) {
@@ -325,7 +325,7 @@ class App extends Component {
               <ListItemText primary="Tips" />
             </ListItem>
             {this.state.worksheets.map((worksheet) => {
-              const isActive = encodeURI(location.pathname.replace('/', '')) === encodeURI(worksheet.name);
+              const isActive = util.formatURLString(location.pathname.replace('/', '')) === util.formatURLString(worksheet.name);
               return (
                 <ListItem divider key={worksheet.id} button onClick={this.goWorkSheet.bind(this, worksheet.id)} disabled={isActive} style={{ backgroundColor: isActive ? 'rgba(0, 0, 0, 0.08)' : '' }}>
                   <ListItemText key={worksheet.id} primary={worksheet.name} />

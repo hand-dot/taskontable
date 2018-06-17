@@ -288,5 +288,13 @@ export default {
     // 数値チェック
     return pattern.test(numVal.toString());
   },
+
+  /**
+   * URL用の文字列にフォーマットします。
+   * @param  {String} str
+   */
+  formatURLString(str) {
+    return encodeURI((str || '').toLowerCase());
+  },
 };
 
