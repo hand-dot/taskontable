@@ -179,15 +179,13 @@ class App extends Component {
                 database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'),
                 database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value'),
               ]).then((snapshots) => {
-                // ワークシートの一覧を再取得
-                database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value').then((worksheets) => {
-                  if (worksheets.exists() && worksheets.val() !== []) {
-                    Promise.all(worksheets.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((worksheetNames) => {
-                      this.setState({ worksheets: worksheetNames.map((worksheetName, index) => ({ id: worksheets.val()[index], name: worksheetName.exists() && worksheetName.val() ? worksheetName.val() : 'Unknown' })) });
-                    });
-                  }
-                });
                 const [worksheetIds, worksheetUserIds] = snapshots;
+                // ワークシートの一覧を再取得
+                if (worksheetIds.exists() && worksheetIds.val() !== []) {
+                  Promise.all(worksheetIds.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((worksheetNames) => {
+                    this.setState({ worksheets: worksheetNames.map((worksheetName, index) => ({ id: worksheetIds.val()[index], name: worksheetName.exists() && worksheetName.val() ? worksheetName.val() : 'Unknown' })) });
+                  });
+                }
                 const promises = [
                   database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set((worksheetIds.exists() ? worksheetIds.val() : []).concat([worksheetId])), // 自分の参加しているワークシートにワークシートのidを追加
                   database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).set((worksheetUserIds.exists() ? worksheetUserIds.val() : []).concat([user.uid])), // 参加しているワークシートのユーザーに自分のidを追加
