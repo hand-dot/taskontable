@@ -287,7 +287,7 @@ class Settings extends Component {
               fullWidth
               margin="normal"
             />
-            <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised">保存する</Button>
+            <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">保存する</Button>
             <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">アプリに戻る</Button>
           </div>
         </Grid>

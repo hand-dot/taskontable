@@ -671,11 +671,11 @@ class WorkSheet extends Component {
           <Paper
             elevation={1}
             style={{
-              marginTop: 10, padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.base.YELLOW, display: userId ? 'none' : 'block',
+              marginTop: 10, padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.light.SKIN, display: userId ? 'none' : 'block',
             }}
           >
             <Typography align="center" variant="subheading">
-              {constants.TITLE}のアカウントはお持ちですか？<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >アカウント作成</Button></Link>または<Link to="/">{constants.TITLE}について詳しくみる</Link>
+              {constants.TITLE}のアカウントはお持ちですか？<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/signup">アカウント作成</Link>または<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/">{constants.TITLE}について詳しくみる</Link>
             </Typography>
           </Paper>
         </Grid>
@@ -687,7 +687,7 @@ class WorkSheet extends Component {
                 onChange={this.handleTab.bind(this)}
                 scrollable
                 scrollButtons="off"
-                indicatorColor="primary"
+                indicatorColor="secondary"
               >
                 <Tab label={<span><AvTimer style={{ fontSize: 16, marginRight: '0.5em' }} />ダッシュボード</span>} />
                 <Tab disabled={this.state.readOnly} label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />タスクプール</span>} />

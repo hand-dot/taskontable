@@ -8,6 +8,7 @@ const parser = new UAParser();
 const osName = parser.getOS().name;
 
 const rgb = {
+  SKIN: '252, 248, 243',
   RED: '255, 99, 132',
   YELLOW: '255, 205, 86',
   GREEN: '75, 192, 192',
@@ -104,6 +105,7 @@ export default {
   DAY_OF_WEEK_STR: ['日', '月', '火', '水', '木', '金', '土'],
   brandColor: {
     base: {
+      SKIN: `rgb(${rgb.SKIN})`,
       RED: `rgb(${rgb.RED})`,
       YELLOW: `rgb(${rgb.YELLOW})`,
       GREEN: `rgb(${rgb.GREEN})`,
@@ -112,6 +114,7 @@ export default {
       GREY: `rgb(${rgb.GREY})`,
     },
     light: {
+      SKIN: `rgba(${rgb.SKIN},0.2)`,
       RED: `rgba(${rgb.RED},0.2)`,
       YELLOW: `rgba(${rgb.YELLOW},0.2)`,
       GREEN: `rgba(${rgb.GREEN},0.2)`,

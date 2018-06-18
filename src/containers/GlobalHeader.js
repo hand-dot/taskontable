@@ -121,7 +121,7 @@ class GlobalHeader extends Component {
             <Toolbar className={classes.root}>
               {(() => {
                   if (this.state.login) {
-                    return (<Button className={classes.title} onClick={openSideBar} ><img src={title} style={{ marginTop: 5 }} alt="taskontable" height="18" /></Button>);
+                    return (<Button className={classes.title} onClick={openSideBar} ><img src={title} alt="taskontable" height="18" /></Button>);
                   }
                   return (<Link className={classes.title} to="/"><img src={title} alt="taskontable" height="18" /></Link>);
               })()}
@@ -129,8 +129,8 @@ class GlobalHeader extends Component {
                 if (!this.state.login) {
                   return (
                     <div style={{ display: 'inline-flex' }}>
-                      <Link className={classes.link} to="/login"><Button variant="raised" className={classes.button}>ログイン</Button></Link>
-                      <Link className={classes.link} to="/signup"><Button variant="raised" className={classes.button} color="primary" >アカウント作成</Button></Link>
+                      <Link className={classes.link} to="/login"><Button className={classes.button}>ログイン</Button></Link>
+                      <Link className={classes.link} to="/signup"><Button className={classes.button} >アカウント作成</Button></Link>
                     </div>);
                 }
                 return (

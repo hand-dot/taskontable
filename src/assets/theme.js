@@ -11,17 +11,30 @@ const theme = createMuiTheme({
       contrastText: '#fff',
     },
     secondary: {
-      light: constants.brandColor.light.PURPLE,
-      main: constants.brandColor.base.PURPLE,
+      light: constants.brandColor.light.GREY,
+      main: constants.brandColor.base.GREY,
       // dark: will be calculated from palette.secondary.main,
       contrastText: '#fff',
     },
     text: {
-      primary: 'rgba(0, 0, 0, 0.5)',
-      secondary: 'rgba(0, 0, 0, 0.4)',
-    }
-    ,
-
+      primary: 'rgba(0, 0, 0, 0.7)',
+      secondary: 'rgba(0, 0, 0, 0.5)',
+    },
+    typography: {
+      // Use the system font instead of the default Roboto font.
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(','),
+    },
     // error: will us the default color
   },
   mixins: {

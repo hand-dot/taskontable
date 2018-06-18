@@ -27,7 +27,6 @@ const styles = theme => ({
   },
   bgTransparent: {
     backgroundColor: 'transparent',
-    color: '#fff',
   },
   link: {
     textDecoration: 'none',
@@ -42,8 +41,8 @@ const styles = theme => ({
     textAlign: 'center',
   },
   stroke: {
-    color: theme.palette.primary.light,
-    WebkitTextStroke: `1px ${theme.palette.primary.main}`,
+    color: constants.brandColor.light.BLUE,
+    WebkitTextStroke: `1px ${constants.brandColor.base.BLUE}`,
   },
 });
 
@@ -73,12 +72,12 @@ function Top(props) {
       <Grid item xs={12}>
         <Paper square className={classes.bgTransparent} elevation={0}>
           <div className={classes.content}>
-            <Typography align="center" style={{ color: '#fff', marginBottom: '2em' }}>
+            <Typography align="center" style={{ marginBottom: '2em' }}>
               {constants.TITLE}はExcelを扱うようにタスクを管理できるツールです。<br />高速に入力でき、タスクの整理に使う時間をできる限り減らし、実行する時間を増やすことができます。
             </Typography>
             {/* TODO ここは動画にする予定 */}
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fscreencapture.gif?alt=media&token=35183429-df91-490a-82e7-7f38a3ac127b" alt="taskontable" />
-            <Typography align="center" style={{ color: '#fff', marginBottom: '2em' }}>
+            <Typography align="center" style={{ marginBottom: '2em' }}>
               複雑な設定は一切必要なく、すぐに使い始められます。
             </Typography>
           </div>

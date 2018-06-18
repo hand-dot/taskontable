@@ -47,11 +47,11 @@ class WorkSheetList extends Component {
           <div style={{ minHeight: '100vh' }}>
             <div className={classes.content}>
               <div style={{ marginBottom: 30 }}>
-                <Typography style={{ color: '#fff' }} gutterBottom variant="title">{constants.TITLE}({constants.APP_VERSION})へようこそ！</Typography>
-                <Typography style={{ color: '#fff' }} variant="body2">
+                <Typography gutterBottom variant="title">{constants.TITLE}({constants.APP_VERSION})へようこそ！</Typography>
+                <Typography variant="body2">
                   Tips<span role="img" aria-label="Tips">💡</span>
                 </Typography>
-                <Typography style={{ color: '#fff' }} gutterBottom variant="body1">
+                <Typography gutterBottom variant="body1">
                   もしまだコミュニティに参加されていなければ是非
                   　<a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>　に参加してみてください！<br />
                   クローズドβ版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜<br />

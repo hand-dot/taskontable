@@ -26,10 +26,7 @@ ReactDOM.render(
       <ErrorBoundary>
         <div style={{
           minHeight: '100vh',
-          backgroundColor: constants.brandColor.base.BLUE,
-          transformOrigin: 0,
-          backgroundImage: `linear-gradient(150deg,${constants.brandColor.light.PURPLE} 15%,${theme.palette.primary.main} 70%,${constants.brandColor.base.GREEN} 94%)`,
-          backgroundAttachment: 'fixed',
+          backgroundColor: constants.brandColor.base.SKIN,
         }}
         >
           <CssBaselines />

@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
-import titleWh from '../images/title_wh.png';
+import title from '../images/title_gr.png';
 import constants from '../constants';
 import util from '../util';
 
@@ -25,7 +25,6 @@ const styles = theme => ({
   },
   bgTransparent: {
     backgroundColor: 'transparent',
-    color: '#fff',
   },
   link: {
     textDecoration: 'none',
@@ -48,7 +47,7 @@ function Footer(props) {
       <Grid item xs={12}>
         <Paper square className={classes.bgTransparent} elevation={0}>
           <div className={classes.content}>
-            <Typography align="center" style={{ marginBottom: '2em', color: '#fff' }}>
+            <Typography align="center" style={{ marginBottom: '2em' }}>
             お友達にシェアしてみませんか？
             </Typography>
             {/* カラーコード参考 https://qiita.com/AcaiBowl/items/8ee0a5a6c994685fb1cd */}
@@ -66,25 +65,25 @@ function Footer(props) {
                 <Button style={{ color: '#fff', backgroundColor: '#1dcd00', textDecoration: 'none' }} variant="raised" className={classes.button}>LINE</Button>
               </a>
             </div>
-            <Typography variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em', color: '#fff' }}>
+            <Typography variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
               Build Your WorkFlow
             </Typography>
-            <img style={{ margin: '2em auto', display: 'block' }} src={titleWh} alt="taskontable" height="40" />
+            <img style={{ margin: '2em auto', display: 'block' }} src={title} alt="taskontable" height="40" />
             <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '4em' }}>
               <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.CONTACT_URL} target="_blank">お問い合わせ</a>
+                <a style={{ margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">お問い合わせ</a>
               </Grid>
               <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.COMMUNITY_URL} target="_blank">コミュニティー</a>
+                <a style={{ margin: '0 .4em' }} href={constants.COMMUNITY_URL} target="_blank">コミュニティー</a>
               </Grid>
               <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.BLOG_URL} target="_blank">ブログ</a>
+                <a style={{ margin: '0 .4em' }} href={constants.BLOG_URL} target="_blank">ブログ</a>
               </Grid>
               <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.ROADMAP_URL} target="_blank">ロードマップ</a>
+                <a style={{ margin: '0 .4em' }} href={constants.ROADMAP_URL} target="_blank">ロードマップ</a>
               </Grid>
               <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em', color: '#fff' }} href={constants.REPOSITORY_URL} target="_blank">ソースコード</a>
+                <a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">ソースコード</a>
               </Grid>
             </Grid>
           </div>

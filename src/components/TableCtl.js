@@ -22,21 +22,15 @@ import constants from '../constants';
 import util from '../util';
 import tasksUtil from '../tasksUtil';
 
-const styles = theme => ({
+const styles = {
   progress: {
-    height: theme.spacing.unit,
-  },
-  blue: {
-    background: constants.brandColor.base.BLUE,
-  },
-  lightBlue: {
-    background: constants.brandColor.light.BLUE,
+    height: 2,
   },
   tableCtlButton: {
     fontSize: 11,
     minWidth: 25,
   },
-});
+};
 
 class TableCtl extends Component {
   constructor(props) {
@@ -79,7 +73,7 @@ class TableCtl extends Component {
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
       <div>
-        <LinearProgress classes={{ root: classes.progress, barColorPrimary: classes.blue, colorPrimary: classes.lightBlue }} variant="determinate" value={progressPer} />
+        <LinearProgress classes={{ root: classes.progress }} variant="determinate" value={progressPer} />
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems="center" justify="center" spacing={0}>
           <Hidden xsDown>
             <Grid item xs={2} style={{ textAlign: 'center' }}>
