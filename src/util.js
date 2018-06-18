@@ -24,7 +24,9 @@ if (process.env.NODE_ENV !== 'test') {
   firebase.initializeApp(firebaseConf);
   database = firebase.database();
   auth = firebase.auth();
-  messaging = firebase.messaging();
+  if (constants.SUPPORTEDBROWSERS.indexOf(browserName) >= 0 && osName !== 'iOS') { // safari,iosではエラーになるため
+    messaging = firebase.messaging();
+  }
   storage = firebase.storage();
 }
 
