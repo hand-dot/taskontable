@@ -53,11 +53,6 @@ class TaskTable extends Component {
       afterUpdateSettings() { self.syncPropByUpdate(); },
     }));
   }
-  componentWillReceiveProps(nextProps) {
-    if (this.props.taskTableFilterBy !== nextProps.taskTableFilterBy || !util.equal(this.props.tableTasks, nextProps.tableTasks)) {
-      this.setDataForHot(nextProps.taskTableFilterBy ? tasksUtil.getTasksByAssign(nextProps.tableTasks, nextProps.taskTableFilterBy) : nextProps.tableTasks);
-    }
-  }
   componentDidUpdate(prevProps) {
     if (!util.equal(this.props.members, prevProps.members)) {
       hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = this.props.members.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
@@ -65,6 +60,9 @@ class TaskTable extends Component {
         userId: this.props.userId,
         members: this.props.members,
       }));
+    }
+    if (this.props.taskTableFilterBy !== prevProps.taskTableFilterBy || !util.equal(this.props.tableTasks, prevProps.tableTasks)) {
+      this.setDataForHot(this.props.taskTableFilterBy ? tasksUtil.getTasksByAssign(this.props.tableTasks, this.props.taskTableFilterBy) : this.props.tableTasks);
     }
   }
   componentWillUnmount() {
@@ -94,15 +92,29 @@ class TaskTable extends Component {
 
   syncPropByRender() {
     if (!this.hot) return;
-    const hotTasks = getHotTasksIgnoreEmptyTask(this.hot);
-    if (!util.equal(hotTasks.map(task => tasksUtil.deleteUselessTaskProp(task)), this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)))) {
+    if (!this.isSamePropTaskAndHotData()) {
       this.props.handleSaveable(true);
-      this.props.handleTableTasks(this.props.tableTasks);
+      this.props.handleTableTasks(getHotTasksIgnoreEmptyTask(this.hot).map(task => tasksUtil.deleteUselessTaskProp(task)));
     }
   }
 
   syncPropByUpdate() {
-    this.props.handleSaveable(false);
+    if (!this.hot) return;
+    if (!this.isSamePropTaskAndHotData()) {
+      this.props.handleSaveable(false);
+    }
+  }
+
+  isSamePropTaskAndHotData() {
+    const hotTasks = util.cloneDeep(getHotTasksIgnoreEmptyTask(this.hot).map(task => tasksUtil.deleteUselessTaskProp(task)));
+    const propTasks = util.cloneDeep(this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)));
+    let same = false;
+    if (this.props.taskTableFilterBy) {
+      same = util.equal(tasksUtil.getTasksByAssign(hotTasks, this.props.taskTableFilterBy), tasksUtil.getTasksByAssign(propTasks, this.props.taskTableFilterBy));
+    } else {
+      same = util.equal(hotTasks, propTasks);
+    }
+    return same;
   }
 
   updateIsActive(isActive) {

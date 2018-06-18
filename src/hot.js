@@ -265,7 +265,7 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
   const newDatas = [];
-  datas.forEach((data) => {
+  util.cloneDeep(datas).forEach((data) => {
     if (!util.equal(tableTaskSchema, data)) {
       const startTimeVal = data.startTime;
       const endTimeVal = data.endTime;

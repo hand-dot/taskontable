@@ -210,7 +210,8 @@ class WorkSheet extends Component {
 
 
   getHotTaskIgnoreFilter(hotTasks) {
-    return this.state.taskTableFilterBy ? tasksUtil.getTasksByNotAssign(this.state.tableTasks, this.state.taskTableFilterBy).concat(hotTasks).map(tableTask => util.setIdIfNotExist(tableTask)).filter((o1, i, self) => self.findIndex(o2 => o2.id === o1.id) === i) : hotTasks;
+    const tableTasks = this.state.taskTableFilterBy ? tasksUtil.getTasksByNotAssign(this.state.tableTasks, this.state.taskTableFilterBy).concat(hotTasks) : hotTasks;
+    return tasksUtil.getSortedTasks(tableTasks.map(tableTask => util.setIdIfNotExist(tableTask)).filter((o1, i, self) => self.findIndex(o2 => o2.id === o1.id) === i));
   }
 
   /**
