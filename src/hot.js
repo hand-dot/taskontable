@@ -149,7 +149,7 @@ const bindShortcut = (hotInstance) => {
   // ショートカット処理
   hotInstance.addHook('afterDocumentKeyDown', (e) => {
     // ハンズオンテーブル以外のキーダウンイベントでは下記の処理をしない
-    if (e.path && e.path[0] && e.path[0].id !== 'HandsontableCopyPaste') return;
+    if (e.realTarget.className !== 'handsontableInput') return;
     if (constants.shortcuts.HOT_CURRENTTIME(e)) {
       e.preventDefault();
       const selected = hotInstance.getSelectedLast();
