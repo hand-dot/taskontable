@@ -309,6 +309,7 @@ class App extends Component {
   goWorkSheet(id) {
     this.props.history.push('/');
     setTimeout(() => { this.props.history.push(`/${id}`); });
+    if (util.isMobile()) this.setState({ isOpenSidebar: false });
   }
 
   render() {
