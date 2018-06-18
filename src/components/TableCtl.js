@@ -142,19 +142,19 @@ class TableCtl extends Component {
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
             <Tooltip title={moment(date, constants.DATEFMT).add(-1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="prev" ><NavigateBefore style={{ fontSize: 16 }} /></Button>
+                <Button className={classes.tableCtlButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" ><NavigateBefore style={{ fontSize: 16 }} /></Button>
               </div>
             </Tooltip>
             {!util.isMobile() && (
               <Tooltip title={`最終保存時刻 : ${savedAt}`} placement="top">
                 <div style={{ display: 'inline-block' }}>
-                  <Button className={classes.tableCtlButton} disabled={!saveable} variant="raised" onClick={saveWorkSheet} color="default"><Save style={{ fontSize: 16 }} /></Button>
+                  <Button className={classes.tableCtlButton} disabled={!saveable} onClick={saveWorkSheet} color="default"><Save style={{ fontSize: 16 }} /></Button>
                 </div>
               </Tooltip>
             )}
             <Tooltip title={moment(date, constants.DATEFMT).add(1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.tableCtlButton} variant="raised" onClick={this.changeDate.bind(this)} data-date-nav="next" ><NavigateNext style={{ fontSize: 16 }} /></Button>
+                <Button className={classes.tableCtlButton} onClick={this.changeDate.bind(this)} data-date-nav="next" ><NavigateNext style={{ fontSize: 16 }} /></Button>
               </div>
             </Tooltip>
           </Grid>
