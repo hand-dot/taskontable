@@ -45,7 +45,8 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
     removeNotifiCell(hotInstance, row, [prop]);
     // 他人に割り当てられた通知の場合は何もしない(空の場合は通知する)
     const assign = hotInstance.getDataAtRowProp(row, 'assign');
-    if (assign !== '' && assign !== hotInstance.getSettings().userId) return;
+    const { userId } = hotInstance.getSettings();
+    if (assign !== '' && userId !== '' && assign !== userId) return;
     let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
     let taskTitleLabel;
     if (snooz) {
@@ -98,7 +99,8 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
   if (prop === 'estimate' || prop === 'startTime' || prop === 'endTime' || prop === 'assign') {
     // case5 他人に割り当てられた通知の場合は削除(空の場合は通知する)
     const assignVal = prop === 'assign' ? newVal : hotInstance.getDataAtRowProp(row, 'assign');
-    if (assignVal !== '' && assignVal !== hotInstance.getSettings().userId) {
+    const { userId } = hotInstance.getSettings();
+    if (assignVal !== '' && userId !== '' && assignVal !== userId) {
       removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
       return;
     }
