@@ -4,7 +4,7 @@ import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
 import localforage from 'localforage';
 import { withStyles } from '@material-ui/core/styles';
-import { Switch, Route, Link, withRouter } from 'react-router-dom';
+import { Switch, Route, withRouter } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import TextField from '@material-ui/core/TextField';

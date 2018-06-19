@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 
 import constants from '../constants';
-import util from '../util';
 import '../styles/helpdialog.css';
 
 const styles = {
