@@ -405,6 +405,7 @@ class App extends Component {
           </DialogActions>
         </Dialog>
         <Dialog
+          fullWidth
           open={this.state.isOpenCreateWorksheetModal}
           onClose={() => { this.setState({ newWorksheetName: '', isOpenCreateWorksheetModal: false }); }}
           aria-labelledby="form-dialog-title"
