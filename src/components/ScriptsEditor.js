@@ -97,7 +97,7 @@ function ScriptsEditor(props) {
               return '完了したタスクをgithubのissueでクローズしている例です。';
             })()}
             <Typography gutterBottom variant="caption">
-              参考:<a href="https://developer.github.com/v3/issues/#list-issues-for-a-repository" target="_blank">https://developer.github.com/v3/issues/#list-issues-for-a-repository</a>
+              参考:<a href="https://developer.github.com/v3/issues/#list-issues-for-a-repository" target="_blank" rel="noopener noreferrer">https://developer.github.com/v3/issues/#list-issues-for-a-repository</a>
             </Typography>
           </Typography>
         </Paper>
