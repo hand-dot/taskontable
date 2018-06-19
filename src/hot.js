@@ -333,16 +333,15 @@ export const hotConf = {
         img.style.borderRadius = '50%';
         if (assingedUser) {
           img.src = assingedUser.photoURL || person;
-          if (td.parentNode.style.backgroundColor === constants.cellColor.RUNNING) {
-            img.style.animation = `busy 3s ${row % 3}s infinite`;
-          } else if (td.parentNode.style.backgroundColor === constants.cellColor.OUT) {
-            img.style.animation = 'help 1s infinite';
-          }
         } else {
           img.src = value ? unknown : logoMini; // unknownは削除されたユーザー
           img.title = value ? '@unknown' : '@every';
         }
-
+        if (td.parentNode.style.backgroundColor === constants.cellColor.RUNNING) {
+          img.style.animation = `busy 3s ${row % 3}s infinite`;
+        } else if (td.parentNode.style.backgroundColor === constants.cellColor.OUT) {
+          img.style.animation = 'help 1s infinite';
+        }
         td.appendChild(img);
         return td;
       },
