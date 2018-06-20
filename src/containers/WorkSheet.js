@@ -59,6 +59,9 @@ const styles = {
     overflow: 'hidden',
     padding: 0,
   },
+  expansionPanelSummary: {
+    marginBottom: 3,
+  },
 };
 
 class WorkSheet extends Component {
@@ -103,6 +106,10 @@ class WorkSheet extends Component {
 
   componentWillMount() {
     const worksheetId = encodeURI(this.props.match.params.id);
+    if (worksheetId === 'index.html') {
+      this.props.history.push('/');
+      return;
+    }
     Promise.all([
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).once('value'),
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value'),
@@ -680,7 +687,7 @@ class WorkSheet extends Component {
         </Grid>
         <Grid item xs={12}>
           <ExpansionPanel expanded={this.state.isOpenDashboard} style={{ margin: 0 }} elevation={1}>
-            <ExpansionPanelSummary expandIcon={<IconButton onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><ExpandMore /></IconButton>}>
+            <ExpansionPanelSummary classes={{ content: classes.expansionPanelSummary }} expandIcon={<IconButton onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}><ExpandMore /></IconButton>}>
               <Tabs
                 value={this.state.tab}
                 onChange={this.handleTab.bind(this)}

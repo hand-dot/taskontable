@@ -39,12 +39,12 @@ const styles = theme => ({
     margin: `${theme.spacing.unit}px 0`,
   },
   actionIcon: {
-    width: 25,
-    height: 25,
+    width: 35,
+    height: 35,
   },
   userPhoto: {
-    width: 25,
-    height: 25,
+    width: 35,
+    height: 35,
     textAlign: 'center',
     margin: '0 auto',
   },

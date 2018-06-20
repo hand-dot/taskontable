@@ -115,7 +115,7 @@ class TableCtl extends Component {
                 );
               } else if (tableTasks.length === tasksUtil.getDoneTasks(tableTasks).length) {
                 return (
-                  <Typography style={{ animation: 'good 1s linear 0s 1', color: constants.brandColor.base.BLUE }} variant="caption">
+                  <Typography style={{ animation: 'good 1s linear 0s 1', color: theme.palette.primary.main }} variant="caption">
                     <ThumbUp style={{ fontSize: 16 }} />
                     <span style={{ marginRight: theme.spacing.unit }} />
                     Complete!
