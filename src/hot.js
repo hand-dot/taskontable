@@ -8,6 +8,7 @@ import notifiIcon from './images/notifiIcon.png';
 import person from './images/person.svg';
 import logoMini from './images/logo_mini.png';
 import unknown from './images/unknown.png';
+import doorknock from './sounds/doorknock.mp3';
 
 let notifiIds = [];
 
@@ -57,6 +58,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
       taskTitleLabel = '終了';
     }
     taskTitle = taskTitle ? `⏰ ${taskTitleLabel} - ${taskTitle}` : `⏰ ${taskTitleLabel} - 無名タスク`;
+    new Audio(doorknock).play();
     if (permission !== 'granted') {
       alert(taskTitle);
       window.focus();
