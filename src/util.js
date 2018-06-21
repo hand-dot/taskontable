@@ -114,22 +114,6 @@ export default {
   },
 
   /**
-   * getDayメソッドで取得したものを文字列の曜日に変換します。
-   * https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay
-   * @param  {Number} dayOfWeek
-   */
-  convertDayOfWeekToString(dayOfWeek) {
-    return constants.DAY_OF_WEEK_STR[dayOfWeek];
-  },
-  /**
-   * 文字列の曜日からgetDayメソッドで取得できる数値の曜日に変換します。
-   * https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay
-   * @param  {String} dayOfWeekStr
-   */
-  convertDayOfWeekFromString(dayOfWeekStr) {
-    return constants.DAY_OF_WEEK_STR.findIndex(str => str === dayOfWeekStr);
-  },
-  /**
    * Dateオブジェクトから何週目の何曜日という情報を持ったオブジェクトを返します。
    * @param  {Date} date
    */

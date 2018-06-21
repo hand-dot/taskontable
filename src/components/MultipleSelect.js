@@ -16,9 +16,10 @@ const styles = {
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 
-// FIXME keyとvalueで値をやりとりしたい
 function MultipleSelect(props) {
-  const { value, options, onChange, disabled, classes } = props;
+  const {
+    value, options, onChange, disabled, classes,
+  } = props;
   return (
     <div className={classes.container}>
       <FormControl>
@@ -41,13 +42,11 @@ function MultipleSelect(props) {
         >
           {options.map(option => (
             <MenuItem
-              key={option}
-              value={option}
-              style={{
-                fontSize: 12,
-              }}
+              key={option.key}
+              value={option.value}
+              style={{ fontSize: 12 }}
             >
-              {option}
+              {option.key}
             </MenuItem>
           ))}
         </Select>
@@ -59,7 +58,10 @@ function MultipleSelect(props) {
 
 MultipleSelect.propTypes = {
   value: PropTypes.arrayOf(PropTypes.any).isRequired,
-  options: PropTypes.arrayOf(PropTypes.any).isRequired,
+  options: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    value: PropTypes.number.isRequired,
+  })).isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line

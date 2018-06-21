@@ -357,18 +357,6 @@ class WorkSheet extends Component {
       const { poolTasks } = this.state;
       poolTasks[poolTaskKey] = this.state.poolTasks[poolTaskKey].map(poolTask => util.setIdIfNotExist(poolTask));
     });
-    if (this.state.poolTasks.regularTasks) {
-      // regularTasksで保存する値のdayOfWeekが['日','月'...]になっているので変換
-      // https://github.com/hand-dot/taskontable/issues/118
-      const { poolTasks } = this.state;
-      poolTasks.regularTasks = this.state.poolTasks.regularTasks.map((task) => {
-        const copyTask = Object.assign({}, task);
-        if (copyTask.dayOfWeek) {
-          copyTask.dayOfWeek = copyTask.dayOfWeek.map(day => util.convertDayOfWeekFromString(day));
-        }
-        return copyTask;
-      });
-    }
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/poolTasks`).set(this.state.poolTasks);
   }
 
@@ -453,18 +441,12 @@ class WorkSheet extends Component {
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
         const savedAt = moment().format(constants.TIMEFMT);
-        if (this.state.isSyncedTableTasks) { // ほかのユーザーの更新
-          snackbarText = `テーブルが更新されました。(${savedAt})`;
-        }
+        if (this.state.isSyncedTableTasks) snackbarText = `テーブルが更新されました。(${savedAt})`; // ほかのユーザーの更新
         newTableTasks = snapshot.val();
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合(定期タスクをテーブルに設定する処理。本日以降しか動作しない)
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
-        // MultipleSelectコンポーネントで扱えるように,['日','月'...]に変換されているため、
-        // util.convertDayOfWeekToString(dayAndCount.day)) で[0, 1]へ再変換の処理を行っている
-        // https://github.com/hand-dot/taskontable/issues/118
-        const regularTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === util.convertDayOfWeekToString(dayAndCount.day)) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-        newTableTasks = regularTasks;
+        newTableTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === dayAndCount.day) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
         if (newTableTasks.length !== 0) snackbarText = '定期タスクを読み込みました。';
       }
       this.fireScript(newTableTasks, 'importScript').then(
@@ -491,24 +473,7 @@ class WorkSheet extends Component {
         const statePoolTasks = Object.assign({}, this.state.poolTasks);
         statePoolTasks.highPriorityTasks = poolTasks.highPriorityTasks ? poolTasks.highPriorityTasks : [];
         statePoolTasks.lowPriorityTasks = poolTasks.lowPriorityTasks ? poolTasks.lowPriorityTasks : [];
-        if (poolTasks.regularTasks) {
-          statePoolTasks.regularTasks = poolTasks.regularTasks;
-          statePoolTasks.regularTasks = statePoolTasks.regularTasks.map((task, index) => {
-            const copyTask = Object.assign({}, task);
-            // regularTasksで保存する値のdayOfWeekが[0, 1...]になっているので、
-            // MultipleSelectコンポーネントで扱えるように,['日','月'...]へ変換
-            // https://github.com/hand-dot/taskontable/issues/118
-            if (poolTasks.regularTasks[index].dayOfWeek) {
-              copyTask.dayOfWeek = poolTasks.regularTasks[index].dayOfWeek.map(d => util.convertDayOfWeekToString(d));
-            } else {
-              copyTask.dayOfWeek = [];
-            }
-            copyTask.week = poolTasks.regularTasks[index].week ? poolTasks.regularTasks[index].week : [];
-            return copyTask;
-          });
-        } else {
-          statePoolTasks.regularTasks = [];
-        }
+        statePoolTasks.regularTasks = poolTasks.regularTasks ? poolTasks.regularTasks : [];
         this.setState({
           poolTasks: statePoolTasks,
         });

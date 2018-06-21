@@ -29,18 +29,6 @@ it('getTimeDiffSec - HH:mm:ss形式の文字列の2つの差分を秒で求め�
 it('getTimeDiffSec - HH:mm:ss形式の文字列の2つの差分を秒で求められること(負の値)', () => {
   assert.equal(util.getTimeDiffSec('10:01:01', '10:00:31'), -30);
 });
-it('convertDayOfWeekToString - getDayメソッドで取得したものを文字列の曜日に変換できること1', () => {
-  assert.equal(util.convertDayOfWeekToString(1), '月');
-});
-it('convertDayOfWeekToString - getDayメソッドで取得したものを文字列の曜日に変換できること2', () => {
-  assert.equal(util.convertDayOfWeekToString(2), '火');
-});
-it('convertDayOfWeekFromString - 文字列の曜日からgetDayメソッドで取得できる数値の曜日に変換できること1', () => {
-  assert.equal(util.convertDayOfWeekFromString('月'), 1);
-});
-it('convertDayOfWeekFromString - 文字列の曜日からgetDayメソッドで取得できる数値の曜日に変換できること2', () => {
-  assert.equal(util.convertDayOfWeekFromString('火'), 2);
-});
 it('getDayAndCount - Dateオブジェクトから何週目の何曜日という情報を持ったオブジェクトを返せること1', () => {
   assert.deepEqual(util.getDayAndCount(new Date(2018, 5, 1)), { day: 5, count: 1 });
 });

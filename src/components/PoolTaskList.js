@@ -228,7 +228,7 @@ class TaskList extends Component {
                     <MultipleSelect
                       className={classes.miniCellInput}
                       value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
-                      options={[1, 2, 3, 4, 5]}
+                      options={[1, 2, 3, 4, 5].map(w => ({ key: w.toString(), value: w }))}
                       onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'week')}
                       disabled={this.state.editingTaskIndex !== index}
                     />
@@ -239,7 +239,7 @@ class TaskList extends Component {
                     <MultipleSelect
                       className={classes.miniCellInput}
                       value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
-                      options={constants.DAY_OF_WEEK_STR}
+                      options={[0, 1, 2, 3, 4, 5, 6].map(d => ({ key: constants.DAY_OF_WEEK_STR[d], value: d }))}
                       onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'dayOfWeek')}
                       disabled={this.state.editingTaskIndex !== index}
                     />
@@ -361,7 +361,7 @@ class TaskList extends Component {
                   <MultipleSelect
                     className={classes.miniCellInput}
                     value={this.state[constants.taskStateType.add].week}
-                    options={[1, 2, 3, 4, 5]}
+                    options={[1, 2, 3, 4, 5].map(w => ({ key: w.toString(), value: w }))}
                     onChange={this.changeTask.bind(this, constants.taskStateType.add, 'week')}
                     disabled={this.state.editingTaskIndex !== -1}
                   />
@@ -372,7 +372,7 @@ class TaskList extends Component {
                   <MultipleSelect
                     className={classes.miniCellInput}
                     value={this.state[constants.taskStateType.add].dayOfWeek}
-                    options={constants.DAY_OF_WEEK_STR}
+                    options={[0, 1, 2, 3, 4, 5, 6].map(d => ({ key: constants.DAY_OF_WEEK_STR[d], value: d }))}
                     onChange={this.changeTask.bind(this, constants.taskStateType.add, 'dayOfWeek')}
                     disabled={this.state.editingTaskIndex !== -1}
                   />
