@@ -63,9 +63,10 @@ class ActivityChart extends Component {
 
 
   draw(datas) {
+    if (!this.activity || !Array.isArray(this.props.tableTasks)) return;
     d3.selectAll(`#activity-${this.state.id} > *`).remove();
     const padding = 40;
-    const width = this.activity.parentNode.clientWidth;
+    const width = this.activity.parentNode ? this.activity.parentNode.clientWidth : 0;
 
     const height = 300;
     const svg = d3.select(`#activity-${this.state.id}`).attr('width', width).attr('height', height);
