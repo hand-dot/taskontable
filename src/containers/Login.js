@@ -6,7 +6,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import google from '../images/google.svg';
 import constants from '../constants';
 import util from '../util';
@@ -60,7 +59,7 @@ class Login extends Component {
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
         <Grid item xs={12}>
-          <Paper style={{ minHeight: '100vh' }} square elevation={0}>
+          <div style={{ minHeight: '100vh' }}>
             <div className={classes.content}>
               <Typography variant="headline" gutterBottom>
                 {constants.TITLE}にログイン
@@ -113,7 +112,7 @@ class Login extends Component {
                 <Link to="/">Topに戻る</Link>
               </div>
             </div>
-          </Paper>
+          </div>
         </Grid>
       </Grid>
     );

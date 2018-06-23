@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
 import titleGr from '../images/title_gr.png';
@@ -42,8 +41,8 @@ const styles = theme => ({
     textAlign: 'center',
   },
   stroke: {
-    color: constants.brandColor.light.BLUE,
-    WebkitTextStroke: `1px ${constants.brandColor.base.BLUE}`,
+    color: '#eee',
+    WebkitTextStroke: '1px #999',
   },
 });
 
@@ -54,7 +53,7 @@ function Top(props) {
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
       <Grid item xs={12}>
-        <Paper className={classes.center} square elevation={0}>
+        <div className={classes.center} style={{ backgroundColor: '#fffefc' }}>
           <div className={classes.content}>
             <Typography className={classes.stroke} variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
               Build Your WorkFlow
@@ -70,10 +69,10 @@ function Top(props) {
               <Button variant="raised" className={classes.button} color="primary" >無料登録して始める</Button>
             </Link>
           </div>
-        </Paper>
+        </div>
       </Grid>
       <Grid item xs={12}>
-        <Paper square className={classes.bgTransparent} elevation={0}>
+        <div>
           <div className={classes.content}>
             <Typography align="center" style={{ marginBottom: '2em' }}>
               {constants.TITLE}はExcelを扱うようにタスクを管理できるツールです。<br />高速に入力でき、タスクの整理に使う時間をできる限り減らし、実行する時間を増やすことができます。
@@ -84,10 +83,10 @@ function Top(props) {
               複雑な設定は一切必要なく、すぐに使い始められます。
             </Typography>
           </div>
-        </Paper>
+        </div>
       </Grid>
       <Grid item xs={12}>
-        <Paper className={classes.center} square elevation={0}>
+        <div className={classes.center} style={{ backgroundColor: '#fffefc' }}>
           <div className={classes.content}>
             <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
               Plugin
@@ -104,10 +103,10 @@ function Top(props) {
               </Grid>
             </Grid>
           </div>
-        </Paper>
+        </div>
       </Grid>
       <Grid item xs={12}>
-        <Paper className={classes.center} square elevation={0}>
+        <div className={classes.center} style={{ backgroundColor: '#fffefc' }}>
           <div className={classes.content}>
             <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
               Collaboration
@@ -124,10 +123,10 @@ function Top(props) {
               </Grid>
             </Grid>
           </div>
-        </Paper>
+        </div>
       </Grid>
       <Grid item xs={12}>
-        <Paper square className={classes.center} elevation={0}>
+        <div className={classes.center} style={{ backgroundColor: '#fffefc' }}>
           <div className={classes.content}>
             <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
             Anytime, anywhere
@@ -137,10 +136,10 @@ function Top(props) {
             </Typography>
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fdevices.png?alt=media&token=2cf665e4-87ac-4c3e-8bd9-5c555f9b653e" alt="taskontable" />
           </div>
-        </Paper>
+        </div>
       </Grid>
       <Grid item xs={12}>
-        <Paper className={classes.center} square elevation={0}>
+        <div className={classes.center} style={{ backgroundColor: '#fffefc' }}>
           <div className={classes.content}>
             <Typography className={classes.stroke} variant="display3" align="center" style={{ marginBottom: '2em' }}>
               General Public License
@@ -150,7 +149,7 @@ function Top(props) {
             </Typography>
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 480 }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2FGPL.png?alt=media&token=6e0c8418-c002-47e9-a445-6d1559c8a436" alt="taskontable" />
           </div>
-        </Paper>
+        </div>
       </Grid>
       <Footer />
     </Grid>

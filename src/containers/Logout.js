@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
@@ -22,10 +21,6 @@ const styles = theme => ({
     maxWidth: 600,
     margin: '0 auto',
   },
-  bgTransparent: {
-    backgroundColor: 'transparent',
-    color: '#fff',
-  },
   link: {
     textDecoration: 'none',
     display: 'block',
@@ -39,8 +34,8 @@ const styles = theme => ({
     textAlign: 'center',
   },
   stroke: {
-    color: constants.brandColor.light.BLUE,
-    WebkitTextStroke: `1px ${constants.brandColor.base.BLUE}`,
+    color: '#eee',
+    WebkitTextStroke: '1px #999',
   },
 });
 
@@ -49,7 +44,7 @@ function Logout(props) {
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
       <Grid item xs={12}>
-        <Paper className={classes.center} square elevation={0}>
+        <div className={classes.center}>
           <div className={classes.content}>
             <Typography className={classes.stroke} variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
               Did You Build Your Workflow?
@@ -61,7 +56,7 @@ function Logout(props) {
               <Link to="/">Topに戻る</Link>
             </div>
           </div>
-        </Paper>
+        </div>
       </Grid>
       <Footer />
     </Grid>

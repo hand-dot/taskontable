@@ -5,8 +5,8 @@ import constants from '../constants';
 const theme = createMuiTheme({
   palette: {
     primary: {
-      light: constants.brandColor.light.BLUE,
-      main: constants.brandColor.base.BLUE,
+      light: '#eee',
+      main: '#999',
       // dark: will be calculated from palette.primary.main,
       contrastText: '#fff',
     },
@@ -17,8 +17,8 @@ const theme = createMuiTheme({
       contrastText: '#fff',
     },
     text: {
-      primary: 'rgba(0, 0, 0, 0.7)',
-      secondary: 'rgba(0, 0, 0, 0.5)',
+      primary: 'rgba(0, 0, 0, 0.9)',
+      secondary: 'rgba(0, 0, 0, 0.7)',
     },
     typography: {
       // Use the system font instead of the default Roboto font.

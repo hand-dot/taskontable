@@ -9,6 +9,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import Person from '@material-ui/icons/Person';
@@ -33,7 +34,6 @@ const styles = {
     padding: '4em 2em 2em',
     width: '100%',
     margin: '0 auto',
-    backgroundColor: '#fff',
   },
   content: {
     maxWidth: 660,
@@ -208,9 +208,11 @@ class Settings extends Component {
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
         <Grid item xs={12}>
-          <Typography gutterBottom variant="title" style={{ paddingBottom: '2em' }}>
+          <Typography gutterBottom variant="title">
             アカウント設定
           </Typography>
+        </Grid>
+        <Grid item xs={3}>
           <div className={classes.content}>
             {(() => {
               if (this.state.loginProviderId === constants.loginProviderId.PASSWORD) {
@@ -248,48 +250,53 @@ class Settings extends Component {
                 </DialogActions>
               </Dialog>
             </div>
-            <TextField
-              value={this.state.displayName}
-              onChange={(e) => { this.setState({ displayName: e.target.value }); }}
-              id="displayName"
-              label="ユーザー名"
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              value={this.state.email}
-              disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
-              onChange={(e) => { this.setState({ email: e.target.value }); }}
-              id="email"
-              label="メールアドレス"
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              value={this.state.newPassword}
-              disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
-              onChange={(e) => { this.setState({ newPassword: e.target.value }); }}
-              id="newPassword"
-              type="password"
-              label="パスワード"
-              placeholder="6文字以上入力してください"
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              value={this.state.newPasswordConf}
-              disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
-              onChange={(e) => { this.setState({ newPasswordConf: e.target.value }); }}
-              id="newPasswordConf"
-              type="password"
-              label="パスワード(確認)"
-              placeholder="上のパスワードと同じものを入力してください。"
-              fullWidth
-              margin="normal"
-            />
-            <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">保存する</Button>
-            <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">アプリに戻る</Button>
           </div>
+        </Grid>
+        <Grid item xs={9}>
+          <TextField
+            value={this.state.displayName}
+            onChange={(e) => { this.setState({ displayName: e.target.value }); }}
+            id="displayName"
+            label="ユーザー名"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            value={this.state.email}
+            disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
+            onChange={(e) => { this.setState({ email: e.target.value }); }}
+            id="email"
+            label="メールアドレス"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            value={this.state.newPassword}
+            disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
+            onChange={(e) => { this.setState({ newPassword: e.target.value }); }}
+            id="newPassword"
+            type="password"
+            label="パスワード"
+            placeholder="6文字以上入力してください"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            value={this.state.newPasswordConf}
+            disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
+            onChange={(e) => { this.setState({ newPasswordConf: e.target.value }); }}
+            id="newPasswordConf"
+            type="password"
+            label="パスワード(確認)"
+            placeholder="上のパスワードと同じものを入力してください。"
+            fullWidth
+            margin="normal"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Divider style={{ margin: '1.5em 0' }} />
+          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">保存する</Button>
+          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">アプリに戻る</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

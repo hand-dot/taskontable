@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.min.css';
@@ -38,7 +38,6 @@ const styles = {
     padding: '4em 2em 2em',
     width: '100%',
     margin: '0 auto',
-    backgroundColor: '#fff',
   },
   button: {
     fontSize: 11,
@@ -204,9 +203,7 @@ class Activity extends Component {
           )}
         </Grid>
         <Grid item xs={8}>
-          <Paper square elevation={0}>
-            <div ref={(node) => { this.hotDom = node; }} />
-          </Paper>
+          <div ref={(node) => { this.hotDom = node; }} />
         </Grid>
         <Grid item xs={4}>
           <CodeMirror
@@ -215,6 +212,7 @@ class Activity extends Component {
           />
         </Grid>
         <Grid item xs={12} style={{ marginTop: theme.spacing.unit * 2 }}>
+          <Divider style={{ margin: '1.5em 0' }} />
           <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">ワークシートに戻る</Button>
         </Grid>
         <Snackbar

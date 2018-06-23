@@ -54,6 +54,7 @@ const styles = theme => ({
     position: 'relative',
     minHeight: '100vh',
     width: constants.SIDEBAR_WIDTH,
+    backgroundColor: 'transparent',
   },
   circularProgress: {
     overflow: 'hidden',

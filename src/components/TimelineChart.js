@@ -57,7 +57,7 @@ class TimelineChart extends Component {
   draw(data) {
     d3.selectAll(`#timeline-${this.state.id} > *`).remove();
     const labels = d3.nest().key(d => d.key).entries(data);
-    const w = window.innerWidth;
+    const w = this.timeline.parentNode.clientWidth;
     // svg
     const svg = d3.select(`#timeline-${this.state.id}`).attr('width', w).attr('height', h);
     // xAxis

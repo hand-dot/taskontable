@@ -43,22 +43,20 @@ class WorkSheetList extends Component {
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch">
         <Grid item xs={12}>
-          <div style={{ minHeight: '100vh' }}>
-            <div className={classes.content}>
-              <div style={{ marginBottom: 30 }}>
-                <Typography gutterBottom variant="title">{constants.TITLE}({constants.APP_VERSION})へようこそ！</Typography>
-                <Typography variant="body2">
+          <div className={classes.content} style={{ minHeight: '100vh' }}>
+            <div style={{ marginBottom: 30 }}>
+              <Typography gutterBottom variant="title">{constants.TITLE}({constants.APP_VERSION})へようこそ！</Typography>
+              <Typography variant="body2">
                   Tips<span role="img" aria-label="Tips">💡</span>
-                </Typography>
-                <Typography gutterBottom variant="body1">
+              </Typography>
+              <Typography gutterBottom variant="body1">
                   もしまだコミュニティに参加されていなければ是非
-                  　<a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>　に参加してみてください！<br />
+                <a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>　に参加してみてください！<br />
                   クローズドβ版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜<br />
-                  {constants.TITLE}の話以外にもいろいろな雑談☕がゆる～く行われています。
-                </Typography>
-              </div>
-              <Divider />
+                {constants.TITLE}の話以外にもいろいろな雑談☕がゆる～く行われています。
+              </Typography>
             </div>
+            <Divider />
           </div>
         </Grid>
       </Grid>

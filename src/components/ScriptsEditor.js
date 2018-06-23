@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -33,7 +32,7 @@ function ScriptsEditor(props) {
   return (
     <Grid container>
       <Grid item xs={5} style={{ padding: theme.spacing.unit }}>
-        <Paper square elevation={0}>
+        <div>
           <Typography gutterBottom variant="subheading">
             {(() => {
               if (scriptType === 'importScript') {
@@ -100,7 +99,7 @@ function ScriptsEditor(props) {
               参考:<a href="https://developer.github.com/v3/issues/#list-issues-for-a-repository" target="_blank" rel="noopener noreferrer">https://developer.github.com/v3/issues/#list-issues-for-a-repository</a>
             </Typography>
           </Typography>
-        </Paper>
+        </div>
       </Grid>
       <Grid item xs={7}>
         <CodeMirror

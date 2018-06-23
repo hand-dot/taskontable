@@ -637,18 +637,17 @@ class WorkSheet extends Component {
       userId, classes, history, theme,
     } = this.props;
     return (
-      <Grid container spacing={0} className={classes.root} style={{ paddingTop: theme.mixins.toolbar.minHeight }}>
-        <Grid item xs={12}>
-          <Paper
-            elevation={1}
-            style={{
-              marginTop: 10, padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.light.SKIN, display: userId ? 'none' : 'block',
-            }}
-          >
-            <Typography align="center" variant="subheading">
-              {constants.TITLE}のアカウントはお持ちですか？<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/signup">アカウント作成</Link>または<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/">{constants.TITLE}について詳しくみる</Link>
-            </Typography>
-          </Paper>
+      <Grid container spacing={0} className={classes.root} style={{ padding: this.state.isMobile ? 0 : theme.spacing.unit, paddingTop: (this.state.isMobile ? 0 : 17) + theme.mixins.toolbar.minHeight }}>
+        <Grid
+          item
+          xs={12}
+          style={{
+            padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.base.YELLOW, display: userId ? 'none' : 'block',
+          }}
+        >
+          <Typography align="center" variant="title">
+          👋{constants.TITLE}のアカウントはお持ちですか？<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/signup">アカウント作成</Link>または<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/">{constants.TITLE}について詳しくみる</Link>
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <ExpansionPanel expanded={this.state.isOpenDashboard} style={{ margin: 0 }} elevation={1}>
@@ -732,6 +731,7 @@ class WorkSheet extends Component {
             <Divider />
             <TextField
               fullWidth
+              style={{ padding: theme.spacing.unit }}
               InputProps={{ style: { fontSize: 13, padding: theme.spacing.unit } }}
               onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
               onBlur={() => {
@@ -746,7 +746,11 @@ class WorkSheet extends Component {
                 }
               }}
               value={this.state.memo}
-              label={`${this.state.date}のメモ`}
+              label={
+                <span style={{ fontSize: 13, padding: this.props.theme.spacing.unit }}>
+                  {`${this.state.date}のメモ`}
+                </span>
+              }
               multiline
               margin="normal"
             />

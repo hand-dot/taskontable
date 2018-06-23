@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import Switch from '@material-ui/core/Switch';
 import Refresh from '@material-ui/icons/Refresh';
 import Handsontable from 'handsontable';
@@ -41,7 +41,6 @@ const styles = {
     padding: '4em 2em 2em',
     width: '100%',
     margin: '0 auto',
-    backgroundColor: '#fff',
   },
   button: {
     fontSize: 11,
@@ -221,7 +220,7 @@ class Scripts extends Component {
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <Paper square elevation={0}>
+          <div>
             <Typography gutterBottom variant="subheading">
               スクリプトの利用(ON/OFF)
               <span className={classes.divider}>/</span>
@@ -234,31 +233,30 @@ class Scripts extends Component {
                 />
               </div>
             </Typography>
-          </Paper>
+          </div>
         </Grid>
         <Grid item xs={12}>
-          <Paper square elevation={0}>
-            <Typography gutterBottom variant="subheading">
+          <Divider style={{ margin: '1.5em 0' }} />
+          <Typography gutterBottom variant="subheading">
               ワークシートのデータの例
-              <span className={classes.divider}>/</span>
-              <Tooltip title="リセット" placement="top">
-                <div style={{ display: 'inline-block' }}>
-                  <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><Refresh style={{ fontSize: 13 }} /></Button>
-                </div>
-              </Tooltip>
-            </Typography>
-            <Typography gutterBottom variant="caption">
+            <span className={classes.divider}>/</span>
+            <Tooltip title="リセット" placement="top">
+              <div style={{ display: 'inline-block' }}>
+                <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><Refresh style={{ fontSize: 13 }} /></Button>
+              </div>
+            </Tooltip>
+          </Typography>
+          <Typography gutterBottom variant="caption">
               タスクのスキーマは　{JSON.stringify(tableTaskSchema)}　このようになっております。
-            </Typography>
-            <Typography gutterBottom variant="caption">
+          </Typography>
+          <Typography gutterBottom variant="caption">
               ワークシートのデータは左のテーブルに対して右のJSON形式(配列)で保存されます。
-            </Typography>
-          </Paper>
+          </Typography>
         </Grid>
         <Grid item xs={8}>
-          <Paper square elevation={0}>
+          <div>
             <div ref={(node) => { this.exampleHotDom = node; }} />
-          </Paper>
+          </div>
         </Grid>
         <Grid item xs={4}>
           <CodeMirror
@@ -266,7 +264,9 @@ class Scripts extends Component {
             options={Object.assign({}, editorOptions, { readOnly: true })}
           />
         </Grid>
+
         <Grid item xs={12}>
+          <Divider style={{ margin: '1.5em 0' }} />
           <ScriptsEditor
             scriptType="importScript"
             script={this.state.importScript}
@@ -281,6 +281,7 @@ class Scripts extends Component {
           />
         </Grid>
         <Grid item xs={12}>
+          <Divider style={{ margin: '1.5em 0' }} />
           <ScriptsEditor
             scriptType="exportScript"
             script={this.state.exportScript}
@@ -295,6 +296,7 @@ class Scripts extends Component {
           />
         </Grid>
         <Grid item xs={12}>
+          <Divider style={{ margin: '1.5em 0' }} />
           <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">ワークシートに戻る</Button>
         </Grid>
         <Snackbar
