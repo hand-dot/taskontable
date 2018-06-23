@@ -22,6 +22,7 @@ export default {
   TITLE: 'Taskontable',
   EMAIL: 'info@taskontable.com',
   SUPPORTEDBROWSERS: ['Chrome'],
+  SUPPORTLANGAGES: ['en', 'ja'],
   METAKEY: osName === 'Mac OS' ? '⌘' : 'ctrl',
   URL: 'https://taskontable.com',
   DEVURL1: 'http://localhost:3000',
