@@ -142,16 +142,7 @@ class ActivityChart extends Component {
   }
   render() {
     const { classes } = this.props;
-    return (
-      <div>
-        <Typography gutterBottom variant="caption">
-          見積:<span className={classes.block} style={{ color: constants.brandColor.base.GREEN }}>■</span>(緑色) /
-          実績:<span className={classes.block} style={{ color: constants.brandColor.base.BLUE }}>■</span>(青色) /
-          残:<span className={classes.block} style={{ color: constants.brandColor.base.RED }}>■</span>(赤色)
-        </Typography>
-        <svg id={`activity-${this.state.id}`} ref={(node) => { this.activity = node; }} />
-      </div>
-    );
+    return (<svg id={`activity-${this.state.id}`} ref={(node) => { this.activity = node; }} />);
   }
 }
 

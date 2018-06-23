@@ -22,11 +22,6 @@ import util from '../util';
 import DatePicker from '../components/DatePicker';
 import ActivityChart from '../components/ActivityChart';
 
-// TODO ！期間をスタート、エンドで絞り込めるようにする
-// ①画面の遷移時、デフォルトで直近の1週間のデータを取得する。
-// ②期間はあとから変更可能
-// ③その期間は同じ年で同じ月でないといけない(大量のデータを処理させ、システムに無駄に不可をかけないように)
-
 const database = util.getDatabase();
 
 const editorOptions = {
@@ -160,7 +155,6 @@ class Activity extends Component {
   }
 
   changeDate(type, newDate) {
-    // ③ここでバリデーションなど、の処理を書く
     this.setState({ [type]: newDate });
     setTimeout(() => this.setActivityData());
   }
@@ -198,7 +192,16 @@ class Activity extends Component {
           <DatePicker value={this.state.endDate} changeDate={(e) => { this.changeDate('endDate', e.target.value); }} label="終了" />
         </Grid>
         <Grid item xs={12}>
-          {this.state.taskData !== '' && (<ActivityChart tableTasks={JSON.parse(this.state.taskData)} />)}
+          {this.state.taskData !== '' && (
+            <div>
+              <Typography gutterBottom variant="caption">
+                見積:<span className={classes.block} style={{ color: constants.brandColor.base.GREEN }}>■</span>(緑色) /
+                実績:<span className={classes.block} style={{ color: constants.brandColor.base.BLUE }}>■</span>(青色) /
+                残:<span className={classes.block} style={{ color: constants.brandColor.base.RED }}>■</span>(赤色)
+              </Typography>
+              <ActivityChart tableTasks={JSON.parse(this.state.taskData)} />
+            </div>
+          )}
         </Grid>
         <Grid item xs={8}>
           <Paper square elevation={0}>
