@@ -1,15 +1,19 @@
+import Polyglot from 'node-polyglot';
 import constants from '../constants';
+import en from './en';
+import ja from './ja';
 
-/**
-* ブラウザの言語設定を取得します。
-* サポート言語以外のものは en にフォールバックします。
-*/
-const getBrowserLanguage = () => {
-    const language = (window.navigator.languages && window.navigator.languages[0]) ||
-        window.navigator.language ||
-        window.navigator.userLanguage ||
-        window.navigator.browserLanguage;
-    return constants.SUPPORTLANGAGES.indexOf(language) >= 0 ? language : 'en';
-}
+const polyglot = new Polyglot();
+polyglot.extend({
+  en,
+  ja,
+});
 
-export const i18n = require(`./${getBrowserLanguage()}`).default;
+const language = (() => (constants.SUPPORTLANGAGES.indexOf(polyglot.locale()) >= 0 ? polyglot.locale() : 'en'))();
+
+export default {
+  t(key, arg) {
+    return arg ? polyglot.t(`${language}.${key}`, arg) : polyglot.t(`${language}.${key}`);
+  },
+};
+

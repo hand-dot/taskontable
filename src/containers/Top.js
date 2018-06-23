@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
 import titleGr from '../images/title_gr.png';
-import {i18n} from '../i18n/';
+import i18n from '../i18n/';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
@@ -48,7 +48,8 @@ const styles = theme => ({
 });
 
 function Top(props) {
-  console.log(i18n);
+  console.log(i18n.t('common.test'));
+  console.log(i18n.t('common.hello_name', { name: 'DeNiro' }));
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">

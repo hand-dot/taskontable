@@ -1,5 +1,6 @@
 export default {
-    common: {
-        test: 'test',
-    }
-}
+  common: {
+    test: 'test',
+    hello_name: 'Hola, %{name}.',
+  },
+};
