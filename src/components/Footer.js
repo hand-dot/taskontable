@@ -11,7 +11,7 @@ import util from '../util';
 
 const styles = theme => ({
   content: {
-    paddingTop: util.isMobile ? '7em' : '3em',
+    paddingTop: util.isMobile ? '2em' : '3em',
     paddingBottom: '3em',
     paddingLeft: 10,
     paddingRight: 10,
@@ -32,7 +32,7 @@ function Footer(props) {
       <Grid item xs={12}>
         <Paper style={{ backgroundColor: '#fffefc' }} square elevation={0}>
           <div className={classes.content}>
-            <Divider style={{ margin: '1.5em 0' }} />
+            <Divider style={{ margin: '0 0 7em' }} />
             <div className={classes.center}>
               <Typography variant="display3" align="center">
                 タスクオンテーブル
@@ -41,20 +41,20 @@ function Footer(props) {
                 T a s k o n t a b l e
               </Typography>
             </div>
-            <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '1.5em' }}>
-              <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
+            <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '7em' }}>
+              <Grid item xs={12} sm={3} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">Contact</a>
               </Grid>
-              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em' }} href={constants.COMMUNITY_URL} target="_blank">Community</a>
               </Grid>
-              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em' }} href={constants.BLOG_URL} target="_blank">Blog</a>
               </Grid>
-              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em' }} href={constants.ROADMAP_URL} target="_blank">Roadmap</a>
               </Grid>
-              <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={3} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">Github</a>
               </Grid>
             </Grid>
