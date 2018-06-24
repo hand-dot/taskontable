@@ -8,6 +8,7 @@ import Divider from '@material-ui/core/Divider';
 
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n/';
 
 const styles = theme => ({
   content: {
@@ -43,19 +44,19 @@ function Footer(props) {
             </div>
             <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '7em' }}>
               <Grid item xs={12} sm={3} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">Contact</a>
+                <a style={{ margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">{i18n.t('common.contact')}</a>
               </Grid>
               <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.COMMUNITY_URL} target="_blank">Community</a>
+                <a style={{ margin: '0 .4em' }} href={constants.COMMUNITY_URL} target="_blank">{i18n.t('common.community')}</a>
               </Grid>
               <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.BLOG_URL} target="_blank">Blog</a>
+                <a style={{ margin: '0 .4em' }} href={constants.BLOG_URL} target="_blank">{i18n.t('common.blog')}</a>
               </Grid>
               <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.ROADMAP_URL} target="_blank">Roadmap</a>
+                <a style={{ margin: '0 .4em' }} href={constants.ROADMAP_URL} target="_blank">{i18n.t('common.roadMap')}</a>
               </Grid>
               <Grid item xs={12} sm={3} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">Github</a>
+                <a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">{i18n.t('common.github')}</a>
               </Grid>
             </Grid>
           </div>

@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n/';
 
 const styles = theme => ({
   content: {
@@ -42,11 +43,11 @@ function Logout(props) {
       <Grid item xs={12}>
         <div className={classes.center}>
           <div className={classes.content}>
-            <Typography variant="headline" align="center" style={{ marginBottom: '2em' }}>
-            お使いいただきありがとうございました。<br />{constants.TITLE}からログアウトしました。
+            <Typography variant="display3" align="center">
+              {i18n.t('logOut.thanksForUsing_title', { title: constants.TITLE })}
             </Typography>
             <div style={{ fontSize: 12, marginTop: 20 }}>
-              <Link to="/">Topに戻る</Link>
+              <Link to="/">{i18n.t('common.backToTop')}</Link>
             </div>
           </div>
         </div>

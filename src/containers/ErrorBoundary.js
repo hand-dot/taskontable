@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import util from '../util';
+import i18n from '../i18n/';
 
 const auth = util.getAuth();
 
@@ -56,7 +57,7 @@ class ErrorBoundary extends Component {
               </Typography>
               <Button onClick={() => Raven.lastEventId() && Raven.showReportDialog()} variant="raised" color="primary" className={classes.button}>エラーを報告する</Button>
               <div style={{ fontSize: 12, marginBottom: 10 }}>
-                <a href="" onClick={() => { auth.signOut().then(() => { window.location.replace(`${window.location.protocol}//${window.location.host}/`); }); return false; }}>Topに戻る</a>
+                <a href="" onClick={() => { auth.signOut().then(() => { window.location.replace(`${window.location.protocol}//${window.location.host}/`); }); return false; }}>{i18n.t('common.backToTop')}</a>
               </div>
             </div>
           </Grid>

@@ -12,7 +12,6 @@ import deskWoman from '../images/illust/desk_woman.jpg';
 import elevatorMan from '../images/illust/elevator_man.jpg';
 import skateboard from '../images/illust/skateboard.jpg';
 import teamMens from '../images/illust/team_mens.jpg';
-import i18n from '../i18n/';
 import Footer from '../components/Footer';
 import constants from '../constants';
 
@@ -44,8 +43,6 @@ const styles = theme => ({
 });
 
 function Top(props) {
-  console.log(i18n.t('common.test'));
-  console.log(i18n.t('common.hello_name', { name: 'DeNiro' }));
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="center" justify="center" style={{ backgroundColor: '#fffefc' }}>
@@ -96,7 +93,7 @@ function Top(props) {
             <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
               {constants.TITLE} is To-Do List &amp; Time keeper on Spreadsheet.
             </Typography>
-            {/* TODO ここは動画にする予定 */}
+            {/* TODO ここはライブデモにする予定 */}
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fscreencapture.gif?alt=media&token=35183429-df91-490a-82e7-7f38a3ac127b" alt="taskontable" />
           </div>
         </div>

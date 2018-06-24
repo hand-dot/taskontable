@@ -16,6 +16,7 @@ import Help from '@material-ui/icons/Help';
 import Notifications from '@material-ui/icons/Notifications';
 import HelpDialog from '../components/HelpDialog';
 import constants from '../constants';
+import i18n from '../i18n/';
 import title from '../images/title_gr.png';
 
 const styles = theme => ({
@@ -129,8 +130,8 @@ class GlobalHeader extends Component {
                 if (!this.state.login) {
                   return (
                     <div style={{ display: 'inline-flex' }}>
-                      <Link className={classes.link} to="/login"><Button className={classes.button}>ログイン</Button></Link>
-                      <Link className={classes.link} to="/signup"><Button className={classes.button} >アカウント作成</Button></Link>
+                      <Link className={classes.link} to="/login"><Button className={classes.button}>{i18n.t('common.logIn')}</Button></Link>
+                      <Link className={classes.link} to="/signup"><Button className={classes.button} >{i18n.t('common.signUp')}</Button></Link>
                     </div>);
                 }
                 return (
@@ -144,9 +145,9 @@ class GlobalHeader extends Component {
                         open={this.state.openMenuKey === 'user'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem title={user.email}>アカウント名: {user.displayName}</MenuItem>
-                        <MenuItem onClick={this.goSettings.bind(this)}>アカウント設定</MenuItem>
-                        <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
+                        <MenuItem title={user.email}>{i18n.t('common.userName')}: {user.displayName}</MenuItem>
+                        <MenuItem onClick={this.goSettings.bind(this)}>{i18n.t('globalHeader.accountSettings')}</MenuItem>
+                        <MenuItem onClick={this.logout.bind(this)}>{i18n.t('common.logOut')}</MenuItem>
                       </Menu>
                     </div>
                     <div>
@@ -163,11 +164,11 @@ class GlobalHeader extends Component {
                         open={this.state.openMenuKey === 'info'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>お問い合わせ</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>ロードマップ</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>ブログ</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>コミュニティー</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>ソースコード</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>{i18n.t('common.contact')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>{i18n.t('common.roadMap')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>{i18n.t('common.blog')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>{i18n.t('common.community')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>{i18n.t('common.github')}</MenuItem>
                       </Menu>
                     </div>
                   </div>);
