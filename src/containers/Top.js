@@ -18,7 +18,7 @@ import constants from '../constants';
 
 const styles = theme => ({
   content: {
-    paddingTop: '6em',
+    paddingTop: '3em',
     paddingBottom: '3em',
     paddingLeft: 10,
     paddingRight: 10,
@@ -50,7 +50,7 @@ function Top(props) {
   return (
     <Grid spacing={0} container alignItems="center" justify="center" style={{ backgroundColor: '#fffefc' }}>
       <Grid item xs={12}>
-        <div className={classes.content}>
+        <div className={classes.content} style={{ paddingTop: '7em' }}>
           <div className={classes.center}>
             <Typography variant="display3" align="center">
             タスクオンテーブル
@@ -86,7 +86,7 @@ function Top(props) {
           &lt; All you need  is Taskontable &gt;
         </Typography>
         <img style={{ display: 'inline-block', maxWidth: 300 }} src={deskWoman} alt="deskWoman" />
-        <Link style={{ marginBottom: '2em' }} className={classes.link} to="/signup">
+        <Link style={{ margin: '1em 0 3em' }} className={classes.link} to="/signup">
           <Button variant="raised" className={classes.button} color="primary" >Sign Up – It’s Free.</Button>
         </Link>
       </Grid>
