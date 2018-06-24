@@ -33,10 +33,6 @@ const styles = theme => ({
     margin: '0 auto',
     textAlign: 'center',
   },
-  stroke: {
-    color: '#eee',
-    WebkitTextStroke: '1px #999',
-  },
 });
 
 function Logout(props) {
@@ -46,9 +42,6 @@ function Logout(props) {
       <Grid item xs={12}>
         <div className={classes.center}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
-              Did You Build Your Workflow?
-            </Typography>
             <Typography variant="headline" align="center" style={{ marginBottom: '2em' }}>
             お使いいただきありがとうございました。<br />{constants.TITLE}からログアウトしました。
             </Typography>

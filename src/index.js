@@ -26,7 +26,7 @@ ReactDOM.render(
       <ErrorBoundary>
         <div style={{
           minHeight: '100vh',
-          backgroundColor: constants.brandColor.base.SKIN,
+          backgroundColor: '#fffefc',
         }}
         >
           <CssBaselines />
