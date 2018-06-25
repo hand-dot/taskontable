@@ -34,4 +34,17 @@ export default {
   logOut: {
     thanksForUsing_title: 'Thanks for using %{title}.',
   },
+  top: {
+    doWeHaveToFinishTheirTasksByToday: '<Do We have to finish their tasks by today?',
+    okayLetsGetItOverWith: 'Okay, let’s get it over with!>',
+    allYouNeedIsTaskontable: '<All you need  is Taskontable>',
+    signUpItsFree: 'Sign Up – It’s Free.',
+    taskontableIsToDoListAndTimeKeeperOnSpreadsheet: 'Taskontable is To-Do List & Time keeper on Spreadsheet.',
+    aToolForClearingTasksOneByOne: 'A tool for clearing tasks one by one.',
+    singleTaskIsBoostPersonalProductivity: 'Single task is boost personal productivity.',
+    modernAndClassicalInterface: 'Modern & classical interface.',
+    SimpleFastBeautifulMoreFun: 'Simple, fast, beautiful, more fun.',
+    developedForIndividualsAndTeams: 'Developed for individuals and teams.',
+    canCollaborateInRealtime: 'Can collaborate in realtime.',
+  },
 };

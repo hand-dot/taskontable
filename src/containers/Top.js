@@ -50,10 +50,10 @@ function Top(props) {
         <div className={classes.content} style={{ paddingTop: '7em' }}>
           <div className={classes.center}>
             <Typography variant="display3" align="center">
-            タスクオンテーブル
+              タスクオンテーブル
             </Typography>
             <Typography variant="display3" align="center">
-            T a s k o n t a b l e
+              T a s k o n t a b l e
             </Typography>
           </div>
         </div>
@@ -65,7 +65,7 @@ function Top(props) {
           </Grid>
           <Grid item xs={6} sm={2}>
             <Typography align="left" style={{ marginBottom: 60 }}>
-            &lt;Do We have to finish their tasks by today?
+              &lt;Do We have to finish their tasks by today?
             </Typography>
           </Grid>
           <Grid item xs={6} sm={2}>
