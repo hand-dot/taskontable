@@ -37,13 +37,14 @@ const styles = theme => ({
 });
 
 function Logout(props) {
+  const isMobile = util.isMobile();
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
       <Grid item xs={12}>
         <div className={classes.center}>
           <div className={classes.content}>
-            <Typography variant="display3" align="center">
+            <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
               {i18n.t('logOut.thanksForUsing_title', { title: constants.TITLE })}
             </Typography>
             <div style={{ fontSize: 12, marginTop: 20 }}>
