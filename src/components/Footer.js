@@ -27,6 +27,7 @@ const styles = theme => ({
 });
 
 function Footer(props) {
+  const isMobile = util.isMobile();
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
@@ -35,10 +36,10 @@ function Footer(props) {
           <div className={classes.content}>
             <Divider style={{ margin: '0 0 7em' }} />
             <div className={classes.center}>
-              <Typography variant="display3" align="center">
+              <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
                 タスクオンテーブル
               </Typography>
-              <Typography variant="display3" align="center">
+              <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
                 T a s k o n t a b l e
               </Typography>
             </div>

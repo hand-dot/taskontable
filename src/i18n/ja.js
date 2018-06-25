@@ -34,4 +34,17 @@ export default {
   logOut: {
     thanksForUsing_title: '%{title}をお使いいただきありがとうございました。',
   },
+  top: {
+    doWeHaveToFinishTheirTasksByToday: '<今日中にこの仕事やんないといけないんだって?',
+    okayLetsGetItOverWith: 'おっけー!やっちゃおうぜ！>',
+    allYouNeedIsTaskontable: '<必要なのはTaskontableだけ>',
+    signUpItsFree: '無料でアカウント作成する',
+    taskontableIsToDoListAndTimeKeeperOnSpreadsheet: 'Taskontableはスプレットシート上のTo-Doリストとタイムキーパーです。',
+    aToolForClearingTasksOneByOne: 'タスクを1つ1つ消化するためのツールです。',
+    singleTaskIsBoostPersonalProductivity: 'シングルタスクは個人の生産性を向上させます。',
+    modernAndClassicalInterface: 'モダン&クラシカルなインターフェース。',
+    SimpleFastBeautifulMoreFun: 'シンプルで、速く、美しく、しかも楽しい。',
+    developedForIndividualsAndTeams: '個人とチーム向けに開発されました。',
+    canCollaborateInRealtime: 'リアルタイムにコラボレーションできます。',
+  },
 };

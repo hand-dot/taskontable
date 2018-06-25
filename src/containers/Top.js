@@ -14,6 +14,8 @@ import skateboard from '../images/illust/skateboard.jpg';
 import teamMens from '../images/illust/team_mens.jpg';
 import Footer from '../components/Footer';
 import constants from '../constants';
+import util from '../util';
+import i18n from '../i18n/';
 
 const styles = theme => ({
   content: {
@@ -43,16 +45,17 @@ const styles = theme => ({
 });
 
 function Top(props) {
+  const isMobile = util.isMobile();
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="center" justify="center" style={{ backgroundColor: '#fffefc' }}>
       <Grid item xs={12}>
         <div className={classes.content} style={{ paddingTop: '7em' }}>
           <div className={classes.center}>
-            <Typography variant="display3" align="center">
+            <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
               タスクオンテーブル
             </Typography>
-            <Typography variant="display3" align="center">
+            <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
               T a s k o n t a b l e
             </Typography>
           </div>
@@ -60,38 +63,40 @@ function Top(props) {
       </Grid>
       <Grid item xs={12}>
         <Grid spacing={0} container alignItems="center" justify="center" style={{ backgroundColor: '#fffefc' }}>
-          <Grid style={{ textAlign: 'right' }} item xs={6} sm={4}>
+          <Grid style={{ textAlign: 'right' }} item xs={5} sm={4}>
             <img style={{ display: 'inline-block', maxWidth: 150 }} src={coffeeWoman} alt="coffeeWoman" />
           </Grid>
-          <Grid item xs={6} sm={2}>
-            <Typography align="left" style={{ marginBottom: 60 }}>
-              &lt;Do We have to finish their tasks by today?
+          <Grid item xs={7} sm={2}>
+            <Typography align="left" style={{ marginBottom: isMobile ? 0 : 20 }}>
+              {i18n.t('top.doWeHaveToFinishTheirTasksByToday')}
             </Typography>
           </Grid>
-          <Grid item xs={6} sm={2}>
-            <Typography align="right" style={{ marginTop: 60 }}>
-              Okay, let’s get it over with! &gt;
+          <Grid item xs={7} sm={2}>
+            <Typography align="right" style={{ marginTop: isMobile ? 0 : 20 }}>
+              {i18n.t('top.okayLetsGetItOverWith')}
             </Typography>
           </Grid>
-          <Grid style={{ textAlign: 'left' }} item xs={6} sm={4}>
+          <Grid style={{ textAlign: 'left' }} item xs={5} sm={4}>
             <img style={{ display: 'inline-block', maxWidth: 150 }} src={faceMan} alt="faceMan" />
           </Grid>
         </Grid>
       </Grid>
       <Grid className={classes.center} item xs={12}>
         <Typography gutterBottom variant="title" align="center">
-          &lt; All you need  is Taskontable &gt;
+          {i18n.t('top.allYouNeedIsTaskontable')}
         </Typography>
-        <img style={{ display: 'inline-block', maxWidth: 300 }} src={deskWoman} alt="deskWoman" />
+        <img style={{ display: 'inline-block', maxWidth: 200 }} src={deskWoman} alt="deskWoman" />
         <Link style={{ margin: '1em 0 3em' }} className={classes.link} to="/signup">
-          <Button variant="raised" className={classes.button} color="primary" >Sign Up – It’s Free.</Button>
+          <Button variant="raised" className={classes.button} color="primary" >
+            {i18n.t('top.signUpItsFree')}
+          </Button>
         </Link>
       </Grid>
       <Grid item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
         <div>
           <div className={classes.content}>
             <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
-              {constants.TITLE} is To-Do List &amp; Time keeper on Spreadsheet.
+              {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
             </Typography>
             {/* TODO ここはライブデモにする予定 */}
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fscreencapture.gif?alt=media&token=35183429-df91-490a-82e7-7f38a3ac127b" alt="taskontable" />
@@ -107,7 +112,9 @@ function Top(props) {
               </Grid>
               <Grid item xs={12} md={7}>
                 <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
-                  A tool for clearing tasks one by one. <br /> Single task is boost personal productivity.
+                  {i18n.t('top.aToolForClearingTasksOneByOne')}
+                  <br />
+                  {i18n.t('top.singleTaskIsBoostPersonalProductivity')}
                 </Typography>
               </Grid>
             </Grid>
@@ -120,7 +127,9 @@ function Top(props) {
             <Grid spacing={0} container alignItems="center" justify="center">
               <Grid item xs={12} md={7}>
                 <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
-                  Modern &amp; classical interface. <br /> Simple, fast, beautiful, more fun.
+                  {i18n.t('top.modernAndClassicalInterface')}
+                  <br />
+                  {i18n.t('top.SimpleFastBeautifulMoreFun')}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={5}>
@@ -135,7 +144,9 @@ function Top(props) {
           <div className={classes.content}>
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 600 }} src={teamMens} alt="teamMens" />
             <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
-              Developed for individuals and teams. <br /> Can collaborate in realtime.
+              {i18n.t('top.developedForIndividualsAndTeams')}
+              <br />
+              {i18n.t('top.canCollaborateInRealtime')}
             </Typography>
           </div>
         </div>
