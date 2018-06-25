@@ -63,19 +63,19 @@ class Login extends Component {
           <div style={{ minHeight: '100vh' }}>
             <div className={classes.content}>
               <Typography variant="headline" gutterBottom>
-                {i18n.t('common.logIn_title', { title: constants.TITLE })}
+                {i18n.t('signUpAndLogIn.logIn_title', { title: constants.TITLE })}
               </Typography>
               <div style={{ fontSize: 12, marginBottom: 20 }}>
                 {i18n.t('common.or')}&nbsp;
                 <Link to={this.props.location.search === '' ? '/signup' : `/signup${this.props.location.search}`}>
-                  {i18n.t('common.createAnAccount')}
+                  {i18n.t('signUpAndLogIn.createAnAccount')}
                 </Link>
               </div>
               <Typography variant="caption" gutterBottom>
-                {i18n.t('common.NoteForBeta1')}
+                {i18n.t('signUpAndLogIn.NoteForBeta1')}
               </Typography>
               <Typography variant="caption" gutterBottom>
-                {i18n.t('common.NoteForBeta2')}
+                {i18n.t('signUpAndLogIn.NoteForBeta2')}
               </Typography>
               <form style={{ marginTop: '2em' }}>
                 <TextField

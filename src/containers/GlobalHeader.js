@@ -164,11 +164,11 @@ class GlobalHeader extends Component {
                         open={this.state.openMenuKey === 'info'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>{i18n.t('common.contact')}</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>{i18n.t('common.roadMap')}</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>{i18n.t('common.blog')}</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>{i18n.t('common.community')}</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>{i18n.t('common.github')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>{i18n.t('external.contact')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>{i18n.t('external.roadMap')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>{i18n.t('external.blog')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>{i18n.t('external.community')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>{i18n.t('external.github')}</MenuItem>
                       </Menu>
                     </div>
                   </div>);

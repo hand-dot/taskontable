@@ -68,19 +68,19 @@ class Signup extends Component {
           <div style={{ minHeight: '100vh' }}>
             <div className={classes.content}>
               <Typography variant="headline" gutterBottom>
-                {i18n.t('common.createAnAccount')}
+                {i18n.t('signUpAndLogIn.createAnAccount')}
               </Typography>
               <div style={{ fontSize: 12, marginBottom: 20 }}>
                 {i18n.t('common.or')}&nbsp;
                 <Link to={this.props.location.search === '' ? '/login' : `/login${this.props.location.search}`}>
-                  {i18n.t('common.logIn_title', { title: constants.TITLE })}
+                  {i18n.t('signUpAndLogIn.logIn_title', { title: constants.TITLE })}
                 </Link>
               </div>
               <Typography variant="caption" gutterBottom>
-                {i18n.t('common.NoteForBeta1')}
+                {i18n.t('signUpAndLogIn.NoteForBeta1')}
               </Typography>
               <Typography variant="caption" gutterBottom>
-                {i18n.t('common.NoteForBeta2')}
+                {i18n.t('signUpAndLogIn.NoteForBeta2')}
               </Typography>
               <form style={{ marginTop: '2em' }}>
                 <TextField
@@ -125,7 +125,9 @@ class Signup extends Component {
                   fullWidth
                   margin="normal"
                 />
-                <Button onClick={this.signup.bind(this, constants.authType.EMAIL_AND_PASSWORD)} variant="raised" className={classes.button}>{i18n.t('common.createAnAccount')}</Button>
+                <Button onClick={this.signup.bind(this, constants.authType.EMAIL_AND_PASSWORD)} variant="raised" className={classes.button}>
+                  {i18n.t('signUpAndLogIn.createAnAccount')}
+                </Button>
               </form>
               <Typography gutterBottom>
                 {i18n.t('common.or')}
