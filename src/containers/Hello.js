@@ -4,8 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import Help from '@material-ui/icons/Help';
-
+import SnsShare from '../components/SnsShare';
 import constants from '../constants';
 import '../styles/helpdialog.css';
 
@@ -15,19 +14,15 @@ const styles = {
   },
   content: {
     padding: '4em 2em 0',
-    // maxWidth: 960,
   },
 };
 
 
-class WorkSheetList extends Component {
+class Hello extends Component {
   constructor(props) {
     super(props);
     this.state = {
     };
-  }
-
-  componentWillMount() {
   }
 
   render() {
@@ -44,8 +39,7 @@ class WorkSheetList extends Component {
               <Typography gutterBottom variant="body1">
                   もしまだコミュニティに参加されていなければ是非
                 <a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>に参加してみてください！<br />
-                  クローズドβ版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜<br />
-                {constants.TITLE}の話以外にもいろいろな雑談☕がゆる～く行われています。
+                  クローズドβ版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜
               </Typography>
             </div>
             <Divider />
@@ -55,9 +49,24 @@ class WorkSheetList extends Component {
               </Typography>
               <Typography gutterBottom variant="body1">
                 もし使い方が分からなければヘッダーの❓をクリックしてみてください！ショートカットなど使い方が大体書いてあります。<br />
-                もしそれでもわからないときはヘッダーのℹをクリックしてお問い合わせしてください🙏<br />
-                フィードバックは大歓迎！あなたのご意見をお待ちしております。
+                もしそれでも分からないときはヘッダーのℹをクリックしてお問い合わせしてください。<br />
+                フィードバックは大歓迎！いつでもあなたのご意見をお待ちしております。
               </Typography>
+            </div>
+            <Divider />
+            <div style={{ marginTop: 30, marginBottom: 30 }}>
+              <Typography gutterBottom variant="body2">
+              Please<span role="img" aria-label="Help">🙏</span>
+              </Typography>
+              <Typography gutterBottom variant="body1">
+                使ってみて、もし気に入ったらお友達や同僚にシェアしてほしいです！
+              </Typography>
+              <SnsShare title={constants.TITLE} shareUrl={constants.URL} />
+              <br />
+              <Typography gutterBottom variant="body1">
+                それともしgithubのアカウントを持っていたらスターをもらえると嬉しいです！
+              </Typography>
+              <iframe title="Star hand-dot/taskontable on GitHub" src="https://ghbtns.com/github-btn.html?user=hand-dot&repo=taskontable&type=star&count=true&size=large" frameBorder="0" scrolling="0" width="160px" height="30px" />
             </div>
             <Divider />
           </div>
@@ -67,10 +76,10 @@ class WorkSheetList extends Component {
   }
 }
 
-WorkSheetList.propTypes = {
+Hello.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles, { withTheme: true })(WorkSheetList);
+export default withStyles(styles, { withTheme: true })(Hello);
 

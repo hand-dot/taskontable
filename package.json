@@ -40,6 +40,7 @@
     "react-ga": "^2.5.3",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
+    "react-share": "^2.2.0",
     "ua-parser-js": "^0.7.18",
     "uuid": "^3.2.1"
   },
