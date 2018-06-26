@@ -86,7 +86,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
  * 通知を管理する処理。
  * ロジックは下記の通り
  * case0 [作成]・見積・開始時刻のペアが成立した→通知を予約する
- * case1 [削除]・見積・開始時刻のペアが不成立になった→通知を破棄する
+ * case1 [削除]・開始時刻のペアが不成立になった→通知を破棄する
  * case2 [削除]・終了時刻が入力された→通知を破棄する
  * case3 [削除・更新]・終了時刻が空になった→通知を破棄し、新しい通知を設定する
  * case4 [更新]・見積・開始時刻のペアが成立した状態で見積or開始時刻が新しい値として入力された→既存の通知
@@ -112,8 +112,8 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
     const startTimeVal = prop === 'startTime' ? newVal : hotInstance.getDataAtRowProp(row, 'startTime');
     const endTimeVal = prop === 'endTime' ? newVal : hotInstance.getDataAtRowProp(row, 'endTime');
 
-    // case1 見積が空か0,もしくは開始時刻が空の場合、既に登録されている通知を削除
-    if (estimateVal === '' || estimateVal === 0 || startTimeVal === '') {
+    // case1 開始時刻が空の場合、既に登録されている通知を削除
+    if (startTimeVal === '') {
       removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
       return;
     }
@@ -132,6 +132,8 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
     if (startTimeOut > 0) {
       setNotifiCell(hotInstance, row, 'startTime', startTimeOut);
     }
+    // 見積が空もしくは0なので終了時刻の予約はできない
+    if (estimateVal === '' || estimateVal === 0) return;
     // --------------------------終了時刻に表示する通知の設定--------------------------
     const endTimeOut = startTimeMoment.add(estimateVal, 'minutes').diff(currentMoment);
     if (endTimeOut > 0) {
@@ -289,7 +291,7 @@ const resetNotifi = debounce((hotInstance) => {
   for (let index = 0; index < rowCount; index += 1) {
     if (!hotInstance.isEmptyRow(index)) {
       const estimate = hotInstance.getDataAtRowProp(index, 'estimate');
-      if (estimate) manageNotifi(hotInstance, index, 'estimate', estimate);
+      manageNotifi(hotInstance, index, 'estimate', estimate || 0);
     }
   }
 }, 1000);
