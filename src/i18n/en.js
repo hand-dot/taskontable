@@ -1,3 +1,5 @@
+import constants from '../constants';
+
 export default {
   common: {
     close: 'Close',
@@ -11,7 +13,7 @@ export default {
     signUpWithG: 'Sign Up with Google',
     logOut: 'Log Out',
     backToTop: 'Back to Top',
-    or: 'OR',
+    or: 'or',
     forExample: 'e.g.,',
     userName: 'UserName',
     email: 'Email',
@@ -93,5 +95,26 @@ export default {
     setOpenRangeTo_target: 'Set OpenRange to %{target}.',
     doYouHaveATaskontableAccount: 'Do you have a Taskontable account?',
     showMoreAboutTaskontable: 'Show more about Taskontable',
+  },
+  hot: {
+    snooz: 'Snooz',
+    start: 'Start',
+    end: 'End',
+    anonymousTask: 'Anonymous task',
+    resetTime: 'There are tasks for time is entered. \n Do you want to reset it?',
+    rowAbove: 'Insert row above',
+    rowBelow: 'Insert row below',
+    removeRow: 'Remove row',
+    reverseTaskpoolHight: 'Reverse taskpool[Hight]',
+    reverseTaskpoolLow: 'Reverse taskpool[Low]',
+    startTask: 'Start The Task',
+    doneTask: 'Done The Task',
+    assign: 'Assign',
+    title: 'Title',
+    estimate: 'Estimate(min)',
+    startTime: `StartTime(${constants.TIMEFMT})`,
+    endTime: `EndTime(${constants.TIMEFMT})`,
+    actually: 'Actually(min)',
+    memo: 'Memo',
   },
 };

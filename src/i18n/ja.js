@@ -1,3 +1,5 @@
+import constants from '../constants';
+
 export default {
   common: {
     close: '閉じる',
@@ -93,5 +95,26 @@ export default {
     setOpenRangeTo_target: '公開範囲を%{target}に設定しました。',
     doYouHaveATaskontableAccount: 'Taskontableのアカウントはお持ちですか?',
     showMoreAboutTaskontable: 'Taskontableについて詳しく見る',
+  },
+  hot: {
+    snooz: 'スヌーズ',
+    start: '開始',
+    end: '終了',
+    anonymousTask: '無名タスク',
+    resetTime: '時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？',
+    rowAbove: '上に行を追加する',
+    rowBelow: '下に行を追加する',
+    removeRow: '行を削除する',
+    reverseTaskpoolHight: '[すぐにやる]に戻す',
+    reverseTaskpoolLow: '[いつかやる]に戻す',
+    startTask: 'タスクを開始する',
+    doneTask: 'タスクを終了にする',
+    assign: '割当',
+    title: '作業内容',
+    estimate: '見積(分)',
+    startTime: `開始時刻(${constants.TIMEFMT})`,
+    endTime: `終了時刻(${constants.TIMEFMT})`,
+    actually: '実績(min)',
+    memo: '備考',
   },
 };
