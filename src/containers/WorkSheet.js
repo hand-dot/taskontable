@@ -44,6 +44,7 @@ import TaskTableMobile from '../components/TaskTableMobile';
 import constants from '../constants';
 import tasksUtil from '../tasksUtil';
 import util from '../util';
+import i18n from '../i18n';
 
 const database = util.getDatabase();
 
@@ -150,7 +151,7 @@ class WorkSheet extends Component {
     if (!this.state.isMobile) window.onkeydown = (e) => { this.fireShortcut(e); };
     window.onbeforeunload = (e) => {
       if (this.state.saveable) {
-        const dialogText = '保存していない内容があります。';
+        const dialogText = i18n.t('common.someContentsAreNotSaved');
         e.returnValue = dialogText;
         return dialogText;
       }
@@ -198,7 +199,7 @@ class WorkSheet extends Component {
       }
       return Promise.resolve();
     }).then(() => localforage.removeItem(`recentMessage.${worksheetId}`)).catch((err) => {
-      throw new Error(`消えてしまった通知の取得に失敗しました:${err}`);
+      throw new Error(`Failed to get notification(RecentMessage) :${err}`);
     });
   }
 
@@ -260,7 +261,7 @@ class WorkSheet extends Component {
         const savedAt = moment().format(constants.TIMEFMT);
         this.setState({
           isOpenSnackbar: true,
-          snackbarText: `${snackbarText}テーブルタスクを保存しました。(${savedAt})`,
+          snackbarText: `${snackbarText}${i18n.t('common.saved_target', { target: i18n.t('worksheet.tableTask') })} (${savedAt})`,
           savedAt,
           saveable: false,
         });
@@ -285,7 +286,7 @@ class WorkSheet extends Component {
       Promise.all([this.saveTableTasks(), this.savePoolTasks()]).then(() => {
         this.setState({
           isOpenSnackbar: true,
-          snackbarText: 'テーブルタスクをタスクプールに移動しました。',
+          snackbarText: i18n.t('worksheet.movedTableTasksToTaskPool'),
           savedAt: moment().format(constants.TIMEFMT),
           saveable: false,
         });
@@ -338,7 +339,7 @@ class WorkSheet extends Component {
       this.savePoolTasks().then(() => {
         this.setState({
           isOpenSnackbar: true,
-          snackbarText: taskActionType === constants.taskActionType.MOVE_TABLE ? 'タスクプールからテーブルタスクに移動しました。' : 'タスクプールを保存しました。',
+          snackbarText: taskActionType === constants.taskActionType.MOVE_TABLE ? i18n.t('worksheet.movedTaskPoolToTableTasks') : i18n.t('common.saved_target', { target: i18n.t('worksheet.taskPool') }),
         });
       });
     });
@@ -349,7 +350,7 @@ class WorkSheet extends Component {
    */
   savePoolTasks() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
       return Promise.resolve();
     }
     // IDの生成処理
@@ -365,14 +366,14 @@ class WorkSheet extends Component {
    */
   saveWorkSheet() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
       return Promise.resolve();
     }
     return Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
       const savedAt = moment().format(constants.TIMEFMT);
       this.setState({
         isOpenSnackbar: true,
-        snackbarText: `${snackbarTexts[0]}ワークシートを保存しました。(${savedAt})`,
+        snackbarText: `${snackbarTexts[0]}${i18n.t('common.saved_target', { target: i18n.t('common.worksheet') })} (${savedAt})`,
         savedAt,
         saveable: false,
       });
@@ -384,7 +385,7 @@ class WorkSheet extends Component {
    */
   saveTableTasks() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
       return Promise.resolve();
     }
     // IDを生成し無駄なプロパティを削除する。また、hotで並び変えられたデータを取得するために処理が入っている。
@@ -394,9 +395,9 @@ class WorkSheet extends Component {
     return this.fireScript(sortedTableTask, 'exportScript')
       .then(
         data => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).set(data)
-          .then(() => 'エクスポートスクリプトを実行しました。(success) - '),
+          .then(() => `${i18n.t('common.executedExportScript')}(success) - `),
         reason => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).set(sortedTableTask)
-          .then(() => (reason ? `エクスポートスクリプトを実行しました。(error)：${reason} - ` : '')),
+          .then(() => (reason ? `${i18n.t('common.executedExportScript')}(error)：${reason} - ` : '')),
       );
   }
   /**
@@ -404,7 +405,7 @@ class WorkSheet extends Component {
    */
   saveMemo() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーでないため編集が許可されていません。' });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
       return Promise.resolve();
     }
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).set(this.state.memo ? this.state.memo : null);
@@ -441,22 +442,22 @@ class WorkSheet extends Component {
       if (snapshot.exists() && !util.equal(snapshot.val(), [])) {
         // サーバーに保存されたデータが存在する場合
         const savedAt = moment().format(constants.TIMEFMT);
-        if (this.state.isSyncedTableTasks) snackbarText = `テーブルが更新されました。(${savedAt})`; // ほかのユーザーの更新
+        if (this.state.isSyncedTableTasks) snackbarText = `${i18n.t('worksheet.tableHasBeenUpdated')} (${savedAt})`; // ほかのユーザーの更新
         newTableTasks = snapshot.val();
       } else if (this.state.poolTasks.regularTasks.length !== 0 && moment(this.state.date, constants.DATEFMT).isAfter(moment().subtract(1, 'days'))) {
         // 定期のタスクが設定されており、サーバーにデータが存在しない場合(定期タスクをテーブルに設定する処理。本日以降しか動作しない)
         const dayAndCount = util.getDayAndCount(new Date(this.state.date));
         newTableTasks = this.state.poolTasks.regularTasks.filter(regularTask => regularTask.dayOfWeek.findIndex(d => d === dayAndCount.day) !== -1 && regularTask.week.findIndex(w => w === dayAndCount.count) !== -1);
-        if (newTableTasks.length !== 0) snackbarText = '定期タスクを読み込みました。';
+        if (newTableTasks.length !== 0) snackbarText = i18n.t('worksheet.loadedRegularTask');
       }
       this.fireScript(newTableTasks, 'importScript').then(
         (data) => {
           this.setSortedTableTasks(data);
-          this.setState({ isSyncedTableTasks: true, isOpenSnackbar: true, snackbarText: `インポートスクリプトを実行しました。(success)${snackbarText ? ` - ${snackbarText}` : ''}` });
+          this.setState({ isSyncedTableTasks: true, isOpenSnackbar: true, snackbarText: `${i18n.t('common.executedImportScript')}(success)${snackbarText ? ` - ${snackbarText}` : ''}` });
         },
         (reason) => {
           this.setSortedTableTasks(newTableTasks);
-          if (reason) snackbarText = `インポートスクリプトを実行しました。(error)：${reason}${snackbarText ? ` - ${snackbarText}` : ''}`;
+          if (reason) snackbarText = `${i18n.t('common.executedImportScript')}(error)：${reason}${snackbarText ? ` - ${snackbarText}` : ''}`;
           this.setState({ isSyncedTableTasks: true, isOpenSnackbar: snackbarText !== '', snackbarText });
         },
       );
@@ -526,7 +527,7 @@ class WorkSheet extends Component {
   fireShortcut(e) {
     if (constants.shortcuts.NEXTDATE(e) || constants.shortcuts.PREVDATE(e)) {
       // 基準日を変更
-      if (this.state.saveable && !window.confirm('保存していない内容があります。')) return false;
+      if (this.state.saveable && !window.confirm(i18n.t('common.someContentsAreNotSaved'))) return false;
       const newDate = moment(this.state.date).add(constants.shortcuts.NEXTDATE(e) ? 1 : -1, 'day').format(constants.DATEFMT);
       setTimeout(() => this.changeDate(newDate));
     } else if (constants.shortcuts.SAVE(e)) {
@@ -589,7 +590,7 @@ class WorkSheet extends Component {
    * @param  {String} newDate 変更する日付(constants.DATEFMT)
    */
   changeDate(newDate) {
-    if (!this.state.saveable || window.confirm('保存していない内容があります。')) {
+    if (!this.state.saveable || window.confirm(i18n.t('common.someContentsAreNotSaved'))) {
       database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).off();
       database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).off();
       this.setState({ date: newDate, isSyncedTableTasks: false });
@@ -613,7 +614,7 @@ class WorkSheet extends Component {
   handleMembers(newMembers) {
     this.setState({ members: newMembers });
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/members/`).set(newMembers.map(newMember => newMember.uid)).then(() => {
-      this.setState({ isOpenSnackbar: true, snackbarText: 'メンバーを更新しました。' });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.membersHaveBeenUpdated') });
       return Promise.resolve();
     });
   }
@@ -626,7 +627,7 @@ class WorkSheet extends Component {
   handleWorksheetOpenRange(worksheetOpenRange) {
     this.setState({ worksheetOpenRange });
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/openRange/`).set(worksheetOpenRange).then(() => {
-      this.setState({ isOpenSnackbar: true, snackbarText: `公開範囲を${worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? '公開' : '非公開'}に設定しました。` });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.setOpenRangeTo_target', { target: worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }) });
       return Promise.resolve();
     });
   }
@@ -646,7 +647,9 @@ class WorkSheet extends Component {
           }}
         >
           <Typography align="center" variant="title">
-          👋{constants.TITLE}のアカウントはお持ちですか？<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/signup">アカウント作成</Link>または<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/">{constants.TITLE}について詳しくみる</Link>
+            <span role="img" aria-label="HandWave">👋</span>
+            {i18n.t('worksheet.doYouHaveATaskontableAccount')}
+            <Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/signup">{i18n.t('common.signUp')}</Link>{i18n.t('common.or')}<Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/">{i18n.t('worksheet.showMoreAboutTaskontable')}</Link>
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -659,12 +662,12 @@ class WorkSheet extends Component {
                 scrollButtons="off"
                 indicatorColor="secondary"
               >
-                <Tab label={<span><AvTimer style={{ fontSize: 16, marginRight: '0.5em' }} />ダッシュボード</span>} />
-                <Tab disabled={this.state.readOnly} label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />タスクプール</span>} />
-                <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />メンバー</span>} />
-                <Tab disabled={this.state.readOnly} label={<span>{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? <LockOpen style={{ fontSize: 16, marginRight: '0.5em' }} /> : <Lock style={{ fontSize: 16, marginRight: '0.5em' }} />}公開範囲</span>} />
-                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }} label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />プラグイン(α版)</span>} />)}
-                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }} label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />アクティビティ(α版)</span>} />)}
+                <Tab label={<span><AvTimer style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.dashBoad')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.taskPool')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.members')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span>{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? <LockOpen style={{ fontSize: 16, marginRight: '0.5em' }} /> : <Lock style={{ fontSize: 16, marginRight: '0.5em' }} />}{i18n.t('worksheet.openRange')}</span>} />
+                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }} label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.plugIns')}(<span role="img" aria-label="stop">⛔</span>)</span>} />)}
+                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }} label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.activity')}(<span role="img" aria-label="stop">⛔</span>)</span>} />)}
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
@@ -739,7 +742,7 @@ class WorkSheet extends Component {
                   this.saveMemo().then(() => {
                     this.setState({
                       isOpenSnackbar: true,
-                      snackbarText: 'メモを保存しました。',
+                      snackbarText: i18n.t('common.saved_target', { target: i18n.t('worksheet.memo') }),
                       saveable: false,
                     });
                   });
@@ -748,7 +751,7 @@ class WorkSheet extends Component {
               value={this.state.memo}
               label={
                 <span style={{ fontSize: 13, padding: this.props.theme.spacing.unit }}>
-                  {`${this.state.date}のメモ`}
+                  {`${i18n.t('worksheet.memo')}(${this.state.date})`}
                 </span>
               }
               multiline
