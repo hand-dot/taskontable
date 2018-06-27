@@ -383,7 +383,7 @@ class App extends Component {
           </Switch>
         </main>
         <Dialog open={this.state.processing}>
-          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
+          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>
         </Dialog>
         <Dialog open={this.state.isOpenSupportBrowserDialog}>
           <DialogTitle>{i18n.t('app.unsupportedBrowser')}</DialogTitle>

@@ -22,16 +22,9 @@ import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import People from '@material-ui/icons/People';
-import FormatListBulleted from '@material-ui/icons/FormatListBulleted';
-import AvTimer from '@material-ui/icons/AvTimer';
 import Close from '@material-ui/icons/Close';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Person from '@material-ui/icons/Person';
-import Lock from '@material-ui/icons/Lock';
-import LockOpen from '@material-ui/icons/LockOpen';
-import Power from '@material-ui/icons/Power';
-import ShowChart from '@material-ui/icons/ShowChart';
 
 import Dashboard from '../components/Dashboard';
 import TableCtl from '../components/TableCtl';
@@ -662,12 +655,12 @@ class WorkSheet extends Component {
                 scrollButtons="off"
                 indicatorColor="secondary"
               >
-                <Tab label={<span><AvTimer style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.dashBoad')}</span>} />
-                <Tab disabled={this.state.readOnly} label={<span><FormatListBulleted style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.taskPool')}</span>} />
-                <Tab disabled={this.state.readOnly} label={<span><People style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.members')}</span>} />
-                <Tab disabled={this.state.readOnly} label={<span>{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? <LockOpen style={{ fontSize: 16, marginRight: '0.5em' }} /> : <Lock style={{ fontSize: 16, marginRight: '0.5em' }} />}{i18n.t('worksheet.openRange')}</span>} />
-                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }} label={<span><Power style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.plugIns')}(<span role="img" aria-label="stop">⛔</span>)</span>} />)}
-                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }} label={<span><ShowChart style={{ fontSize: 16, marginRight: '0.5em' }} />{i18n.t('worksheet.activity')}(<span role="img" aria-label="stop">⛔</span>)</span>} />)}
+                <Tab label={<span role="img" aria-label="dashboad">🚩{i18n.t('worksheet.dashBoad')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="taskpool">📁{i18n.t('worksheet.taskPool')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="members">👫{i18n.t('worksheet.members')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="openrange">{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? '🔓' : '🔒' }{i18n.t('worksheet.openRange')}</span>} />
+                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }} label={<span role="img" aria-label="plugins">🔌{i18n.t('worksheet.plugIns')}(<span role="img" aria-label="stop">⛔</span>)</span>} />)}
+                {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }} label={<span role="img" aria-label="activity">📈{i18n.t('worksheet.activity')}(<span role="img" aria-label="stop">⛔</span>)</span>} />)}
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }} >
@@ -785,7 +778,7 @@ class WorkSheet extends Component {
           action={[<IconButton key="close" color="inherit" onClick={() => { this.setState({ isOpenReceiveMessage: false, receiveMessage: { body: '', icon: '' } }); }}><Close /></IconButton>]}
         />
         <Dialog open={!this.state.isSyncedTableTasks}>
-          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
+          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>
         </Dialog>
       </Grid>
     );

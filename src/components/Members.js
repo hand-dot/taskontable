@@ -502,7 +502,7 @@ HP: ${window.location.protocol}//${window.location.host}
             </DialogActions>
           </Dialog>
           <Dialog open={this.state.processing}>
-            <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
+            <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>
           </Dialog>
         </div>
         <Snackbar
