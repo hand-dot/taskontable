@@ -83,7 +83,7 @@ class Login extends Component {
                   onChange={(e) => { this.setState({ email: e.target.value }); }}
                   disabled={this.props.location.search !== ''}
                   id="email"
-                  label={i18n.t('common.email')}
+                  label={i18n.t('common.emailAddress')}
                   InputLabelProps={{
                     shrink: true,
                   }}

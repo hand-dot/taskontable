@@ -22,6 +22,7 @@ import constants from '../constants';
 import google from '../images/google.svg';
 import email from '../images/email.svg';
 import util from '../util';
+import i18n from '../i18n';
 
 const database = util.getDatabase();
 const auth = util.getAuth();
@@ -87,10 +88,10 @@ class Settings extends Component {
       } else if (providerId === constants.loginProviderId.GOOGLE) {
         this.setState({ loginProviderId: constants.loginProviderId.GOOGLE });
       } else {
-        throw new Error('想定外のプロバイダの利用');
+        throw new Error('Use of unexpected provider');
       }
     } else {
-      throw new Error('複数のプロバイダの利用');
+      throw new Error('Use of multiple providers');
     }
     const { user } = this.props;
     this.setState({
@@ -115,7 +116,7 @@ class Settings extends Component {
     const propsUser = user;
     const authUser = auth.currentUser;
     if (propsUser.uid !== authUser.uid) {
-      throw new Error('認証ユーザーと現在のユーザーのIDが違います。');
+      throw new Error('Authenticated User uid differs from Current User uid.');
     } else {
       const promises = [];
       if (this.newPhotoBlob) {
@@ -131,7 +132,7 @@ class Settings extends Component {
         if (this.state.newPassword.length >= 6 && this.state.newPassword === this.state.newPasswordConf) {
           promises.push(authUser.updatePassword(this.state.newPassword));
         } else {
-          alert('パスワードを正しく入力してください。');
+          alert(i18n.t('validation.correct_target', { target: i18n.t('common.password') }));
           this.setState({ processing: false });
           return;
         }
@@ -143,7 +144,7 @@ class Settings extends Component {
             authUser.updateProfile({ displayName: this.state.displayName }),
           );
         } else {
-          alert('ユーザー名が空文字です。');
+          alert(i18n.t('validation.invalid_target', { target: i18n.t('common.userName') }));
           this.setState({ processing: false });
           return;
         }
@@ -155,7 +156,7 @@ class Settings extends Component {
             authUser.updateEmail(this.state.email),
           );
         } else {
-          alert('無効なメールアドレスです。');
+          alert(i18n.t('validation.invalid_target', { target: i18n.t('common.emailAddress') }));
           this.setState({ processing: false });
           return;
         }
@@ -168,7 +169,7 @@ class Settings extends Component {
           photoURL: this.state.photoURL,
         });
       }, () => {
-        alert('保存に失敗しました。ログイン情報が古い可能性があります。\nお手数ですが、ログインしなおしてもう一度お試しください。');
+        alert(i18n.t('settings.failedToSave'));
         this.setState({ processing: false });
       });
     }
@@ -177,7 +178,7 @@ class Settings extends Component {
   backToApp() {
     const { user } = this.props;
     if (user.displayName !== this.state.displayName || user.email !== this.state.email || user.photoURL !== this.state.photoURL) {
-      if (!window.confirm('保存していない内容がありますが、アプリに戻ってもよろしいですか？')) return;
+      if (!window.confirm(i18n.t('common.someContentsAreNotSaved') + i18n.t('common.areYouSureBackToPreviousPage'))) return;
     }
     this.props.history.goBack();
   }
@@ -209,7 +210,7 @@ class Settings extends Component {
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
         <Grid item xs={12}>
           <Typography gutterBottom variant="title">
-            アカウント設定
+            {i18n.t('common.accountSettings')}
           </Typography>
         </Grid>
         <Grid item xs={3}>
@@ -234,18 +235,18 @@ class Settings extends Component {
                 onClose={() => { this.setState({ isOpenEditPhotoDialog: false }); }}
                 aria-labelledby="edit-photo-dialog"
               >
-                <DialogTitle id="edit-photo-dialog">プロフィール写真を変更</DialogTitle>
+                <DialogTitle id="edit-photo-dialog">{i18n.t('settings.changeProfilePhoto')}</DialogTitle>
                 <DialogContent>
                   <DialogContentText />
-                  <img ref={(node) => { this.editingPhoto = node; }} style={{ maxWidth: 300, maxHeight: 300 }} src={this.state.photoURL} crossOrigin="" alt={`${this.state.displayName}のアイコン${this.state.photoURL ? '' : '(未設定) / '}`} />
+                  <img ref={(node) => { this.editingPhoto = node; }} style={{ maxWidth: 300, maxHeight: 300 }} src={this.state.photoURL} crossOrigin="" alt={`${i18n.t('settings.profilePhoto') + (this.state.photoURL ? '' : `: ${i18n.t('settings.notSet')}`)}`} />
                   <div><input type="file" name="image" accept="image/*" onChange={this.changePhotoInput.bind(this)} /></div>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={() => { this.setState({ isOpenEditPhotoDialog: false }); }} color="primary">
-                    キャンセル
+                    {i18n.t('common.cancel')}
                   </Button>
                   <Button onClick={this.cropPhoto.bind(this)} color="primary">
-                    変更
+                    {i18n.t('common.change')}
                   </Button>
                 </DialogActions>
               </Dialog>
@@ -257,7 +258,7 @@ class Settings extends Component {
             value={this.state.displayName}
             onChange={(e) => { this.setState({ displayName: e.target.value }); }}
             id="displayName"
-            label="ユーザー名"
+            label={i18n.t('common.userName')}
             fullWidth
             margin="normal"
           />
@@ -266,7 +267,7 @@ class Settings extends Component {
             disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
             onChange={(e) => { this.setState({ email: e.target.value }); }}
             id="email"
-            label="メールアドレス"
+            label={i18n.t('common.emailAddress')}
             fullWidth
             margin="normal"
           />
@@ -276,8 +277,8 @@ class Settings extends Component {
             onChange={(e) => { this.setState({ newPassword: e.target.value }); }}
             id="newPassword"
             type="password"
-            label="パスワード"
-            placeholder="6文字以上入力してください"
+            label={i18n.t('common.password')}
+            placeholder={i18n.t('validation.minLength_num', { num: 6 })}
             fullWidth
             margin="normal"
           />
@@ -287,22 +288,22 @@ class Settings extends Component {
             onChange={(e) => { this.setState({ newPasswordConf: e.target.value }); }}
             id="newPasswordConf"
             type="password"
-            label="パスワード(確認)"
-            placeholder="上のパスワードと同じものを入力してください。"
+            label={i18n.t('common.passwordConfirmation')}
+            placeholder={i18n.t('settings.pleaseEnterSamePasswordAsAbove')}
             fullWidth
             margin="normal"
           />
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">保存する</Button>
-          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">アプリに戻る</Button>
+          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">{i18n.t('common.save')}</Button>
+          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSaveSnackbar}
           onClose={() => { this.setState({ isOpenSaveSnackbar: false }); }}
-          message="保存しました。"
+          message={i18n.t('common.saved_target', { target: i18n.t('common.userInformation') })}
         />
         <Dialog open={this.state.processing}>
           <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>

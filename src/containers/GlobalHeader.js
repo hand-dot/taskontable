@@ -146,7 +146,7 @@ class GlobalHeader extends Component {
                         onClose={this.closeMenu.bind(this)}
                       >
                         <MenuItem title={user.email}>{i18n.t('common.userName')}: {user.displayName}</MenuItem>
-                        <MenuItem onClick={this.goSettings.bind(this)}>{i18n.t('globalHeader.accountSettings')}</MenuItem>
+                        <MenuItem onClick={this.goSettings.bind(this)}>{i18n.t('common.accountSettings')}</MenuItem>
                         <MenuItem onClick={this.logout.bind(this)}>{i18n.t('common.logOut')}</MenuItem>
                       </Menu>
                     </div>

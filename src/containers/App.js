@@ -225,7 +225,7 @@ class App extends Component {
         return;
       }
       if (!util.validateEmail(email) || password.length < 6) {
-        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('validation.must_pair1_pair2', { pair1: i18n.t('common.email'), pair2: i18n.t('common.password') }) });
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('validation.must_pair1_pair2', { pair1: i18n.t('common.emailAddress'), pair2: i18n.t('common.password') }) });
         return;
       }
       tmpDisplayName = username;
@@ -245,7 +245,7 @@ class App extends Component {
         auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
       } else if (type === constants.authType.EMAIL_AND_PASSWORD) {
         if (!util.validateEmail(email) || password.length < 6) {
-          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('validation.must_pair1_pair2', { pair1: i18n.t('common.email'), pair2: i18n.t('common.password') }) });
+          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('validation.must_pair1_pair2', { pair1: i18n.t('common.emailAddress'), pair2: i18n.t('common.password') }) });
           return;
         }
         auth.signInWithEmailAndPassword(email, password).then(() => {

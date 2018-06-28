@@ -149,7 +149,7 @@ HP: ${URL}
 
   addMember() {
     if (this.state.invitationEmails.length === 0) {
-      alert(i18n.t('validation.must_target', { target: i18n.t('common.email') }));
+      alert(i18n.t('validation.must_target', { target: i18n.t('common.emailAddress') }));
       return;
     }
     this.setState({ processing: true });
@@ -275,7 +275,7 @@ HP: ${URL}
         this.state.invitationEmails.push(email);
       }
     } else {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('validation.invalid_target', { target: i18n.t('common.email') }) });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('validation.invalid_target', { target: i18n.t('common.emailAddress') }) });
     }
   }
 
@@ -410,7 +410,7 @@ HP: ${URL}
                 onAdd={(email) => { this.addEmail(email); }}
                 onBlur={(e) => { this.addEmail(e.target.value); }}
                 onDelete={(email) => { this.setState({ invitationEmails: this.state.invitationEmails.filter(invitationEmail => invitationEmail !== email) }); }}
-                label={i18n.t('common.email')}
+                label={i18n.t('common.emailAddress')}
                 fullWidthInput
                 fullWidth
               />

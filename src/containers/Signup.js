@@ -103,7 +103,7 @@ class Signup extends Component {
                   disabled={this.props.location.search !== ''}
                   autoComplete="email"
                   id="email"
-                  label={i18n.t('common.email')}
+                  label={i18n.t('common.emailAddress')}
                   InputLabelProps={{
                   shrink: true,
                 }}
