@@ -18,6 +18,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import constants from '../constants';
 import google from '../images/google.svg';
 import email from '../images/email.svg';
@@ -303,7 +304,13 @@ class Settings extends Component {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSaveSnackbar}
           onClose={() => { this.setState({ isOpenSaveSnackbar: false }); }}
-          message={i18n.t('common.saved_target', { target: i18n.t('common.userInformation') })}
+          ContentProps={{ 'aria-describedby': 'info-id' }}
+          message={
+            <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
+              <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
+              <span style={{ paddingLeft: theme.spacing.unit }}>{i18n.t('common.saved_target', { target: i18n.t('common.userInformation') })}</span>
+            </span>
+          }
         />
         <Dialog open={this.state.processing}>
           <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>

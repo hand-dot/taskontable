@@ -22,6 +22,7 @@ import Sms from '@material-ui/icons/Sms';
 import Person from '@material-ui/icons/Person';
 import Email from '@material-ui/icons/Email';
 import PersonAdd from '@material-ui/icons/PersonAdd';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import util from '../util';
 import i18n from '../i18n';
 import constants from '../constants';
@@ -510,7 +511,13 @@ HP: ${URL}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSnackbar}
           onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
-          message={this.state.snackbarText}
+          ContentProps={{ 'aria-describedby': 'info-id' }}
+          message={
+            <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
+              <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
+              <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.snackbarText}</span>
+            </span>
+          }
         />
       </div>
     );
