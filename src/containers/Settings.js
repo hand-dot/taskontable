@@ -214,7 +214,7 @@ class Settings extends Component {
             {i18n.t('common.accountSettings')}
           </Typography>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <div className={classes.content}>
             {(() => {
               if (this.state.loginProviderId === constants.loginProviderId.PASSWORD) {
@@ -224,7 +224,7 @@ class Settings extends Component {
               }
               return null;
             })()}
-            <div>
+            <div style={{ textAlign: 'center' }}>
               <IconButton className={classes.iconButton} data-menu-key="user" onClick={() => { this.setState({ isOpenEditPhotoDialog: true }); }}>
                 {this.state.photoURL ? <Avatar className={classes.userPhoto} src={this.state.photoURL} /> : <Person style={{ fontSize: 100 }} />}
               </IconButton>
@@ -254,7 +254,7 @@ class Settings extends Component {
             </div>
           </div>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           <TextField
             value={this.state.displayName}
             onChange={(e) => { this.setState({ displayName: e.target.value }); }}

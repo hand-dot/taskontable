@@ -295,7 +295,7 @@ HP: ${URL}
               {i18n.t('worksheet.members')}
             </Typography>
             <div className={classes.membersContainer}>
-              {members.length === 0 ? <Typography align="center" variant="caption">{i18n.t('members.noMembers')}</Typography> : members.map(member => (
+              {members.length === 0 ? <div style={{ minHeight: 100, display: 'flex', alignItems: 'center' }}><Typography align="center" variant="caption">{i18n.t('members.noMembers')}</Typography></div> : members.map(member => (
                 <div className={classes.member} key={member.uid}>
                   <IconButton
                     className={classes.actionIcon}
@@ -351,7 +351,7 @@ HP: ${URL}
             </Typography>
             <div className={classes.membersContainer}>
               <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
-              {invitedEmails.length === 0 ? <Typography align="center" variant="caption" style={{ minWidth: 150 }}>{i18n.t('members.noOneIsInvited')}</Typography> : invitedEmails.map(invitedEmail => (
+              {invitedEmails.length === 0 ? <div style={{ minHeight: 100, display: 'flex', alignItems: 'center' }}><Typography align="center" variant="caption" style={{ minWidth: 150 }}>{i18n.t('members.noOneIsInvited')}</Typography></div> : invitedEmails.map(invitedEmail => (
                 <div className={classes.member} key={invitedEmail}>
                   <IconButton
                     className={classes.actionIcon}
