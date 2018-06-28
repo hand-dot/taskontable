@@ -1,7 +1,14 @@
-import constants from '../constants';
-
 export default {
   common: {
+    weeks: {
+      sun: 'Sun',
+      mon: 'Mon',
+      tue: 'Tue',
+      wed: 'Wed',
+      thurs: 'Thurs',
+      fri: 'Fri',
+      sat: 'Sat',
+    },
     tasks: 'tasks',
     close: 'Close',
     create: 'Create',
@@ -30,6 +37,7 @@ export default {
     private: 'Private',
     sec: 'sec',
     min: 'min',
+    edit: 'Edit',
   },
   external: {
     contact: 'Contact',
@@ -121,6 +129,31 @@ export default {
     remaining: 'Remaining',
     anonymousTask: 'Anonymous task',
   },
+  taskPool: {
+    areYouSureDelete_target: 'Are you sure delete %{target}?',
+    highPriority: 'HighPriority',
+    lowPriority: 'LowPriority',
+    regular: 'Regular',
+    canNotSaveWhenIsEmpty_target: 'Can not save when %{target} is empty.',
+    title: 'Title',
+    weekNumber: 'WeekNumber',
+    dayOfWeek: 'DayOfWeek',
+    moveToTable: 'Move to Table',
+    moveToTop: 'Move to Top',
+    moveUpOne: 'Move Up one',
+    moveOneDown: 'Move one Down',
+    moveToBottom: 'Move to Bottom',
+    remove: 'Remove',
+  },
+  columns: {
+    assign: 'Assign',
+    title: 'Title',
+    estimate: 'Estimate(min)',
+    startTime: 'StartTime(HH:mm)',
+    endTime: 'EndTime(HH:mm)',
+    actually: 'Actually(min)',
+    memo: 'Memo',
+  },
   hot: {
     snooz: 'Snooz',
     start: 'Start',
@@ -134,12 +167,5 @@ export default {
     reverseTaskpoolLow: 'Reverse taskpool[Low]',
     startTask: 'Start The Task',
     doneTask: 'Done The Task',
-    assign: 'Assign',
-    title: 'Title',
-    estimate: 'Estimate(min)',
-    startTime: `StartTime(${constants.TIMEFMT})`,
-    endTime: `EndTime(${constants.TIMEFMT})`,
-    actually: 'Actually(min)',
-    memo: 'Memo',
   },
 };

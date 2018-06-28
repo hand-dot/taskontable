@@ -3,6 +3,7 @@ import SENTRY_URL from './configs/sentry';
 import SENDGRID_API_KEY from './configs/sendgrid';
 import FCM_KEY from './configs/cloudmessaging';
 import GA_ID from './configs/ga';
+import i18n from './i18n';
 
 const parser = new UAParser();
 const osName = parser.getOS().name;
@@ -22,7 +23,6 @@ export default {
   TITLE: 'Taskontable',
   EMAIL: 'info@taskontable.com',
   SUPPORTEDBROWSERS: ['Chrome'],
-  SUPPORTLANGAGES: ['en', 'ja'],
   METAKEY: osName === 'Mac OS' ? '⌘' : 'ctrl',
   URL: 'https://taskontable.com',
   DEVURL1: 'http://localhost:3000',
@@ -103,7 +103,15 @@ export default {
   DATEFMT: 'YYYY-MM-DD',
   TIMEFMT: 'HH:mm',
   INITIALDATE: '1970-01-01',
-  DAY_OF_WEEK_STR: ['日', '月', '火', '水', '木', '金', '土'],
+  DAY_OF_WEEK_STR: [
+    i18n.t('common.weeks.sun'),
+    i18n.t('common.weeks.mon'),
+    i18n.t('common.weeks.tue'),
+    i18n.t('common.weeks.wed'),
+    i18n.t('common.weeks.thurs'),
+    i18n.t('common.weeks.fri'),
+    i18n.t('common.weeks.sat'),
+  ],
   brandColor: {
     base: {
       SKIN: `rgb(${rgb.SKIN})`,

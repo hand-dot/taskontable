@@ -313,7 +313,7 @@ export const hotConf = {
   colWidths: Math.round(window.innerWidth / 7),
   columns: [
     {
-      title: i18n.t('hot.assign'),
+      title: i18n.t('columns.assign'),
       data: 'assign',
       editor: 'select',
       selectOptions: [],
@@ -352,19 +352,19 @@ export const hotConf = {
       },
     },
     {
-      title: i18n.t('hot.title'),
+      title: i18n.t('columns.title'),
       data: 'title',
       type: 'text',
     },
     {
-      title: i18n.t('hot.estimate'),
+      title: i18n.t('columns.estimate'),
       data: 'estimate',
       type: 'numeric',
       allowInvalid: false,
       colWidths: 50,
     },
     {
-      title: i18n.t('hot.startTime'),
+      title: i18n.t('columns.startTime'),
       data: 'startTime',
       type: 'time',
       colWidths: 70,
@@ -382,7 +382,7 @@ export const hotConf = {
       },
     },
     {
-      title: i18n.t('hot.endTime'),
+      title: i18n.t('columns.endTime'),
       data: 'endTime',
       type: 'time',
       colWidths: 70,
@@ -423,7 +423,7 @@ export const hotConf = {
       },
     },
     {
-      title: i18n.t('hot.actually'),
+      title: i18n.t('columns.actually'),
       data: 'actually',
       type: 'numeric',
       readOnly: true,
@@ -451,7 +451,7 @@ export const hotConf = {
       },
     },
     {
-      title: i18n.t('hot.memo'),
+      title: i18n.t('columns.memo'),
       data: 'memo',
       type: 'text',
     },

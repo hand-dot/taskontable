@@ -1,7 +1,14 @@
-import constants from '../constants';
-
 export default {
   common: {
+    weeks: {
+      sun: '日',
+      mon: '月',
+      tue: '火',
+      wed: '水',
+      thurs: '木',
+      fri: '金',
+      sat: '土',
+    },
     tasks: 'タスク',
     close: '閉じる',
     create: '作成',
@@ -30,6 +37,7 @@ export default {
     private: '非公開',
     sec: '秒',
     min: '分',
+    edit: '編集',
   },
   external: {
     contact: 'コンタクト',
@@ -121,6 +129,31 @@ export default {
     remaining: '残',
     anonymousTask: '無名タスク',
   },
+  taskPool: {
+    areYouSureDelete_target: '%{target}を本当に削除しますか？',
+    highPriority: 'すぐにやる',
+    lowPriority: 'いつかやる',
+    regular: '定期的',
+    canNotSaveWhenIsEmpty_target: '%{target}が空の状態では保存できません。',
+    title: '作業内容',
+    weekNumber: '第何週',
+    dayOfWeek: '何曜日',
+    moveToTable: 'テーブルに移動',
+    moveToTop: '先頭に移動',
+    moveUpOne: '1つ上に移動',
+    moveOneDown: '1つ下に移動',
+    moveToBottom: '末尾に移動',
+    remove: '削除',
+  },
+  columns: {
+    assign: '割当',
+    title: '作業内容',
+    estimate: '見積(分)',
+    startTime: '開始時刻(HH:mm)',
+    endTime: '終了時刻(HH:mm)',
+    actually: '実績(min)',
+    memo: '備考',
+  },
   hot: {
     snooz: 'スヌーズ',
     start: '開始',
@@ -134,12 +167,5 @@ export default {
     reverseTaskpoolLow: '[いつかやる]に戻す',
     startTask: 'タスクを開始する',
     doneTask: 'タスクを終了にする',
-    assign: '割当',
-    title: '作業内容',
-    estimate: '見積(分)',
-    startTime: `開始時刻(${constants.TIMEFMT})`,
-    endTime: `終了時刻(${constants.TIMEFMT})`,
-    actually: '実績(min)',
-    memo: '備考',
   },
 };
