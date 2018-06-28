@@ -8,6 +8,7 @@ import debounce from 'lodash.debounce';
 import { hotConf, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n';
 
 import '../styles/handsontable-custom.css';
 import tasksUtil from '../tasksUtil';
@@ -83,7 +84,7 @@ class TaskTable extends Component {
   moveTableTaskToPoolTask(taskPoolType, index, hotInstance) {
     const task = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
     if (!task.title) {
-      alert('作業内容が未記入のタスクはタスクプールに戻せません。');
+      alert(i18n.t('worksheet.cantMoveToTaskPoolWithNoTitleTask'));
       return;
     }
     hotInstance.alter('remove_row', index);

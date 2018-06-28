@@ -58,7 +58,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
     } else {
       taskTitleLabel = i18n.t('hot.end');
     }
-    taskTitle = `⏰[${taskTitleLabel}] - ${taskTitle || i18n.t('hot.anonymousTask')}`;
+    taskTitle = `⏰[${taskTitleLabel}] - ${taskTitle || i18n.t('common.anonymousTask')}`;
     new Audio(doorknock).play();
     if (permission !== 'granted') {
       alert(taskTitle);

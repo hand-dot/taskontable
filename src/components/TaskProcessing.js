@@ -29,7 +29,7 @@ function getTitle(processingTask, defaultTitle, isShortTitle) {
   const actuallyMinute = util.getTimeDiffMinute(processingTask.startTime, processingTask.now);
   let title = '';
   if (processingTask.id) {
-    title = isShortTitle ? `${(processingTask.title.length < 18 ? processingTask.title || '' : `${processingTask.title.substring(0, 15)}...`) || '無名タスク'}` : processingTask.title || '無名タスク';
+    title = isShortTitle ? `${(processingTask.title.length < 18 ? processingTask.title || '' : `${processingTask.title.substring(0, 15)}...`) || i18n.t('common.anonymousTask')}` : processingTask.title || i18n.t('common.anonymousTask');
     if (processingTask.estimate) {
       const isOver = actuallyMinute >= processingTask.estimate;
       if (processingTask.estimate - actuallyMinute === 1 || actuallyMinute - processingTask.estimate === 0) {

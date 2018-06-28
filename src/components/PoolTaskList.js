@@ -83,15 +83,15 @@ class TaskList extends Component {
     if (this.state.editingTaskIndex === index) {
       // 編集を保存する場合
       if (this.state[constants.taskStateType.edit].title === '') {
-        alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
+        alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
         return;
       }
       if (this.props.isRegularTask) {
         if (this.state[constants.taskStateType.edit].week.length === 0) {
-          alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.weekNumber') })}`);
+          alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.weekNumber') })}`);
           return;
         } else if (this.state[constants.taskStateType.edit].dayOfWeek.length === 0) {
-          alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.dayOfWeek') })}`);
+          alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.dayOfWeek') })}`);
           return;
         }
       }
@@ -111,15 +111,15 @@ class TaskList extends Component {
 
   addTask() {
     if (this.state[constants.taskStateType.add].title === '') {
-      alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
+      alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
       return;
     }
     if (this.props.isRegularTask) {
       if (this.state[constants.taskStateType.add].week.length === 0) {
-        alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.weekNumber') })}`);
+        alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.weekNumber') })}`);
         return;
       } else if (this.state[constants.taskStateType.add].dayOfWeek.length === 0) {
-        alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.dayOfWeek') })}`);
+        alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.dayOfWeek') })}`);
         return;
       }
     }

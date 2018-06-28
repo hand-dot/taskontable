@@ -91,7 +91,7 @@ class TaskTableMobile extends Component {
 
   addTask() {
     if (this.state[constants.taskStateType.add].title === '') {
-      alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
+      alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
       return;
     }
     // タスクを追加した場合には割当を自動的に自分にする
@@ -105,7 +105,7 @@ class TaskTableMobile extends Component {
     if (this.state.editingTaskIndex === index) {
       // 編集を保存する場合
       if (this.state[constants.taskStateType.edit].title === '') {
-        alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
+        alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
         return;
       }
       if (!util.equal(this.props.tableTasks[index], this.state[constants.taskStateType.edit])) {
