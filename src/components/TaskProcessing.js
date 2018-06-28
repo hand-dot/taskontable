@@ -34,7 +34,7 @@ function getTitle(processingTask, defaultTitle, isShortTitle) {
       const isOver = actuallyMinute >= processingTask.estimate;
       if (processingTask.estimate - actuallyMinute === 1 || actuallyMinute - processingTask.estimate === 0) {
         const sec = moment(processingTask.now, 'HH:mm:ss').format('s');
-        title = `${i18n.t(`worksheet.tableCtl.taskProcessing.${isOver ? 'over_target' : 'remaining_target'}`, { target: sec + i18n.t('common.sec') })} - ${title}`;
+        title = `${i18n.t(`worksheet.tableCtl.taskProcessing.${isOver ? 'over_target' : 'remaining_target'}`, { target: (isOver ? sec : 60 - sec) + i18n.t('common.sec') })} - ${title}`;
       } else if (isOver) {
         const min = actuallyMinute - processingTask.estimate;
         title = `${i18n.t('worksheet.tableCtl.taskProcessing.over_target', { target: min + i18n.t('common.min') })} - ${title}`;
