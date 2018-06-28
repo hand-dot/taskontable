@@ -6,6 +6,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
 import Favorite from '@material-ui/icons/Favorite';
 import util from '../util';
+import i18n from '../i18n';
 import tasksUtil from '../tasksUtil';
 import constants from '../constants';
 import processingTaskSchema from '../schemas/processingTaskSchema';
@@ -33,14 +34,16 @@ function getTitle(processingTask, defaultTitle, isShortTitle) {
       const isOver = actuallyMinute >= processingTask.estimate;
       if (processingTask.estimate - actuallyMinute === 1 || actuallyMinute - processingTask.estimate === 0) {
         const sec = moment(processingTask.now, 'HH:mm:ss').format('s');
-        title = `${isOver ? `${sec}秒オーバー` : `残${60 - sec}秒`} - ${title}`;
+        title = `${i18n.t(`worksheet.tableCtl.taskProcessing.${isOver ? 'over_target' : 'remaining_target'}`, { target: sec + i18n.t('common.sec') })} - ${title}`;
       } else if (isOver) {
-        title = `${`${actuallyMinute - processingTask.estimate}分オーバー`} - ${title}`;
+        const min = actuallyMinute - processingTask.estimate;
+        title = `${i18n.t('worksheet.tableCtl.taskProcessing.over_target', { target: min + i18n.t('common.min') })} - ${title}`;
       } else {
-        title = actuallyMinute < 0 ? defaultTitle : `残${processingTask.estimate - actuallyMinute}分- ${title}`;
+        const min = processingTask.estimate - actuallyMinute;
+        title = actuallyMinute < 0 ? defaultTitle : `${i18n.t('worksheet.tableCtl.taskProcessing.remaining_target', { target: min + i18n.t('common.min') })} - ${title}`;
       }
     } else {
-      title = `${actuallyMinute <= 0 ? `${moment(processingTask.now, 'HH:mm:ss').format('s')}秒` : `${actuallyMinute}分`}経過 - ${title}`;
+      title = `${actuallyMinute <= 0 ? `${moment(processingTask.now, 'HH:mm:ss').format('s') + i18n.t('common.sec')}` : `${actuallyMinute + i18n.t('common.min')}`}${i18n.t('worksheet.tableCtl.taskProcessing.passed')} - ${title}`;
     }
   } else {
     title = defaultTitle;
@@ -117,23 +120,25 @@ class TaskProcessing extends Component {
       color = 'grey';
     }
     return (
-      <div style={{ paddingLeft: theme.spacing.unit * 2, paddingRight: theme.spacing.unit * 2 }} title={this.state.processingTask.title}>
-        <Typography variant="caption" align="center">
-          <Favorite
-            style={{
-              fontSize: 15,
-              marginRight: theme.spacing.unit,
-              color: this.state.processingTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
-              animation: this.state.processingTask.id ? 'heartbeat 2s infinite' : '',
-            }}
-          />
-          {getTitle(this.state.processingTask, '開始しているタスクはありません。', true)}
-        </Typography>
-        <LinearProgress
-          classes={{ root: classes.progress, barColorPrimary: classes[color], colorPrimary: classes.grey }}
-          variant="determinate"
-          value={100 - remainPercent <= 0 ? 100 : 100 - remainPercent}
+      <div>
+        <Favorite
+          style={{
+            fontSize: 15,
+            marginRight: theme.spacing.unit,
+            color: this.state.processingTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
+            animation: this.state.processingTask.id ? 'heartbeat 2s infinite' : '',
+          }}
         />
+        <div style={{ width: '90%', display: 'inline-block' }} title={this.state.processingTask.title}>
+          <Typography variant="caption" align="center">
+            {getTitle(this.state.processingTask, i18n.t('worksheet.tableCtl.taskProcessing.thereAreNoStartingTasks'), true)}
+          </Typography>
+          <LinearProgress
+            classes={{ root: classes.progress, barColorPrimary: classes[color], colorPrimary: classes.grey }}
+            variant="determinate"
+            value={100 - remainPercent <= 0 ? 100 : 100 - remainPercent}
+          />
+        </div>
       </div>
     );
   }

@@ -11,6 +11,7 @@ export default {
     signUp: 'アカウント作成',
     logInWithG: 'Googleアカウントでログインする',
     signUpWithG: 'Googleアカウントでアカウント作成する',
+    logOut: 'ログアウト',
     backToTop: 'Topに戻る',
     or: 'OR',
     forExample: 'たとえば',
@@ -26,9 +27,10 @@ export default {
     executedImportScript: 'インポートスクリプトを実行しました。',
     public: '公開',
     private: '非公開',
+    sec: '秒',
+    min: '分',
   },
   external: {
-    logOut: 'ログアウト',
     contact: 'コンタクト',
     roadMap: 'ロードマップ',
     blog: 'ブログ',
@@ -80,7 +82,7 @@ export default {
   worksheet: {
     tableTask: 'テーブルタスク',
     taskPool: 'タスクプール',
-    memo: 'メモ',    
+    memo: 'メモ',
     dashBoad: 'ダッシュボード',
     members: 'メンバー',
     openRange: '公開範囲',
@@ -95,6 +97,16 @@ export default {
     setOpenRangeTo_target: '公開範囲を%{target}に設定しました。',
     doYouHaveATaskontableAccount: 'Taskontableのアカウントはお持ちですか?',
     showMoreAboutTaskontable: 'Taskontableについて詳しく見る',
+    tableCtl: {
+      thereAreNoTasks: 'タスクがありません',
+      lastSavedAt: '最終保存時刻',
+      taskProcessing: {
+        over_target: '%{target}オーバー',
+        remaining_target: '残%{target}',
+        passed: '経過',
+        thereAreNoStartingTasks: '開始しているタスクはありません。',
+      },
+    },
   },
   hot: {
     snooz: 'スヌーズ',

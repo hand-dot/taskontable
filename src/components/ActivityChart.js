@@ -5,7 +5,6 @@ import debounce from 'lodash.debounce';
 import * as d3 from 'd3';
 import uuid from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import constants from '../constants';
 import util from '../util';
 
@@ -143,7 +142,6 @@ class ActivityChart extends Component {
       .attr('d', remainingLine);
   }
   render() {
-    const { classes } = this.props;
     return (<svg id={`activity-${this.state.id}`} ref={(node) => { this.activity = node; }} />);
   }
 }

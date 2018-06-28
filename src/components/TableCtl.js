@@ -10,16 +10,15 @@ import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
-import ThumbUp from '@material-ui/icons/ThumbUp';
 import Error from '@material-ui/icons/Error';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import NavigateBefore from '@material-ui/icons/NavigateBefore';
 import NavigateNext from '@material-ui/icons/NavigateNext';
-import Save from '@material-ui/icons/Save';
 import DatePicker from './DatePicker';
 import TaskProcessing from './TaskProcessing';
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n';
 import tasksUtil from '../tasksUtil';
 
 const styles = {
@@ -111,12 +110,12 @@ class TableCtl extends Component {
             {(() => {
               if (tableTasks.length === 0) {
                 return (
-                  <Typography variant="caption">タスクがありません</Typography>
+                  <Typography variant="caption">{i18n.t('worksheet.tableCtl.thereAreNoTasks')}</Typography>
                 );
               } else if (tableTasks.length === tasksUtil.getDoneTasks(tableTasks).length) {
                 return (
                   <Typography style={{ animation: 'good 1s linear 0s 1', color: theme.palette.primary.main }} variant="caption">
-                    <ThumbUp style={{ fontSize: 16 }} />
+                    <span role="img" aria-label="complete">👍</span>
                     <span style={{ marginRight: theme.spacing.unit }} />
                     Complete!
                   </Typography>
@@ -140,9 +139,11 @@ class TableCtl extends Component {
               </div>
             </Tooltip>
             {!util.isMobile() && (
-              <Tooltip title={`最終保存時刻 : ${savedAt}`} placement="top">
+              <Tooltip title={`${i18n.t('worksheet.tableCtl.lastSavedAt')} : ${savedAt}`} placement="top">
                 <div style={{ display: 'inline-block' }}>
-                  <Button className={classes.tableCtlButton} disabled={!saveable} onClick={saveWorkSheet} color="default"><Save style={{ fontSize: 16 }} /></Button>
+                  <Button className={classes.tableCtlButton} disabled={!saveable} onClick={saveWorkSheet} color="default">
+                    <span role="img" aria-label="save">💾</span>
+                  </Button>
                 </div>
               </Tooltip>
             )}

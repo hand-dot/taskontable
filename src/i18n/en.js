@@ -27,6 +27,8 @@ export default {
     executedImportScript: 'Executed the Import Script.',
     public: 'Public',
     private: 'Private',
+    sec: 'sec',
+    min: 'min',
   },
   external: {
     contact: 'Contact',
@@ -95,6 +97,16 @@ export default {
     setOpenRangeTo_target: 'Set OpenRange to %{target}.',
     doYouHaveATaskontableAccount: 'Do you have a Taskontable account?',
     showMoreAboutTaskontable: 'Show more about Taskontable',
+    tableCtl: {
+      thereAreNoTasks: 'There are no tasks',
+      lastSavedAt: 'Last Saved at',
+      taskProcessing: {
+        over_target: 'Over %{target}',
+        remaining_target: '%{target} remaining',
+        passed: 'Passed',
+        thereAreNoStartingTasks: 'There are no starting tasks.',
+      },
+    },
   },
   hot: {
     snooz: 'Snooz',
