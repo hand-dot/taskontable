@@ -14,7 +14,7 @@ export default {
       margin: '0 auto',
     },
     cellInput: {
-      padding: 0,
+      padding: '0 3px',
       fontSize: 12,
     },
     miniCellInput: {

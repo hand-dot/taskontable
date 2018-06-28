@@ -163,7 +163,7 @@ class App extends Component {
         }).then((workSheetListIds) => {
           const pathname = util.formatURLString(this.props.location.pathname.replace('/', ''));
           const fromInviteEmail = util.getQueryVariable('worksheet') !== '';
-          if (!fromInviteEmail && ['login', 'signup', 'index.html'].includes(pathname)) { // ■ログイン時
+          if (!fromInviteEmail && ['login', 'signup'].includes(pathname)) { // ■ログイン時
             this.props.history.push('/');
             return Promise.resolve();
           } else if (workSheetListIds.includes(pathname)) { // ■既に参加しているワークシートの場合

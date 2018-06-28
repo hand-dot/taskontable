@@ -81,8 +81,8 @@ export default {
     canCollaborateInRealtime: 'Can collaborate in realtime.',
   },
   worksheet: {
-    tableTask: 'table task',
-    taskPool: 'task pool',
+    tableTask: 'TableTask',
+    taskPool: 'TaskPool',
     memo: 'memo',
     dashBoad: 'DashBoad',
     members: 'Members',

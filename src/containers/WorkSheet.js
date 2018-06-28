@@ -100,7 +100,7 @@ class WorkSheet extends Component {
 
   componentWillMount() {
     const worksheetId = encodeURI(this.props.match.params.id);
-    if (worksheetId === 'index.html') {
+    if (!util.validateDatabaseKey(worksheetId)) {
       this.props.history.push('/');
       return;
     }
