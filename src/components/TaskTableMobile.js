@@ -21,10 +21,11 @@ import tableTaskSchema from '../schemas/tableTaskSchema';
 import constants from '../constants';
 import style from '../assets/style';
 import util from '../util';
+import i18n from '../i18n';
 
 const styles = style.table;
 
-const CustomTableCell = withStyles(theme => ({
+const CustomTableCell = withStyles(() => ({
   root: {
     border: '1px solid #CCC',
   },
@@ -75,7 +76,7 @@ class TaskTableMobile extends Component {
 
   doTaskAction(index, taskActionType) {
     this.closeTaskAction(index);
-    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${this.props.tableTasks[index].title} を本当に削除しますか？`)) {
+    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${i18n.t('taskPool.areYouSureDelete_target', { target: this.props.tableTasks[index].title })}`)) {
       this.props.changeTableTasks(constants.taskActionType.REMOVE, index);
     } else if (taskActionType !== constants.taskActionType.REMOVE) {
       this.props.changeTableTasks(taskActionType, index);
@@ -90,7 +91,7 @@ class TaskTableMobile extends Component {
 
   addTask() {
     if (this.state[constants.taskStateType.add].title === '') {
-      alert('作業内容が空の状態では保存できません。');
+      alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
       return;
     }
     // タスクを追加した場合には割当を自動的に自分にする
@@ -104,7 +105,7 @@ class TaskTableMobile extends Component {
     if (this.state.editingTaskIndex === index) {
       // 編集を保存する場合
       if (this.state[constants.taskStateType.edit].title === '') {
-        alert('作業内容が空の状態では保存できません。');
+        alert(`${i18n.t('taskPool.canNotSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
         return;
       }
       if (!util.equal(this.props.tableTasks[index], this.state[constants.taskStateType.edit])) {
@@ -128,11 +129,11 @@ class TaskTableMobile extends Component {
         <Table>
           <TableHead>
             <TableRow className={classes.taskRow}>
-              <CustomTableCell padding="none">作業内容</CustomTableCell>
-              <CustomTableCell padding="none">見積(分)</CustomTableCell>
-              <CustomTableCell padding="none">開始</CustomTableCell>
-              <CustomTableCell padding="none">終了</CustomTableCell>
-              <CustomTableCell padding="none">編集</CustomTableCell>
+              <CustomTableCell padding="none">{i18n.t('columns.title')}</CustomTableCell>
+              <CustomTableCell padding="none">{i18n.t('columns.memo')}</CustomTableCell>
+              <CustomTableCell padding="none">{i18n.t('columns.startTime')}</CustomTableCell>
+              <CustomTableCell padding="none">{i18n.t('columns.endTime')}</CustomTableCell>
+              <CustomTableCell padding="none">{i18n.t('common.edit')}</CustomTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -215,25 +216,25 @@ class TaskTableMobile extends Component {
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
                       <MenuItem key="movePoolHighPriority" disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_HIGHPRIORITY)}>
-                        <Typography variant="caption">[すぐにやる]に戻す</Typography>
+                        <Typography variant="caption">{i18n.t('hot.reverseTaskpoolHight')}</Typography>
                       </MenuItem>
                       <MenuItem key="movePoolLowPriority" disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_LOWPRIORITY)}>
-                        <Typography variant="caption">[いつかやる]に戻す</Typography>
+                        <Typography variant="caption">{i18n.t('hot.reverseTaskpoolLow')}</Typography>
                       </MenuItem>
                       <MenuItem key="topToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
-                        <Typography variant="caption">先頭に移動</Typography>
+                        <Typography variant="caption">{i18n.t('taskPool.moveToTop')}</Typography>
                       </MenuItem>
                       <MenuItem key="upTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
-                        <Typography variant="caption">1つ上に移動</Typography>
+                        <Typography variant="caption">{i18n.t('taskPool.moveUpOne')}</Typography>
                       </MenuItem>
                       <MenuItem key="downTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
-                        <Typography variant="caption">1つ下に移動</Typography>
+                        <Typography variant="caption">{i18n.t('taskPool.moveOneDown')}</Typography>
                       </MenuItem>
                       <MenuItem key="bottomToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
-                        <Typography variant="caption">末尾に移動</Typography>
+                        <Typography variant="caption">{i18n.t('taskPool.moveToBottom')}</Typography>
                       </MenuItem>
                       <MenuItem key="removeTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
-                        <Typography variant="caption">削除</Typography>
+                        <Typography variant="caption">{i18n.t('common.remove')}</Typography>
                       </MenuItem>
                     </Menu>
                   </div>
@@ -247,7 +248,7 @@ class TaskTableMobile extends Component {
                   fullWidth
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'title')}
                   value={this.state[constants.taskStateType.add].title}
-                  placeholder="作業内容"
+                  placeholder={i18n.t('columns.title')}
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
@@ -258,7 +259,7 @@ class TaskTableMobile extends Component {
                   type="number"
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'estimate')}
                   value={this.state[constants.taskStateType.add].estimate}
-                  placeholder="見積(分)"
+                  placeholder={i18n.t('columns.estimate')}
                   disabled={this.state.editingTaskIndex !== -1}
                   disableUnderline={this.state.editingTaskIndex !== -1}
                 />
@@ -270,7 +271,7 @@ class TaskTableMobile extends Component {
                   InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'startTime')}
                   value={this.state[constants.taskStateType.add].startTime}
-                  placeholder="開始時刻"
+                  placeholder={i18n.t('columns.startTime')}
                   disabled={this.state.editingTaskIndex !== -1}
                 />
               </CustomTableCell>
@@ -281,7 +282,7 @@ class TaskTableMobile extends Component {
                   InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'endTime')}
                   value={this.state[constants.taskStateType.add].endTime}
-                  placeholder="終了時刻"
+                  placeholder={i18n.t('columns.endTime')}
                   disabled={this.state.editingTaskIndex !== -1}
                 />
               </CustomTableCell>

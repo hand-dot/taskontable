@@ -364,7 +364,7 @@ export const hotConf = {
       colWidths: 50,
     },
     {
-      title: i18n.t('columns.startTime'),
+      title: i18n.t('columns.startTimeWithFMT'),
       data: 'startTime',
       type: 'time',
       colWidths: 70,
@@ -382,7 +382,7 @@ export const hotConf = {
       },
     },
     {
-      title: i18n.t('columns.endTime'),
+      title: i18n.t('columns.endTimeWithFMT'),
       data: 'endTime',
       type: 'time',
       colWidths: 70,
