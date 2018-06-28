@@ -276,7 +276,7 @@ class TaskList extends Component {
                         <Typography variant="caption">{i18n.t('taskPool.moveToBottom')}</Typography>
                       </MenuItem>
                       <MenuItem key="removeTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
-                        <Typography variant="caption">{i18n.t('taskPool.remove')}</Typography>
+                        <Typography variant="caption">{i18n.t('common.remove')}</Typography>
                       </MenuItem>
                     </Menu>
                   </div>
