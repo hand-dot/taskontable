@@ -177,6 +177,13 @@ export default {
     notifyOtherMembers: 'Notify other members',
     doNotNoifyMeAndNotificationBlockingMembers: 'Do not notify. Me and notification block members.',
   },
+  openRange: {
+    areYouSureSetOpenRangeTo_target: 'Are you sure set open range to %{target}?',
+    changeOpenRange: 'Change OpenRange',
+    copied: 'Copied',
+    anyoneCanRead: 'It\'s visible to anyone with the link and will show up in search engines like Google.  Only members can edit it.',
+    onlyMembersCanReadAndEdit: 'Only members can read and edit.',
+  },
   columns: {
     assign: 'Assign',
     title: 'Title',

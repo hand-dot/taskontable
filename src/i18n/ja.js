@@ -177,6 +177,13 @@ export default {
     notifyOtherMembers: 'ほかのメンバーにも通知する',
     doNotNoifyMeAndNotificationBlockingMembers: '自分と通知を拒否しているメンバーには通知されません。',
   },
+  openRange: {
+    areYouSureSetOpenRangeTo_target: '公開範囲を%{target}に設定してもよろしいですか？',
+    changeOpenRange: '公開範囲を変更',
+    copied: 'コピーしました',
+    anyoneCanRead: 'URLを知っている人は誰でも閲覧でき、Googleのような検索エンジンにも表示されます。編集可能なのはメンバーのみです。',
+    onlyMembersCanReadAndEdit: 'メンバーのみ、閲覧、編集できます。',
+  },
   columns: {
     assign: '割当',
     title: '作業内容',
