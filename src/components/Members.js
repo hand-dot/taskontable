@@ -238,7 +238,7 @@ HP: ${URL}
       const title = `🔔 ${i18n.t('members.notificationFrom_userName', { userName: this.props.userName })}`;
       const message = `${this.props.userName}: ${this.state.notificationMessage ? `${this.state.notificationMessage}` : i18n.t('members.pleaseCheckTheSchedule')}`;
       const url = `${URL}/${this.props.worksheetId}`;
-      const icon = this.props.userPhotoURL || notifiIcon;
+      const icon = this.props.userPhotoURL || notifiIcon; // TODO notifiIconじゃなくてデフォルトのユーザーアイコンを決めるべき
       promises.push(util.sendNotification({
         title, body: message, url, icon, to: this.state.target.fcmToken,
       }).then(res => res.ok));
@@ -290,7 +290,7 @@ HP: ${URL}
       }}
         >
           <div>
-            <Typography variant="subheading">
+            <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit }}>
               {i18n.t('worksheet.members')}
             </Typography>
             <div className={classes.membersContainer}>
@@ -345,7 +345,7 @@ HP: ${URL}
             </div>
           </div>
           <div>
-            <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit * 4 }}>
+            <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit * 6 }}>
               {i18n.t('members.inviting')}
             </Typography>
             <div className={classes.membersContainer}>
@@ -430,10 +430,10 @@ HP: ${URL}
             onClose={() => { this.setState({ isOpenRemoveMemberModal: false }); }}
             aria-labelledby="remove-member-dialog-title"
           >
-            <DialogTitle id="remove-member-dialog-title">{this.state.target.type === constants.handleUserType.MEMBER ? 'メンバー' : '招待中のメンバー'}を削除する</DialogTitle>
+            <DialogTitle id="remove-member-dialog-title">{i18n.t('common.remove_target', { target: i18n.t('worksheet.members') })}</DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>本当に{this.state.target.type === constants.handleUserType.MEMBER ? `メンバーの${this.state.target.displayName}` : `招待中のメンバーの${this.state.target.email}`}を削除してもよろしいですか？</Typography>
-              <Typography variant="caption">*削除後は再度招待しないとこのワークシートにアクセスできなくなります。</Typography>
+              <Typography variant="body1" gutterBottom>{i18n.t('common.areYouSureRemove_target', { target: this.state.target.type === constants.handleUserType.MEMBER ? this.state.target.displayName : this.state.target.email })}</Typography>
+              <Typography variant="caption">*{i18n.t('members.afterRemoveCantAccess')}</Typography>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => { this.setState({ isOpenRemoveMemberModal: false }); }} color="primary">
@@ -448,9 +448,9 @@ HP: ${URL}
             onClose={() => { this.setState({ isOpenResendEmailModal: false }); }}
             aria-labelledby="resend-email-dialog-title"
           >
-            <DialogTitle id="resend-email-dialog-title">招待中のメンバーにメールを再送信する</DialogTitle>
+            <DialogTitle id="resend-email-dialog-title">{i18n.t('members.resendAnInvitationEmail')}</DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>{`招待中のメンバーの${this.state.target.email}宛に招待メールを再送信してもよろしいですか？`}</Typography>
+              <Typography variant="body1" gutterBottom>{i18n.t('members.areYouSureResendInvitationEmailTo_target', { target: this.state.target.email })}</Typography>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => { this.setState({ isOpenResendEmailModal: false }); }} color="primary">
@@ -465,9 +465,9 @@ HP: ${URL}
             onClose={() => { this.setState({ isOpenSendNotificationModal: false }); }}
             aria-labelledby="send-notification-dialog-title"
           >
-            <DialogTitle id="send-notification-dialog-title">メンバーに通知を送信する</DialogTitle>
+            <DialogTitle id="send-notification-dialog-title">{i18n.t('members.sendNotification')}</DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>{`メンバーの${this.state.target.displayName}さん宛にこのページを開いてもらう通知を送信してもよろしいですか？`}</Typography>
+              <Typography variant="body1" gutterBottom>{i18n.t('members.areYouSureSendNotificationTo_target', { target: this.state.target.displayName })}</Typography>
               <TextField
                 maxLength={100}
                 onChange={(e) => { this.setState({ notificationMessage: e.target.value }); }}
@@ -476,8 +476,8 @@ HP: ${URL}
                 margin="dense"
                 id="message"
                 type="message"
-                label="一言メッセージ"
-                placeholder="例えば 予定を入れたのでチェックしてください。 とか"
+                label={i18n.t('members.message')}
+                placeholder={i18n.t('common.forExample') + i18n.t('members.pleaseCheckTheSchedule')}
                 fullWidth
               />
               <FormGroup row>
@@ -490,9 +490,9 @@ HP: ${URL}
                       value="isNotificateAllMember"
                     />
                 }
-                  label="ほかのメンバーにも通知する"
+                  label={i18n.t('members.notifyOtherMembers')}
                 />
-                <Typography variant="caption" gutterBottom>(*自分と通知を拒否しているメンバーには通知されません。)</Typography>
+                <Typography variant="caption" gutterBottom>(*{i18n.t('members.doNotNoifyMeAndNotificationBlockingMembers')})</Typography>
               </FormGroup>
             </DialogContent>
             <DialogActions>
