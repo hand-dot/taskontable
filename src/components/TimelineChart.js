@@ -13,7 +13,7 @@ const h = 50;
 const margin = {
   top: 10,
   right: 50,
-  left: 25,
+  left: 50,
   bottom: 10,
 };
 

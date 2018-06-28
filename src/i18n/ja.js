@@ -2,6 +2,7 @@ import constants from '../constants';
 
 export default {
   common: {
+    tasks: 'タスク',
     close: '閉じる',
     create: '作成',
     cancel: 'キャンセル',
@@ -107,6 +108,18 @@ export default {
         thereAreNoStartingTasks: '開始しているタスクはありません。',
       },
     },
+  },
+  dashBoad: {
+    summary: 'サマリ',
+    clock: '時計',
+    currentTime: '現在時刻',
+    endTime: '終了時刻',
+    timeline: 'タイムライン',
+    estimate: '見積',
+    actually: '実績',
+    done: '消化',
+    remaining: '残',
+    anonymousTask: '無名タスク',
   },
   hot: {
     snooz: 'スヌーズ',

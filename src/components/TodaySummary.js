@@ -5,6 +5,7 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
+import i18n from '../i18n';
 
 function TodaySummary(props) {
   const { data } = props;
@@ -16,14 +17,14 @@ function TodaySummary(props) {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell padding="none">見積</TableCell>
+              <TableCell padding="none">{i18n.t('dashBoad.estimate')}</TableCell>
               <TableCell padding="none">{(data.estimateTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.estimateTasks.taskNum}タスク</TableCell>
+              <TableCell padding="none">{data.estimateTasks.taskNum}{i18n.t('common.tasks')}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none">実績</TableCell>
+              <TableCell padding="none">{i18n.t('dashBoad.actually')}</TableCell>
               <TableCell padding="none">{(data.actuallyTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.actuallyTasks.taskNum}タスク</TableCell>
+              <TableCell padding="none">{data.actuallyTasks.taskNum}{i18n.t('common.tasks')}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -32,14 +33,14 @@ function TodaySummary(props) {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell padding="none">消化</TableCell>
+              <TableCell padding="none">{i18n.t('dashBoad.done')}</TableCell>
               <TableCell padding="none">{(data.doneTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.doneTasks.taskNum}タスク</TableCell>
+              <TableCell padding="none">{data.doneTasks.taskNum}{i18n.t('common.tasks')}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none">残</TableCell>
+              <TableCell padding="none">{i18n.t('dashBoad.remaining')}</TableCell>
               <TableCell padding="none">{(data.remainingTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.remainingTasks.taskNum}タスク</TableCell>
+              <TableCell padding="none">{data.remainingTasks.taskNum}{i18n.t('common.tasks')}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

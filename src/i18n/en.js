@@ -2,6 +2,7 @@ import constants from '../constants';
 
 export default {
   common: {
+    tasks: 'tasks',
     close: 'Close',
     create: 'Create',
     cancel: 'Cancel',
@@ -107,6 +108,18 @@ export default {
         thereAreNoStartingTasks: 'There are no starting tasks.',
       },
     },
+  },
+  dashBoad: {
+    summary: 'Summary',
+    clock: 'Clock',
+    currentTime: 'CurrentTime',
+    endTime: 'EndTime',
+    timeline: 'Timeline',
+    estimate: 'Estimate',
+    actually: 'Actually',
+    done: 'Done',
+    remaining: 'Remaining',
+    anonymousTask: 'Anonymous task',
   },
   hot: {
     snooz: 'Snooz',
