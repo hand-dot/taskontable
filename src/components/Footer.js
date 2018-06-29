@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-
+import Title from '../components/Title';
 import constants from '../constants';
 import util from '../util';
 import i18n from '../i18n/';
 
-const styles = theme => ({
+const styles = {
   content: {
     paddingTop: util.isMobile ? '2em' : '3em',
     paddingBottom: '3em',
@@ -19,15 +18,9 @@ const styles = theme => ({
     maxWidth: 960,
     margin: '0 auto',
   },
-  center: {
-    display: 'block',
-    margin: '0 auto',
-    textAlign: 'center',
-  },
-});
+};
 
 function Footer(props) {
-  const isMobile = util.isMobile();
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
@@ -35,14 +28,7 @@ function Footer(props) {
         <Paper square elevation={0}>
           <div className={classes.content}>
             <Divider style={{ margin: '0 0 7em' }} />
-            <div className={classes.center}>
-              <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
-                タスクオンテーブル
-              </Typography>
-              <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
-                T a s k o n t a b l e
-              </Typography>
-            </div>
+            <Title />
             <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '7em' }}>
               <Grid item xs={12} sm={3} style={{ marginBottom: '2em' }} className={classes.center}>
                 <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">{i18n.t('external.contact')}</a>

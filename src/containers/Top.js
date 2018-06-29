@@ -10,9 +10,9 @@ import pcMan from '../images/illust/pc_man.jpg';
 import elevatorMan from '../images/illust/elevator_man.jpg';
 import skateboard from '../images/illust/skateboard.jpg';
 import teamMens from '../images/illust/team_mens.jpg';
+import Title from '../components/Title';
 import Footer from '../components/Footer';
 import constants from '../constants';
-import util from '../util';
 import i18n from '../i18n/';
 
 const styles = theme => ({
@@ -43,28 +43,20 @@ const styles = theme => ({
 });
 
 function Top(props) {
-  const isMobile = util.isMobile();
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="center" justify="center">
       <Grid item xs={12}>
         <div className={classes.content} style={{ paddingTop: '6em' }}>
-          <div className={classes.center}>
-            <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
-              タスクオンテーブル
-            </Typography>
-            <Typography variant={isMobile ? 'display1' : 'display3'} align="center">
-              T a s k o n t a b l e
-            </Typography>
-          </div>
+          <Title />
         </div>
       </Grid>
       <Grid className={classes.center} item xs={12}>
-        <img style={{ display: 'inline-block', maxWidth: 400, paddingBottom: '2em' }} src={pcMan} alt="pcMan" />
-        <Typography style={{ marginBottom: '1em' }} variant="title" align="center">
+        <img style={{ display: 'inline-block', maxWidth: 300, paddingBottom: '2em' }} src={pcMan} alt="pcMan" />
+        <Typography style={{ marginBottom: '1em' }} align="center">
           {i18n.t('top.toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer')}
         </Typography>
-        <Typography style={{ marginBottom: '1em' }} variant="title" align="center">
+        <Typography style={{ marginBottom: '1em' }} align="center">
           {i18n.t('top.whyDontYouFinishWorkEarly')}
         </Typography>
         <Link style={{ margin: '1em 0 3em' }} className={classes.link} to="/signup">

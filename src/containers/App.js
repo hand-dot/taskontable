@@ -315,7 +315,9 @@ class App extends Component {
   }
 
   render() {
-    const { classes, theme, location } = this.props;
+    const {
+      classes, theme, location, history,
+    } = this.props;
     return (
       <div className={classes.root}>
         <GlobalHeader
@@ -326,6 +328,7 @@ class App extends Component {
           closeHelpDialog={() => { this.setState({ isOpenHelpDialog: false }); }}
           logout={this.logout.bind(this)}
           goSettings={() => { this.props.history.push(`/${this.state.user.uid}/settings`); }}
+          history={history}
         />
         <Drawer variant="persistent" open={this.state.isOpenSidebar} style={{ display: this.state.isOpenSidebar ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }} >
           <div style={{ height: theme.spacing.unit }} />
