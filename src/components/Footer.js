@@ -32,7 +32,7 @@ function Footer(props) {
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
       <Grid item xs={12}>
-        <Paper style={{ backgroundColor: '#fffefc' }} square elevation={0}>
+        <Paper square elevation={0}>
           <div className={classes.content}>
             <Divider style={{ margin: '0 0 7em' }} />
             <div className={classes.center}>

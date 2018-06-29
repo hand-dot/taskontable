@@ -89,9 +89,8 @@ export default {
     thanksForUsing_title: '%{title}をお使いいただきありがとうございました。',
   },
   top: {
-    doWeHaveToFinishTheirTasksByToday: '<今日中にこの仕事やんないといけないんだって?',
-    okayLetsGetItOverWith: 'おっけー! やっちゃおうぜ！>',
-    allYouNeedIsTaskontable: '<必要なのはTaskontableだけ>',
+    toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer: '一日の大半をコンピュータの前で過ごす働き者へ。',
+    whyDontYouFinishWorkEarly: '仕事をはやく終わらせたいですか?',
     signUpItsFree: '無料でアカウント作成する',
     taskontableIsToDoListAndTimeKeeperOnSpreadsheet: 'Taskontableはスプレットシート上のTo-Doリストとタイムキーパーです。',
     aToolForClearingTasksOneByOne: 'タスクを1つ1つ消化するためのツールです。',

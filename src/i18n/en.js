@@ -89,9 +89,8 @@ export default {
     thanksForUsing_title: 'Thanks for using %{title}.',
   },
   top: {
-    doWeHaveToFinishTheirTasksByToday: '<Do We have to finish their tasks by today?',
-    okayLetsGetItOverWith: 'Okay, let’s get it over with!>',
-    allYouNeedIsTaskontable: '<All you need  is Taskontable>',
+    toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer: 'To the hard worker who spends most of the day in front of computer.',
+    whyDontYouFinishWorkEarly: 'Why don\'t you finish work early?',
     signUpItsFree: 'Sign Up – It’s Free.',
     taskontableIsToDoListAndTimeKeeperOnSpreadsheet: 'Taskontable is To-Do List & Time keeper on Spreadsheet.',
     aToolForClearingTasksOneByOne: 'A tool for clearing tasks one by one.',
