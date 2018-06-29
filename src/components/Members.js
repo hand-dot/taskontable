@@ -58,6 +58,7 @@ const styles = theme => ({
     alignItems: 'center',
   },
   member: {
+    textAlign: 'center',
     maxWidth: 200,
     display: 'inline-block',
     padding: theme.spacing.unit,
