@@ -1,6 +1,6 @@
 export default {
   common: {
-    weeks: {
+    days: {
       sun: '日',
       mon: '月',
       tue: '火',

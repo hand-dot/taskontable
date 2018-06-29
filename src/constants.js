@@ -104,13 +104,13 @@ export default {
   TIMEFMT: 'HH:mm',
   INITIALDATE: '1970-01-01',
   DAY_OF_WEEK_STR: [
-    i18n.t('common.weeks.sun'),
-    i18n.t('common.weeks.mon'),
-    i18n.t('common.weeks.tue'),
-    i18n.t('common.weeks.wed'),
-    i18n.t('common.weeks.thurs'),
-    i18n.t('common.weeks.fri'),
-    i18n.t('common.weeks.sat'),
+    i18n.t('common.days.sun'),
+    i18n.t('common.days.mon'),
+    i18n.t('common.days.tue'),
+    i18n.t('common.days.wed'),
+    i18n.t('common.days.thurs'),
+    i18n.t('common.days.fri'),
+    i18n.t('common.days.sat'),
   ],
   brandColor: {
     base: {
