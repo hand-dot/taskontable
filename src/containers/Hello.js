@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import SnsShare from '../components/SnsShare';
 import constants from '../constants';
+import util from '../util';
 import '../styles/helpdialog.css';
 
 const styles = {
@@ -24,7 +25,18 @@ class Hello extends Component {
     this.state = {
     };
   }
-
+  componentWillMount() {
+    setTimeout(() => {
+      if (!util.isMobile()) {
+        window.onkeydown = (e) => {
+          if (constants.shortcuts.TOGGLE_HELP(e)) {
+            e.preventDefault();
+            this.props.toggleHelpDialog();
+          }
+        };
+      }
+    });
+  }
   render() {
     const { classes } = this.props;
     return (
@@ -77,6 +89,7 @@ class Hello extends Component {
 }
 
 Hello.propTypes = {
+  toggleHelpDialog: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

@@ -361,7 +361,7 @@ class App extends Component {
         </Drawer>
         <main className={classes.content}>
           <Switch>
-            <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <Hello user={this.state.user} {...props} />; } return (<Top {...props} />); }} />
+            <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <Hello user={this.state.user} {...props} toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }} />; } return (<Top {...props} />); }} />
             <Route exact strict path="/signup" render={props => <Signup signup={this.signup.bind(this)} login={this.login.bind(this)} {...props} />} />
             <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
             <Route exact strict path="/logout" render={props => <Logout {...props} />} />
