@@ -122,9 +122,9 @@ class GlobalHeader extends Component {
             <Toolbar style={{ paddingLeft: 0 }} className={classes.root}>
               {(() => {
                   if (this.state.login) {
-                    return (<Button className={classes.title} onClick={openSideBar} ><img src={title} alt="taskontable" height="25" /></Button>);
+                    return (<Button className={classes.title} onClick={openSideBar} ><img src={title} alt="taskontable" height="18" /></Button>);
                   }
-                  return (<Button className={classes.title} onClick={() => { history.push('/'); }}><img src={title} alt="taskontable" height="25" /></Button>);
+                  return (<Button className={classes.title} onClick={() => { history.push('/'); }}><img src={title} alt="taskontable" height="18" /></Button>);
               })()}
               {(() => {
                 if (!this.state.login) {
