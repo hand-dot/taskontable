@@ -101,6 +101,22 @@ export default {
     developedForIndividualsAndTeams: 'Developed for individuals and teams.',
     canCollaborateInRealtime: 'Can collaborate in realtime.',
   },
+  help: {
+    title: 'Help',
+    tableColor: 'Table color',
+    tableColors: {
+      yellow: 'Tasks that do not enter estimate turn yellow.',
+      green: 'Tasks that reserved the start time will be green.',
+      blue: 'The running task will turn blue.',
+      red: 'Tasks after passing through estimate turns red.',
+      gray: 'Completed task is grayed out.',
+    },
+    keyboardShortcut: 'Keyboard shortcut',
+    keyboardShortcuts: {
+      application: 'Application',
+      table: 'Table',
+    },
+  },
   worksheet: {
     tableTask: 'TableTask',
     taskPool: 'TaskPool',

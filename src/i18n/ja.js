@@ -101,6 +101,22 @@ export default {
     developedForIndividualsAndTeams: '個人とチーム向けに開発されました。',
     canCollaborateInRealtime: 'リアルタイムにコラボレーションできます。',
   },
+  help: {
+    title: 'ヘルプ',
+    tableColor: 'テーブルの色',
+    tableColors: {
+      yellow: '見積を入力していないタスクは黄色になります。',
+      green: '開始時刻を予約したタスクは緑色になります。',
+      blue: '実行中のタスクは青色になります。',
+      red: '見積を過ぎたタスクは赤色になります。',
+      gray: '完了したタスクは灰色になります。',
+    },
+    keyboardShortcut: 'キーボードショートカット',
+    keyboardShortcuts: {
+      application: 'アプリケーション',
+      table: 'テーブル',
+    },
+  },
   worksheet: {
     tableTask: 'テーブルタスク',
     taskPool: 'タスクプール',
