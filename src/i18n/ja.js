@@ -233,4 +233,35 @@ export default {
     pleaseReport: 'エラーが発生した手順、状態を詳しく報告してくださるとなるべくはやく頑張って対応します。',
     reportError: 'エラーを報告する',
   },
+  mail: {
+    invite: {
+      subject_userName_worksheetName: 'Taskontableへのご招待 - %{userName} さんから、Taskontableのワークシート「%{worksheetName}」への招待が届いています。',
+      body_userName_worksheetName_loginUrl_signupUrl: `
+%{userName} さんから、Taskontableのワークシート「%{worksheetName}」への招待が届いています。
+
+■アカウントを既にお持ちの場合
+
+%{loginUrl}  をクリックして参加してください。
+(＊Googleログインにて既にこのメールアドレスのアカウントでログインしている場合は上記のURLからGoogleログインしてください。)
+
+
+
+■アカウントをまだお持ちでない場合は
+
+%{signupUrl}  からアカウントを作成してください。
+
+Taskontableとは--Taskontableはスプレットシート上のTo-Doリストとタイムキーパーです。`,
+    },
+    footer: `
+
+---------------------------------------
+
+Taskontable
+
+e-mail: info@taskontable.com
+
+HP: https://taskontable.com
+
+--------------------------------------`,
+  },
 };

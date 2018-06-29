@@ -233,4 +233,35 @@ export default {
     pleaseReport: 'If you report detailed procedures and conditions in which errors occurred in detail, \n I will try hard as quickly as possible to respond.',
     reportError: 'Report an error',
   },
+  mail: {
+    invite: {
+      subject_userName_worksheetName: 'Invitation to Taskontable - %{userName} has sent you an invitation to Taskontable\'s worksheet "%{worksheetName}".',
+      body_userName_worksheetName_loginUrl_signupUrl: `
+%{userName} has sent you an invitation to Taskontable's worksheet "%{worksheetName}".
+
+■ If you already have an account
+
+Please click %{loginUrl} to join.
+(*If you are already log in with Google using this email address, please log in with Google from the above URL).
+
+
+
+■ If you do not have an account yet
+
+Please create an account from %{signupUrl}.
+
+What is Taskontable - Taskontable is a To-Do list and time keeper on a spreadsheet.`,
+    },
+    footer: `
+
+---------------------------------------
+
+Taskontable
+
+e-mail: info@taskontable.com
+
+HP: https://taskontable.com
+
+--------------------------------------`,
+  },
 };

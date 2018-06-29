@@ -113,38 +113,18 @@ class Members extends Component {
   }
 
   sendInviteEmail(to) {
-    const siteTitle = constants.TITLE;
     const supportEmail = constants.EMAIL;
     const { userName, worksheetName, worksheetId } = this.props;
     const urlParam = `?email=${encodeURIComponent(to)}&worksheet=${worksheetId}`;
+    const loginUrl = `${URL}/login${urlParam}`;
+    const signupUrl = `${URL}/signup${urlParam}`;
     return util.sendEmail({
       to,
       from: supportEmail,
-      subject: `${siteTitle}へのご招待 - ${userName} さんから、${siteTitle}のワークシート「${worksheetName}」への招待が届いています。`,
-      body: `
-${userName} さんから、${siteTitle}のワークシート「${worksheetName}」への招待が届いています。
-
-■アカウントを既にお持ちの場合
-
-${URL}/login${urlParam}  をクリックして参加してください。
-(＊Googleログインにて既にこのメールアドレスのアカウントでログインしている場合は上記のURLからGoogleログインしてください。)
-
-
-■アカウントをまだお持ちでない場合は
-
-${URL}/signup${urlParam}  からアカウントを作成してください。
-
-${siteTitle}とは--Taskontableはスプレットシート上のTo-Doリストとタイムキーパーです。
-
----------------------------------------
-
-${siteTitle}
-
-e-mail: ${supportEmail}
-
-HP: ${URL}
-
---------------------------------------`,
+      subject: i18n.t('mail.invite.subject_userName_worksheetName', { userName, worksheetName }),
+      body: i18n.t('mail.invite.body_userName_worksheetName_loginUrl_signupUrl', {
+        userName, worksheetName, loginUrl, signupUrl,
+      }) + i18n.t('mail.footer'),
     });
   }
 
