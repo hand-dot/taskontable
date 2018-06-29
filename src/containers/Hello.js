@@ -13,7 +13,7 @@ const styles = {
     minHeight: '100vh',
   },
   content: {
-    padding: '4em 2em 0',
+    padding: '4.5em 2em 0',
   },
 };
 

@@ -221,4 +221,9 @@ export default {
     notSet: '未設定',
     pleaseEnterSamePasswordAsAbove: '上のパスワードと同じものを入力してください。',
   },
+  errorBoundary: {
+    sorry: 'すみません。エラーが発生しちゃいました。',
+    pleaseReport: 'エラーが発生した手順、状態を詳しく報告してくださるとなるべくはやく頑張って対応します。',
+    reportError: 'エラーを報告する',
+  },
 };

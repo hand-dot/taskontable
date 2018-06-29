@@ -114,7 +114,7 @@ export default {
     cantMoveToTaskPoolWithNoTitleTask: 'Can not move to TaskPool with no title task.',
     editingIsNotAllowedBecauseItIsNotAMember: 'Editing is not allowed because it is not a member.',
     tableHasBeenUpdated: 'Table has been updated.',
-    loadedRegularTask: 'Loaded regular task',
+    loadedRegularTask: 'Loaded RegularTask',
     membersHaveBeenUpdated: 'Members have been updated.',
     setOpenRangeTo_target: 'Set OpenRange to %{target}.',
     doYouHaveATaskontableAccount: 'Do you have a Taskontable account?',
@@ -220,5 +220,10 @@ export default {
     changeProfilePhoto: 'Change profile photo',
     notSet: 'Not set',
     pleaseEnterSamePasswordAsAbove: 'Please enter same password as above.',
+  },
+  errorBoundary: {
+    sorry: 'Sorry. An error occurred...',
+    pleaseReport: 'If you report detailed procedures and conditions in which errors occurred in detail, \n I will try hard as quickly as possible to respond.',
+    reportError: 'Report an error',
   },
 };
