@@ -60,7 +60,7 @@ class Hello extends Component {
                 Help<span role="img" aria-label="Help">😵</span>
               </Typography>
               <Typography gutterBottom variant="body1">
-                使い方が分からなければヘッダーの<b>(?)</b>をクリックしてみてください！ショートカットなど使い方が大体書いてあります。<br />
+                使い方が分からなければ <kbd>ctrl</kbd> + <kbd>?</kbd> を入力！もしくは、ヘッダーの<b>(?)</b>をクリックしてください！ショートカットなど使い方が大体書いてあります。<br />
                 もしそれでも分からないときはヘッダーの<b>(i)</b>をクリックしてお問い合わせしてください。<br />
                 フィードバックは大歓迎！いつでもあなたのご意見をお待ちしております😍
               </Typography>

@@ -85,7 +85,7 @@ function HelpDialog(props) {
                 {/* ヘルプだけはmacOSでクロームのヘルプがアプリのレベルで割り当てられていてctrlにしなければいけない */}
                 <Typography gutterBottom variant="caption"><kbd>ctrl</kbd> + <kbd>?</kbd> – {i18n.t('help.keyboardShortcuts.showHelp')}</Typography>
                 <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>S</kbd> – {i18n.t('help.keyboardShortcuts.save')}</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>J</kbd> – {i18n.t('help.keyboardShortcuts.dashboardOpeningAndClosing')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>J</kbd> – {i18n.t('help.keyboardShortcuts.dashboardOpenAndClose')}</Typography>
                 <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&gt;</kbd> – {i18n.t('help.keyboardShortcuts.moveToNextDay')}</Typography>
                 <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&lt;</kbd> – {i18n.t('help.keyboardShortcuts.moveToPreviousDay')}</Typography>
               </Grid>

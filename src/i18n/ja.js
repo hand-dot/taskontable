@@ -116,7 +116,7 @@ export default {
       application: 'アプリケーション',
       showHelp: 'ヘルプを表示',
       save: '保存',
-      dashboardOpeningAndClosing: 'ダッシュボード開閉',
+      dashboardOpenAndClose: 'ダッシュボード開閉',
       moveToNextDay: '次の日に移動',
       moveToPreviousDay: '前の日に移動',
       table: 'テーブル',

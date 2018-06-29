@@ -116,7 +116,7 @@ export default {
       application: 'Application',
       showHelp: 'Show Help',
       save: 'Save',
-      dashboardOpeningAndClosing: 'Dashboard opening and closing',
+      dashboardOpenAndClose: 'Dashboard open and close',
       moveToNextDay: 'Move to the next day',
       moveToPreviousDay: 'Move to the previous day',
       table: 'Table',
