@@ -20,11 +20,13 @@ import constants from '../constants';
 import '../styles/handsontable-custom.css';
 import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import ScriptsEditor from '../components/ScriptsEditor';
+import UnderDevelopment from '../components/UnderDevelopment';
 import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
 import exampleExportScript from '../exampleDatas/exampleExportScript';
 import tableTaskSchema from '../schemas/tableTaskSchema';
 import util from '../util';
+import i18n from '../i18n';
 
 const database = util.getDatabase();
 
@@ -211,29 +213,28 @@ class Scripts extends Component {
     const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{ paddingBottom: '3em' }}>
           <Typography variant="title">
-            スクリプト設定(α版)
+            {i18n.t('worksheet.plugIns')}
           </Typography>
           <Typography gutterBottom variant="caption">
-            本日のワークシートのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。
+            {i18n.t('scripts.description')}
           </Typography>
+          <UnderDevelopment />
         </Grid>
         <Grid item xs={12}>
-          <div>
-            <Typography gutterBottom variant="subheading">
-              スクリプトの利用(ON/OFF)
-              <span className={classes.divider}>/</span>
-              <div style={{ display: 'inline-block' }}>
-                <Switch
-                  color="primary"
-                  checked={this.state.scriptEnable}
-                  onChange={this.handleScriptEnable.bind(this)}
-                  value="scriptEnable"
-                />
-              </div>
-            </Typography>
-          </div>
+          <Typography gutterBottom variant="subheading">
+            スクリプトの利用(ON/OFF)
+            <span className={classes.divider}>/</span>
+            <div style={{ display: 'inline-block' }}>
+              <Switch
+                color="primary"
+                checked={this.state.scriptEnable}
+                onChange={this.handleScriptEnable.bind(this)}
+                value="scriptEnable"
+              />
+            </div>
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
@@ -297,7 +298,7 @@ class Scripts extends Component {
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">ワークシートに戻る</Button>
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

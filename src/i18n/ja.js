@@ -51,6 +51,7 @@ export default {
     save: '保存する',
     userInformation: 'ユーザー情報',
     anonymousTask: '無名タスク',
+    underDevelopment: 'これは開発中の実験的な機能です',
   },
   external: {
     contact: 'コンタクト',
@@ -189,6 +190,12 @@ export default {
     copied: 'コピーしました',
     anyoneCanRead: 'URLを知っている人は誰でも閲覧でき、Googleのような検索エンジンにも表示されます。編集可能なのはメンバーのみです。',
     onlyMembersCanReadAndEdit: 'メンバーのみ、閲覧、編集できます。',
+  },
+  activity: {
+    description: '過去に行った内容を期間指定し確認することができます。',
+  },
+  scripts: {
+    description: '本日のワークシートのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。',
   },
   columns: {
     assign: '割当',

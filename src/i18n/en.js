@@ -51,6 +51,7 @@ export default {
     save: 'Save',
     userInformation: 'User information',
     anonymousTask: 'Anonymous task',
+    underDevelopment: 'This is an experimental feature under development.',
   },
   external: {
     contact: 'Contact',
@@ -189,6 +190,12 @@ export default {
     copied: 'Copied',
     anyoneCanRead: 'It\'s visible to anyone with the link and will show up in search engines like Google.  Only members can edit it.',
     onlyMembersCanReadAndEdit: 'Only members can read and edit.',
+  },
+  activity: {
+    description: 'You can specify the period of time you have done in the past and check it.',
+  },
+  scripts: {
+    description: 'It is a function for developers who can program Web Workers executed at the time of fetch/ saving data.',
   },
   columns: {
     assign: 'Assign',

@@ -19,7 +19,9 @@ import constants from '../constants';
 import '../styles/handsontable-custom.css';
 import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import util from '../util';
+import i18n from '../i18n';
 import DatePicker from '../components/DatePicker';
+import UnderDevelopment from '../components/UnderDevelopment';
 import ActivityChart from '../components/ActivityChart';
 
 const database = util.getDatabase();
@@ -174,13 +176,14 @@ class Activity extends Component {
     const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{ paddingBottom: '3em' }} >
           <Typography variant="title">
-            アクティビティ(α版)
+            {i18n.t('worksheet.activity')}
           </Typography>
           <Typography gutterBottom variant="caption">
-            過去に行った内容を期間指定し確認することができます。
+            {i18n.t('activity.description')}
           </Typography>
+          <UnderDevelopment />
         </Grid>
         <Grid item xs={12}>
           <Typography gutterBottom variant="caption">
@@ -213,7 +216,7 @@ class Activity extends Component {
         </Grid>
         <Grid item xs={12} style={{ marginTop: theme.spacing.unit * 2 }}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">ワークシートに戻る</Button>
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
