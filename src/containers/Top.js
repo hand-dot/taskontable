@@ -77,7 +77,7 @@ function Top(props) {
               title="Getting Started Taskontable"
               width={util.isMobile() ? 'inherit' : '960'}
               height={util.isMobile() ? 'inherit' : '540'}
-              src="https://www.youtube.com/embed/rttbn7PNyBY"
+              src="https://www.youtube.com/embed/rttbn7PNyBY?rel=0&amp;showinfo=0"
               frameBorder="0"
               allow="autoplay; encrypted-media"
               allowFullScreen
