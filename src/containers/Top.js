@@ -13,6 +13,7 @@ import teamMens from '../images/illust/team_mens.jpg';
 import Title from '../components/Title';
 import Footer from '../components/Footer';
 import constants from '../constants';
+import util from '../util';
 import i18n from '../i18n/';
 
 const styles = theme => ({
@@ -53,10 +54,10 @@ function Top(props) {
       </Grid>
       <Grid className={classes.center} item xs={12}>
         <img style={{ display: 'inline-block', maxWidth: 300, paddingBottom: '2em' }} src={pcMan} alt="pcMan" />
-        <Typography style={{ marginBottom: '1em' }} align="center">
+        <Typography variant="title" style={{ marginBottom: '1em' }} align="center">
           {i18n.t('top.toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer')}
         </Typography>
-        <Typography style={{ marginBottom: '1em' }} align="center">
+        <Typography variant="title" style={{ marginBottom: '1em' }} align="center">
           {i18n.t('top.whyDontYouFinishWorkEarly')}
         </Typography>
         <Link style={{ margin: '1em 0 3em' }} className={classes.link} to="/signup">
@@ -71,8 +72,16 @@ function Top(props) {
             <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
               {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
             </Typography>
-            {/* TODO ここはライブデモにする予定 */}
-            <img className={classes.center} style={{ marginBottom: '2em', width: '100%' }} src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fscreencapture.gif?alt=media&token=35183429-df91-490a-82e7-7f38a3ac127b" alt="taskontable" />
+            <iframe
+              style={{ display: 'block', margin: '0 auto' }}
+              title="Getting Started Taskontable"
+              width={util.isMobile() ? 'inherit' : '960'}
+              height={util.isMobile() ? 'inherit' : '540'}
+              src="https://www.youtube.com/embed/rttbn7PNyBY"
+              frameBorder="0"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            />
           </div>
         </div>
       </Grid>
