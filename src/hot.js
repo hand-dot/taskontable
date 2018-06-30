@@ -366,7 +366,7 @@ export const hotConf = {
       type: 'text',
     },
     {
-      title: i18n.t('columns.estimate'),
+      title: i18n.t('columns.estimateWithUnit'),
       data: 'estimate',
       type: 'numeric',
       allowInvalid: false,

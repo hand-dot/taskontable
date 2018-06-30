@@ -236,7 +236,8 @@ export default {
   columns: {
     assign: '割当',
     title: '作業内容',
-    estimate: '見積(分)',
+    estimate: '見積',
+    estimateWithUnit: '見積(分)',
     startTime: '開始時刻',
     startTimeWithFMT: '開始時刻(HH:mm)',
     endTime: '終了時刻',

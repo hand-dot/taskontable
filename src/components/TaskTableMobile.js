@@ -130,7 +130,7 @@ class TaskTableMobile extends Component {
           <TableHead>
             <TableRow className={classes.taskRow}>
               <CustomTableCell padding="none">{i18n.t('columns.title')}</CustomTableCell>
-              <CustomTableCell padding="none">{i18n.t('columns.memo')}</CustomTableCell>
+              <CustomTableCell padding="none">{i18n.t('columns.estimate')}</CustomTableCell>
               <CustomTableCell padding="none">{i18n.t('columns.startTime')}</CustomTableCell>
               <CustomTableCell padding="none">{i18n.t('columns.endTime')}</CustomTableCell>
               <CustomTableCell padding="none">{i18n.t('common.edit')}</CustomTableCell>

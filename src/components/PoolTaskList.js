@@ -140,7 +140,7 @@ class TaskList extends Component {
           <TableHead>
             <TableRow className={classes.taskRow}>
               <CustomTableCell className={classes.cellInput} padding="none">{i18n.t('columns.title')}</CustomTableCell>
-              <CustomTableCell className={classes.cellInput} padding="none">{i18n.t('columns.memo')}</CustomTableCell>
+              <CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('columns.memo')}</CustomTableCell>
               <CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('columns.estimate')}</CustomTableCell>
               {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('columns.assign')}</CustomTableCell>)}
               {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('columns.startTime')}</CustomTableCell>)}
@@ -165,7 +165,7 @@ class TaskList extends Component {
                 <CustomTableCell padding="none">
                   <Input
                     fullWidth
-                    className={classes.cellInput}
+                    className={classes.miniCellInput}
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'memo')}
                     value={this.state.editingTaskIndex !== index ? task.memo : this.state[constants.taskStateType.edit].memo}
                     disabled={this.state.editingTaskIndex !== index}
@@ -298,7 +298,7 @@ class TaskList extends Component {
               <CustomTableCell padding="none">
                 <Input
                   fullWidth
-                  className={classes.cellInput}
+                  className={classes.miniCellInput}
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'memo')}
                   value={this.state[constants.taskStateType.add].memo}
                   placeholder={i18n.t('columns.memo')}

@@ -60,6 +60,7 @@ const styles = theme => ({
   member: {
     textAlign: 'center',
     maxWidth: 200,
+    minWidth: 110,
     display: 'inline-block',
     padding: theme.spacing.unit,
     borderRadius: theme.spacing.unit,

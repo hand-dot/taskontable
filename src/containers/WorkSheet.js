@@ -655,10 +655,10 @@ class WorkSheet extends Component {
                 scrollButtons="off"
                 indicatorColor="secondary"
               >
-                <Tab label={<span role="img" aria-label="dashboad">🚩{i18n.t('worksheet.dashBoad')}</span>} />
-                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="taskpool">📁{i18n.t('worksheet.taskPool')}</span>} />
-                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="members">👫{i18n.t('worksheet.members')}</span>} />
-                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="openrange">{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? '🔓' : '🔒' }{i18n.t('worksheet.openRange')}</span>} />
+                <Tab label={<span role="img" aria-label="dashboad">🚩{this.state.isMobile ? '' : i18n.t('worksheet.dashBoad')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="taskpool">📁{this.state.isMobile ? '' : i18n.t('worksheet.taskPool')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="members">👫{this.state.isMobile ? '' : i18n.t('worksheet.members')}</span>} />
+                <Tab disabled={this.state.readOnly} label={<span role="img" aria-label="openrange">{this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? '🔓' : '🔒' }{this.state.isMobile ? '' : i18n.t('worksheet.openRange')}</span>} />
                 {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }} label={<span role="img" aria-label="plugins">🔌{i18n.t('worksheet.plugIns')}(<span role="img" aria-label="stop">⛔</span>)</span>} />)}
                 {!this.state.isMobile && (<Tab disabled={this.state.readOnly} onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }} label={<span role="img" aria-label="activity">📈{i18n.t('worksheet.activity')}(<span role="img" aria-label="stop">⛔</span>)</span>} />)}
               </Tabs>

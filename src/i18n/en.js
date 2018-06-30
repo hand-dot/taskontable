@@ -237,7 +237,8 @@ export default {
   columns: {
     assign: 'Assign',
     title: 'Title',
-    estimate: 'Estimate(min)',
+    estimate: 'Estimate',
+    estimateWithUnit: 'Estimate(min)',
     startTime: 'StartTime',
     startTimeWithFMT: 'StartTime(HH:mm)',
     endTime: 'EndTime',
