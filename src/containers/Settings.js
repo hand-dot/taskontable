@@ -32,7 +32,6 @@ const storage = util.getStorage();
 const styles = {
   root: {
     paddingTop: '5em',
-    minHeight: '100vh',
     padding: '4em 2em 2em',
     width: '100%',
     margin: '0 auto',
@@ -296,8 +295,10 @@ class Settings extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Divider style={{ margin: '1.5em 0' }} />
           <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">{i18n.t('common.save')}</Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Divider style={{ margin: '1.5em 0' }} />
           <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
         </Grid>
         <Snackbar
