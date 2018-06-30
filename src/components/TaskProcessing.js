@@ -43,7 +43,7 @@ function getTitle(processingTask, defaultTitle, isShortTitle) {
         title = actuallyMinute < 0 ? defaultTitle : `${i18n.t('worksheet.tableCtl.taskProcessing.remaining_target', { target: min + i18n.t('common.min') })} - ${title}`;
       }
     } else {
-      title = `${actuallyMinute <= 0 ? `${moment(processingTask.now, 'HH:mm:ss').format('s') + i18n.t('common.sec')}` : `${actuallyMinute + i18n.t('common.min')}`}${i18n.t('worksheet.tableCtl.taskProcessing.passed')} - ${title}`;
+      title = `${actuallyMinute <= 0 ? `${moment(processingTask.now, 'HH:mm:ss').format('s') + i18n.t('common.sec')}` : `${actuallyMinute + i18n.t('common.min')}`} ${i18n.t('worksheet.tableCtl.taskProcessing.passed')} - ${title}`;
     }
   } else {
     title = defaultTitle;
