@@ -107,8 +107,8 @@ class TaskTable extends Component {
   }
 
   isSamePropTaskAndHotData() {
-    const hotTasks = util.cloneDeep(getHotTasksIgnoreEmptyTask(this.hot).map(task => tasksUtil.deleteUselessTaskProp(task)));
-    const propTasks = util.cloneDeep(this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)));
+    const hotTasks = getHotTasksIgnoreEmptyTask(this.hot).map(task => tasksUtil.deleteUselessTaskProp(task));
+    const propTasks = this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task));
     let same = false;
     if (this.props.taskTableFilterBy) {
       same = util.equal(tasksUtil.getTasksByAssign(hotTasks, this.props.taskTableFilterBy), tasksUtil.getTasksByAssign(propTasks, this.props.taskTableFilterBy));

@@ -270,18 +270,27 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 };
 
 export const setDataForHot = (hotInstance, datas) => {
-  if (!hotInstance || !Array.isArray(datas)) return;
-  const newDatas = [];
+  if (!Array.isArray(datas)) return;
+  const dataForHot = [];
+  let rowIndex = 0;
   util.cloneDeep(datas).forEach((data) => {
     if (!util.equal(tableTaskSchema, data)) {
-      const startTimeVal = data.startTime;
-      const endTimeVal = data.endTime;
-      data.actually = startTimeVal && endTimeVal ? util.getTimeDiffMinute(startTimeVal, endTimeVal) : null;
-      newDatas.push(data);
+      Object.entries(data).forEach(([key, value]) => {
+        dataForHot.push([rowIndex, key, value]);
+      });
     }
+    rowIndex += 1;
   });
-  hotInstance.updateSettings({ data: newDatas });
-  hotInstance.render();
+  const rowCount = hotInstance.countRows();
+  // rowIndex これから入れる行数
+  // rowCount 今の行数
+  let needTrim = false;
+  if (rowIndex < rowCount) needTrim = true;
+  hotInstance.setDataAtRowProp(dataForHot);
+  // 不要な行を削除する
+  if (needTrim) hotInstance.alter('remove_row', rowIndex, rowCount);
+  // 保存ボタンが活性化するのを防ぐ
+  hotInstance.runHooks('afterUpdateSettings');
 };
 
 const resetNotifi = debounce((hotInstance) => {
