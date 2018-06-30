@@ -42,6 +42,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
   // タイマーを登録(セルにタイマーIDを設定)
   const col = hotInstance.propToCol(prop);
   const notifiId = setTimeout(() => {
+    if (!hotInstance) return;
     // タイマーが削除されていた場合には何もしない
     if (!hotInstance.getCellMeta(row, col)[targetNotifiId]) return;
     removeNotifiCell(hotInstance, row, [prop]);

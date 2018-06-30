@@ -30,19 +30,19 @@ function Footer(props) {
             <Divider style={{ margin: '0 0 7em' }} />
             <Title />
             <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '7em' }}>
-              <Grid item xs={12} sm={3} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={3} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                 <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">{i18n.t('external.contact')}</a>
               </Grid>
-              <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                 <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.COMMUNITY_URL} target="_blank">{i18n.t('external.community')}</a>
               </Grid>
-              <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                 <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.BLOG_URL} target="_blank">{i18n.t('external.blog')}</a>
               </Grid>
-              <Grid item xs={12} sm={2} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                 <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.ROADMAP_URL} target="_blank">{i18n.t('external.roadMap')}</a>
               </Grid>
-              <Grid item xs={12} sm={3} style={{ marginBottom: '2em' }} className={classes.center}>
+              <Grid item xs={12} sm={3} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                 <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">{i18n.t('external.github')}</a>
               </Grid>
             </Grid>
