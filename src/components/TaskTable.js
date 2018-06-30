@@ -20,7 +20,6 @@ class TaskTable extends Component {
   constructor(props) {
     super(props);
     this.hot = null;
-    this.setDataForHot = debounce(this.setDataForHot, constants.RENDER_DELAY);
     this.syncPropByUpdate = debounce(this.syncPropByUpdate, constants.RENDER_DELAY);
     this.syncPropByRender = debounce(this.syncPropByRender, constants.RENDER_DELAY);
   }
