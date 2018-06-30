@@ -136,7 +136,6 @@ export default {
     toReserveEndNotification: 'To reserve an end notification, enter estimate and the start time.',
     notificationNotDisplayed: 'Please click here if notification is not displayed.',
     changeGoogleChromeSitePermissions: 'Change Google Chrome site permissions',
-
   },
   worksheet: {
     tableTask: 'TableTask',
