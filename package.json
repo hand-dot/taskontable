@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@firebase/app": "^0.3.3",
-    "@firebase/auth": "^0.5.3",
+    "@firebase/auth": "^0.7.0",
     "@firebase/database": "^0.3.3",
     "@firebase/messaging": "^0.3.5",
     "@firebase/storage": "^0.2.3",
