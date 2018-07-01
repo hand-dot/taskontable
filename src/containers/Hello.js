@@ -34,6 +34,7 @@ class Hello extends Component {
       isOpenHowtoUseDialog: false,
     };
   }
+
   componentWillMount() {
     setTimeout(() => {
       if (!util.isMobile()) {
@@ -46,8 +47,9 @@ class Hello extends Component {
       }
     });
   }
+
   render() {
-    const { classes, theme } = this.props;
+    const { classes } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch">
         <Grid item xs={12}>
@@ -60,24 +62,36 @@ class Hello extends Component {
             </Typography>
             <div style={{ marginTop: 30, marginBottom: 30 }}>
               <Typography gutterBottom variant="body2">
-                Community<span role="img" aria-label="Community">😉</span>
+                Community
+                <span role="img" aria-label="Community">
+                  😉
+                </span>
               </Typography>
               <p dangerouslySetInnerHTML={{ __html: i18n.t('hello.community') }} />
               <a href={constants.COMMUNITY_URL} target="_blank">
-                {i18n.t('common.join')}<span role="img" aria-label="Help">🚀</span>
+                {i18n.t('common.join')}
+                <span role="img" aria-label="Help">
+                  🚀
+                </span>
               </a>
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
               <Typography gutterBottom variant="body2">
-                Help<span role="img" aria-label="Help">😵</span>
+                Help
+                <span role="img" aria-label="Help">
+                  😵
+                </span>
               </Typography>
               <p dangerouslySetInnerHTML={{ __html: i18n.t('hello.help') }} />
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
               <Typography gutterBottom variant="body2">
-              Please<span role="img" aria-label="Help">🙏</span>
+              Please
+                <span role="img" aria-label="Help">
+                  🙏
+                </span>
               </Typography>
               <p>
                 {i18n.t('hello.please1')}
@@ -98,7 +112,9 @@ class Hello extends Component {
           onClose={() => { this.setState({ isOpenHowtoUseDialog: false }); }}
           aria-labelledby="how-to-use-dialog"
         >
-          <DialogTitle id="how-to-use-dialog">{i18n.t('hello.howTouse')}</DialogTitle>
+          <DialogTitle id="how-to-use-dialog">
+            {i18n.t('hello.howTouse')}
+          </DialogTitle>
           <DialogContent>
             <DialogContentText />
             <HowtoUse />
@@ -121,4 +137,3 @@ Hello.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(Hello);
-

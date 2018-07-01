@@ -55,10 +55,10 @@ function Top(props) {
       </Grid>
       <Grid className={classes.center} item xs={12}>
         <img style={{ display: 'inline-block', maxWidth: 300, paddingBottom: '2em' }} src={pcMan} alt="pcMan" />
-        <Typography variant="title" style={{ marginBottom: '1em' }} align="center">
+        <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
           {i18n.t('top.toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer')}
         </Typography>
-        <Typography variant="title" style={{ marginBottom: '1em' }} align="center">
+        <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
           {i18n.t('top.whyDontYouFinishWorkEarly')}
         </Typography>
         <Link style={{ margin: '1em 0 3em' }} className={classes.link} to="/signup">
@@ -68,23 +68,23 @@ function Top(props) {
         </Link>
       </Grid>
       <Grid item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
-        <div>
-          <div className={classes.content}>
-            <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
-              {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
-            </Typography>
-            <iframe
-              style={{ display: 'block', margin: '0 auto' }}
-              title="Getting Started Taskontable"
-              width={util.isMobile() ? 'inherit' : '960'}
-              height={util.isMobile() ? 'inherit' : '540'}
-              src="https://www.youtube.com/embed/rttbn7PNyBY?rel=0&amp;showinfo=0"
-              frameBorder="0"
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-            />
-          </div>
+        <Divider />
+        <div className={classes.content}>
+          <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+            {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
+          </Typography>
+          <iframe
+            style={{ display: 'block', margin: '0 auto' }}
+            title="Getting Started Taskontable"
+            width={util.isMobile() ? 'inherit' : '960'}
+            height={util.isMobile() ? 'inherit' : '540'}
+            src="https://www.youtube.com/embed/rttbn7PNyBY?rel=0&amp;showinfo=0"
+            frameBorder="0"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
         </div>
+        <Divider />
       </Grid>
       <Grid item xs={12}>
         <div className={classes.center}>
@@ -94,7 +94,7 @@ function Top(props) {
                 <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={desk} alt="desk" />
               </Grid>
               <Grid item xs={12} md={7}>
-                <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
+                <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
                   {i18n.t('top.aToolForClearingTasksOneByOne')}
                   <br />
                   {i18n.t('top.singleTaskIsBoostPersonalProductivity')}
@@ -109,7 +109,7 @@ function Top(props) {
           <div className={classes.content}>
             <Grid spacing={0} container alignItems="center" justify="center">
               <Grid item xs={12} md={7}>
-                <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
+                <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
                   {i18n.t('top.modernAndClassicalInterface')}
                   <br />
                   {i18n.t('top.SimpleFastBeautifulMoreFun')}
@@ -126,7 +126,7 @@ function Top(props) {
         <div className={classes.center}>
           <div className={classes.content}>
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 600 }} src={teamMens} alt="teamMens" />
-            <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
+            <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
               {i18n.t('top.developedForIndividualsAndTeams')}
               <br />
               {i18n.t('top.canCollaborateInRealtime')}
