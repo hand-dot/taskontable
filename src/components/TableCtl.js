@@ -26,7 +26,7 @@ const styles = {
     height: 2,
   },
   tableCtlButton: {
-    fontSize: 11,
+    fontSize: 13,
     minWidth: 25,
   },
 };
@@ -91,7 +91,8 @@ class TableCtl extends Component {
                   </option>
                   {members.map(member => (
                     <option key={member.uid} value={member.uid}>
-                      @{member.displayName}
+                      @
+                      {member.displayName}
                     </option>
                   ))}
                 </Select>
@@ -110,12 +111,16 @@ class TableCtl extends Component {
             {(() => {
               if (tableTasks.length === 0) {
                 return (
-                  <Typography variant="caption">{i18n.t('worksheet.tableCtl.thereAreNoTasks')}</Typography>
+                  <Typography variant="caption">
+                    {i18n.t('worksheet.tableCtl.thereAreNoTasks')}
+                  </Typography>
                 );
-              } else if (tableTasks.length === tasksUtil.getDoneTasks(tableTasks).length) {
+              } if (tableTasks.length === tasksUtil.getDoneTasks(tableTasks).length) {
                 return (
                   <Typography style={{ animation: 'good 1s linear 0s 1', color: theme.palette.primary.main }} variant="caption">
-                    <span role="img" aria-label="complete">👍</span>
+                    <span role="img" aria-label="complete">
+                      👍
+                    </span>
                     <span style={{ marginRight: theme.spacing.unit }} />
                     Complete!
                   </Typography>
@@ -124,10 +129,16 @@ class TableCtl extends Component {
               return (
                 <Typography variant="caption">
                   <Error style={{ verticalAlign: 'bottom', fontSize: 16, color: constants.brandColor.base.YELLOW }} />
-                  <span>{tasksUtil.getOpenTasks(tableTasks).length}Open</span>
+                  <span>
+                    {tasksUtil.getOpenTasks(tableTasks).length}
+                    Open
+                  </span>
                   <span style={{ marginRight: theme.spacing.unit }}>&nbsp;</span>
                   <CheckCircle style={{ verticalAlign: 'bottom', fontSize: 16, color: constants.brandColor.base.GREEN }} />
-                  <span>{tasksUtil.getDoneTasks(tableTasks).length}Close</span>
+                  <span>
+                    {tasksUtil.getDoneTasks(tableTasks).length}
+                    Close
+                  </span>
                 </Typography>
               );
             })()}
@@ -135,21 +146,30 @@ class TableCtl extends Component {
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={3}>
             <Tooltip title={moment(date, constants.DATEFMT).add(-1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.tableCtlButton} onClick={this.changeDate.bind(this)} data-date-nav="prev" ><NavigateBefore style={{ fontSize: 16 }} /></Button>
+                <Button className={classes.tableCtlButton} onClick={this.changeDate.bind(this)} data-date-nav="prev">
+                  <NavigateBefore style={{ fontSize: 16 }} />
+                </Button>
               </div>
             </Tooltip>
             {!util.isMobile() && (
               <Tooltip title={`${i18n.t('worksheet.tableCtl.lastSavedAt')} : ${savedAt}`} placement="top">
                 <div style={{ display: 'inline-block' }}>
                   <Button className={classes.tableCtlButton} disabled={!saveable} onClick={saveWorkSheet} color="default">
-                    <span role="img" aria-label="save">💾</span>
+                    <span role="img" aria-label="save">
+                    💾(
+                      {saveable ? <Error style={{ verticalAlign: 'bottom', fontSize: 16, color: constants.brandColor.base.YELLOW }} /> : <CheckCircle style={{ verticalAlign: 'bottom', fontSize: 16, color: constants.brandColor.base.GREEN }} />}
+                      )
+                    </span>
+
                   </Button>
                 </div>
               </Tooltip>
             )}
             <Tooltip title={moment(date, constants.DATEFMT).add(1, 'day').format(constants.DATEFMT)} placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.tableCtlButton} onClick={this.changeDate.bind(this)} data-date-nav="next" ><NavigateNext style={{ fontSize: 16 }} /></Button>
+                <Button className={classes.tableCtlButton} onClick={this.changeDate.bind(this)} data-date-nav="next">
+                  <NavigateNext style={{ fontSize: 16 }} />
+                </Button>
               </div>
             </Tooltip>
           </Grid>
@@ -189,4 +209,3 @@ TableCtl.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(TableCtl);
-
