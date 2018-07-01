@@ -24,6 +24,7 @@ import Close from '@material-ui/icons/Close';
 
 import '../styles/keyframes.css';
 import util from '../util';
+import i18n from '../i18n/';
 import constants from '../constants';
 
 import GlobalHeader from './GlobalHeader';
@@ -35,7 +36,7 @@ import Scripts from './Scripts';
 import Activity from './Activity';
 import Settings from './Settings';
 import WorkSheet from './WorkSheet';
-import Tips from './Tips';
+import Hello from './Hello';
 
 const messaging = util.getMessaging();
 const auth = util.getAuth();
@@ -54,6 +55,7 @@ const styles = theme => ({
     position: 'relative',
     minHeight: '100vh',
     width: constants.SIDEBAR_WIDTH,
+    backgroundColor: 'transparent',
   },
   circularProgress: {
     overflow: 'hidden',
@@ -112,7 +114,7 @@ class App extends Component {
             messaging.getToken().then((refreshedToken) => {
               database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/fcmToken`).set(refreshedToken);
             }).catch((err) => {
-              throw new Error(`トークン更新のモニタリングに失敗: ${err}`);
+              throw new Error(`Fail Token Update Monitoring: ${err}`);
             });
           });
           // フォアグラウンド時に通知をハンドリングする処理
@@ -161,7 +163,7 @@ class App extends Component {
         }).then((workSheetListIds) => {
           const pathname = util.formatURLString(this.props.location.pathname.replace('/', ''));
           const fromInviteEmail = util.getQueryVariable('worksheet') !== '';
-          if (!fromInviteEmail && ['login', 'signup', 'index.html'].includes(pathname)) { // ■ログイン時
+          if (!fromInviteEmail && ['login', 'signup'].includes(pathname)) { // ■ログイン時
             this.props.history.push('/');
             return Promise.resolve();
           } else if (workSheetListIds.includes(pathname)) { // ■既に参加しているワークシートの場合
@@ -219,19 +221,19 @@ class App extends Component {
     this.setState({ processing: true });
     if (type === constants.authType.EMAIL_AND_PASSWORD) {
       if (username === '') {
-        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'ユーザー名を入力してください。' });
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('validation.must_target', { target: i18n.t('common.userName') }) });
         return;
       }
       if (!util.validateEmail(email) || password.length < 6) {
-        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'メールアドレスとパスワードを正しく入力してください。' });
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('validation.must_pair1_pair2', { pair1: i18n.t('common.emailAddress'), pair2: i18n.t('common.password') }) });
         return;
       }
       tmpDisplayName = username;
       auth.createUserWithEmailAndPassword(email, password).then(() => {
-        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウントを作成しました。' });
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('app.createdAnAccount') });
       }, (e) => {
-        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'アカウント作成に失敗しました。' });
-        throw new Error(`アカウント作成に失敗:${e}`);
+        this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('app.failedAccountCreation') });
+        throw new Error(`Fail Create Account:${e}`);
       });
     }
   }
@@ -243,13 +245,13 @@ class App extends Component {
         auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
       } else if (type === constants.authType.EMAIL_AND_PASSWORD) {
         if (!util.validateEmail(email) || password.length < 6) {
-          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'メールアドレスとパスワードを正しく入力してください。' });
+          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('validation.must_pair1_pair2', { pair1: i18n.t('common.emailAddress'), pair2: i18n.t('common.password') }) });
           return;
         }
         auth.signInWithEmailAndPassword(email, password).then(() => {
-          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'ログインしました。' });
+          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('app.loggedIn') });
         }, () => {
-          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: 'ログインに失敗しました。' });
+          this.setState({ processing: false, isOpenSnackbar: true, snackbarText: i18n.t('app.failedToLogin') });
         });
       }
     } else {
@@ -275,11 +277,11 @@ class App extends Component {
 
   createWorksheet() {
     if (this.state.newWorksheetName === '') {
-      alert('ワークシート名が未入力です。');
+      alert(i18n.t('validation.must_target', { target: i18n.t('common.worksheetName') }));
       return;
     }
     if (!util.validateDatabaseKey(this.state.newWorksheetName)) {
-      alert('ワークシート名として禁止されている文字列が含まれています。');
+      alert(i18n.t('validation.containsForbiddenCharacter_target', { target: i18n.t('common.worksheetName') }));
       return;
     }
     // ワークシートのIDはシート名をtoLowerCaseしてencodeURIしたものにするシート名はシート名で別管理する
@@ -287,18 +289,18 @@ class App extends Component {
     // ワークシートのIDが存在しない場合は作成できる。
     database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).once('value').then((snapshot) => {
       if (snapshot.exists()) {
-        alert('そのワークシート名は作成できません。');
+        alert(i18n.t('validation.cantCreate_target', { target: i18n.t('common.worksheetName') }));
       } else {
         Promise.all([
           database.ref(`/${constants.API_VERSION}/users/${this.state.user.uid}/worksheets/`).set(this.state.worksheets.map(worksheet => worksheet.id).concat([newWorksheetId])),
-          database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.state.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PUBLIC }),
+          database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.state.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PRIVATE }),
         ]).then(() => {
           this.setState({
             worksheets: this.state.worksheets.concat([{ id: newWorksheetId, name: this.state.newWorksheetName }]),
             newWorksheetName: '',
             isOpenCreateWorksheetModal: false,
             isOpenSnackbar: true,
-            snackbarText: `${this.state.newWorksheetName}を作成しました。`,
+            snackbarText: i18n.t('common.wasCreated_target', { target: this.state.newWorksheetName }),
           });
           this.goWorkSheet(newWorksheetId);
         });
@@ -313,7 +315,9 @@ class App extends Component {
   }
 
   render() {
-    const { classes, theme, location } = this.props;
+    const {
+      classes, theme, location, history,
+    } = this.props;
     return (
       <div className={classes.root}>
         <GlobalHeader
@@ -324,6 +328,7 @@ class App extends Component {
           closeHelpDialog={() => { this.setState({ isOpenHelpDialog: false }); }}
           logout={this.logout.bind(this)}
           goSettings={() => { this.props.history.push(`/${this.state.user.uid}/settings`); }}
+          history={history}
         />
         <Drawer variant="persistent" open={this.state.isOpenSidebar} style={{ display: this.state.isOpenSidebar ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }} >
           <div style={{ height: theme.spacing.unit }} />
@@ -333,13 +338,13 @@ class App extends Component {
               <ListItemIcon>
                 <Close />
               </ListItemIcon>
-              <ListItemText primary="閉じる" />
+              <ListItemText primary={i18n.t('common.close')} />
             </ListItem>
             <ListItem divider button onClick={this.goWorkSheet.bind(this, '')} disabled={location.pathname === '/'} style={{ backgroundColor: location.pathname === '/' ? 'rgba(0, 0, 0, 0.08)' : '' }}>
               <ListItemIcon>
-                <span role="img" aria-label="Tips" >💡</span>
+                <span role="img" aria-label="Hello" >😜</span>
               </ListItemIcon>
-              <ListItemText primary="Tips" />
+              <ListItemText primary="Hello" />
             </ListItem>
             {this.state.worksheets.map((worksheet) => {
               const isActive = util.formatURLString(location.pathname.replace('/', '')) === util.formatURLString(worksheet.name);
@@ -353,13 +358,13 @@ class App extends Component {
               <ListItemIcon>
                 <Add />
               </ListItemIcon>
-              <ListItemText primary="新規作成" />
+              <ListItemText primary={i18n.t('common.createNew')} />
             </ListItem>
           </List>
         </Drawer>
         <main className={classes.content}>
           <Switch>
-            <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <Tips user={this.state.user} {...props} />; } return (<Top {...props} />); }} />
+            <Route exact strict path="/" render={(props) => { if (this.state.user.uid !== '') { return <Hello user={this.state.user} {...props} toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }} />; } return (<Top {...props} />); }} />
             <Route exact strict path="/signup" render={props => <Signup signup={this.signup.bind(this)} login={this.login.bind(this)} {...props} />} />
             <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />
             <Route exact strict path="/logout" render={props => <Logout {...props} />} />
@@ -381,14 +386,15 @@ class App extends Component {
           </Switch>
         </main>
         <Dialog open={this.state.processing}>
-          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
+          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>
         </Dialog>
         <Dialog open={this.state.isOpenSupportBrowserDialog}>
-          <DialogTitle>サポート対象外ブラウザです</DialogTitle>
+          <DialogTitle>{i18n.t('app.unsupportedBrowser')}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              本サービスは現在{constants.SUPPORTEDBROWSERS}での動作をサポートしております。<br />
-              お手数ですが、{constants.SUPPORTEDBROWSERS}で開きなおすか、下記のボタンを押してダウンロードして下さい。
+              {i18n.t('app.thisServiceCurrentlySupportsOperationAt_target', { target: constants.SUPPORTEDBROWSERS })}
+              <br />
+              {i18n.t('app.pleaseReopenItWithTargetOrDownloadByClickingTheButtonBelow_target', { target: constants.SUPPORTEDBROWSERS })}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -400,7 +406,7 @@ class App extends Component {
               color="primary"
               autoFocus
             >
-              ダウンロードする
+              {i18n.t('common.download')}
             </Button>
           </DialogActions>
         </Dialog>
@@ -410,7 +416,7 @@ class App extends Component {
           onClose={() => { this.setState({ newWorksheetName: '', isOpenCreateWorksheetModal: false }); }}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">ワークシートを作成</DialogTitle>
+          <DialogTitle id="form-dialog-title">{i18n.t('app.createWorksheet')}</DialogTitle>
           <DialogContent>
             <TextField
               onChange={(e) => { this.setState({ newWorksheetName: e.target.value }); }}
@@ -418,13 +424,13 @@ class App extends Component {
               autoFocus
               margin="dense"
               id="name"
-              label="ワークシート名"
+              label={i18n.t('common.worksheetName')}
               fullWidth
             />
           </DialogContent>
           <DialogActions>
-            <Button size="small" onClick={() => { this.setState({ isOpenCreateWorksheetModal: false }); }} color="primary">キャンセル</Button>
-            <Button size="small" onClick={this.createWorksheet.bind(this)} color="primary">作成</Button>
+            <Button size="small" onClick={() => { this.setState({ isOpenCreateWorksheetModal: false }); }} color="primary">{i18n.t('common.cancel')}</Button>
+            <Button size="small" onClick={this.createWorksheet.bind(this)} color="primary">{i18n.t('common.create')}</Button>
           </DialogActions>
         </Dialog>
         <Snackbar

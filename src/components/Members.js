@@ -22,11 +22,15 @@ import Sms from '@material-ui/icons/Sms';
 import Person from '@material-ui/icons/Person';
 import Email from '@material-ui/icons/Email';
 import PersonAdd from '@material-ui/icons/PersonAdd';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import util from '../util';
+import i18n from '../i18n';
 import constants from '../constants';
 import notifiIcon from '../images/notifiIcon.png';
 
 const database = util.getDatabase();
+
+const URL = `${window.location.protocol}//${window.location.host}`;
 
 const styles = theme => ({
   root: {
@@ -54,7 +58,9 @@ const styles = theme => ({
     alignItems: 'center',
   },
   member: {
+    textAlign: 'center',
     maxWidth: 200,
+    minWidth: 110,
     display: 'inline-block',
     padding: theme.spacing.unit,
     borderRadius: theme.spacing.unit,
@@ -109,42 +115,24 @@ class Members extends Component {
   }
 
   sendInviteEmail(to) {
+    const supportEmail = constants.EMAIL;
+    const { userName, worksheetName, worksheetId } = this.props;
+    const urlParam = `?email=${encodeURIComponent(to)}&worksheet=${worksheetId}`;
+    const loginUrl = `${URL}/login${urlParam}`;
+    const signupUrl = `${URL}/signup${urlParam}`;
     return util.sendEmail({
       to,
-      from: constants.EMAIL,
-      subject: `${constants.TITLE}へのご招待 - ${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.worksheetName}」への招待が届いています。`,
-      body: `
-${this.props.userName} さんから、${constants.TITLE}のワークシート「${this.props.worksheetName}」への招待が届いています。
-
-■アカウントを既にお持ちの場合
-
-${window.location.protocol}//${window.location.host}/login?email=${encodeURIComponent(to)}&worksheet=${this.props.worksheetId}  をクリックして参加してください。
-(＊Googleログインにて既にこのメールアドレスのアカウントでログインしている場合は上記のURLからGoogleログインしてください。)
-　
-
-■アカウントをまだお持ちでない場合は
-
-${window.location.protocol}//${window.location.host}/signup?email=${encodeURIComponent(to)}&worksheet=${this.props.worksheetId} 
-
-からアカウントを作成してください。
-
-${constants.TITLE}とは--${constants.TITLE}はExcelライクなタスク管理ツールです。タスクをシーケンシャルにすることで生産性を向上させ一日をスムーズに進行することができます。
-
------->> Build Your WorkFlow ----------->>>--
-
-${constants.TITLE}サポート
-
-e-mail: ${constants.EMAIL}
-
-HP: ${window.location.protocol}//${window.location.host}
-
------->> Build Your WorkFlow ----------->>>--`,
+      from: supportEmail,
+      subject: i18n.t('mail.invite.subject_userName_worksheetName', { userName, worksheetName }),
+      body: i18n.t('mail.invite.body_userName_worksheetName_loginUrl_signupUrl', {
+        userName, worksheetName, loginUrl, signupUrl,
+      }) + i18n.t('mail.footer'),
     });
   }
 
   addMember() {
     if (this.state.invitationEmails.length === 0) {
-      alert('メールアドレスを入力してください。');
+      alert(i18n.t('validation.must_target', { target: i18n.t('common.emailAddress') }));
       return;
     }
     this.setState({ processing: true });
@@ -153,12 +141,12 @@ HP: ${window.location.protocol}//${window.location.host}
         () => {
           this.props.handleInvitedEmails(this.props.invitedEmails.concat(this.state.invitationEmails).filter((x, i, self) => self.indexOf(x) === i)).then(() => {
             this.setState({
-              isOpenSnackbar: true, snackbarText: '招待メールを送信しました。', invitationEmails: [], isOpenAddMemberModal: false, processing: false,
+              isOpenSnackbar: true, snackbarText: i18n.t('members.sentAnInvitationEmail'), invitationEmails: [], isOpenAddMemberModal: false, processing: false,
             });
           });
         },
         () => {
-          this.setState({ isOpenSnackbar: true, snackbarText: '招待メールの送信に失敗しました。', processing: false });
+          this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('members.failedToSendInvitationMail'), processing: false });
         },
       );
   }
@@ -171,15 +159,15 @@ HP: ${window.location.protocol}//${window.location.host}
     if (this.state.target.type === constants.handleUserType.MEMBER) {
       this.setState({ processing: true });
       database.ref(`/${constants.API_VERSION}/users/${this.state.target.uid}/worksheets/`).once('value').then((myWorksheetIds) => {
-        if (!myWorksheetIds.exists() && !Array.isArray(myWorksheetIds.val())) throw new Error('削除しようとしたメンバーが存在しませんでした。');
+        if (!myWorksheetIds.exists() && !Array.isArray(myWorksheetIds.val())) throw new Error('The member who tried to delete did not exist.');
         return myWorksheetIds.val().filter(worksheetId => worksheetId !== this.props.worksheetId);
       }).then((newWorksheetIds) => {
-        if (this.props.userId === this.state.target.uid && !window.confirm(`${this.props.worksheetName}から自分を削除しようとしています。もう一度参加するためにはメンバーに招待してもらう必要があります。よろしいですか？`)) {
+        if (this.props.userId === this.state.target.uid && !window.confirm(i18n.t('members.deletingMyselfFrom_worksheetName', { worksheetName: this.props.worksheetName }))) {
           this.setState({ isOpenRemoveMemberModal: false, processing: false });
           return;
         }
         const newMembers = this.props.members.filter(member => member.email !== this.state.target.email);
-        if (newMembers.length === 0 && !window.confirm(`${this.props.worksheetName}からメンバーがいなくなります。このワークシートに二度と遷移できなくなりますがよろしいですか？`)) {
+        if (newMembers.length === 0 && !window.confirm(i18n.t('members.noMembersFrom_worksheetName', { worksheetName: this.props.worksheetName }))) {
           this.setState({ isOpenRemoveMemberModal: false, processing: false });
           return;
         }
@@ -214,11 +202,11 @@ HP: ${window.location.protocol}//${window.location.host}
       this.sendInviteEmail(this.state.target.email).then(
         () => {
           this.setState({
-            isOpenSnackbar: true, snackbarText: '招待メールを再送信しました。', processing: false, isOpenResendEmailModal: false,
+            isOpenSnackbar: true, snackbarText: i18n.t('members.resentAnInvitationEmail'), processing: false, isOpenResendEmailModal: false,
           });
         },
         () => {
-          this.setState({ isOpenSnackbar: true, snackbarText: '招待メールの再送信に失敗しました。', processing: false });
+          this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('members.failedToResendInvitationMail'), processing: false });
         },
       );
     }
@@ -230,10 +218,10 @@ HP: ${window.location.protocol}//${window.location.host}
   sendNotification() {
     if (this.state.target.type === constants.handleUserType.MEMBER) {
       const promises = [];
-      const title = `🔔 ${this.props.userName}さんが通知を送信しました。`;
-      const message = `${this.props.userName}: ${this.state.notificationMessage ? `${this.state.notificationMessage}` : '予定を入れたのでチェックしてください。'}`;
-      const url = `${window.location.protocol}//${window.location.host}/${this.props.worksheetId}`;
-      const icon = this.props.userPhotoURL || notifiIcon;
+      const title = `🔔 ${i18n.t('members.notificationFrom_userName', { userName: this.props.userName })}`;
+      const message = `${this.props.userName}: ${this.state.notificationMessage ? `${this.state.notificationMessage}` : i18n.t('members.pleaseCheckTheSchedule')}`;
+      const url = `${URL}/${this.props.worksheetId}`;
+      const icon = this.props.userPhotoURL || notifiIcon; // TODO notifiIconじゃなくてデフォルトのユーザーアイコンを決めるべき
       promises.push(util.sendNotification({
         title, body: message, url, icon, to: this.state.target.fcmToken,
       }).then(res => res.ok));
@@ -246,11 +234,11 @@ HP: ${window.location.protocol}//${window.location.host}
       Promise.all(promises).then((res) => {
         let snackbarText;
         if (res.every(r => r)) {
-          snackbarText = '通知を送信しました。';
+          snackbarText = i18n.t('members.sentNotification');
         } else if (res.every(r => !r)) {
-          snackbarText = '通知の送信に失敗しました。';
+          snackbarText = i18n.t('members.failedToSendNotification');
         } else {
-          snackbarText = '通知の送信に一部失敗しました。';
+          snackbarText = i18n.t('members.failedToSendSomeNotifications');
         }
         this.setState({
           isOpenSnackbar: true, snackbarText, isOpenSendNotificationModal: false, notificationMessage: '',
@@ -265,12 +253,12 @@ HP: ${window.location.protocol}//${window.location.host}
     }
     if (util.validateEmail(email)) {
       if (this.props.members.map(member => member.email).includes(email)) {
-        this.setState({ isOpenSnackbar: true, snackbarText: 'このメールアドレスは既にメンバーに存在します。' });
+        this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('members.emailAlreadyExistsInTheMember') });
       } else {
         this.state.invitationEmails.push(email);
       }
     } else {
-      this.setState({ isOpenSnackbar: true, snackbarText: 'メールアドレスとして不正です。' });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('validation.invalid_target', { target: i18n.t('common.emailAddress') }) });
     }
   }
 
@@ -285,11 +273,11 @@ HP: ${window.location.protocol}//${window.location.host}
       }}
         >
           <div>
-            <Typography variant="subheading">
-              メンバー
+            <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit }}>
+              {i18n.t('worksheet.members')}
             </Typography>
             <div className={classes.membersContainer}>
-              {members.length === 0 ? <Typography align="center" variant="caption">メンバーがいません</Typography> : members.map(member => (
+              {members.length === 0 ? <div style={{ minHeight: 100, display: 'flex', alignItems: 'center' }}><Typography align="center" variant="caption">{i18n.t('members.noMembers')}</Typography></div> : members.map(member => (
                 <div className={classes.member} key={member.uid}>
                   <IconButton
                     className={classes.actionIcon}
@@ -310,80 +298,78 @@ HP: ${window.location.protocol}//${window.location.host}
                   >
                     <Delete style={{ fontSize: 16 }} />
                   </IconButton>
-                /
-                  <span title={(!member.fcmToken ? `${member.displayName}さんは通知を拒否しているようです。` : '') || (member.uid === this.props.userId ? '自分に通知を送ることはできません' : '')}>
+                  /
+                  <span>
                     <IconButton
                       disabled={!member.fcmToken || member.uid === this.props.userId}
                       className={classes.actionIcon}
                       color="default"
                       onClick={() => {
-                    this.setState({
-                      isOpenSendNotificationModal: true,
-                      target: {
-                        type: constants.handleUserType.MEMBER,
-                        uid: member.uid,
-                        displayName: member.displayName,
-                        email: member.email,
-                        photoURL: member.photoURL,
-                        fcmToken: member.fcmToken,
-                      },
-                    });
-                  }}
+                        this.setState({
+                          isOpenSendNotificationModal: true,
+                          target: {
+                            type: constants.handleUserType.MEMBER,
+                            uid: member.uid,
+                            displayName: member.displayName,
+                            email: member.email,
+                            photoURL: member.photoURL,
+                            fcmToken: member.fcmToken,
+                          },
+                        });
+                      }}
                     >
                       <Sms style={{ fontSize: 16 }} />
                     </IconButton>
                   </span>
                   <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
                   {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><Person /></div>}
-                  <Typography title={member.email} className={classes.memberText} align="center" variant="caption">{member.email}</Typography>
                 </div>
-          ))}
+              ))}
             </div>
           </div>
           <div>
-            <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit * 4 }}>
-            招待中メンバー
+            <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit * 6 }}>
+              {i18n.t('members.inviting')}
             </Typography>
             <div className={classes.membersContainer}>
               <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
-              {invitedEmails.length === 0 ? <Typography align="center" variant="caption" style={{ minWidth: 150 }}>誰も招待されていません。</Typography> : invitedEmails.map(invitedEmail => (
-                <div className={classes.member} key={invitedEmail} title={`招待中 - ${invitedEmail}`}>
+              {invitedEmails.length === 0 ? <div style={{ minHeight: 100, display: 'flex', alignItems: 'center' }}><Typography align="center" variant="caption" style={{ minWidth: 150 }}>{i18n.t('members.noOneIsInvited')}</Typography></div> : invitedEmails.map(invitedEmail => (
+                <div className={classes.member} key={invitedEmail}>
                   <IconButton
                     className={classes.actionIcon}
                     color="default"
                     onClick={() => {
-                  this.setState({
-                    isOpenRemoveMemberModal: true,
-                    target: Object.assign(getBlankTarget(), {
-                      type: constants.handleUserType.INVITED,
-                      email: invitedEmail,
-                    }),
-                  });
-                }}
+                      this.setState({
+                        isOpenRemoveMemberModal: true,
+                        target: Object.assign(getBlankTarget(), {
+                          type: constants.handleUserType.INVITED,
+                          email: invitedEmail,
+                        }),
+                      });
+                    }}
                   >
                     <Delete style={{ fontSize: 16 }} />
                   </IconButton>
-                /
+                   /
                   <IconButton
                     className={classes.actionIcon}
                     color="default"
                     onClick={() => {
-                    this.setState({
-                      isOpenResendEmailModal: true,
-                      target: Object.assign(getBlankTarget(), {
-                        type: constants.handleUserType.INVITED,
-                        email: invitedEmail,
-                      }),
-                    });
-                  }}
+                      this.setState({
+                        isOpenResendEmailModal: true,
+                        target: Object.assign(getBlankTarget(), {
+                          type: constants.handleUserType.INVITED,
+                          email: invitedEmail,
+                        }),
+                      });
+                    }}
                   >
                     <Email style={{ fontSize: 16 }} />
                   </IconButton>
-                  <Typography className={classes.memberText} align="center" variant="caption">招待中</Typography>
-                  <div className={classes.userPhoto}><Person /></div>
                   <Typography className={classes.memberText} align="center" variant="caption">{invitedEmail}</Typography>
+                  <div className={classes.userPhoto}><Person /></div>
                 </div>
-          ))}
+              ))}
             </div>
           </div>
           <div style={{ marginTop: '2em' }}>
@@ -399,7 +385,7 @@ HP: ${window.location.protocol}//${window.location.host}
             aria-labelledby="add-member-dialog-title"
             fullWidth
           >
-            <DialogTitle id="add-member-dialog-title">メンバーを追加する</DialogTitle>
+            <DialogTitle id="add-member-dialog-title">{i18n.t('members.addMembers')}</DialogTitle>
             <DialogContent>
               <ChipInput
                 autoFocus
@@ -407,14 +393,18 @@ HP: ${window.location.protocol}//${window.location.host}
                 onAdd={(email) => { this.addEmail(email); }}
                 onBlur={(e) => { this.addEmail(e.target.value); }}
                 onDelete={(email) => { this.setState({ invitationEmails: this.state.invitationEmails.filter(invitationEmail => invitationEmail !== email) }); }}
-                label="メールアドレス"
+                label={i18n.t('common.emailAddress')}
                 fullWidthInput
                 fullWidth
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => { this.setState({ invitationEmails: [], isOpenAddMemberModal: false }); }} color="primary">キャンセル</Button>
-              <Button onClick={this.addMember.bind(this)} color="primary">招待メールを送信</Button>
+              <Button onClick={() => { this.setState({ invitationEmails: [], isOpenAddMemberModal: false }); }} color="primary">
+                {i18n.t('common.cancel')}
+              </Button>
+              <Button onClick={this.addMember.bind(this)} color="primary">
+                {i18n.t('members.sendAnInvitationEmail')}
+              </Button>
             </DialogActions>
           </Dialog>
           {/* メンバーの削除モーダル */}
@@ -423,18 +413,16 @@ HP: ${window.location.protocol}//${window.location.host}
             onClose={() => { this.setState({ isOpenRemoveMemberModal: false }); }}
             aria-labelledby="remove-member-dialog-title"
           >
-            <DialogTitle id="remove-member-dialog-title">{this.state.target.type === constants.handleUserType.MEMBER ? 'メンバー' : '招待中のメンバー'}を削除する</DialogTitle>
+            <DialogTitle id="remove-member-dialog-title">{i18n.t('common.remove_target', { target: i18n.t('worksheet.members') })}</DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>本当に{this.state.target.type === constants.handleUserType.MEMBER ? `メンバーの${this.state.target.displayName}` : `招待中のメンバーの${this.state.target.email}`}を削除してもよろしいですか？</Typography>
-              <Typography variant="caption">*削除後は再度招待しないとこのワークシートにアクセスできなくなります。</Typography>
+              <Typography variant="body1" gutterBottom>{i18n.t('common.areYouSureRemove_target', { target: this.state.target.type === constants.handleUserType.MEMBER ? this.state.target.displayName : this.state.target.email })}</Typography>
+              <Typography variant="caption">*{i18n.t('members.afterRemoveCantAccess')}</Typography>
             </DialogContent>
             <DialogActions>
-              <Button
-                onClick={() => { this.setState({ isOpenRemoveMemberModal: false }); }}
-                color="primary"
-              >キャンセル
+              <Button onClick={() => { this.setState({ isOpenRemoveMemberModal: false }); }} color="primary">
+                {i18n.t('common.cancel')}
               </Button>
-              <Button onClick={this.removeMember.bind(this)} color="primary">削除</Button>
+              <Button onClick={this.removeMember.bind(this)} color="primary">{i18n.t('common.remove')}</Button>
             </DialogActions>
           </Dialog>
           {/* 招待中のメンバーメール再送信モーダル */}
@@ -443,17 +431,15 @@ HP: ${window.location.protocol}//${window.location.host}
             onClose={() => { this.setState({ isOpenResendEmailModal: false }); }}
             aria-labelledby="resend-email-dialog-title"
           >
-            <DialogTitle id="resend-email-dialog-title">招待中のメンバーにメールを再送信する</DialogTitle>
+            <DialogTitle id="resend-email-dialog-title">{i18n.t('members.resendAnInvitationEmail')}</DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>{`招待中のメンバーの${this.state.target.email}宛に招待メールを再送信してもよろしいですか？`}</Typography>
+              <Typography variant="body1" gutterBottom>{i18n.t('members.areYouSureResendInvitationEmailTo_target', { target: this.state.target.email })}</Typography>
             </DialogContent>
             <DialogActions>
-              <Button
-                onClick={() => { this.setState({ isOpenResendEmailModal: false }); }}
-                color="primary"
-              >キャンセル
+              <Button onClick={() => { this.setState({ isOpenResendEmailModal: false }); }} color="primary">
+                {i18n.t('common.cancel')}
               </Button>
-              <Button onClick={this.resendEmail.bind(this)} color="primary">再送信</Button>
+              <Button onClick={this.resendEmail.bind(this)} color="primary">{i18n.t('common.resend')}</Button>
             </DialogActions>
           </Dialog>
           {/* メンバー通知モーダル */}
@@ -462,9 +448,9 @@ HP: ${window.location.protocol}//${window.location.host}
             onClose={() => { this.setState({ isOpenSendNotificationModal: false }); }}
             aria-labelledby="send-notification-dialog-title"
           >
-            <DialogTitle id="send-notification-dialog-title">メンバーに通知を送信する</DialogTitle>
+            <DialogTitle id="send-notification-dialog-title">{i18n.t('members.sendNotification')}</DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>{`メンバーの${this.state.target.displayName}さん宛にこのページを開いてもらう通知を送信してもよろしいですか？`}</Typography>
+              <Typography variant="body1" gutterBottom>{i18n.t('members.areYouSureSendNotificationTo_target', { target: this.state.target.displayName })}</Typography>
               <TextField
                 maxLength={100}
                 onChange={(e) => { this.setState({ notificationMessage: e.target.value }); }}
@@ -473,8 +459,8 @@ HP: ${window.location.protocol}//${window.location.host}
                 margin="dense"
                 id="message"
                 type="message"
-                label="一言メッセージ"
-                placeholder="例えば 予定を入れたのでチェックしてください。 とか"
+                label={i18n.t('members.message')}
+                placeholder={i18n.t('common.forExample') + i18n.t('members.pleaseCheckTheSchedule')}
                 fullWidth
               />
               <FormGroup row>
@@ -487,29 +473,33 @@ HP: ${window.location.protocol}//${window.location.host}
                       value="isNotificateAllMember"
                     />
                 }
-                  label="ほかのメンバーにも通知する"
+                  label={i18n.t('members.notifyOtherMembers')}
                 />
-                <Typography variant="caption" gutterBottom>(*自分と通知を拒否しているメンバーには通知されません。)</Typography>
+                <Typography variant="caption" gutterBottom>(*{i18n.t('members.doNotNoifyMeAndNotificationBlockingMembers')})</Typography>
               </FormGroup>
             </DialogContent>
             <DialogActions>
-              <Button
-                onClick={() => { this.setState({ isOpenSendNotificationModal: false }); }}
-                color="primary"
-              >キャンセル
+              <Button onClick={() => { this.setState({ isOpenSendNotificationModal: false }); }} color="primary">
+                {i18n.t('common.cancel')}
               </Button>
-              <Button onClick={this.sendNotification.bind(this)} color="primary">送信</Button>
+              <Button onClick={this.sendNotification.bind(this)} color="primary">{i18n.t('common.send')}</Button>
             </DialogActions>
           </Dialog>
           <Dialog open={this.state.processing}>
-            <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} size={40} /></div>
+            <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>
           </Dialog>
         </div>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSnackbar}
           onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
-          message={this.state.snackbarText}
+          ContentProps={{ 'aria-describedby': 'info-id' }}
+          message={
+            <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
+              <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
+              <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.snackbarText}</span>
+            </span>
+          }
         />
       </div>
     );

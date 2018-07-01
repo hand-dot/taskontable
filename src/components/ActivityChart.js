@@ -5,7 +5,6 @@ import debounce from 'lodash.debounce';
 import * as d3 from 'd3';
 import uuid from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import constants from '../constants';
 import util from '../util';
 
@@ -63,9 +62,11 @@ class ActivityChart extends Component {
 
 
   draw(datas) {
+    if (!this.activity || !Array.isArray(this.props.tableTasks)) return;
     d3.selectAll(`#activity-${this.state.id} > *`).remove();
     const padding = 40;
-    const width = window.innerWidth - constants.SIDEBAR_WIDTH - (padding * 2);
+    const width = this.activity.parentNode ? this.activity.parentNode.clientWidth : 0;
+
     const height = 300;
     const svg = d3.select(`#activity-${this.state.id}`).attr('width', width).attr('height', height);
     const timeparser = d3.timeParse('%Y-%m-%d');
@@ -141,17 +142,7 @@ class ActivityChart extends Component {
       .attr('d', remainingLine);
   }
   render() {
-    const { classes } = this.props;
-    return (
-      <div>
-        <Typography gutterBottom variant="caption">
-          見積:<span className={classes.block} style={{ color: constants.brandColor.base.GREEN }}>■</span>(緑色) /
-          実績:<span className={classes.block} style={{ color: constants.brandColor.base.BLUE }}>■</span>(青色) /
-          残:<span className={classes.block} style={{ color: constants.brandColor.base.RED }}>■</span>(赤色)
-        </Typography>
-        <svg id={`activity-${this.state.id}`} ref={(node) => { this.activity = node; }} />
-      </div>
-    );
+    return (<svg id={`activity-${this.state.id}`} ref={(node) => { this.activity = node; }} />);
   }
 }
 

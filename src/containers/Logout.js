@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n/';
 
 const styles = theme => ({
   content: {
@@ -22,10 +22,6 @@ const styles = theme => ({
     maxWidth: 600,
     margin: '0 auto',
   },
-  bgTransparent: {
-    backgroundColor: 'transparent',
-    color: '#fff',
-  },
   link: {
     textDecoration: 'none',
     display: 'block',
@@ -38,30 +34,24 @@ const styles = theme => ({
     margin: '0 auto',
     textAlign: 'center',
   },
-  stroke: {
-    color: constants.brandColor.light.BLUE,
-    WebkitTextStroke: `1px ${constants.brandColor.base.BLUE}`,
-  },
 });
 
 function Logout(props) {
+  const isMobile = util.isMobile();
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
       <Grid item xs={12}>
-        <Paper className={classes.center} square elevation={0}>
+        <div className={classes.center}>
           <div className={classes.content}>
-            <Typography className={classes.stroke} variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
-              Did You Build Your Workflow?
-            </Typography>
-            <Typography variant="headline" align="center" style={{ marginBottom: '2em' }}>
-            お使いいただきありがとうございました。<br />{constants.TITLE}からログアウトしました。
+            <Typography variant={isMobile ? 'display2' : 'display3'} align="center">
+              {i18n.t('logOut.thanksForUsing_title', { title: constants.TITLE })}
             </Typography>
             <div style={{ fontSize: 12, marginTop: 20 }}>
-              <Link to="/">Topに戻る</Link>
+              <Link to="/">{i18n.t('common.backToTop')}</Link>
             </div>
           </div>
-        </Paper>
+        </div>
       </Grid>
       <Footer />
     </Grid>

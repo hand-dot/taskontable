@@ -8,6 +8,7 @@ import TodaySummary from './TodaySummary';
 import Clock from './Clock';
 import TimelineChart from './TimelineChart';
 import util from '../util';
+import i18n from '../i18n';
 import tasksUtil from '../tasksUtil';
 
 const styles = {};
@@ -76,9 +77,7 @@ class Dashboard extends Component {
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} sm={6}>
-          <Typography variant="subheading">
-            サマリ
-          </Typography>
+          <Typography variant="subheading">{i18n.t('dashBoad.summary')}</Typography>
           <TodaySummary
             data={{
               estimateTasks: this.state.estimateTasks,
@@ -90,19 +89,19 @@ class Dashboard extends Component {
         </Grid>
         {!util.isMobile() && (
           <Grid item xs={12} sm={6}>
-            <Typography gutterBottom variant="subheading">時刻</Typography>
+            <Typography gutterBottom variant="subheading">{i18n.t('dashBoad.clock')}</Typography>
             <Grid container>
               <Grid item xs={6}>
-                <Clock title="現在時刻" time={this.state.currentTime} />
+                <Clock title={i18n.t('dashBoad.currentTime')} time={this.state.currentTime} />
               </Grid>
               <Grid item xs={6}>
-                <Clock title="終了時刻" time={this.state.endTime} />
+                <Clock title={i18n.t('dashBoad.endTime')} time={this.state.endTime} />
               </Grid>
             </Grid>
           </Grid>
         )}
         <Grid item xs={12}>
-          <Typography gutterBottom variant="subheading">タイムライン</Typography>
+          <Typography gutterBottom variant="subheading">{i18n.t('dashBoad.timeline')}</Typography>
           <Grid container>
             <Grid item xs={12}>
               <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)} />

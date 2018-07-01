@@ -14,6 +14,7 @@ import Close from '@material-ui/icons/Close';
 import '../styles/helpdialog.css';
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n';
 
 const styles = {
   flex: {
@@ -33,7 +34,9 @@ const styles = {
 };
 
 function HelpDialog(props) {
-  const { open, onClose, classes } = props;
+  const {
+    open, onClose, classes, theme,
+  } = props;
   return (
     <Dialog
       fullScreen={util.isMobile()}
@@ -42,31 +45,31 @@ function HelpDialog(props) {
     >
       <AppBar position="static" color="default">
         <Toolbar>
-          <Typography variant="title" color="inherit" className={classes.flex}>ヘルプ</Typography>
+          <Typography variant="title" color="inherit" className={classes.flex}>{i18n.t('help.title')}</Typography>
           <IconButton className={classes.closeBtn} onClick={onClose}>
             <Close />
           </IconButton>
         </Toolbar>
       </AppBar>
       <div>
-        <DialogTitle>テーブルの色</DialogTitle>
+        <DialogTitle>{i18n.t('help.tableColor')}</DialogTitle>
         <DialogContent className={classes.content}>
-          <Grid container spacing={40}>
+          <Grid container>
             <Grid item xs={12}>
               <Typography gutterBottom variant="caption">
-                見積を入力していないタスクは<span className={classes.block} style={{ color: constants.cellColor.WARNING }}>■</span>(黄色)になります。
+                {i18n.t('help.tableColors.yellow')} / <span className={classes.block} style={{ color: constants.cellColor.WARNING }}>■</span>
               </Typography>
               <Typography gutterBottom variant="caption">
-                開始時刻を予約したタスクは<span className={classes.block} style={{ color: constants.cellColor.RESERVATION }}>■</span>(緑色)になります。
+                {i18n.t('help.tableColors.green')} / <span className={classes.block} style={{ color: constants.cellColor.RESERVATION }}>■</span>
               </Typography>
               <Typography gutterBottom variant="caption">
-                実行中のタスクは<span className={classes.block} style={{ color: constants.cellColor.RUNNING }}>■</span>(青色)になります。
+                {i18n.t('help.tableColors.blue')} / <span className={classes.block} style={{ color: constants.cellColor.RUNNING }}>■</span>
               </Typography>
               <Typography gutterBottom variant="caption">
-                見積を過ぎたのタスクは<span className={classes.block} style={{ color: constants.cellColor.OUT }}>■</span>(赤色)になります。
+                {i18n.t('help.tableColors.red')} / <span className={classes.block} style={{ color: constants.cellColor.OUT }}>■</span>
               </Typography>
               <Typography gutterBottom variant="caption">
-                完了したタスクは<span className={classes.block} style={{ color: constants.cellColor.DONE }}>■</span>(灰色)になります。
+                {i18n.t('help.tableColors.gray')} / <span className={classes.block} style={{ color: constants.cellColor.DONE }}>■</span>
               </Typography>
             </Grid>
           </Grid>
@@ -74,55 +77,58 @@ function HelpDialog(props) {
       </div>
       {!util.isMobile() && (
         <div>
-          <DialogTitle>キーボードショートカット</DialogTitle>
+          <DialogTitle>{i18n.t('help.keyboardShortcut')}</DialogTitle>
           <DialogContent className={classes.content}>
-            <Grid container spacing={40}>
+            <Grid container>
               <Grid className={classes.shotcut} item xs={6}>
-                <h5>アプリ</h5>
+                <h5 style={{ margin: theme.spacing.unit }}>{i18n.t('help.keyboardShortcuts.application')}</h5>
                 {/* ヘルプだけはmacOSでクロームのヘルプがアプリのレベルで割り当てられていてctrlにしなければいけない */}
-                <Typography gutterBottom variant="caption"><kbd>ctrl</kbd> + <kbd>?</kbd> – ヘルプを表示</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>S</kbd> – 保存</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>J</kbd> – ダッシュボード開閉</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&gt;</kbd> – 次の日に移動</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&lt;</kbd> – 前の日に移動</Typography>
+                <Typography gutterBottom variant="caption"><kbd>ctrl</kbd> + <kbd>?</kbd> – {i18n.t('help.keyboardShortcuts.showHelp')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>S</kbd> – {i18n.t('help.keyboardShortcuts.save')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>J</kbd> – {i18n.t('help.keyboardShortcuts.dashboardOpenAndClose')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&gt;</kbd> – {i18n.t('help.keyboardShortcuts.moveToNextDay')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&lt;</kbd> – {i18n.t('help.keyboardShortcuts.moveToPreviousDay')}</Typography>
               </Grid>
               <Grid className={classes.shotcut} item xs={6}>
-                <h5>テーブル編集</h5>
-                <Typography gutterBottom variant="caption"><kbd>右クリック</kbd> – コンテキストメニュー表示</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>C</kbd> – コピー</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>X</kbd> – 切り取り</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>V</kbd> – 貼り付け</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>Z</kbd> – 戻る</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>Y</kbd> – 進む</Typography>
-                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>:</kbd> – 現在時刻を入力</Typography>
+                <h5 style={{ margin: theme.spacing.unit }}>{i18n.t('help.keyboardShortcuts.table')}</h5>
+                <Typography gutterBottom variant="caption"><kbd>{i18n.t('help.keyboardShortcuts.rightClick')}</kbd> – {i18n.t('help.keyboardShortcuts.showContextMenu')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>C</kbd> – {i18n.t('help.keyboardShortcuts.copy')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>X</kbd> – {i18n.t('help.keyboardShortcuts.cut')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>V</kbd> – {i18n.t('help.keyboardShortcuts.paste')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>Z</kbd> – {i18n.t('help.keyboardShortcuts.back')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>Y</kbd> – {i18n.t('help.keyboardShortcuts.forward')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>:</kbd> – {i18n.t('help.keyboardShortcuts.enterCurrentTime')}</Typography>
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogTitle>タスクの入力について</DialogTitle>
+          <DialogTitle>{i18n.t('help.aboutTaskInput')}</DialogTitle>
           <DialogContent className={classes.content}>
-            <Grid container spacing={40}>
+            <Grid container>
               <Grid item xs={12}>
                 <Typography gutterBottom variant="caption">
-            セル上で右クリックすると現在時刻の入力・行の追加・削除を行えます。
+                  {i18n.t('help.rightClickOnTheCell')}
                 </Typography>
                 <Typography gutterBottom variant="caption">
-            行を選択しドラッグアンドドロップでタスクを入れ替えることができます。
+                  {i18n.t('help.rowDragAndDrop')}
                 </Typography>
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogTitle>アラームについて</DialogTitle>
+          <DialogTitle>{i18n.t('help.aboutNotification')}</DialogTitle>
           <DialogContent className={classes.content}>
-            <Grid container spacing={40}>
+            <Grid container>
               <Grid item xs={12}>
                 <Typography gutterBottom variant="caption">
-            終了通知の予約を行うには見積を入力したタスクの開始時刻を入力してください。
+                  {i18n.t('help.toReserveStartNotification')}
                 </Typography>
                 <Typography gutterBottom variant="caption">
-            開始時刻を削除、もしくは終了時刻を入力すると終了通知の予約は削除されます。
+                  {i18n.t('help.toReserveEndNotification')}
                 </Typography>
                 <Typography gutterBottom variant="caption">
-            通知が表示されない場合はこちらをご参照ください。<a href={constants.CHROME_HELP_PERMISSION_URL} target="_blank">サイトの許可を変更する Google Chrome</a>
+                  {i18n.t('help.notificationNotDisplayed')}
+                  <a href={constants.CHROME_HELP_PERMISSION_URL} target="_blank">
+                    {i18n.t('help.changeGoogleChromeSitePermissions')}
+                  </a>
                 </Typography>
               </Grid>
             </Grid>
@@ -137,6 +143,7 @@ HelpDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
+  theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles, { withTheme: true })(HelpDialog);

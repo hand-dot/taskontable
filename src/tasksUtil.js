@@ -2,6 +2,7 @@ import moment from 'moment';
 import * as R from 'ramda';
 import constants from './constants';
 import util from './util';
+import i18n from './i18n';
 import tableTaskSchema from './schemas/tableTaskSchema';
 
 export default {
@@ -42,7 +43,7 @@ export default {
   getEstimateTimelineChartTasks(tasks) {
     const hasStartTime = t => t.startTime;
     const getTimelineChartTask = t => ({
-      key: '見積', start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.startTime, constants.TIMEFMT).add(t.estimate || 0, 'minutes').toDate(), title: t.title || '無名タスク',
+      key: i18n.t('dashBoad.estimate'), start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.startTime, constants.TIMEFMT).add(t.estimate || 0, 'minutes').toDate(), title: t.title || i18n.t('common.anonymousTask'),
     });
     return R.compose(R.map(r => getTimelineChartTask(r)), R.filter(hasStartTime, R))(tasks);
   },
@@ -52,7 +53,7 @@ export default {
    */
   getActuallyTimelineChartTasks(tasks) {
     const getTimelineChartTask = t => ({
-      key: '実績', start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.endTime, constants.TIMEFMT).toDate(), title: t.title || '無名タスク',
+      key: i18n.t('dashBoad.actually'), start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.endTime, constants.TIMEFMT).toDate(), title: t.title || i18n.t('common.anonymousTask'),
     });
     return R.compose(R.map(r => getTimelineChartTask(r)), this.getDoneTasks(R))(tasks);
   },

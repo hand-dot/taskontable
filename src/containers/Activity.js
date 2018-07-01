@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.min.css';
@@ -19,13 +19,10 @@ import constants from '../constants';
 import '../styles/handsontable-custom.css';
 import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import util from '../util';
+import i18n from '../i18n';
 import DatePicker from '../components/DatePicker';
+import UnderDevelopment from '../components/UnderDevelopment';
 import ActivityChart from '../components/ActivityChart';
-
-// TODO ！期間をスタート、エンドで絞り込めるようにする
-// ①画面の遷移時、デフォルトで直近の1週間のデータを取得する。
-// ②期間はあとから変更可能
-// ③その期間は同じ年で同じ月でないといけない(大量のデータを処理させ、システムに無駄に不可をかけないように)
 
 const database = util.getDatabase();
 
@@ -43,7 +40,6 @@ const styles = {
     padding: '4em 2em 2em',
     width: '100%',
     margin: '0 auto',
-    backgroundColor: '#fff',
   },
   button: {
     fontSize: 11,
@@ -160,7 +156,6 @@ class Activity extends Component {
   }
 
   changeDate(type, newDate) {
-    // ③ここでバリデーションなど、の処理を書く
     this.setState({ [type]: newDate });
     setTimeout(() => this.setActivityData());
   }
@@ -181,13 +176,14 @@ class Activity extends Component {
     const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{ paddingBottom: '3em' }} >
           <Typography variant="title">
-            アクティビティ(α版)
+            {i18n.t('worksheet.activity')}
           </Typography>
           <Typography gutterBottom variant="caption">
-            過去に行った内容を期間指定し確認することができます。
+            {i18n.t('activity.description')}
           </Typography>
+          <UnderDevelopment />
         </Grid>
         <Grid item xs={12}>
           <Typography gutterBottom variant="caption">
@@ -198,12 +194,19 @@ class Activity extends Component {
           <DatePicker value={this.state.endDate} changeDate={(e) => { this.changeDate('endDate', e.target.value); }} label="終了" />
         </Grid>
         <Grid item xs={12}>
-          {this.state.taskData !== '' && (<ActivityChart tableTasks={JSON.parse(this.state.taskData)} />)}
+          {this.state.taskData !== '' && (
+            <div>
+              <Typography gutterBottom variant="caption">
+                見積:<span className={classes.block} style={{ color: constants.brandColor.base.GREEN }}>■</span>(緑色) /
+                実績:<span className={classes.block} style={{ color: constants.brandColor.base.BLUE }}>■</span>(青色) /
+                残:<span className={classes.block} style={{ color: constants.brandColor.base.RED }}>■</span>(赤色)
+              </Typography>
+              <ActivityChart tableTasks={JSON.parse(this.state.taskData)} />
+            </div>
+          )}
         </Grid>
         <Grid item xs={8}>
-          <Paper square elevation={0}>
-            <div ref={(node) => { this.hotDom = node; }} />
-          </Paper>
+          <div ref={(node) => { this.hotDom = node; }} />
         </Grid>
         <Grid item xs={4}>
           <CodeMirror
@@ -212,7 +215,8 @@ class Activity extends Component {
           />
         </Grid>
         <Grid item xs={12} style={{ marginTop: theme.spacing.unit * 2 }}>
-          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">ワークシートに戻る</Button>
+          <Divider style={{ margin: '1.5em 0' }} />
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

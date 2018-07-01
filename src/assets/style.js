@@ -8,18 +8,18 @@ export default {
     actionIcon: {
       fontSize: 14,
       width: util.isMobile() ? 14 : 45,
-      height: util.isMobile() ? 10 : 45,
+      height: util.isMobile() ? 'inherit' : 45,
     },
     actionIcons: {
       margin: '0 auto',
     },
     cellInput: {
-      padding: 0,
+      padding: '0 3px',
       fontSize: 12,
     },
     miniCellInput: {
       fontSize: 12,
-      width: util.isMobile() ? '3rem' : '6.4rem',
+      width: util.isMobile() ? '3.5rem' : '6.4rem',
     },
     taskRow: {
       padding: theme.spacing.unit,

@@ -6,6 +6,7 @@ import Tab from '@material-ui/core/Tab';
 
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n';
 
 import PoolTaskList from './PoolTaskList';
 
@@ -26,7 +27,7 @@ class TaskPool extends Component {
   }
 
   doTaskAction(index, taskActionType) {
-    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${this.props.poolTasks[this.state.tab][index].title} を本当に削除しますか？`)) {
+    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${i18n.t('taskPool.areYouSureDelete_target', { target: this.props.poolTasks[this.state.tab][index].title })}`)) {
       this.props.changePoolTasks(constants.taskActionType.REMOVE, this.state.tab, index);
     } else if (taskActionType !== constants.taskActionType.REMOVE) {
       this.props.changePoolTasks(taskActionType, this.state.tab, index);
@@ -54,16 +55,16 @@ class TaskPool extends Component {
             if (!util.isMobile()) {
               return (
                 <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="secondary" textColor="inherit">
-                  <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
-                  <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
-                  <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label="定期的" />
+                  <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.highPriority')} />
+                  <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.lowPriority')} />
+                  <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.regular')} />
                 </Tabs>
               );
             }
             return (
               <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="secondary" textColor="inherit">
-                <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="すぐにやる" />
-                <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label="いつかやる" />
+                <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.highPriority')} />
+                <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.lowPriority')} />
               </Tabs>
             );
           })()}

@@ -5,13 +5,14 @@ import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-import Snackbar from '@material-ui/core/Snackbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControl from '@material-ui/core/FormControl';
 import AssignmentReturn from '@material-ui/icons/AssignmentReturn';
 import constants from '../constants';
+import i18n from '../i18n';
 import util from '../util';
 
 const styles = theme => ({
@@ -30,13 +31,12 @@ class OpenRange extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      snackbarText: '',
-      isOpenSnackbar: false,
+      isOpenTooltip: false,
     };
   }
 
   handleWorksheetOpenRange(event) {
-    if (!window.confirm(`公開範囲を${event.target.value === constants.worksheetOpenRange.PUBLIC ? '公開' : '非公開'}に設定してもよろしいですか？`)) return;
+    if (!window.confirm(i18n.t('openRange.areYouSureSetOpenRangeTo_target', { target: event.target.value === constants.worksheetOpenRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }))) return;
     this.props.handleWorksheetOpenRange(event.target.value);
   }
 
@@ -45,7 +45,7 @@ class OpenRange extends Component {
     return (
       <FormControl component="fieldset" required className={classes.formControl}>
         <Typography variant="subheading">
-              公開範囲を変更
+          {i18n.t('openRange.changeOpenRange')}
         </Typography>
         <RadioGroup
           aria-label="worksheetOpenRange"
@@ -54,11 +54,22 @@ class OpenRange extends Component {
           value={worksheetOpenRange}
           onChange={this.handleWorksheetOpenRange.bind(this)}
         >
-          <FormControlLabel value={constants.worksheetOpenRange.PUBLIC} control={<Radio color="primary" />} label={<span>公開: URLを知っている人は誰でも閲覧でき、Googleのような検索エンジンにも表示されます。編集可能なのはワークシートのメンバーのみです。</span>} />
-          <FormControlLabel value={constants.worksheetOpenRange.PRIVATE} control={<Radio color="primary" />} label={<span>非公開: ワークシートのメンバーのみ、閲覧、編集できます。</span>} />
+          <FormControlLabel
+            value={constants.worksheetOpenRange.PUBLIC}
+            control={<Radio color="primary" />}
+            label={
+              <span>{i18n.t('common.public')}: {i18n.t('openRange.anyoneCanRead')}</span>
+          }
+          />
+          <FormControlLabel
+            value={constants.worksheetOpenRange.PRIVATE}
+            control={<Radio color="primary" />}
+            label={
+              <span>{i18n.t('common.private')}: {i18n.t('openRange.onlyMembersCanReadAndEdit')}</span>}
+          />
         </RadioGroup>
         <Typography variant="subheading">
-              URL
+          URL
         </Typography>
         <Input
           id="urlInput"
@@ -66,24 +77,20 @@ class OpenRange extends Component {
           value={window.location.href}
           endAdornment={
             <InputAdornment position="end">
-              <IconButton
-                aria-label="URL"
-                onClick={() => {
+              <Tooltip open={this.state.isOpenTooltip} onClose={() => { this.setState({ isOpenTooltip: false }); }} id="tooltip-copied" title={i18n.t('openRange.copied')}>
+                <IconButton
+                  aria-label="URL"
+                  onClick={() => {
                     util.copyTextToClipboard(window.location.href);
-                    this.setState({ isOpenSnackbar: true, snackbarText: 'クリップボードにURLをコピーしました。' });
-                }}
-                onMouseDown={(e) => { e.preventDefault(); }}
-              >
-                <AssignmentReturn />
-              </IconButton>
+                    this.setState({ isOpenTooltip: true });
+                  }}
+                  onMouseDown={(e) => { e.preventDefault(); }}
+                >
+                  <AssignmentReturn />
+                </IconButton>
+              </Tooltip>
             </InputAdornment>
               }
-        />
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSnackbar}
-          onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
-          message={this.state.snackbarText}
         />
       </FormControl>
     );

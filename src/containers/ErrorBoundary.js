@@ -7,8 +7,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
+import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n/';
 
 const auth = util.getAuth();
 
@@ -29,6 +30,12 @@ const styles = {
   },
 };
 
+Raven.config(constants.SENTRY_URL, {
+  release: constants.APP_VERSION,
+  environment: process.env.NODE_ENV,
+  shouldSendCallback: () => ['development', 'production', 'staging'].indexOf(process.env.NODE_ENV) !== -1,
+}).install();
+
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
@@ -47,21 +54,26 @@ class ErrorBoundary extends Component {
       return (
         <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
           <Grid item xs={12}>
-            <Paper style={{ minHeight: '100vh' }} square elevation={0}>
-              <div className={classes.content}>
-                <Typography variant="title" gutterBottom>
-                すみません。エラーが発生しちゃいました。
-                </Typography>
-                <img src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fcat.png?alt=media&token=ad2ea5c2-1a0b-4261-92ee-5d99dbe6c4da" style={{ width: '100%' }} alt="cat" />
-                <Typography variant="caption" gutterBottom>
-                エラーが発生した手順、状態を詳しく報告してくださるとなるべくはやく頑張って対応します。
-                </Typography>
-                <Button onClick={() => Raven.lastEventId() && Raven.showReportDialog()} variant="raised" color="primary" className={classes.button}>エラーを報告する</Button>
-                <div style={{ fontSize: 12, marginBottom: 10 }}>
-                  <a href="" onClick={() => { auth.signOut().then(() => { window.location.replace(`${window.location.protocol}//${window.location.host}/`); }); return false; }}>Topに戻る</a>
-                </div>
+            <div style={{ minHeight: '100vh' }} className={classes.content}>
+              <Typography variant="title" gutterBottom>
+                {i18n.t('errorBoundary.sorry')}
+              </Typography>
+              <img src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fcat.png?alt=media&token=ad2ea5c2-1a0b-4261-92ee-5d99dbe6c4da" style={{ width: '100%' }} alt="cat" />
+              <Typography variant="caption" gutterBottom>
+                {i18n.t('errorBoundary.pleaseReport')}
+              </Typography>
+              <Button
+                onClick={() => Raven.lastEventId() && Raven.showReportDialog()}
+                variant="raised"
+                color="primary"
+                className={classes.button}
+              >
+                {i18n.t('errorBoundary.reportError')}
+              </Button>
+              <div style={{ fontSize: 12, marginBottom: 10 }}>
+                <a href="" onClick={() => { auth.signOut().then(() => { window.location.replace(`${window.location.protocol}//${window.location.host}/`); }); return false; }}>{i18n.t('common.backToTop')}</a>
               </div>
-            </Paper>
+            </div>
           </Grid>
         </Grid>
       );

@@ -16,7 +16,8 @@ import Help from '@material-ui/icons/Help';
 import Notifications from '@material-ui/icons/Notifications';
 import HelpDialog from '../components/HelpDialog';
 import constants from '../constants';
-import title from '../images/title_gr.png';
+import i18n from '../i18n/';
+import title from '../images/title.png';
 
 const styles = theme => ({
   root: {
@@ -110,7 +111,7 @@ class GlobalHeader extends Component {
 
   render() {
     const {
-      user, openSideBar, isOpenHelpDialog, openHelpDialog, closeHelpDialog, classes,
+      user, openSideBar, isOpenHelpDialog, openHelpDialog, closeHelpDialog, history, classes,
     } = this.props;
     const { anchorEl } = this.state;
 
@@ -118,19 +119,19 @@ class GlobalHeader extends Component {
       <AppBar color="default" className={classes.appBar}>
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
           <Grid item xs={12}>
-            <Toolbar className={classes.root}>
+            <Toolbar style={{ paddingLeft: 0 }} className={classes.root}>
               {(() => {
                   if (this.state.login) {
                     return (<Button className={classes.title} onClick={openSideBar} ><img src={title} alt="taskontable" height="18" /></Button>);
                   }
-                  return (<Link className={classes.title} to="/"><img src={title} alt="taskontable" height="18" /></Link>);
+                  return (<Button className={classes.title} onClick={() => { history.push('/'); }}><img src={title} alt="taskontable" height="18" /></Button>);
               })()}
               {(() => {
                 if (!this.state.login) {
                   return (
                     <div style={{ display: 'inline-flex' }}>
-                      <Link className={classes.link} to="/login"><Button className={classes.button}>ログイン</Button></Link>
-                      <Link className={classes.link} to="/signup"><Button className={classes.button} >アカウント作成</Button></Link>
+                      <Link className={classes.link} to="/login"><Button className={classes.button}>{i18n.t('common.logIn')}</Button></Link>
+                      <Link className={classes.link} to="/signup"><Button className={classes.button} >{i18n.t('common.signUp')}</Button></Link>
                     </div>);
                 }
                 return (
@@ -144,9 +145,9 @@ class GlobalHeader extends Component {
                         open={this.state.openMenuKey === 'user'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem title={user.email}>アカウント名: {user.displayName}</MenuItem>
-                        <MenuItem onClick={this.goSettings.bind(this)}>アカウント設定</MenuItem>
-                        <MenuItem onClick={this.logout.bind(this)}>ログアウト</MenuItem>
+                        <MenuItem title={user.email}>{i18n.t('common.userName')}: {user.displayName}</MenuItem>
+                        <MenuItem onClick={this.goSettings.bind(this)}>{i18n.t('common.accountSettings')}</MenuItem>
+                        <MenuItem onClick={this.logout.bind(this)}>{i18n.t('common.logOut')}</MenuItem>
                       </Menu>
                     </div>
                     <div>
@@ -163,11 +164,12 @@ class GlobalHeader extends Component {
                         open={this.state.openMenuKey === 'info'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>お問い合わせ</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>ロードマップ</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>ブログ</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>コミュニティー</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>ソースコード</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>{i18n.t('external.contact')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>{i18n.t('external.roadMap')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>{i18n.t('external.blog')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>{i18n.t('external.community')}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>{i18n.t('external.github')}</MenuItem>
+                        <MenuItem disabled>version:{constants.APP_VERSION}</MenuItem>
                       </Menu>
                     </div>
                   </div>);
@@ -204,6 +206,7 @@ GlobalHeader.propTypes = {
   closeHelpDialog: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   goSettings: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired, // eslint-disable-line
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

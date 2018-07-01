@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import Switch from '@material-ui/core/Switch';
 import Refresh from '@material-ui/icons/Refresh';
 import Handsontable from 'handsontable';
@@ -20,11 +20,13 @@ import constants from '../constants';
 import '../styles/handsontable-custom.css';
 import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import ScriptsEditor from '../components/ScriptsEditor';
+import UnderDevelopment from '../components/UnderDevelopment';
 import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
 import exampleExportScript from '../exampleDatas/exampleExportScript';
 import tableTaskSchema from '../schemas/tableTaskSchema';
 import util from '../util';
+import i18n from '../i18n';
 
 const database = util.getDatabase();
 
@@ -41,7 +43,6 @@ const styles = {
     padding: '4em 2em 2em',
     width: '100%',
     margin: '0 auto',
-    backgroundColor: '#fff',
   },
   button: {
     fontSize: 11,
@@ -212,53 +213,51 @@ class Scripts extends Component {
     const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{ paddingBottom: '3em' }}>
           <Typography variant="title">
-            スクリプト設定(α版)
+            {i18n.t('worksheet.plugIns')}
           </Typography>
           <Typography gutterBottom variant="caption">
-            本日のワークシートのデータの取得時・保存時に実行されるWeb Workersをプログラミングできる開発者向けの機能となっております。
+            {i18n.t('scripts.description')}
+          </Typography>
+          <UnderDevelopment />
+        </Grid>
+        <Grid item xs={12}>
+          <Typography gutterBottom variant="subheading">
+            スクリプトの利用(ON/OFF)
+            <span className={classes.divider}>/</span>
+            <div style={{ display: 'inline-block' }}>
+              <Switch
+                color="primary"
+                checked={this.state.scriptEnable}
+                onChange={this.handleScriptEnable.bind(this)}
+                value="scriptEnable"
+              />
+            </div>
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <Paper square elevation={0}>
-            <Typography gutterBottom variant="subheading">
-              スクリプトの利用(ON/OFF)
-              <span className={classes.divider}>/</span>
-              <div style={{ display: 'inline-block' }}>
-                <Switch
-                  color="primary"
-                  checked={this.state.scriptEnable}
-                  onChange={this.handleScriptEnable.bind(this)}
-                  value="scriptEnable"
-                />
-              </div>
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper square elevation={0}>
-            <Typography gutterBottom variant="subheading">
+          <Divider style={{ margin: '1.5em 0' }} />
+          <Typography gutterBottom variant="subheading">
               ワークシートのデータの例
-              <span className={classes.divider}>/</span>
-              <Tooltip title="リセット" placement="top">
-                <div style={{ display: 'inline-block' }}>
-                  <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><Refresh style={{ fontSize: 13 }} /></Button>
-                </div>
-              </Tooltip>
-            </Typography>
-            <Typography gutterBottom variant="caption">
+            <span className={classes.divider}>/</span>
+            <Tooltip title="リセット" placement="top">
+              <div style={{ display: 'inline-block' }}>
+                <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><Refresh style={{ fontSize: 13 }} /></Button>
+              </div>
+            </Tooltip>
+          </Typography>
+          <Typography gutterBottom variant="caption">
               タスクのスキーマは　{JSON.stringify(tableTaskSchema)}　このようになっております。
-            </Typography>
-            <Typography gutterBottom variant="caption">
+          </Typography>
+          <Typography gutterBottom variant="caption">
               ワークシートのデータは左のテーブルに対して右のJSON形式(配列)で保存されます。
-            </Typography>
-          </Paper>
+          </Typography>
         </Grid>
         <Grid item xs={8}>
-          <Paper square elevation={0}>
+          <div>
             <div ref={(node) => { this.exampleHotDom = node; }} />
-          </Paper>
+          </div>
         </Grid>
         <Grid item xs={4}>
           <CodeMirror
@@ -266,7 +265,9 @@ class Scripts extends Component {
             options={Object.assign({}, editorOptions, { readOnly: true })}
           />
         </Grid>
+
         <Grid item xs={12}>
+          <Divider style={{ margin: '1.5em 0' }} />
           <ScriptsEditor
             scriptType="importScript"
             script={this.state.importScript}
@@ -281,6 +282,7 @@ class Scripts extends Component {
           />
         </Grid>
         <Grid item xs={12}>
+          <Divider style={{ margin: '1.5em 0' }} />
           <ScriptsEditor
             scriptType="exportScript"
             script={this.state.exportScript}
@@ -295,7 +297,8 @@ class Scripts extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">ワークシートに戻る</Button>
+          <Divider style={{ margin: '1.5em 0' }} />
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

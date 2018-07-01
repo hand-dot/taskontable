@@ -4,6 +4,7 @@ import debounce from 'lodash.debounce';
 import tableTaskSchema from './schemas/tableTaskSchema';
 import constants from './constants';
 import util from './util';
+import i18n from './i18n';
 import notifiIcon from './images/notifiIcon.png';
 import person from './images/person.svg';
 import logoMini from './images/logo_mini.png';
@@ -41,6 +42,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
   // タイマーを登録(セルにタイマーIDを設定)
   const col = hotInstance.propToCol(prop);
   const notifiId = setTimeout(() => {
+    if (!hotInstance) return;
     // タイマーが削除されていた場合には何もしない
     if (!hotInstance.getCellMeta(row, col)[targetNotifiId]) return;
     removeNotifiCell(hotInstance, row, [prop]);
@@ -51,13 +53,13 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
     let taskTitle = hotInstance.getDataAtRowProp(row, 'title');
     let taskTitleLabel;
     if (snooz) {
-      taskTitleLabel = 'スヌーズ';
+      taskTitleLabel = i18n.t('hot.snooz');
     } else if (prop === 'startTime') {
-      taskTitleLabel = '開始';
+      taskTitleLabel = i18n.t('hot.start');
     } else {
-      taskTitleLabel = '終了';
+      taskTitleLabel = i18n.t('hot.end');
     }
-    taskTitle = taskTitle ? `⏰ ${taskTitleLabel} - ${taskTitle}` : `⏰ ${taskTitleLabel} - 無名タスク`;
+    taskTitle = `⏰[${taskTitleLabel}] - ${taskTitle || i18n.t('common.anonymousTask')}`;
     new Audio(doorknock).play();
     if (permission !== 'granted') {
       alert(taskTitle);
@@ -86,7 +88,7 @@ const setNotifiCell = (hotInstance, row, prop, timeout, snooz) => {
  * 通知を管理する処理。
  * ロジックは下記の通り
  * case0 [作成]・見積・開始時刻のペアが成立した→通知を予約する
- * case1 [削除]・見積・開始時刻のペアが不成立になった→通知を破棄する
+ * case1 [削除]・開始時刻のペアが不成立になった→通知を破棄する
  * case2 [削除]・終了時刻が入力された→通知を破棄する
  * case3 [削除・更新]・終了時刻が空になった→通知を破棄し、新しい通知を設定する
  * case4 [更新]・見積・開始時刻のペアが成立した状態で見積or開始時刻が新しい値として入力された→既存の通知
@@ -112,8 +114,8 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
     const startTimeVal = prop === 'startTime' ? newVal : hotInstance.getDataAtRowProp(row, 'startTime');
     const endTimeVal = prop === 'endTime' ? newVal : hotInstance.getDataAtRowProp(row, 'endTime');
 
-    // case1 見積が空か0,もしくは開始時刻が空の場合、既に登録されている通知を削除
-    if (estimateVal === '' || estimateVal === 0 || startTimeVal === '') {
+    // case1 開始時刻が空の場合、既に登録されている通知を削除
+    if (startTimeVal === '') {
       removeNotifiCell(hotInstance, row, ['startTime', 'endTime']);
       return;
     }
@@ -132,6 +134,8 @@ const manageNotifi = (hotInstance, row, prop, newVal) => {
     if (startTimeOut > 0) {
       setNotifiCell(hotInstance, row, 'startTime', startTimeOut);
     }
+    // 見積が空もしくは0なので終了時刻の予約はできない
+    if (estimateVal === '' || estimateVal === 0) return;
     // --------------------------終了時刻に表示する通知の設定--------------------------
     const endTimeOut = startTimeMoment.add(estimateVal, 'minutes').diff(currentMoment);
     if (endTimeOut > 0) {
@@ -186,7 +190,7 @@ export const contextMenuCallback = (key, selections, hotInstance) => {
         if (hotInstance.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
         if (hotInstance.getDataAtRowProp(row, 'startTime') !== '') confirm = true;
       }
-      if (confirm && !window.confirm('終了時刻もしくは開始時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
+      if (confirm && !window.confirm(i18n.t('hot.resetTime'))) return;
       for (let { row } = selection.start; row <= selection.end.row; row += 1) {
         hotInstance.setDataAtRowProp(row, 'endTime', '');
         hotInstance.setDataAtRowProp(row, 'startTime', moment().format(constants.TIMEFMT));
@@ -196,7 +200,7 @@ export const contextMenuCallback = (key, selections, hotInstance) => {
       for (let { row } = selection.start; row <= selection.end.row; row += 1) {
         if (hotInstance.getDataAtRowProp(row, 'endTime') !== '') confirm = true;
       }
-      if (confirm && !window.confirm('終了時刻が入力されているタスクがあります。\n 再設定してもよろしいですか？')) return;
+      if (confirm && !window.confirm(i18n.t('hot.resetTime'))) return;
       for (let { row } = selection.start; row <= selection.end.row; row += 1) {
         // 開始時刻が空だった場合は現在時刻を設定する
         if (hotInstance.getDataAtRowProp(row, 'startTime') === '') hotInstance.setDataAtRowProp(row, 'startTime', moment().format(constants.TIMEFMT));
@@ -208,18 +212,18 @@ export const contextMenuCallback = (key, selections, hotInstance) => {
 
 export const contextMenuItems = {
   row_above: {
-    name: '上に行を追加する',
+    name: i18n.t('hot.rowAbove'),
   },
   row_below: {
-    name: '下に行を追加する',
+    name: i18n.t('hot.rowBelow'),
   },
   hsep1: '---------',
   remove_row: {
-    name: '行を削除する',
+    name: i18n.t('hot.removeRow'),
   },
   hsep2: '---------',
   reverse_taskpool_hight: {
-    name: '[すぐにやる]に戻す',
+    name: i18n.t('hot.reverseTaskpoolHight'),
     disabled() {
       const selected = this.getSelectedLast();
       const startRow = selected[0];
@@ -232,7 +236,7 @@ export const contextMenuItems = {
     },
   },
   reverse_taskpool_low: {
-    name: '[いつかやる]に戻す',
+    name: i18n.t('hot.reverseTaskpoolLow'),
     disabled() {
       const selected = this.getSelectedLast();
       const startRow = selected[0];
@@ -246,10 +250,10 @@ export const contextMenuItems = {
   },
   hsep3: '---------',
   start_task: {
-    name: 'タスクを開始する',
+    name: i18n.t('hot.startTask'),
   },
   done_task: {
-    name: 'タスクを終了にする',
+    name: i18n.t('hot.doneTask'),
   },
 };
 
@@ -268,17 +272,26 @@ export const getHotTasksIgnoreEmptyTask = (hotInstance) => {
 
 export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
-  const newDatas = [];
+  const dataForHot = [];
+  let rowIndex = 0;
   util.cloneDeep(datas).forEach((data) => {
     if (!util.equal(tableTaskSchema, data)) {
-      const startTimeVal = data.startTime;
-      const endTimeVal = data.endTime;
-      data.actually = startTimeVal && endTimeVal ? util.getTimeDiffMinute(startTimeVal, endTimeVal) : null;
-      newDatas.push(data);
+      Object.entries(data).forEach(([key, value]) => {
+        dataForHot.push([rowIndex, key, value]);
+      });
     }
+    rowIndex += 1;
   });
-  hotInstance.updateSettings({ data: newDatas });
-  hotInstance.render();
+  const rowCount = hotInstance.countRows();
+  // rowIndex これから入れる行数
+  // rowCount 今の行数
+  let needTrim = false;
+  if (rowIndex < rowCount) needTrim = true;
+  hotInstance.setDataAtRowProp(dataForHot);
+  // 不要な行を削除する
+  if (needTrim) hotInstance.alter('remove_row', rowIndex, rowCount);
+  // 保存ボタンが活性化するのを防ぐ
+  hotInstance.runHooks('afterUpdateSettings');
 };
 
 const resetNotifi = debounce((hotInstance) => {
@@ -289,7 +302,7 @@ const resetNotifi = debounce((hotInstance) => {
   for (let index = 0; index < rowCount; index += 1) {
     if (!hotInstance.isEmptyRow(index)) {
       const estimate = hotInstance.getDataAtRowProp(index, 'estimate');
-      if (estimate) manageNotifi(hotInstance, index, 'estimate', estimate);
+      manageNotifi(hotInstance, index, 'estimate', estimate || 0);
     }
   }
 }, 1000);
@@ -310,7 +323,7 @@ export const hotConf = {
   colWidths: Math.round(window.innerWidth / 7),
   columns: [
     {
-      title: '割当',
+      title: i18n.t('columns.assign'),
       data: 'assign',
       editor: 'select',
       selectOptions: [],
@@ -349,19 +362,19 @@ export const hotConf = {
       },
     },
     {
-      title: '作業内容',
+      title: i18n.t('columns.title'),
       data: 'title',
       type: 'text',
     },
     {
-      title: '見積(分)',
+      title: i18n.t('columns.estimateWithUnit'),
       data: 'estimate',
       type: 'numeric',
       allowInvalid: false,
-      colWidths: 40,
+      colWidths: 50,
     },
     {
-      title: `開始時刻(${constants.TIMEFMT})`,
+      title: i18n.t('columns.startTimeWithFMT'),
       data: 'startTime',
       type: 'time',
       colWidths: 70,
@@ -379,7 +392,7 @@ export const hotConf = {
       },
     },
     {
-      title: `終了時刻(${constants.TIMEFMT})`,
+      title: i18n.t('columns.endTimeWithFMT'),
       data: 'endTime',
       type: 'time',
       colWidths: 70,
@@ -420,12 +433,12 @@ export const hotConf = {
       },
     },
     {
-      title: '実績(分)',
+      title: i18n.t('columns.actually'),
       data: 'actually',
       type: 'numeric',
       readOnly: true,
       validator: false,
-      colWidths: 45,
+      colWidths: 50,
       /* eslint no-param-reassign: ["error", { "props": false }] */
       renderer(instance, td, row, col, prop, value) {
         if (value === null || value === '') {
@@ -448,7 +461,7 @@ export const hotConf = {
       },
     },
     {
-      title: '備考',
+      title: i18n.t('columns.memo'),
       data: 'memo',
       type: 'text',
     },

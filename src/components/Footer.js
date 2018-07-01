@@ -1,89 +1,49 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-
-import title from '../images/title_gr.png';
+import Divider from '@material-ui/core/Divider';
+import Title from '../components/Title';
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n/';
 
-const styles = theme => ({
+const styles = {
   content: {
-    paddingTop: util.isMobile ? '7em' : '3em',
+    paddingTop: util.isMobile ? '2em' : '3em',
     paddingBottom: '3em',
     paddingLeft: 10,
     paddingRight: 10,
     maxWidth: 960,
     margin: '0 auto',
   },
-  textBox: {
-    maxWidth: 600,
-    margin: '0 auto',
-  },
-  bgTransparent: {
-    backgroundColor: 'transparent',
-  },
-  link: {
-    textDecoration: 'none',
-    display: 'block',
-  },
-  button: {
-    margin: theme.spacing.unit,
-  },
-  center: {
-    display: 'block',
-    margin: '0 auto',
-    textAlign: 'center',
-  },
-});
+};
 
 function Footer(props) {
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
       <Grid item xs={12}>
-        <Paper square className={classes.bgTransparent} elevation={0}>
+        <Paper square elevation={0}>
           <div className={classes.content}>
-            <Typography align="center" style={{ marginBottom: '2em' }}>
-            お友達にシェアしてみませんか？
-            </Typography>
-            {/* カラーコード参考 https://qiita.com/AcaiBowl/items/8ee0a5a6c994685fb1cd */}
-            <div style={{ textAlign: 'center' }}>
-              <a style={{ textDecoration: 'none' }} href={`https://plus.google.com/share?url=${constants.URL}`} target="_blank">
-                <Button style={{ color: '#fff', backgroundColor: '#dd4b39', textDecoration: 'none' }} variant="raised" className={classes.button}>Google+</Button>
-              </a>
-              <a style={{ textDecoration: 'none' }} href={`http://twitter.com/share?url=${constants.URL}`} target="_blank">
-                <Button style={{ color: '#fff', backgroundColor: '#55acee', textDecoration: 'none' }} variant="raised" className={classes.button}>Twitter</Button>
-              </a>
-              <a style={{ textDecoration: 'none' }} href={`https://www.facebook.com/sharer/sharer.php?u=${constants.URL}`} target="_blank">
-                <Button style={{ color: '#fff', backgroundColor: '#3B5998', textDecoration: 'none' }} variant="raised" className={classes.button}>Facebook</Button>
-              </a>
-              <a style={{ textDecoration: 'none' }} href={`http://line.me/R/msg/text/?${constants.URL}`} target="_blank">
-                <Button style={{ color: '#fff', backgroundColor: '#1dcd00', textDecoration: 'none' }} variant="raised" className={classes.button}>LINE</Button>
-              </a>
-            </div>
-            <Typography variant="display3" align="center" style={{ marginTop: '0.5em', marginBottom: '0.5em' }}>
-              Build Your WorkFlow
-            </Typography>
-            <img style={{ margin: '2em auto', display: 'block' }} src={title} alt="taskontable" height="40" />
-            <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '4em' }}>
-              <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">お問い合わせ</a>
+            <Divider style={{ margin: '0 0 7em' }} />
+            <Title />
+            <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '7em' }}>
+              <Grid item xs={12} sm={3} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">{i18n.t('external.contact')}</a>
               </Grid>
-              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.COMMUNITY_URL} target="_blank">コミュニティー</a>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.COMMUNITY_URL} target="_blank">{i18n.t('external.community')}</a>
               </Grid>
-              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.BLOG_URL} target="_blank">ブログ</a>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.BLOG_URL} target="_blank">{i18n.t('external.blog')}</a>
               </Grid>
-              <Grid item xs={2} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.ROADMAP_URL} target="_blank">ロードマップ</a>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.ROADMAP_URL} target="_blank">{i18n.t('external.roadMap')}</a>
               </Grid>
-              <Grid item xs={3} style={{ marginBottom: '2em' }} className={classes.center}>
-                <a style={{ margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">ソースコード</a>
+              <Grid item xs={12} sm={3} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.REPOSITORY_URL} target="_blank">{i18n.t('external.github')}</a>
               </Grid>
             </Grid>
           </div>

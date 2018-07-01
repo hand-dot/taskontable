@@ -8,6 +8,7 @@ import debounce from 'lodash.debounce';
 import { hotConf, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n';
 
 import '../styles/handsontable-custom.css';
 import tasksUtil from '../tasksUtil';
@@ -83,7 +84,7 @@ class TaskTable extends Component {
   moveTableTaskToPoolTask(taskPoolType, index, hotInstance) {
     const task = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
     if (!task.title) {
-      alert('作業内容が未記入のタスクはタスクプールに戻せません。');
+      alert(i18n.t('worksheet.cantMoveToTaskPoolWithNoTitleTask'));
       return;
     }
     hotInstance.alter('remove_row', index);
@@ -106,8 +107,8 @@ class TaskTable extends Component {
   }
 
   isSamePropTaskAndHotData() {
-    const hotTasks = util.cloneDeep(getHotTasksIgnoreEmptyTask(this.hot).map(task => tasksUtil.deleteUselessTaskProp(task)));
-    const propTasks = util.cloneDeep(this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)));
+    const hotTasks = getHotTasksIgnoreEmptyTask(this.hot).map(task => tasksUtil.deleteUselessTaskProp(task));
+    const propTasks = this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task));
     let same = false;
     if (this.props.taskTableFilterBy) {
       same = util.equal(tasksUtil.getTasksByAssign(hotTasks, this.props.taskTableFilterBy), tasksUtil.getTasksByAssign(propTasks, this.props.taskTableFilterBy));
