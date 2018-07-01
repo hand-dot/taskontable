@@ -97,7 +97,7 @@ export default {
     signUpItsFree: '無料でアカウント作成する',
     taskontableIsToDoListAndTimeKeeperOnSpreadsheet: 'Taskontableはスプレットシート上のTo-Doリストとタイムキーパーです。',
     aToolForClearingTasksOneByOne: 'タスクを1つ1つ消化するためのツールです。',
-    singleTaskIsBoostPersonalProductivity: 'シングルタスクは個人の生産性を向上させます。',
+    singleTaskIsBoostPersonalProductivity: 'シングルタスクは集中力を高め、個人の生産性を向上させます。',
     modernAndClassicalInterface: 'モダン&クラシカルなインターフェース。',
     SimpleFastBeautifulMoreFun: 'シンプルで、速く、美しく、しかも楽しい。',
     developedForIndividualsAndTeams: '個人とチーム向けに開発されました。',
@@ -105,7 +105,7 @@ export default {
   },
   howTouse: {
     createWorksheet: 'はじめにワークシートを作成してください。',
-    createTask: 'タイトル→見積もり→開始時刻の流れでタスクを作ってみよう。通知を許可していればデスクトップ通知が届きます。',
+    createTask: 'タイトル>見積>開始時刻の流れでタスクを作ってみよう。通知を許可していればデスクトップ通知が届きます。',
     createTasks: 'ショートカット、行の並び替え、コンテキストメニューをつかってタスクをどんどん作ってみよう。',
   },
   hello: {

@@ -4,17 +4,18 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 
 import pcMan from '../images/illust/pc_man.jpg';
-import elevatorMan from '../images/illust/elevator_man.jpg';
+import desk from '../images/illust/desk.png';
 import skateboard from '../images/illust/skateboard.jpg';
 import teamMens from '../images/illust/team_mens.jpg';
 import Title from '../components/Title';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
-import i18n from '../i18n/';
+import i18n from '../i18n';
 
 const styles = theme => ({
   content: {
@@ -61,7 +62,7 @@ function Top(props) {
           {i18n.t('top.whyDontYouFinishWorkEarly')}
         </Typography>
         <Link style={{ margin: '1em 0 3em' }} className={classes.link} to="/signup">
-          <Button variant="raised" className={classes.button} color="primary" >
+          <Button variant="raised" className={classes.button} color="primary">
             {i18n.t('top.signUpItsFree')}
           </Button>
         </Link>
@@ -90,7 +91,7 @@ function Top(props) {
           <div className={classes.content}>
             <Grid spacing={0} container alignItems="center" justify="center">
               <Grid item xs={12} md={5}>
-                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={elevatorMan} alt="elevatorMan" />
+                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={desk} alt="desk" />
               </Grid>
               <Grid item xs={12} md={7}>
                 <Typography variant="title" align="center" style={{ marginBottom: '2em' }}>
@@ -133,6 +134,16 @@ function Top(props) {
           </div>
         </div>
       </Grid>
+      <Grid item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
+        <Divider />
+        <div className={classes.center}>
+          <div className={classes.content}>
+            <Typography style={{ fontWeight: 'bold' }} variant="display3" align="center">
+              Try it out!
+            </Typography>
+          </div>
+        </div>
+      </Grid>
       <Footer />
     </Grid>
   );
@@ -144,4 +155,3 @@ Top.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(Top);
-

@@ -97,7 +97,7 @@ export default {
     signUpItsFree: 'Sign Up – It’s Free.',
     taskontableIsToDoListAndTimeKeeperOnSpreadsheet: 'Taskontable is To-Do List & Time keeper on Spreadsheet.',
     aToolForClearingTasksOneByOne: 'A tool for clearing tasks one by one.',
-    singleTaskIsBoostPersonalProductivity: 'Single task is boost personal productivity.',
+    singleTaskIsBoostPersonalProductivity: 'A single task improve concentration, and boost personal productivity.',
     modernAndClassicalInterface: 'Modern & classical interface.',
     SimpleFastBeautifulMoreFun: 'Simple, fast, beautiful, more fun.',
     developedForIndividualsAndTeams: 'Developed for individuals and teams.',
@@ -105,7 +105,7 @@ export default {
   },
   howTouse: {
     createWorksheet: 'At first, create worksheet.',
-    createTask: 'Let\'s make a task with the flow of title → estimate → start time. You will receive a desktop notification if you allow the notification.',
+    createTask: 'Let\'s make a task with the flow of title > estimate > start time. You will receive a desktop notification if you allow the notification.',
     createTasks: 'Let\'s make a lot of tasks more quickly by using shortcuts, row move, context menus.',
   },
   hello: {
