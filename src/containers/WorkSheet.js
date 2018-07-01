@@ -141,7 +141,12 @@ class WorkSheet extends Component {
     this.getRecentMessage(worksheetId);
     window.onfocus = () => { this.getRecentMessage(worksheetId); };
 
-    if (!this.state.isMobile) window.onkeydown = (e) => { this.fireShortcut(e); };
+    if (!this.state.isMobile) {
+      setTimeout(() => {
+        window.onkeydown = (e) => { this.fireShortcut(e); };
+      });
+    }
+
     window.onbeforeunload = (e) => {
       if (this.state.saveable) {
         const dialogText = i18n.t('common.someContentsAreNotSaved');
