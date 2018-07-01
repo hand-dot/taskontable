@@ -52,6 +52,9 @@ export default {
     userInformation: 'ユーザー情報',
     anonymousTask: '無名タスク',
     underDevelopment: 'これは開発中の実験的な機能です',
+    next: '次へ',
+    back: '戻る',
+    join: '参加する',
   },
   external: {
     contact: 'コンタクト',
@@ -99,6 +102,25 @@ export default {
     SimpleFastBeautifulMoreFun: 'シンプルで、速く、美しく、しかも楽しい。',
     developedForIndividualsAndTeams: '個人とチーム向けに開発されました。',
     canCollaborateInRealtime: 'リアルタイムにコラボレーションできます。',
+  },
+  howTouse: {
+    createWorksheet: 'はじめにワークシートを作成してください。',
+    createTask: 'タイトル→見積もり→開始時刻の流れでタスクを作ってみよう。通知を許可していればデスクトップ通知が届きます。',
+    createTasks: 'ショートカット、行の並び替え、コンテキストメニューをつかってタスクをどんどん作ってみよう。',
+  },
+  hello: {
+    wellcome: 'Taskontableへようこそ!',
+    howTouse: '使い方',
+    seeHowTouse: '使い方を見る',
+    community: `
+是非slackコミュニティに参加してみてください！<br />
+β版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます。`,
+    help: `
+<kbd>ctrl</kbd> + <kbd>?</kbd> を押してください！ヘルプが表示されます。<br />
+それでも分からないときは右のフィードバックからお問い合わせください。<br />
+フィードバックはお気軽に！いつでもあなたのご意見をお待ちしております！`,
+    please1: '使ってみて、もし気に入ったらお友達や同僚にシェアしてほしいです！',
+    please2: 'それともしgithubのアカウントを持っていたら、Taskontableにスターをくれると嬉しいです！',
   },
   help: {
     title: 'ヘルプ',
@@ -148,7 +170,7 @@ export default {
     activity: 'アクティビティ',
     movedTableTasksToTaskPool: 'テーブルタスクをタスクプールに移動しました。',
     movedTaskPoolToTableTasks: 'タスクプールからテーブルタスクに移動しました。',
-    cantMoveToTaskPoolWithNoTitleTask: '作業内容が未記入のタスクはタスクプールに戻せません。',
+    cantMoveToTaskPoolWithNoTitleTask: 'タイトルが未記入のタスクはタスクプールに戻せません。',
     editingIsNotAllowedBecauseItIsNotAMember: 'メンバーでないため編集が許可されていません。',
     tableHasBeenUpdated: 'テーブルが更新されました。',
     loadedRegularTask: '定期タスクを読み込みました。',
@@ -184,7 +206,7 @@ export default {
     lowPriority: 'いつかやる',
     regular: '定期的',
     cantSaveWhenIsEmpty_target: '%{target}が空の状態では保存できません。',
-    title: '作業内容',
+    title: 'タイトル',
     weekNumber: '第何週',
     dayOfWeek: '何曜日',
     moveToTable: 'テーブルに移動',
@@ -235,7 +257,7 @@ export default {
   },
   columns: {
     assign: '割当',
-    title: '作業内容',
+    title: 'タイトル',
     estimate: '見積',
     estimateWithUnit: '見積(分)',
     startTime: '開始時刻',

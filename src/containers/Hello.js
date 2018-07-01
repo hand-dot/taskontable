@@ -3,10 +3,18 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import SnsShare from '../components/SnsShare';
+import HowtoUse from '../components/HowtoUse';
 import constants from '../constants';
 import util from '../util';
+import i18n from '../i18n';
 import '../styles/helpdialog.css';
 
 const styles = {
@@ -23,6 +31,7 @@ class Hello extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isOpenHowtoUseDialog: false,
     };
   }
   componentWillMount() {
@@ -38,51 +47,68 @@ class Hello extends Component {
     });
   }
   render() {
-    const { classes } = this.props;
+    const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch">
         <Grid item xs={12}>
           <div className={classes.content}>
-            <Typography gutterBottom variant="title">{constants.TITLE}({constants.APP_VERSION})へようこそ！</Typography>
+            <Typography gutterBottom variant="title">
+              {i18n.t('hello.wellcome')}
+              <Button onClick={() => { this.setState({ isOpenHowtoUseDialog: true }); }} color="primary">
+                {i18n.t('hello.seeHowTouse')}
+              </Button>
+            </Typography>
             <div style={{ marginTop: 30, marginBottom: 30 }}>
               <Typography gutterBottom variant="body2">
-              Community<span role="img" aria-label="Community">😉</span>
+                Community<span role="img" aria-label="Community">😉</span>
               </Typography>
-              <Typography gutterBottom variant="body1">
-                  もしまだコミュニティに参加されていなければ是非
-                <a style={{ textDecoration: 'none' }} href={constants.COMMUNITY_URL} target="_blank">slackコミュニティ</a>に参加してみてください！<br />
-                  クローズドβ版ならではの限られた数人のコミュニティにユニークな開発者、ユーザーがいます😜
-              </Typography>
+              <p dangerouslySetInnerHTML={{ __html: i18n.t('hello.community') }} />
+              <a href={constants.COMMUNITY_URL} target="_blank">
+                {i18n.t('common.join')}<span role="img" aria-label="Help">🚀</span>
+              </a>
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
               <Typography gutterBottom variant="body2">
                 Help<span role="img" aria-label="Help">😵</span>
               </Typography>
-              <Typography gutterBottom variant="body1">
-                使い方が分からなければ <kbd>ctrl</kbd> + <kbd>?</kbd> を入力！もしくは、ヘッダーの<b>(?)</b>をクリックしてください！ショートカットなど使い方が大体書いてあります。<br />
-                もしそれでも分からないときはヘッダーの<b>(i)</b>をクリックしてお問い合わせしてください。<br />
-                フィードバックは大歓迎！いつでもあなたのご意見をお待ちしております😍
-              </Typography>
+              <p dangerouslySetInnerHTML={{ __html: i18n.t('hello.help') }} />
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
               <Typography gutterBottom variant="body2">
               Please<span role="img" aria-label="Help">🙏</span>
               </Typography>
-              <Typography gutterBottom variant="body1">
-                使ってみて、もし気に入ったらお友達や同僚にシェアしてほしいです！
-              </Typography>
+              <p>
+                {i18n.t('hello.please1')}
+              </p>
               <SnsShare title={constants.TITLE} shareUrl={constants.URL} />
               <br />
-              <Typography gutterBottom variant="body1">
-                それともしgithubのアカウントを持っていたらスターをもらえると嬉しいです！
-              </Typography>
-              <iframe title="Star hand-dot/taskontable on GitHub" src="https://ghbtns.com/github-btn.html?user=hand-dot&repo=taskontable&type=star&count=true&size=large" frameBorder="0" scrolling="0" width="160px" height="30px" />
+              <p>
+                {i18n.t('hello.please2')}
+              </p>
+              <iframe title="Star hand-dot/taskontable on GitHub" src="https://ghbtns.com/github-btn.html?user=hand-dot&repo=taskontable&type=star&count=true&size=large" frameBorder="0" scrolling="0" />
             </div>
             <Divider />
           </div>
         </Grid>
+        <Dialog
+          fullScreen
+          open={this.state.isOpenHowtoUseDialog}
+          onClose={() => { this.setState({ isOpenHowtoUseDialog: false }); }}
+          aria-labelledby="how-to-use-dialog"
+        >
+          <DialogTitle id="how-to-use-dialog">{i18n.t('hello.howTouse')}</DialogTitle>
+          <DialogContent>
+            <DialogContentText />
+            <HowtoUse />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => { this.setState({ isOpenHowtoUseDialog: false }); }} color="primary">
+              {i18n.t('common.close')}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Grid>
     );
   }

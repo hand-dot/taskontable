@@ -169,6 +169,7 @@ class GlobalHeader extends Component {
                         <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>{i18n.t('external.blog')}</MenuItem>
                         <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>{i18n.t('external.community')}</MenuItem>
                         <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>{i18n.t('external.github')}</MenuItem>
+                        <MenuItem disabled>version:{constants.APP_VERSION}</MenuItem>
                       </Menu>
                     </div>
                   </div>);

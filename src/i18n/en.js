@@ -52,6 +52,9 @@ export default {
     userInformation: 'User information',
     anonymousTask: 'Anonymous task',
     underDevelopment: 'This is an experimental feature under development.',
+    next: 'Next',
+    back: 'Back',
+    join: 'Join',
   },
   external: {
     contact: 'Contact',
@@ -99,6 +102,25 @@ export default {
     SimpleFastBeautifulMoreFun: 'Simple, fast, beautiful, more fun.',
     developedForIndividualsAndTeams: 'Developed for individuals and teams.',
     canCollaborateInRealtime: 'Can collaborate in realtime.',
+  },
+  howTouse: {
+    createWorksheet: 'At first, create worksheet.',
+    createTask: 'Let\'s make a task with the flow of title → estimate → start time. You will receive a desktop notification if you allow the notification.',
+    createTasks: 'Let\'s make a lot of tasks more quickly by using shortcuts, row move, context menus.',
+  },
+  hello: {
+    wellcome: 'Welcome to Taskontable!',
+    howTouse: 'How to use',
+    seeHowTouse: 'See how to use',
+    community: `
+Please join the slack community by all means!<br />
+A limited number of beta communities has its own developers and users.`,
+    help: `
+Please press <kbd>ctrl</kbd> + <kbd>?</kbd> Help is displayed.<br />
+If you still do not understand please contact us from the feedback on the right.<br />
+Feel free to feedback! We are always waiting for your feedback !`,
+    please1: 'Please use it and share it with your friends and colleagues if you like!',
+    please2: 'Do you have a github account? I am glad if you give a star to taskontable!',
   },
   help: {
     title: 'Help',
