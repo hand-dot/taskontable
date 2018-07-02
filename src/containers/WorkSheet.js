@@ -91,7 +91,7 @@ class WorkSheet extends Component {
       memo: '',
       importScript: '',
       exportScript: '',
-      isSyncedTableTasks: false, // TODO ワークシートにすべき？じゃないと日付が変わったときにメモが更新されました。と出る。
+      isSyncedTableTasks: false, // TODO ワークシートにすべき？じゃないと日付が変わったときにメモが更新されました。と出る。 https://github.com/hand-dot/taskontable/commit/2478215e39610e2dd3c92be28cb5364037720346
       isOpenReceiveMessage: false,
       receiveMessage: {
         body: '',
@@ -443,7 +443,7 @@ class WorkSheet extends Component {
     if (editingUserId === '' && userId && !isMobile && members.length > 1 && saveable && isSyncedTableTasks) {
       // 編集中ということをサーバーに送信する。
       return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(userId);
-    } 
+    }
     if (editingUserId === userId) {
       return Promise.resolve();
     }
