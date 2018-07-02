@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import i18n from '../i18n/';
+import i18n from '../i18n';
 
 const tutorialSteps = [
   {
@@ -33,7 +33,7 @@ const styles = theme => ({
   header: {
     display: 'flex',
     alignItems: 'center',
-    height: 50,
+    minHeight: 50,
     paddingLeft: theme.spacing.unit * 4,
     backgroundColor: theme.palette.background.default,
   },
@@ -70,7 +70,9 @@ class GettingStarted extends React.Component {
     return (
       <div className={classes.root}>
         <Paper square elevation={0} className={classes.header}>
-          <Typography>{tutorialSteps[activeStep].label}</Typography>
+          <Typography>
+            {tutorialSteps[activeStep].label}
+          </Typography>
         </Paper>
         <img
           className={classes.img}
@@ -82,18 +84,18 @@ class GettingStarted extends React.Component {
           position="static"
           activeStep={activeStep}
           className={classes.mobileStepper}
-          nextButton={
+          nextButton={(
             <Button size="small" onClick={this.handleNext} disabled={activeStep === maxSteps - 1}>
               {i18n.t('common.next')}
               {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
             </Button>
-          }
-          backButton={
+          )}
+          backButton={(
             <Button size="small" onClick={this.handleBack} disabled={activeStep === 0}>
               {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
               {i18n.t('common.back')}
             </Button>
-          }
+          )}
         />
       </div>
     );

@@ -6,7 +6,10 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Close from '@material-ui/icons/Close';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -21,8 +24,19 @@ const styles = {
   root: {
     minHeight: '100vh',
   },
+  flex: {
+    flex: 1,
+  },
+  closeBtn: {
+    marginLeft: 'auto',
+    marginRight: 20,
+  },
   content: {
     padding: '4.5em 2em 0',
+  },
+  block: {
+    fontSize: 22,
+    margin: 5,
   },
 };
 
@@ -112,6 +126,16 @@ class Hello extends Component {
           onClose={() => { this.setState({ isOpenHowtoUseDialog: false }); }}
           aria-labelledby="how-to-use-dialog"
         >
+          <AppBar position="static" color="default">
+            <Toolbar>
+              <Typography variant="title" color="inherit" className={classes.flex}>
+                {i18n.t('hello.howTouse')}
+              </Typography>
+              <IconButton className={classes.closeBtn} onClick={() => { this.setState({ isOpenHowtoUseDialog: false }); }}>
+                <Close />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
           <DialogTitle id="how-to-use-dialog">
             {i18n.t('hello.howTouse')}
           </DialogTitle>
@@ -119,11 +143,6 @@ class Hello extends Component {
             <DialogContentText />
             <HowtoUse />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => { this.setState({ isOpenHowtoUseDialog: false }); }} color="primary">
-              {i18n.t('common.close')}
-            </Button>
-          </DialogActions>
         </Dialog>
       </Grid>
     );
