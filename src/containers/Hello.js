@@ -126,7 +126,7 @@ class Hello extends Component {
           onClose={() => { this.setState({ isOpenHowtoUseDialog: false }); }}
           aria-labelledby="how-to-use-dialog"
         >
-          <AppBar position="static" color="default">
+          <AppBar position="static" color="default" style={{ marginBottom: '1em' }}>
             <Toolbar>
               <Typography variant="title" color="inherit" className={classes.flex}>
                 {i18n.t('hello.howTouse')}
@@ -136,9 +136,6 @@ class Hello extends Component {
               </IconButton>
             </Toolbar>
           </AppBar>
-          <DialogTitle id="how-to-use-dialog">
-            {i18n.t('hello.howTouse')}
-          </DialogTitle>
           <DialogContent>
             <DialogContentText />
             <HowtoUse />

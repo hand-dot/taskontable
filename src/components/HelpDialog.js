@@ -88,6 +88,8 @@ function HelpDialog(props) {
                 <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>J</kbd> – {i18n.t('help.keyboardShortcuts.dashboardOpenAndClose')}</Typography>
                 <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&gt;</kbd> – {i18n.t('help.keyboardShortcuts.moveToNextDay')}</Typography>
                 <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>&lt;</kbd> – {i18n.t('help.keyboardShortcuts.moveToPreviousDay')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>]</kbd> – {i18n.t('help.keyboardShortcuts.moveToNextTab')}</Typography>
+                <Typography gutterBottom variant="caption"><kbd>{constants.METAKEY}</kbd> + <kbd>[</kbd> – {i18n.t('help.keyboardShortcuts.moveToPreviousTab')}</Typography>
               </Grid>
               <Grid className={classes.shotcut} item xs={6}>
                 <h5 style={{ margin: theme.spacing.unit }}>{i18n.t('help.keyboardShortcuts.table')}</h5>
