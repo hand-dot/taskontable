@@ -645,10 +645,38 @@ class WorkSheet extends Component {
 
   render() {
     const {
-      userId, classes, history, theme,
+      isMobile,
+      isOpenDashboard,
+      tab,
+      readOnly,
+      worksheetOpenRange,
+      worksheetId,
+      taskTableFilterBy,
+      tableTasks,
+      poolTasks,
+      members,
+      worksheetName,
+      invitedEmails,
+      date,
+      savedAt,
+      saveable,
+      memo,
+      isOpenSnackbar,
+      snackbarText,
+      isOpenReceiveMessage,
+      receiveMessage,
+      isSyncedTableTasks,
+    } = this.state;
+    const {
+      userId,
+      userName,
+      userPhotoURL,
+      classes,
+      history,
+      theme,
     } = this.props;
     return (
-      <Grid container spacing={0} className={classes.root} style={{ padding: this.state.isMobile ? 0 : theme.spacing.unit, paddingTop: (this.state.isMobile ? 0 : 17) + theme.mixins.toolbar.minHeight }}>
+      <Grid container spacing={0} className={classes.root} style={{ padding: isMobile ? 0 : theme.spacing.unit, paddingTop: (isMobile ? 0 : 17) + theme.mixins.toolbar.minHeight }}>
         <Grid
           item
           xs={12}
@@ -671,17 +699,17 @@ class WorkSheet extends Component {
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <ExpansionPanel expanded={this.state.isOpenDashboard} style={{ margin: 0 }} elevation={1}>
+          <ExpansionPanel expanded={isOpenDashboard} style={{ margin: 0 }} elevation={1}>
             <ExpansionPanelSummary
               classes={{ content: classes.expansionPanelSummary }}
               expandIcon={(
-                <IconButton onClick={() => { this.setState({ isOpenDashboard: !this.state.isOpenDashboard }); }}>
+                <IconButton onClick={() => { this.setState({ isOpenDashboard: !isOpenDashboard }); }}>
                   <ExpandMore />
                 </IconButton>
               )}
             >
               <Tabs
-                value={this.state.tab}
+                value={tab}
                 onChange={this.handleTab.bind(this)}
                 scrollable
                 scrollButtons="off"
@@ -690,41 +718,41 @@ class WorkSheet extends Component {
                 <Tab label={(
                   <span role="img" aria-label="dashboad">
                     🚩
-                    {this.state.isMobile ? '' : i18n.t('worksheet.dashBoad')}
+                    {isMobile ? '' : i18n.t('worksheet.dashBoad')}
                   </span>
                 )}
                 />
                 <Tab
-                  disabled={this.state.readOnly}
+                  disabled={readOnly}
                   label={(
                     <span role="img" aria-label="taskpool">
                       📁
-                      {this.state.isMobile ? '' : i18n.t('worksheet.taskPool')}
+                      {isMobile ? '' : i18n.t('worksheet.taskPool')}
                     </span>
                   )}
                 />
                 <Tab
-                  disabled={this.state.readOnly}
+                  disabled={readOnly}
                   label={(
                     <span role="img" aria-label="members">
                       👫
-                      {this.state.isMobile ? '' : i18n.t('worksheet.members')}
+                      {isMobile ? '' : i18n.t('worksheet.members')}
                     </span>
                   )}
                 />
                 <Tab
-                  disabled={this.state.readOnly}
+                  disabled={readOnly}
                   label={(
                     <span role="img" aria-label="openrange">
-                      {this.state.worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? '🔓' : '🔒' }
-                      {this.state.isMobile ? '' : i18n.t('worksheet.openRange')}
+                      {worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? '🔓' : '🔒' }
+                      {isMobile ? '' : i18n.t('worksheet.openRange')}
                     </span>
                   )}
                 />
-                {!this.state.isMobile && (
+                {!isMobile && (
                 <Tab
-                  disabled={this.state.readOnly}
-                  onClick={() => { history.push(`/${this.state.worksheetId}/scripts`); }}
+                  disabled={readOnly}
+                  onClick={() => { history.push(`/${worksheetId}/scripts`); }}
                   label={(
                     <span role="img" aria-label="plugins">
 🔌
@@ -738,10 +766,10 @@ class WorkSheet extends Component {
                   )}
                 />
                 )}
-                {!this.state.isMobile && (
+                {!isMobile && (
                 <Tab
-                  disabled={this.state.readOnly}
-                  onClick={() => { history.push(`/${this.state.worksheetId}/activity`); }}
+                  disabled={readOnly}
+                  onClick={() => { history.push(`/${worksheetId}/activity`); }}
                   label={(
                     <span role="img" aria-label="activity">
                       📈
@@ -758,35 +786,35 @@ class WorkSheet extends Component {
               </Tabs>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails style={{ display: 'block', padding: 0 }}>
-              {this.state.tab === 0 && (
+              {tab === 0 && (
               <div>
-                <Dashboard tableTasks={this.state.taskTableFilterBy ? tasksUtil.getTasksByAssign(this.state.tableTasks, this.state.taskTableFilterBy) : this.state.tableTasks} />
+                <Dashboard tableTasks={taskTableFilterBy ? tasksUtil.getTasksByAssign(tableTasks, taskTableFilterBy) : tableTasks} />
               </div>
               )}
-              {this.state.tab === 1 && (
+              {tab === 1 && (
               <div>
-                <TaskPool userId={userId} poolTasks={this.state.poolTasks} members={this.state.members} changePoolTasks={this.changePoolTasks.bind(this)} />
+                <TaskPool userId={userId} poolTasks={poolTasks} members={members} changePoolTasks={this.changePoolTasks.bind(this)} />
               </div>
               )}
-              {this.state.tab === 2 && (
+              {tab === 2 && (
                 <div style={{ overflow: 'auto' }}>
                   <Members
                     userId={userId}
-                    userName={this.props.userName}
-                    userPhotoURL={this.props.userPhotoURL}
-                    worksheetId={this.state.worksheetId}
-                    worksheetName={this.state.worksheetName}
-                    members={this.state.members}
-                    invitedEmails={this.state.invitedEmails}
+                    userName={userName}
+                    userPhotoURL={userPhotoURL}
+                    worksheetId={worksheetId}
+                    worksheetName={worksheetName}
+                    members={members}
+                    invitedEmails={invitedEmails}
                     handleMembers={this.handleMembers.bind(this)}
                     handleInvitedEmails={this.handleInvitedEmails.bind(this)}
                   />
                 </div>
               )}
-              {this.state.tab === 3 && (
+              {tab === 3 && (
                 <div style={{ overflow: 'auto' }}>
                   <OpenRange
-                    worksheetOpenRange={this.state.worksheetOpenRange}
+                    worksheetOpenRange={worksheetOpenRange}
                     handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
                   />
                 </div>
@@ -796,37 +824,37 @@ class WorkSheet extends Component {
           <Paper elevation={1}>
             <TableCtl
               userId={userId}
-              taskTableFilterBy={this.state.taskTableFilterBy}
-              members={this.state.members}
-              tableTasks={this.state.tableTasks}
-              date={this.state.date}
-              savedAt={this.state.savedAt}
-              saveable={Boolean(userId && this.state.saveable)}
+              taskTableFilterBy={taskTableFilterBy}
+              members={members}
+              tableTasks={tableTasks}
+              date={date}
+              savedAt={savedAt}
+              saveable={Boolean(userId && saveable)}
               changeDate={this.changeDate.bind(this)}
               saveWorkSheet={this.saveWorkSheet.bind(this)}
               handleTaskTableFilter={(value) => { this.setState({ taskTableFilterBy: value }); }}
             />
-            {this.state.isMobile && (
+            {isMobile && (
             <TaskTableMobile
               userId={userId}
-              tableTasks={this.state.tableTasks}
+              tableTasks={tableTasks}
               changeTableTasks={this.changeTableTasksByMobile.bind(this)}
-              isActive={util.isToday(this.state.date)}
-              readOnly={this.state.readOnly}
+              isActive={util.isToday(date)}
+              readOnly={readOnly}
             />
             )}
-            {!this.state.isMobile && (
+            {!isMobile && (
             <TaskTable
               onRef={ref => (this.taskTable = ref)} // eslint-disable-line
               userId={userId}
-              taskTableFilterBy={this.state.taskTableFilterBy}
-              members={this.state.members}
-              tableTasks={this.state.tableTasks}
+              taskTableFilterBy={taskTableFilterBy}
+              members={members}
+              tableTasks={tableTasks}
               handleTableTasks={(newTableTasks) => {
                 this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
               }}
               handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
-              isActive={util.isToday(this.state.date)}
+              isActive={util.isToday(date)}
               moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
             />
             )}
@@ -837,7 +865,7 @@ class WorkSheet extends Component {
               InputProps={{ style: { fontSize: 13, padding: theme.spacing.unit } }}
               onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
               onBlur={() => {
-                if (this.state.isMobile && this.state.saveable) {
+                if (isMobile && saveable) {
                   this.saveMemo().then(() => {
                     this.setState({
                       isOpenSnackbar: true,
@@ -847,10 +875,10 @@ class WorkSheet extends Component {
                   });
                 }
               }}
-              value={this.state.memo}
+              value={memo}
               label={(
-                <span style={{ fontSize: 13, padding: this.props.theme.spacing.unit }}>
-                  {`${i18n.t('worksheet.memo')}(${this.state.date})`}
+                <span style={{ fontSize: 13, padding: theme.spacing.unit }}>
+                  {`${i18n.t('worksheet.memo')}(${date})`}
                 </span>
               )}
               multiline
@@ -860,14 +888,14 @@ class WorkSheet extends Component {
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSnackbar}
+          open={isOpenSnackbar}
           onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
           ContentProps={{ 'aria-describedby': 'info-id' }}
           message={(
             <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
               <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
               <span style={{ paddingLeft: theme.spacing.unit }}>
-                {this.state.snackbarText}
+                {snackbarText}
               </span>
             </span>
           )}
@@ -878,19 +906,21 @@ class WorkSheet extends Component {
           ContentProps={{ 'aria-describedby': 'message-id' }}
           message={(
             <span id="message-id" style={{ display: 'flex', alignItems: 'center' }}>
-              {this.state.receiveMessage.icon ? <Avatar className={classes.userPhoto} src={this.state.receiveMessage.icon} /> : <Person className={classes.userPhoto} />}
+              {receiveMessage.icon ? <Avatar className={classes.userPhoto} src={receiveMessage.icon} /> : <Person className={classes.userPhoto} />}
               <span style={{ paddingLeft: theme.spacing.unit }}>
-                {this.state.receiveMessage.body}
+                {receiveMessage.body}
               </span>
             </span>
           )}
-          open={this.state.isOpenReceiveMessage}
-          action={[<IconButton key="close" color="inherit" onClick={() => { this.setState({ isOpenReceiveMessage: false, receiveMessage: { body: '', icon: '' } }); }}>
-            <Close />
-          </IconButton>]}
+          open={isOpenReceiveMessage}
+          action={[
+            <IconButton key="close" color="inherit" onClick={() => { this.setState({ isOpenReceiveMessage: false, receiveMessage: { body: '', icon: '' } }); }}>
+              <Close />
+            </IconButton>,
+          ]}
         />
-        <Dialog open={!this.state.isSyncedTableTasks}>
-          <div style={{ padding: this.props.theme.spacing.unit }}>
+        <Dialog open={!isSyncedTableTasks}>
+          <div style={{ padding: theme.spacing.unit }}>
             <CircularProgress className={classes.circularProgress} />
           </div>
         </Dialog>
