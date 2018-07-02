@@ -64,10 +64,12 @@ class WorkSheet extends Component {
     this.saveWorkSheet = debounce(this.saveWorkSheet, constants.REQEST_DELAY_FAST);
     this.attachTableTasks = debounce(this.attachTableTasks, constants.REQEST_DELAY_FAST);
     this.attachMemo = debounce(this.attachMemo, constants.REQEST_DELAY_FAST);
+    this.attachEditingUserId = debounce(this.attachEditingUserId, constants.REQEST_DELAY_FAST);
     this.state = {
       worksheetId: '',
       worksheetOpenRange: '', // public or private
       worksheetName: '',
+      editingUserId: '',
       members: [],
       invitedEmails: [],
       isOpenSnackbar: false,
@@ -89,7 +91,7 @@ class WorkSheet extends Component {
       memo: '',
       importScript: '',
       exportScript: '',
-      isSyncedTableTasks: false,
+      isSyncedTableTasks: false, // TODO ワークシートにすべき？じゃないと日付が変わったときにメモが更新されました。と出る。
       isOpenReceiveMessage: false,
       receiveMessage: {
         body: '',
@@ -148,6 +150,10 @@ class WorkSheet extends Component {
     }
 
     window.onbeforeunload = (e) => {
+      // TODO ここどうにかしたいかも。遷移をキャンセルしたときもロックが解除されてしまう。
+      if (this.state.editingUserId === this.props.userId) {
+        database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/editingUserIds/${this.state.date}`).set(null);
+      }
       if (this.state.saveable) {
         const dialogText = i18n.t('common.someContentsAreNotSaved');
         e.returnValue = dialogText;
@@ -172,12 +178,19 @@ class WorkSheet extends Component {
   }
 
   componentWillUnmount() {
-    if (!this.state.isMobile) window.onkeydown = '';
+    const {
+      isMobile, editingUserId, worksheetId, date,
+    } = this.state;
+    const { userId } = this.props;
+    if (!isMobile) window.onkeydown = '';
     window.onbeforeunload = '';
     window.onfocus = '';
-    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/poolTasks`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).off();
+    // TODO この処理はchangeDateでもやっているので、まとめたい。
+    if (editingUserId === userId) database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/poolTasks`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/tableTasks/${date}`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/memos/${date}`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).off();
   }
 
   getRecentMessage(worksheetId) {
@@ -363,12 +376,24 @@ class WorkSheet extends Component {
    * stateのtableTasksとmemoをサーバーに保存します。
    */
   saveWorkSheet() {
-    if (this.state.readOnly) {
+    const {
+      worksheetId, date, readOnly, editingUserId, members,
+    } = this.state;
+    const { userId } = this.props;
+    if (readOnly) {
       this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
+      return Promise.resolve();
+    }
+    const user = members[members.findIndex(member => member.uid === editingUserId)];
+    // ここで出すsnackbarは警告にしたい。
+    if (editingUserId && editingUserId !== userId && user) {
+      this.setState({ isOpenSnackbar: true, snackbarText: `${user.displayName}さんが編集中です。` });
       return Promise.resolve();
     }
     return Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
       const savedAt = moment().format(constants.TIMEFMT);
+      // 編集中を解除
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
       this.setState({
         isOpenSnackbar: true,
         snackbarText: `${snackbarTexts[0]}${i18n.t('common.saved_target', { target: i18n.t('common.worksheet') })} (${savedAt})`,
@@ -410,6 +435,21 @@ class WorkSheet extends Component {
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).set(this.state.memo ? this.state.memo : null);
   }
 
+  saveEditingUserId() {
+    const {
+      isMobile, members, saveable, isSyncedTableTasks, editingUserId, worksheetId, date,
+    } = this.state;
+    const { userId } = this.props;
+    if (editingUserId === '' && userId && !isMobile && members.length > 1 && saveable && isSyncedTableTasks) {
+      // 編集中ということをサーバーに送信する。
+      return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(userId);
+    } 
+    if (editingUserId === userId) {
+      return Promise.resolve();
+    }
+    return Promise.reject();
+  }
+
   /**
    * WorkSheet全体の同期を開始します。
    */
@@ -422,6 +462,8 @@ class WorkSheet extends Component {
     this.attachMemo();
     // メンバー,招待中のメールアドレスを同期開始
     this.attachMembersAndInvitedEmails();
+    // 編集中のユーザーIDを同期開始
+    this.attachEditingUserId();
   }
 
   /**
@@ -531,6 +573,22 @@ class WorkSheet extends Component {
   }
 
   /**
+   * 編集中のユーザーIDを同期します。
+   */
+  attachEditingUserId() {
+    const {
+      worksheetId, date, editingUserId, userId,
+    } = this.state;
+    return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).on('value', (snapshot) => {
+      if (snapshot.exists() && editingUserId !== snapshot.val() && userId !== snapshot.val()) {
+        this.setState({ editingUserId: snapshot.val() });
+      } else {
+        this.setState({ editingUserId: '' });
+      }
+    });
+  }
+
+  /**
    * ショートカットを実行します。
    * @param  {} e イベント
    */
@@ -608,8 +666,15 @@ class WorkSheet extends Component {
    */
   changeDate(newDate) {
     if (!this.state.saveable || window.confirm(i18n.t('common.someContentsAreNotSaved'))) {
+      // TODO componentWillUnmountで同じような処理をしている。
       database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).off();
       database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).off();
+      database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/editingUserIds/${this.state.date}`).off();
+      if (this.state.editingUserId === this.props.userId) {
+        database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/editingUserIds/${this.state.date}`).set(null).then(() => {
+          this.setState({ editingUserId: '' });
+        });
+      }
       this.setState({ date: newDate, isSyncedTableTasks: false });
       if (!this.state.isMobile) {
         this.taskTable.updateIsActive(util.isToday(newDate));
@@ -617,7 +682,7 @@ class WorkSheet extends Component {
           id: '', assign: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
         }]);
       }
-      setTimeout(() => { this.attachTableTasks(); this.attachMemo(); });
+      setTimeout(() => { this.attachTableTasks(); this.attachMemo(); this.attachEditingUserId(); });
     }
   }
 
@@ -662,6 +727,7 @@ class WorkSheet extends Component {
       tableTasks,
       poolTasks,
       members,
+      editingUserId,
       worksheetName,
       invitedEmails,
       date,
@@ -858,7 +924,12 @@ class WorkSheet extends Component {
               members={members}
               tableTasks={tableTasks}
               handleTableTasks={(newTableTasks) => {
-                this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
+                this.saveEditingUserId().then(() => {
+                  this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
+                },
+                () => {
+                  this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。' });
+                });
               }}
               handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
               isActive={util.isToday(date)}
@@ -870,7 +941,14 @@ class WorkSheet extends Component {
               fullWidth
               style={{ padding: theme.spacing.unit }}
               InputProps={{ style: { fontSize: 13, padding: theme.spacing.unit } }}
-              onChange={(e) => { this.setState({ memo: e.target.value, saveable: true }); }}
+              onChange={(e) => {
+                this.saveEditingUserId().then(() => {
+                  this.setState({ memo: e.target.value, saveable: true });
+                },
+                () => {
+                  this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。' });
+                });
+              }}
               onBlur={() => {
                 if (isMobile && saveable) {
                   this.saveMemo().then(() => {
@@ -926,6 +1004,27 @@ class WorkSheet extends Component {
             </IconButton>,
           ]}
         />
+        {(() => {
+          if (editingUserId === '') return null;
+          const user = members[members.findIndex(member => member.uid === editingUserId)];
+          if (!user) return null;
+          return (
+            <Snackbar
+              key="editing-user"
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              ContentProps={{ 'aria-describedby': 'editing-user-id' }}
+              message={(
+                <span id="editing-user-id" style={{ display: 'flex', alignItems: 'center' }}>
+                  {user.photoURL ? <Avatar className={classes.userPhoto} src={user.photoURL} /> : <Person className={classes.userPhoto} />}
+                  <span style={{ paddingLeft: theme.spacing.unit }}>
+                    {user.uid === userId ? '編集を終えたら保存してロックを解除してください。' : `${user.displayName}さんが編集中です。`}
+                  </span>
+                </span>
+              )}
+              open
+            />
+          );
+        })()}
         <Dialog open={!isSyncedTableTasks}>
           <div style={{ padding: theme.spacing.unit }}>
             <CircularProgress className={classes.circularProgress} />
