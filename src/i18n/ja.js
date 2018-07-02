@@ -176,6 +176,7 @@ export default {
     cantMoveToTaskPoolWithNoTitleTask: 'タイトルが未記入のタスクはタスクプールに戻せません。',
     editingIsNotAllowedBecauseItIsNotAMember: 'メンバーでないため編集が許可されていません。',
     tableHasBeenUpdated: 'テーブルが更新されました。',
+    memoHasBeenUpdated: 'メモが更新されました。',
     loadedRegularTask: '定期タスクを読み込みました。',
     membersHaveBeenUpdated: 'メンバーを更新しました。',
     setOpenRangeTo_target: '公開範囲を%{target}に設定しました。',

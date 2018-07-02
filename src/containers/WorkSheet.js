@@ -486,9 +486,16 @@ class WorkSheet extends Component {
    * メモを同期します。
    */
   attachMemo() {
-    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).on('value', (snapshot) => {
+    const { worksheetId, date, memo } = this.state;
+    return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/memos/${date}`).on('value', (snapshot) => {
       if (snapshot.exists() && snapshot.val()) {
-        if (this.state.memo !== snapshot.val()) this.setState({ memo: snapshot.val() });
+        if (memo !== snapshot.val()) {
+          const savedAt = moment().format(constants.TIMEFMT);
+          const snackbarText = `${i18n.t('worksheet.memoHasBeenUpdated')} (${savedAt})`; // ほかのユーザーの更新
+          this.setState({
+            memo: snapshot.val(), saveable: false, isOpenSnackbar: true, snackbarText,
+          });
+        }
       } else {
         this.setState({ memo: '' });
       }
