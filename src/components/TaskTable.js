@@ -5,7 +5,9 @@ import 'handsontable/dist/handsontable.full.min.css';
 import { withStyles } from '@material-ui/core/styles';
 import debounce from 'lodash.debounce';
 
-import { hotConf, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
+import {
+  hotConf, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot,
+} from '../hot';
 import constants from '../constants';
 import util from '../util';
 import i18n from '../i18n';
@@ -23,8 +25,10 @@ class TaskTable extends Component {
     this.syncPropByUpdate = debounce(this.syncPropByUpdate, constants.RENDER_DELAY);
     this.syncPropByRender = debounce(this.syncPropByRender, constants.RENDER_DELAY);
   }
+
   componentWillMount() {
   }
+
   componentDidMount() {
     this.props.onRef(this);
     const self = this;
@@ -53,7 +57,11 @@ class TaskTable extends Component {
       afterRender() { self.syncPropByRender(); },
       afterUpdateSettings() { self.syncPropByUpdate(); },
     }));
+    setTimeout(() => {
+      if (this.hot) this.hot.selectCell(0, this.hot.getSettings().columns.findIndex(column => column.data === 'title'));
+    });
   }
+
   componentDidUpdate(prevProps) {
     if (!util.equal(this.props.members, prevProps.members)) {
       hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = this.props.members.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
@@ -66,6 +74,7 @@ class TaskTable extends Component {
       this.setDataForHot(this.props.taskTableFilterBy ? tasksUtil.getTasksByAssign(this.props.tableTasks, this.props.taskTableFilterBy) : this.props.tableTasks);
     }
   }
+
   componentWillUnmount() {
     this.props.onRef(undefined);
     if (!this.hot) return;
@@ -153,4 +162,3 @@ TaskTable.propTypes = {
 };
 
 export default withStyles(styles)(TaskTable);
-
