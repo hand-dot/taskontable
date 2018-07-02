@@ -36,15 +36,18 @@ class TableCtl extends Component {
     super(props);
     this.state = {
       target: '',
+      isOpenSavedAtTooltip: false,
     };
   }
 
   componentWillMount() {
-    this.setState({ target: this.props.taskTableFilterBy });
+    const { taskTableFilterBy } = this.props;
+    this.setState({ target: taskTableFilterBy });
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.target !== nextProps.taskTableFilterBy) this.setState({ target: nextProps.taskTableFilterBy });
+    const { target } = this.state;
+    if (target !== nextProps.taskTableFilterBy) this.setState({ target: nextProps.taskTableFilterBy });
   }
 
   /**
@@ -52,23 +55,25 @@ class TableCtl extends Component {
    * @param  {Object} e イベント
    */
   changeDate(e) {
+    const { date, changeDate } = this.props;
     const nav = e.currentTarget.getAttribute('data-date-nav');
     let newDate;
     if (nav) {
-      newDate = moment(this.props.date).add(nav === 'next' ? 1 : -1, 'day').format(constants.DATEFMT);
+      newDate = moment(date).add(nav === 'next' ? 1 : -1, 'day').format(constants.DATEFMT);
     } else if (moment(e.target.value).isValid()) {
       e.persist();
       newDate = e.target.value;
     } else {
       newDate = constants.INITIALDATE;
     }
-    this.props.changeDate(newDate);
+    changeDate(newDate);
   }
 
   render() {
     const {
       userId, members, tableTasks, date, savedAt, saveable, saveWorkSheet, handleTaskTableFilter, classes, theme,
     } = this.props;
+    const { target, isOpenSavedAtTooltip } = this.state;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
       <div>
@@ -79,7 +84,7 @@ class TableCtl extends Component {
               <FormControl>
                 <Select
                   native
-                  value={this.state.target}
+                  value={target}
                   onChange={(e) => {
                     this.setState({ target: e.target.value });
                     handleTaskTableFilter(e.target.value);
@@ -104,7 +109,7 @@ class TableCtl extends Component {
           </Grid>
           <Hidden xsDown>
             <Grid item xs={3}>
-              <TaskProcessing tableTasks={tasksUtil.getTasksByAssign(tableTasks, this.state.target ? this.state.target : userId)} date={date} />
+              <TaskProcessing tableTasks={tasksUtil.getTasksByAssign(tableTasks, target || userId)} date={date} />
             </Grid>
           </Hidden>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={2}>
@@ -152,7 +157,13 @@ class TableCtl extends Component {
               </div>
             </Tooltip>
             {!util.isMobile() && (
-              <Tooltip title={`${i18n.t('worksheet.tableCtl.lastSavedAt')} : ${savedAt}`} placement="top">
+              <Tooltip
+                open={saveable || isOpenSavedAtTooltip}
+                onClose={() => { this.setState({ isOpenSavedAtTooltip: false }); }}
+                onOpen={() => { this.setState({ isOpenSavedAtTooltip: true }); }}
+                title={saveable ? i18n.t('common.unsaved') : `${i18n.t('worksheet.tableCtl.lastSavedAt')} : ${savedAt}`}
+                placement="top"
+              >
                 <div style={{ display: 'inline-block' }}>
                   <Button className={classes.tableCtlButton} disabled={!saveable} onClick={saveWorkSheet} color="default">
                     <span role="img" aria-label="save">

@@ -829,7 +829,7 @@ class WorkSheet extends Component {
               tableTasks={tableTasks}
               date={date}
               savedAt={savedAt}
-              saveable={Boolean(userId && saveable)}
+              saveable={Boolean(userId && saveable && isSyncedTableTasks)}
               changeDate={this.changeDate.bind(this)}
               saveWorkSheet={this.saveWorkSheet.bind(this)}
               handleTaskTableFilter={(value) => { this.setState({ taskTableFilterBy: value }); }}

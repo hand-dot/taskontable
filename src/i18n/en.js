@@ -49,6 +49,7 @@ export default {
     accountSettings: 'AccountSettings',
     change: 'Change',
     save: 'Save',
+    unsaved: 'Unsaved',
     userInformation: 'User information',
     anonymousTask: 'Anonymous task',
     underDevelopment: 'This is an experimental feature under development.',

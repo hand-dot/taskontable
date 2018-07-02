@@ -49,6 +49,7 @@ export default {
     accountSettings: 'アカウント設定',
     change: '変更',
     save: '保存する',
+    unsaved: '未保存',
     userInformation: 'ユーザー情報',
     anonymousTask: '無名タスク',
     underDevelopment: 'これは開発中の実験的な機能です',
