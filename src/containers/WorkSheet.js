@@ -24,6 +24,7 @@ import Dialog from '@material-ui/core/Dialog';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Close from '@material-ui/icons/Close';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import Error from '@material-ui/icons/Error';
 import Person from '@material-ui/icons/Person';
 
 import Dashboard from '../components/Dashboard';
@@ -38,13 +39,17 @@ import constants from '../constants';
 import tasksUtil from '../tasksUtil';
 import util from '../util';
 import i18n from '../i18n';
+import editing from '../images/editing.gif';
 
 const database = util.getDatabase();
 
-const styles = {
+const styles = theme => ({
   root: {
     width: '100%',
     margin: '0 auto',
+  },
+  userPhoto: {
+    marginRight: theme.spacing.unit,
   },
   link: {
     textDecoration: 'none',
@@ -56,7 +61,7 @@ const styles = {
   expansionPanelSummary: {
     marginBottom: 3,
   },
-};
+});
 
 class WorkSheet extends Component {
   constructor(props) {
@@ -69,11 +74,12 @@ class WorkSheet extends Component {
       worksheetId: '',
       worksheetOpenRange: '', // public or private
       worksheetName: '',
-      editingUserId: '',
+      editingUserId: null,
       members: [],
       invitedEmails: [],
       isOpenSnackbar: false,
       snackbarText: '',
+      snackbarType: constants.messageType.SUCCESS,
       isMobile: util.isMobile(),
       readOnly: true,
       saveable: false,
@@ -91,7 +97,8 @@ class WorkSheet extends Component {
       memo: '',
       importScript: '',
       exportScript: '',
-      isSyncedTableTasks: false, // TODO ワークシートにすべき？じゃないと日付が変わったときにメモが更新されました。と出る。 https://github.com/hand-dot/taskontable/commit/2478215e39610e2dd3c92be28cb5364037720346
+      isSyncedTableTasks: false,
+      isSyncedMemo: false,
       isOpenReceiveMessage: false,
       receiveMessage: {
         body: '',
@@ -132,7 +139,7 @@ class WorkSheet extends Component {
             members: members.filter(member => member.exists()).map(member => member.val()),
             invitedEmails: invitedEmails.exists() ? invitedEmails.val() : [],
           });
-          this.fetchScripts().then(() => { this.syncWorkSheet(); });
+          this.fetchScripts().then(() => { this.attachWorkSheet(); });
         });
       } else {
         // メンバーがいないワークシートには遷移できない
@@ -149,11 +156,13 @@ class WorkSheet extends Component {
       });
     }
 
-    window.onbeforeunload = (e) => {
-      // TODO ここどうにかしたいかも。遷移をキャンセルしたときもロックが解除されてしまう。
+    window.onunload = () => {
       if (this.state.editingUserId === this.props.userId) {
         database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/editingUserIds/${this.state.date}`).set(null);
       }
+    };
+
+    window.onbeforeunload = (e) => {
       if (this.state.saveable) {
         const dialogText = i18n.t('common.someContentsAreNotSaved');
         e.returnValue = dialogText;
@@ -168,10 +177,11 @@ class WorkSheet extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { userId } = this.props;
     if (nextProps.userId) {
       database.ref(`/${constants.API_VERSION}/worksheets/${encodeURI(this.props.match.params.id)}/members/`).once('value').then((userIds) => {
         if (userIds.exists() && userIds.val() !== []) {
-          this.setState({ readOnly: !userIds.val().includes(this.props.userId) });
+          this.setState({ readOnly: !userIds.val().includes(userId) });
         }
       });
     }
@@ -184,13 +194,10 @@ class WorkSheet extends Component {
     const { userId } = this.props;
     if (!isMobile) window.onkeydown = '';
     window.onbeforeunload = '';
+    window.onunload = '';
     window.onfocus = '';
-    // TODO この処理はchangeDateでもやっているので、まとめたい。
-    if (editingUserId === userId) database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/poolTasks`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/tableTasks/${date}`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/memos/${date}`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).off();
+    this.detachWorkSheet();
+    if (userId && editingUserId === userId) database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
   }
 
   getRecentMessage(worksheetId) {
@@ -273,6 +280,7 @@ class WorkSheet extends Component {
         this.setState({
           isOpenSnackbar: true,
           snackbarText: `${snackbarText}${i18n.t('common.saved_target', { target: i18n.t('worksheet.tableTask') })} (${savedAt})`,
+          snackbarType: constants.messageType.SUCCESS,
           savedAt,
           saveable: false,
         });
@@ -298,6 +306,7 @@ class WorkSheet extends Component {
         this.setState({
           isOpenSnackbar: true,
           snackbarText: i18n.t('worksheet.movedTableTasksToTaskPool'),
+          snackbarType: constants.messageType.SUCCESS,
           savedAt: moment().format(constants.TIMEFMT),
           saveable: false,
         });
@@ -351,6 +360,7 @@ class WorkSheet extends Component {
         this.setState({
           isOpenSnackbar: true,
           snackbarText: taskActionType === constants.taskActionType.MOVE_TABLE ? i18n.t('worksheet.movedTaskPoolToTableTasks') : i18n.t('common.saved_target', { target: i18n.t('worksheet.taskPool') }),
+          snackbarType: constants.messageType.SUCCESS,
         });
       });
     });
@@ -361,7 +371,7 @@ class WorkSheet extends Component {
    */
   savePoolTasks() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR });
       return Promise.resolve();
     }
     // IDの生成処理
@@ -381,13 +391,12 @@ class WorkSheet extends Component {
     } = this.state;
     const { userId } = this.props;
     if (readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR });
       return Promise.resolve();
     }
     const user = members[members.findIndex(member => member.uid === editingUserId)];
-    // ここで出すsnackbarは警告にしたい。
     if (editingUserId && editingUserId !== userId && user) {
-      this.setState({ isOpenSnackbar: true, snackbarText: `${user.displayName}さんが編集中です。` });
+      this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
       return Promise.resolve();
     }
     return Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
@@ -397,6 +406,7 @@ class WorkSheet extends Component {
       this.setState({
         isOpenSnackbar: true,
         snackbarText: `${snackbarTexts[0]}${i18n.t('common.saved_target', { target: i18n.t('common.worksheet') })} (${savedAt})`,
+        snackbarType: constants.messageType.SUCCESS,
         savedAt,
         saveable: false,
       });
@@ -408,7 +418,7 @@ class WorkSheet extends Component {
    */
   saveTableTasks() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR });
       return Promise.resolve();
     }
     // IDを生成し無駄なプロパティを削除する。また、hotで並び変えられたデータを取得するために処理が入っている。
@@ -429,7 +439,7 @@ class WorkSheet extends Component {
    */
   saveMemo() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember') });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR });
       return Promise.resolve();
     }
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).set(this.state.memo ? this.state.memo : null);
@@ -437,15 +447,12 @@ class WorkSheet extends Component {
 
   saveEditingUserId() {
     const {
-      isMobile, members, saveable, isSyncedTableTasks, editingUserId, worksheetId, date,
+      isMobile, members, saveable, isSyncedTableTasks, isSyncedMemo, editingUserId, worksheetId, date,
     } = this.state;
     const { userId } = this.props;
-    if (editingUserId === '' && userId && !isMobile && members.length > 1 && saveable && isSyncedTableTasks) {
-      // 編集中ということをサーバーに送信する。
+    if (members.length === 1 || editingUserId === userId || !isSyncedTableTasks || !isSyncedMemo) return Promise.resolve();
+    if (!editingUserId && userId && !isMobile && members.length > 1 && saveable && isSyncedTableTasks && isSyncedMemo) {
       return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(userId);
-    }
-    if (editingUserId === userId) {
-      return Promise.resolve();
     }
     return Promise.reject();
   }
@@ -453,7 +460,7 @@ class WorkSheet extends Component {
   /**
    * WorkSheet全体の同期を開始します。
    */
-  syncWorkSheet() {
+  attachWorkSheet() {
     // テーブルを同期開始&初期化
     this.attachTableTasks();
     // タスクプールをサーバーと同期開始
@@ -464,6 +471,19 @@ class WorkSheet extends Component {
     this.attachMembersAndInvitedEmails();
     // 編集中のユーザーIDを同期開始
     this.attachEditingUserId();
+  }
+
+  /**
+   * WorkSheet全体の同期を終了します。
+   */
+  detachWorkSheet() {
+    const { worksheetId, date } = this.state;
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/poolTasks`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/tableTasks/${date}`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/memos/${date}`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members`).off();
+    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails`).off();
   }
 
   /**
@@ -494,12 +514,16 @@ class WorkSheet extends Component {
       this.fireScript(newTableTasks, 'importScript').then(
         (data) => {
           this.setSortedTableTasks(data);
-          this.setState({ isSyncedTableTasks: true, isOpenSnackbar: true, snackbarText: `${i18n.t('common.executedImportScript')}(success)${snackbarText ? ` - ${snackbarText}` : ''}` });
+          this.setState({
+            isSyncedTableTasks: true, isOpenSnackbar: true, snackbarText: `${i18n.t('common.executedImportScript')}(success)${snackbarText ? ` - ${snackbarText}` : ''}`, snackbarType: constants.messageType.SUCCESS,
+          });
         },
         (reason) => {
           this.setSortedTableTasks(newTableTasks);
           if (reason) snackbarText = `${i18n.t('common.executedImportScript')}(error)：${reason}${snackbarText ? ` - ${snackbarText}` : ''}`;
-          this.setState({ isSyncedTableTasks: true, isOpenSnackbar: snackbarText !== '', snackbarText });
+          this.setState({
+            isSyncedTableTasks: true, isOpenSnackbar: snackbarText !== '', snackbarText, snackbarType: reason ? constants.messageType.ERROR : constants.messageType.SUCCESS,
+          });
         },
       );
       this.setState({ saveable: false });
@@ -528,18 +552,17 @@ class WorkSheet extends Component {
    * メモを同期します。
    */
   attachMemo() {
-    const { worksheetId, date, memo } = this.state;
+    const { worksheetId, date } = this.state;
     return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/memos/${date}`).on('value', (snapshot) => {
-      if (snapshot.exists() && snapshot.val()) {
-        if (memo !== snapshot.val()) {
-          const savedAt = moment().format(constants.TIMEFMT);
-          const snackbarText = `${i18n.t('worksheet.memoHasBeenUpdated')} (${savedAt})`; // ほかのユーザーの更新
-          this.setState({
-            memo: snapshot.val(), saveable: false, isOpenSnackbar: true, snackbarText,
-          });
-        }
+      if (snapshot.exists()) {
+        const { isSyncedMemo } = this.state;
+        const savedAt = moment().format(constants.TIMEFMT);
+        const snackbarText = isSyncedMemo ? `${i18n.t('worksheet.memoHasBeenUpdated')} (${savedAt})` : ''; // ほかのユーザーの更新
+        this.setState({
+          isSyncedMemo: true, memo: snapshot.val(), saveable: false, isOpenSnackbar: snackbarText !== '', snackbarText, snackbarType: constants.messageType.SUCCESS,
+        });
       } else {
-        this.setState({ memo: '' });
+        this.setState({ isSyncedMemo: true, memo: '' });
       }
     });
   }
@@ -576,14 +599,17 @@ class WorkSheet extends Component {
    * 編集中のユーザーIDを同期します。
    */
   attachEditingUserId() {
-    const {
-      worksheetId, date, editingUserId, userId,
-    } = this.state;
+    const { worksheetId, date } = this.state;
     return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).on('value', (snapshot) => {
-      if (snapshot.exists() && editingUserId !== snapshot.val() && userId !== snapshot.val()) {
-        this.setState({ editingUserId: snapshot.val() });
+      const { editingUserId } = this.state;
+      if (editingUserId !== snapshot.val()) {
+        // TODO ロックが解除されました。と初期表示ででてしまうのがうざい
+        const newState = snapshot.val() ? { editingUserId: snapshot.val() } : {
+          editingUserId: null, isOpenSnackbar: true, snackbarText: 'ロックが解除されました。', snackbarType: constants.messageType.SUCCESS,
+        };
+        this.setState(newState);
       } else {
-        this.setState({ editingUserId: '' });
+        this.setState({ editingUserId: null });
       }
     });
   }
@@ -665,24 +691,25 @@ class WorkSheet extends Component {
    * @param  {String} newDate 変更する日付(constants.DATEFMT)
    */
   changeDate(newDate) {
-    if (!this.state.saveable || window.confirm(i18n.t('common.someContentsAreNotSaved'))) {
-      // TODO componentWillUnmountで同じような処理をしている。
-      database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).off();
-      database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).off();
-      database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/editingUserIds/${this.state.date}`).off();
-      if (this.state.editingUserId === this.props.userId) {
-        database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/editingUserIds/${this.state.date}`).set(null).then(() => {
-          this.setState({ editingUserId: '' });
-        });
-      }
-      this.setState({ date: newDate, isSyncedTableTasks: false });
-      if (!this.state.isMobile) {
+    const {
+      saveable,
+      worksheetId,
+      date,
+      editingUserId,
+      isMobile,
+    } = this.state;
+    const { userId } = this.props;
+    if (!saveable || window.confirm(i18n.t('common.someContentsAreNotSaved'))) {
+      this.detachWorkSheet();
+      if (userId && editingUserId === userId) database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
+      this.setState({ date: newDate, isSyncedTableTasks: false, isSyncedMemo: false, editingUserId: null });
+      if (!isMobile) {
         this.taskTable.updateIsActive(util.isToday(newDate));
         this.taskTable.setDataForHot([{
           id: '', assign: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
         }]);
       }
-      setTimeout(() => { this.attachTableTasks(); this.attachMemo(); this.attachEditingUserId(); });
+      setTimeout(() => { this.attachWorkSheet(); });
     }
   }
 
@@ -696,7 +723,7 @@ class WorkSheet extends Component {
   handleMembers(newMembers) {
     this.setState({ members: newMembers });
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/members/`).set(newMembers.map(newMember => newMember.uid)).then(() => {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.membersHaveBeenUpdated') });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.membersHaveBeenUpdated'), snackbarType: constants.messageType.SUCCESS });
       return Promise.resolve();
     });
   }
@@ -709,7 +736,7 @@ class WorkSheet extends Component {
   handleWorksheetOpenRange(worksheetOpenRange) {
     this.setState({ worksheetOpenRange });
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/openRange/`).set(worksheetOpenRange).then(() => {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.setOpenRangeTo_target', { target: worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }) });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.setOpenRangeTo_target', { target: worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }), snackbarType: constants.messageType.SUCCESS });
       return Promise.resolve();
     });
   }
@@ -736,9 +763,11 @@ class WorkSheet extends Component {
       memo,
       isOpenSnackbar,
       snackbarText,
+      snackbarType,
       isOpenReceiveMessage,
       receiveMessage,
       isSyncedTableTasks,
+      isSyncedMemo,
     } = this.state;
     const {
       userId,
@@ -902,7 +931,7 @@ class WorkSheet extends Component {
               tableTasks={tableTasks}
               date={date}
               savedAt={savedAt}
-              saveable={Boolean(userId && saveable && isSyncedTableTasks)}
+              saveable={Boolean(userId && saveable && isSyncedTableTasks && isSyncedMemo)}
               changeDate={this.changeDate.bind(this)}
               saveWorkSheet={this.saveWorkSheet.bind(this)}
               handleTaskTableFilter={(value) => { this.setState({ taskTableFilterBy: value }); }}
@@ -924,11 +953,9 @@ class WorkSheet extends Component {
               members={members}
               tableTasks={tableTasks}
               handleTableTasks={(newTableTasks) => {
-                this.saveEditingUserId().then(() => {
-                  this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
-                },
-                () => {
-                  this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。' });
+                this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
+                this.saveEditingUserId().catch(() => {
+                  this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
                 });
               }}
               handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
@@ -942,11 +969,12 @@ class WorkSheet extends Component {
               style={{ padding: theme.spacing.unit }}
               InputProps={{ style: { fontSize: 13, padding: theme.spacing.unit } }}
               onChange={(e) => {
-                this.saveEditingUserId().then(() => {
-                  this.setState({ memo: e.target.value, saveable: true });
-                },
-                () => {
-                  this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。' });
+                const newMemo = e.target.value;
+                this.setState({ memo: newMemo, saveable: true });
+                setTimeout(() => {
+                  this.saveEditingUserId().catch(() => {
+                    this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
+                  });
                 });
               }}
               onBlur={() => {
@@ -955,6 +983,7 @@ class WorkSheet extends Component {
                     this.setState({
                       isOpenSnackbar: true,
                       snackbarText: i18n.t('common.saved_target', { target: i18n.t('worksheet.memo') }),
+                      snackbarType: constants.messageType.SUCCESS,
                       saveable: false,
                     });
                   });
@@ -978,7 +1007,8 @@ class WorkSheet extends Component {
           ContentProps={{ 'aria-describedby': 'info-id' }}
           message={(
             <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
-              <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
+              {snackbarType === constants.messageType.SUCCESS && <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />}
+              {snackbarType === constants.messageType.ERROR && <Error style={{ color: constants.brandColor.base.YELLOW }} />}
               <span style={{ paddingLeft: theme.spacing.unit }}>
                 {snackbarText}
               </span>
@@ -1005,7 +1035,7 @@ class WorkSheet extends Component {
           ]}
         />
         {(() => {
-          if (editingUserId === '') return null;
+          if (!editingUserId) return null;
           const user = members[members.findIndex(member => member.uid === editingUserId)];
           if (!user) return null;
           return (
@@ -1015,17 +1045,30 @@ class WorkSheet extends Component {
               ContentProps={{ 'aria-describedby': 'editing-user-id' }}
               message={(
                 <span id="editing-user-id" style={{ display: 'flex', alignItems: 'center' }}>
-                  {user.photoURL ? <Avatar className={classes.userPhoto} src={user.photoURL} /> : <Person className={classes.userPhoto} />}
-                  <span style={{ paddingLeft: theme.spacing.unit }}>
+                  <Avatar className={classes.userPhoto} src={editing} />
+                  <span style={{ paddingLeft: theme.spacing.unit, paddingRight: theme.spacing.unit }}>
                     {user.uid === userId ? '編集を終えたら保存してロックを解除してください。' : `${user.displayName}さんが編集中です。`}
                   </span>
                 </span>
               )}
               open
+              action={[
+                <IconButton
+                  key="close"
+                  color="inherit"
+                  onClick={() => {
+                    if (userId && window.confirm(`${user.displayName}さんのロックを解除してもよろしいですか？`)) {
+                      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
+                    }
+                  }}
+                >
+                  <Close />
+                </IconButton>,
+              ]}
             />
           );
         })()}
-        <Dialog open={!isSyncedTableTasks}>
+        <Dialog open={!isSyncedTableTasks || !isSyncedMemo}>
           <div style={{ padding: theme.spacing.unit }}>
             <CircularProgress className={classes.circularProgress} />
           </div>

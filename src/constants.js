@@ -141,4 +141,8 @@ export default {
     RUNNING: `rgba(${rgb.BLUE}, 0.2)`,
     OUT: `rgba(${rgb.RED}, 0.2)`,
   },
+  messageType: {
+    ERROR: 'error',
+    SUCCESS: 'success',
+  },
 };
