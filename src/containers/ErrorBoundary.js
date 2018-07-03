@@ -9,7 +9,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import constants from '../constants';
 import util from '../util';
-import i18n from '../i18n/';
+import i18n from '../i18n';
+import error from '../images/error.gif';
+
 
 const auth = util.getAuth();
 
@@ -58,7 +60,7 @@ class ErrorBoundary extends Component {
               <Typography variant="title" gutterBottom>
                 {i18n.t('errorBoundary.sorry')}
               </Typography>
-              <img src="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fcat.png?alt=media&token=ad2ea5c2-1a0b-4261-92ee-5d99dbe6c4da" style={{ width: '100%' }} alt="cat" />
+              <img src={error} style={{ width: '100%' }} alt="cat" />
               <Typography variant="caption" gutterBottom>
                 {i18n.t('errorBoundary.pleaseReport')}
               </Typography>
