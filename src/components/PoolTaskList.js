@@ -90,7 +90,7 @@ class TaskList extends Component {
         if (this.state[constants.taskStateType.edit].week.length === 0) {
           alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.weekNumber') })}`);
           return;
-        } else if (this.state[constants.taskStateType.edit].dayOfWeek.length === 0) {
+        } if (this.state[constants.taskStateType.edit].dayOfWeek.length === 0) {
           alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.dayOfWeek') })}`);
           return;
         }
@@ -118,13 +118,13 @@ class TaskList extends Component {
       if (this.state[constants.taskStateType.add].week.length === 0) {
         alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.weekNumber') })}`);
         return;
-      } else if (this.state[constants.taskStateType.add].dayOfWeek.length === 0) {
+      } if (this.state[constants.taskStateType.add].dayOfWeek.length === 0) {
         alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.dayOfWeek') })}`);
         return;
       }
     }
-    // タスクを追加した場合には割当を自動的に自分にする
-    this.state[constants.taskStateType.add].assign = this.props.userId;
+    // 割り当てを指定せずにタスクを追加した場合には割当を自動的に自分にする
+    if (this.state[constants.taskStateType.add].assign === '') this.state[constants.taskStateType.add].assign = this.props.userId;
     this.props.addTask(this.state[constants.taskStateType.add]);
     this.setState({ [constants.taskStateType.add]: getPoolTaskSchema() });
     setTimeout(() => { this.root.scrollTop = this.root.scrollHeight; });
@@ -139,19 +139,43 @@ class TaskList extends Component {
         <Table>
           <TableHead>
             <TableRow className={classes.taskRow}>
-              <CustomTableCell className={classes.cellInput} padding="none">{i18n.t('columns.title')}</CustomTableCell>
-              <CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('columns.memo')}</CustomTableCell>
-              <CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('columns.estimate')}</CustomTableCell>
-              {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('columns.assign')}</CustomTableCell>)}
-              {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('columns.startTime')}</CustomTableCell>)}
-              {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('taskPool.weekNumber')}</CustomTableCell>)}
-              {isRegularTask && (<CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('taskPool.dayOfWeek')}</CustomTableCell>)}
-              <CustomTableCell className={classes.miniCellInput} padding="none">{i18n.t('common.edit')}</CustomTableCell>
+              <CustomTableCell className={classes.cellInput} padding="none">
+                {i18n.t('columns.title')}
+              </CustomTableCell>
+              <CustomTableCell className={classes.miniCellInput} padding="none">
+                {i18n.t('columns.memo')}
+              </CustomTableCell>
+              <CustomTableCell className={classes.miniCellInput} padding="none">
+                {i18n.t('columns.estimate')}
+              </CustomTableCell>
+              {isRegularTask && (
+              <CustomTableCell className={classes.miniCellInput} padding="none">
+                {i18n.t('columns.assign')}
+              </CustomTableCell>
+              )}
+              {isRegularTask && (
+              <CustomTableCell className={classes.miniCellInput} padding="none">
+                {i18n.t('columns.startTime')}
+              </CustomTableCell>
+              )}
+              {isRegularTask && (
+              <CustomTableCell className={classes.miniCellInput} padding="none">
+                {i18n.t('taskPool.weekNumber')}
+              </CustomTableCell>
+              )}
+              {isRegularTask && (
+              <CustomTableCell className={classes.miniCellInput} padding="none">
+                {i18n.t('taskPool.dayOfWeek')}
+              </CustomTableCell>
+              )}
+              <CustomTableCell className={classes.miniCellInput} padding="none">
+                {i18n.t('common.edit')}
+              </CustomTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {tasks.map((task, index) => (
-              <TableRow className={classes.taskRow} key={task.id} >
+              <TableRow className={classes.taskRow} key={task.id}>
                 <CustomTableCell padding="none">
                   <Input
                     fullWidth
@@ -200,12 +224,12 @@ class TaskList extends Component {
                             key={member.uid}
                             value={member.uid}
                             style={{
-                                fontSize: 12,
-                              }}
+                              fontSize: 12,
+                            }}
                           >
                             {member.displayName}
                           </option>
-                          ))}
+                        ))}
                       </Select>
                     </FormControl>
                   </div>
@@ -251,7 +275,9 @@ class TaskList extends Component {
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
                       {this.state.editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
                     </IconButton>
-                    <span>/</span>
+                    <span>
+                      /
+                    </span>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
                       <MoreHoriz style={{ fontSize: 16 }} />
                     </IconButton>
@@ -261,22 +287,34 @@ class TaskList extends Component {
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
                       <MenuItem key="moveTable" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_TABLE)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveToTable')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveToTable')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="topToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveToTop')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveToTop')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="upTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveUpOne')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveUpOne')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="downTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveOneDown')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveOneDown')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="bottomToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveToBottom')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveToBottom')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="removeTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
-                        <Typography variant="caption">{i18n.t('common.remove')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('common.remove')}
+                        </Typography>
                       </MenuItem>
                     </Menu>
                   </div>
@@ -338,12 +376,12 @@ class TaskList extends Component {
                           >
                             {member.displayName}
                           </option>
-                          ))}
+                        ))}
                       </Select>
                     </FormControl>
                   </div>
                 </CustomTableCell>
-                )}
+              )}
               {isRegularTask && (
                 <CustomTableCell padding="none">
                   <TextField
