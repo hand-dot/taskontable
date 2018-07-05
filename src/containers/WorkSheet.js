@@ -702,7 +702,9 @@ class WorkSheet extends Component {
     if (!saveable || window.confirm(i18n.t('common.someContentsAreNotSaved'))) {
       this.detachWorkSheet();
       if (userId && editingUserId === userId) database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
-      this.setState({ date: newDate, isSyncedTableTasks: false, isSyncedMemo: false, editingUserId: null });
+      this.setState({
+        date: newDate, isSyncedTableTasks: false, isSyncedMemo: false, editingUserId: null,
+      });
       if (!isMobile) {
         this.taskTable.updateIsActive(util.isToday(newDate));
         this.taskTable.setDataForHot([{
