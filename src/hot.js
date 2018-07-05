@@ -274,7 +274,7 @@ export const setDataForHot = (hotInstance, datas) => {
   if (!Array.isArray(datas)) return;
   const dataForHot = [];
   let rowIndex = 0;
-  util.cloneDeep(datas).forEach((data) => {
+  datas.forEach((data) => {
     if (!util.equal(tableTaskSchema, data)) {
       Object.entries(data).forEach(([key, value]) => {
         dataForHot.push([rowIndex, key, value]);
@@ -500,7 +500,7 @@ export const hotConf = {
     for (let i = 0; i < changesLength; i += 1) {
       const [row, prop, oldVal, newVal] = changes[i];
       // 新規にタスクを作成した場合に下記の処理で割当を自分に自動で設定する
-      if (oldVal !== newVal && newVal && (prop !== 'assign') && this.isEmptyRow(row)) {
+      if (newVal && oldVal !== newVal && prop !== 'assign' && this.isEmptyRow(row)) {
         this.setDataAtRowProp(row, 'assign', userId);
       }
     }
@@ -517,10 +517,14 @@ export const hotConf = {
         if (prop !== 'assign' && !newVal && this.getDataAtRow(row).every((data, index) => (index === assignIndex ? data : !data))) {
           this.setDataAtRowProp(row, 'assign', '');
         }
-        if (prop === 'startTime' || prop === 'endTime' || prop === 'estimate') {
-          const startTimeVal = prop === 'startTime' ? newVal : this.getDataAtRowProp(row, 'startTime');
-          const endTimeVal = prop === 'endTime' ? newVal : this.getDataAtRowProp(row, 'endTime');
-          this.setDataAtRowProp(row, 'actually', startTimeVal && endTimeVal ? util.getTimeDiffMinute(startTimeVal, endTimeVal) : null);
+        if (prop === 'startTime' || prop === 'endTime') {
+          if (newVal) {
+            const startTimeVal = prop === 'startTime' ? newVal : this.getDataAtRowProp(row, 'startTime');
+            const endTimeVal = prop === 'endTime' ? newVal : this.getDataAtRowProp(row, 'endTime');
+            if (startTimeVal && endTimeVal) this.setDataAtRowProp(row, 'actually', util.getTimeDiffMinute(startTimeVal, endTimeVal));
+          } else if (oldVal) {
+            this.setDataAtRowProp(row, 'actually', null);
+          }
         }
         if (isActiveNotifi && (prop === 'startTime' || prop === 'endTime' || prop === 'estimate' || prop === 'assign')) {
           manageNotifi(this, row, prop, newVal);

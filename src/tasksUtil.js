@@ -67,6 +67,7 @@ export default {
     const hasNotStartTimeTasks = [];
     for (let i = 0; i < tasks.length; i += 1) {
       const task = tasks[i];
+      task.index = i;
       if (task.startTime !== '') {
         hasStartTimeTasks.push(task);
       } else {
@@ -76,6 +77,8 @@ export default {
     return hasStartTimeTasks.sort((a, b) => {
       if (a.startTime > b.startTime) return 1;
       if (a.startTime < b.startTime) return -1;
+      if (a.index > b.index) return 1;
+      if (a.index < b.index) return -1;
       return 0;
     }).concat(hasNotStartTimeTasks);
   },
