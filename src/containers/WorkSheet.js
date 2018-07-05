@@ -478,12 +478,14 @@ class WorkSheet extends Component {
    */
   detachWorkSheet() {
     const { worksheetId, date } = this.state;
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/poolTasks`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/tableTasks/${date}`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/memos/${date}`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members`).off();
-    database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails`).off();
+    return Promise.all([
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/poolTasks`).off(),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/tableTasks/${date}`).off(),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/memos/${date}`).off(),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).off(),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members`).off(),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails`).off(),
+    ]);
   }
 
   /**
@@ -700,18 +702,19 @@ class WorkSheet extends Component {
     } = this.state;
     const { userId } = this.props;
     if (!saveable || window.confirm(i18n.t('common.someContentsAreNotSaved'))) {
-      this.detachWorkSheet();
-      if (userId && editingUserId === userId) database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
-      this.setState({
-        date: newDate, isSyncedTableTasks: false, isSyncedMemo: false, editingUserId: null,
+      this.detachWorkSheet().then(() => {
+        if (userId && editingUserId === userId) database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
+        this.setState({
+          date: newDate, isSyncedTableTasks: false, isSyncedMemo: false, editingUserId: null,
+        });
+        if (!isMobile) {
+          this.taskTable.updateIsActive(util.isToday(newDate));
+          this.taskTable.setDataForHot([{
+            id: '', assign: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
+          }]);
+        }
+        setTimeout(() => { this.attachWorkSheet(); });
       });
-      if (!isMobile) {
-        this.taskTable.updateIsActive(util.isToday(newDate));
-        this.taskTable.setDataForHot([{
-          id: '', assign: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
-        }]);
-      }
-      setTimeout(() => { this.attachWorkSheet(); });
     }
   }
 
