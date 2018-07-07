@@ -74,13 +74,18 @@ export default {
         hasNotStartTimeTasks.push(task);
       }
     }
-    return hasStartTimeTasks.sort((a, b) => {
+    const sortedTasks = hasStartTimeTasks.sort((a, b) => {
       if (a.startTime > b.startTime) return 1;
       if (a.startTime < b.startTime) return -1;
       if (a.index > b.index) return 1;
       if (a.index < b.index) return -1;
       return 0;
     }).concat(hasNotStartTimeTasks);
+
+    return sortedTasks.map((task) => {
+      delete task.index; // eslint-disable-line
+      return task;
+    });
   },
   /**
    * 引き数のオブジェクトからtableTaskSchemaのプロパティのみにして返します。
