@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import debounce from 'lodash.debounce';
 import localforage from 'localforage';
@@ -10,7 +10,6 @@ import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Snackbar from '@material-ui/core/Snackbar';
 import Avatar from '@material-ui/core/Avatar';
@@ -21,6 +20,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Error from '@material-ui/icons/Error';
 import Person from '@material-ui/icons/Person';
 
+import NotLoginSection from '../components/NotLoginSection';
 import WorkSheetPanels from '../components/WorkSheetPanels';
 import TableCtl from '../components/TableCtl';
 import TaskTable from '../components/TaskTable';
@@ -42,15 +42,9 @@ const styles = theme => ({
   userPhoto: {
     marginRight: theme.spacing.unit,
   },
-  link: {
-    textDecoration: 'none',
-  },
   circularProgress: {
     overflow: 'hidden',
     padding: 0,
-  },
-  expansionPanelSummary: {
-    marginBottom: 3,
   },
 });
 
@@ -782,19 +776,7 @@ class WorkSheet extends Component {
             padding: theme.spacing.unit * 2, backgroundColor: constants.brandColor.base.YELLOW, display: userId ? 'none' : 'block',
           }}
         >
-          <Typography align="center" variant="title">
-            <span role="img" aria-label="HandWave">
-              👋
-            </span>
-            {i18n.t('worksheet.doYouHaveATaskontableAccount')}
-            <Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/signup">
-              {i18n.t('common.signUp')}
-            </Link>
-            {i18n.t('common.or')}
-            <Link style={{ margin: theme.spacing.unit }} className={classes.link} to="/">
-              {i18n.t('worksheet.showMoreAboutTaskontable')}
-            </Link>
-          </Typography>
+          <NotLoginSection />
         </Grid>
         <Grid item xs={12}>
           <WorkSheetPanels
@@ -852,7 +834,7 @@ class WorkSheet extends Component {
               handleTableTasks={(newTableTasks) => {
                 this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
                 this.saveEditingUserId().catch(() => {
-                  this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
+                  if (userId) this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
                 });
               }}
               handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
@@ -870,7 +852,7 @@ class WorkSheet extends Component {
                 this.setState({ memo: newMemo, saveable: true });
                 setTimeout(() => {
                   this.saveEditingUserId().catch(() => {
-                    this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
+                    if (userId) this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
                   });
                 });
               }}
