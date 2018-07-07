@@ -6,6 +6,8 @@ import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import Title from './Title';
 import SnsShare from './SnsShare';
+import Bmc from './Bmc';
+import GithubStart from './GithubStart';
 import constants from '../constants';
 import i18n from '../i18n';
 
@@ -49,9 +51,23 @@ function Footer(props) {
                   {i18n.t('external.roadMap')}
                 </a>
               </Grid>
-              <Grid item xs={12} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
-                <iframe style={{ marginBottom: '2em' }} title="Star hand-dot/taskontable on GitHub" src="https://ghbtns.com/github-btn.html?user=hand-dot&repo=taskontable&type=star&count=true&size=small" width="80" height="20" frameBorder="0" scrolling="0" />
-                <SnsShare title={constants.TITLE} shareUrl={constants.URL} />
+              <Grid item xs={12} style={{ marginBottom: '1em', textAlign: 'center' }} className={classes.center}>
+                <div style={{ marginBottom: '1em' }}>
+                  <GithubStart
+                    title="Star hand-dot/taskontable on GitHub"
+                    user="hand-dot"
+                    repo="taskontable"
+                    size="small"
+                    width="80"
+                    height="20"
+                  />
+                </div>
+                <div style={{ marginBottom: '1em' }}>
+                  <SnsShare title={constants.TITLE} shareUrl={constants.URL} />
+                </div>
+                <div style={{ marginBottom: '1em' }}>
+                  <Bmc id={constants.BMC_ID} />
+                </div>
               </Grid>
             </Grid>
           </div>

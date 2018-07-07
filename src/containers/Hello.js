@@ -13,6 +13,8 @@ import Close from '@material-ui/icons/Close';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import SnsShare from '../components/SnsShare';
+import GithubStart from '../components/GithubStart';
+import Bmc from '../components/Bmc';
 import HowtoUse from '../components/HowtoUse';
 import constants from '../constants';
 import util from '../util';
@@ -107,14 +109,27 @@ class Hello extends Component {
                 </span>
               </Typography>
               <p>
+                ・
                 {i18n.t('hello.please1')}
               </p>
               <SnsShare title={constants.TITLE} shareUrl={constants.URL} />
-              <br />
               <p>
+                ・
                 {i18n.t('hello.please2')}
               </p>
-              <iframe title="Star hand-dot/taskontable on GitHub" src="https://ghbtns.com/github-btn.html?user=hand-dot&repo=taskontable&type=star&count=true&size=large" frameBorder="0" scrolling="0" />
+              <GithubStart
+                title="Star hand-dot/taskontable on GitHub"
+                user="hand-dot"
+                repo="taskontable"
+                size="large"
+                width="120"
+                height="30"
+              />
+              <p>
+                ・
+                {i18n.t('hello.please3')}
+              </p>
+              <Bmc id={constants.BMC_ID} />
             </div>
             <Divider />
           </div>

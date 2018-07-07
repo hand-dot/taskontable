@@ -122,6 +122,7 @@ If you still do not understand please contact us from the feedback on the right.
 Feel free to feedback! We are always waiting for your feedback !`,
     please1: 'Please use it and share it with your friends and colleagues if you like!',
     please2: 'Do you have a github account? I am glad if you give a star to taskontable!',
+    please3: 'Can you support me? Buy me a coffee!',
   },
   help: {
     title: 'Help',
