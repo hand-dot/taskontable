@@ -6,32 +6,23 @@ import moment from 'moment';
 import debounce from 'lodash.debounce';
 import localforage from 'localforage';
 
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Snackbar from '@material-ui/core/Snackbar';
 import Avatar from '@material-ui/core/Avatar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import Close from '@material-ui/icons/Close';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Error from '@material-ui/icons/Error';
 import Person from '@material-ui/icons/Person';
 
-import Dashboard from '../components/Dashboard';
+import WorkSheetPanels from '../components/WorkSheetPanels';
 import TableCtl from '../components/TableCtl';
-import TaskPool from '../components/TaskPool';
-import Members from '../components/Members';
-import OpenRange from '../components/OpenRange';
 import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
 
@@ -806,128 +797,29 @@ class WorkSheet extends Component {
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <ExpansionPanel expanded={isOpenDashboard} style={{ margin: 0 }} elevation={1}>
-            <ExpansionPanelSummary
-              classes={{ content: classes.expansionPanelSummary }}
-              expandIcon={(
-                <IconButton onClick={() => { this.setState({ isOpenDashboard: !isOpenDashboard }); }}>
-                  <ExpandMore />
-                </IconButton>
-              )}
-            >
-              <Tabs
-                value={tab}
-                onChange={this.handleTab.bind(this)}
-                scrollable
-                scrollButtons="off"
-                indicatorColor="secondary"
-              >
-                <Tab label={(
-                  <span role="img" aria-label="dashboad">
-                    🚩
-                    {isMobile ? '' : i18n.t('worksheet.dashBoad')}
-                  </span>
-                )}
-                />
-                <Tab
-                  disabled={readOnly}
-                  label={(
-                    <span role="img" aria-label="taskpool">
-                      📁
-                      {isMobile ? '' : i18n.t('worksheet.taskPool')}
-                    </span>
-                  )}
-                />
-                <Tab
-                  disabled={readOnly}
-                  label={(
-                    <span role="img" aria-label="members">
-                      👫
-                      {isMobile ? '' : i18n.t('worksheet.members')}
-                    </span>
-                  )}
-                />
-                <Tab
-                  disabled={readOnly}
-                  label={(
-                    <span role="img" aria-label="openrange">
-                      {worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? '🔓' : '🔒' }
-                      {isMobile ? '' : i18n.t('worksheet.openRange')}
-                    </span>
-                  )}
-                />
-                {!isMobile && (
-                <Tab
-                  disabled={readOnly}
-                  onClick={() => { history.push(`/${worksheetId}/scripts`); }}
-                  label={(
-                    <span role="img" aria-label="plugins">
-🔌
-                      {i18n.t('worksheet.plugIns')}
-                      (
-                      <span role="img" aria-label="stop">
-                        ⛔
-                      </span>
-                      )
-                    </span>
-                  )}
-                />
-                )}
-                {!isMobile && (
-                <Tab
-                  disabled={readOnly}
-                  onClick={() => { history.push(`/${worksheetId}/activity`); }}
-                  label={(
-                    <span role="img" aria-label="activity">
-                      📈
-                      {i18n.t('worksheet.activity')}
-                      (
-                      <span role="img" aria-label="stop">
-                      ⛔
-                      </span>
-                      )
-                    </span>
-                  )}
-                />
-                )}
-              </Tabs>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails style={{ display: 'block', padding: 0 }}>
-              {tab === 0 && (
-              <div>
-                <Dashboard tableTasks={taskTableFilterBy ? tasksUtil.getTasksByAssign(tableTasks, taskTableFilterBy) : tableTasks} />
-              </div>
-              )}
-              {tab === 1 && (
-              <div>
-                <TaskPool userId={userId} poolTasks={poolTasks} members={members} changePoolTasks={this.changePoolTasks.bind(this)} />
-              </div>
-              )}
-              {tab === 2 && (
-                <div style={{ overflow: 'auto' }}>
-                  <Members
-                    userId={userId}
-                    userName={userName}
-                    userPhotoURL={userPhotoURL}
-                    worksheetId={worksheetId}
-                    worksheetName={worksheetName}
-                    members={members}
-                    invitedEmails={invitedEmails}
-                    handleMembers={this.handleMembers.bind(this)}
-                    handleInvitedEmails={this.handleInvitedEmails.bind(this)}
-                  />
-                </div>
-              )}
-              {tab === 3 && (
-                <div style={{ overflow: 'auto' }}>
-                  <OpenRange
-                    worksheetOpenRange={worksheetOpenRange}
-                    handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
-                  />
-                </div>
-              )}
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
+          <WorkSheetPanels
+            userId={userId}
+            userName={userName}
+            userPhotoURL={userPhotoURL}
+            isOpenDashboard={isOpenDashboard}
+            isMobile={isMobile}
+            tab={tab}
+            readOnly={readOnly}
+            worksheetOpenRange={worksheetOpenRange}
+            worksheetId={worksheetId}
+            taskTableFilterBy={taskTableFilterBy}
+            tableTasks={tableTasks}
+            poolTasks={poolTasks}
+            members={members}
+            worksheetName={worksheetName}
+            invitedEmails={invitedEmails}
+            changePoolTasks={this.changePoolTasks.bind(this)}
+            handleTab={this.handleTab.bind(this)}
+            handleMembers={this.handleMembers.bind(this)}
+            handleInvitedEmails={this.handleInvitedEmails.bind(this)}
+            handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
+            history={history}
+          />
           <Paper elevation={1}>
             <TableCtl
               userId={userId}
