@@ -74,7 +74,7 @@ function Top(props) {
             {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
           </Typography>
           <iframe
-            style={{ display: 'block', margin: '0 auto' }}
+            style={{ display: 'block', margin: '0 auto 1em' }}
             title="Getting Started Taskontable"
             width={util.isMobile() ? 'inherit' : '960'}
             height={util.isMobile() ? 'inherit' : '540'}
@@ -83,6 +83,14 @@ function Top(props) {
             allow="autoplay; encrypted-media"
             allowFullScreen
           />
+          <Typography style={{ fontWeight: 'bold', display: util.isMobile() ? 'none' : 'block' }} variant="display3" align="center">
+            <a href={constants.DEMO_URL}>
+              Try it out!
+              <Typography>
+                (demo)
+              </Typography>
+            </a>
+          </Typography>
         </div>
         <Divider />
       </Grid>
@@ -130,21 +138,6 @@ function Top(props) {
               {i18n.t('top.developedForIndividualsAndTeams')}
               <br />
               {i18n.t('top.canCollaborateInRealtime')}
-            </Typography>
-          </div>
-        </div>
-      </Grid>
-      <Grid item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
-        <Divider />
-        <div className={classes.center}>
-          <div className={classes.content}>
-            <Typography style={{ fontWeight: 'bold', display: 'inline-block' }} variant="display3" align="center">
-              <a href={constants.DEMO_URL}>
-                Try it out!
-                <Typography>
-                  (demo)
-                </Typography>
-              </a>
             </Typography>
           </div>
         </div>
