@@ -379,7 +379,7 @@ class WorkSheet extends Component {
     }
     const user = members[members.findIndex(member => member.uid === editingUserId)];
     if (editingUserId && editingUserId !== userId && user) {
-      this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
+      this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。入力内容は上書きされるかも...画面上部の[X]ボタンを押して制御を奪うこともできます。😎', snackbarType: constants.messageType.ERROR });
       return Promise.resolve();
     }
     return Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
@@ -586,13 +586,14 @@ class WorkSheet extends Component {
   attachEditingUserId() {
     const { worksheetId, date } = this.state;
     return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).on('value', (snapshot) => {
-      const { editingUserId } = this.state;
+      const { editingUserId, members } = this.state;
+      const { userId } = this.props;
       if (editingUserId !== snapshot.val()) {
-        // TODO ロックが解除されました。と初期表示ででてしまうのがうざい
-        const newState = snapshot.val() ? { editingUserId: snapshot.val() } : {
-          editingUserId: null, isOpenSnackbar: true, snackbarText: 'ロックが解除されました。', snackbarType: constants.messageType.SUCCESS,
-        };
-        this.setState(newState);
+        if (editingUserId === userId && snapshot.val()) {
+          const user = members[members.findIndex(member => member.uid === editingUserId)];
+          alert(`${user.displayName}さんに制御を奪われちまった！`);
+        }
+        this.setState({ editingUserId: snapshot.val() });
       } else {
         this.setState({ editingUserId: null });
       }
@@ -827,7 +828,7 @@ class WorkSheet extends Component {
               handleTableTasks={(newTableTasks) => {
                 this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
                 this.saveEditingUserId().catch(() => {
-                  if (userId) this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
+                  if (userId) this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。入力内容は上書きされるかも...画面上部の[X]ボタンを押して制御を奪うこともできます。😎', snackbarType: constants.messageType.ERROR });
                 });
               }}
               handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
@@ -845,7 +846,7 @@ class WorkSheet extends Component {
                 this.setState({ memo: newMemo, saveable: true });
                 setTimeout(() => {
                   this.saveEditingUserId().catch(() => {
-                    if (userId) this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。', snackbarType: constants.messageType.ERROR });
+                    if (userId) this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。入力内容は上書きされるかも...画面上部の[X]ボタンを押して制御を奪うこともできます。😎', snackbarType: constants.messageType.ERROR });
                   });
                 });
               }}
@@ -924,19 +925,19 @@ class WorkSheet extends Component {
                 </span>
               )}
               open
-              action={[
+              action={user.uid !== userId && ([
                 <IconButton
                   key="close"
                   color="inherit"
                   onClick={() => {
-                    if (userId && window.confirm(`${user.displayName}さんのロックを解除してもよろしいですか？`)) {
-                      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
+                    if (userId && window.confirm(`${user.displayName}さんのロックを奪いますか？\n${user.displayName}さんに保存していない変更があれば悲しい気持ちになるかもしれませんよ？`)) {
+                      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(userId).then(() => alert(`${user.displayName}さんの制御を奪ったぜ！`));
                     }
                   }}
                 >
                   <Close />
                 </IconButton>,
-              ]}
+              ])}
             />
           );
         })()}
