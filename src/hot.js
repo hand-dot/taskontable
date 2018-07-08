@@ -276,6 +276,7 @@ export const setDataForHot = (hotInstance, datas) => {
   let rowIndex = 0;
   datas.forEach((data) => {
     if (!util.equal(tableTaskSchema, data)) {
+      data.actually = data.startTime && data.endTime ? util.getTimeDiffMinute(data.startTime, data.endTime) : '';
       Object.entries(data).forEach(([key, value]) => {
         dataForHot.push([rowIndex, key, value]);
       });
@@ -287,7 +288,7 @@ export const setDataForHot = (hotInstance, datas) => {
   // rowCount 今の行数
   let needTrim = false;
   if (rowIndex < rowCount) needTrim = true;
-  hotInstance.setDataAtRowProp(dataForHot);
+  hotInstance.setDataAtRowProp(dataForHot, 'code');
   // 不要な行を削除する
   if (needTrim) hotInstance.alter('remove_row', rowIndex, rowCount);
   // 保存ボタンが活性化するのを防ぐ
@@ -492,8 +493,8 @@ export const hotConf = {
     // 行がずれるので通知を再設定
     resetNotifi(this);
   },
-  beforeChange(changes) {
-    if (!changes) return;
+  beforeChange(changes, source) {
+    if (source === 'code' || !changes) return;
     const { userId } = this.getSettings();
     if (!userId) return;
     const changesLength = changes.length;
@@ -501,12 +502,12 @@ export const hotConf = {
       const [row, prop, oldVal, newVal] = changes[i];
       // 新規にタスクを作成した場合に下記の処理で割当を自分に自動で設定する
       if (newVal && oldVal !== newVal && prop !== 'assign' && this.isEmptyRow(row)) {
-        this.setDataAtRowProp(row, 'assign', userId);
+        this.setDataAtRowProp(row, 'assign', userId, 'code');
       }
     }
   },
-  afterChange(changes) {
-    if (!changes) return;
+  afterChange(changes, source) {
+    if (source === 'code' || !changes) return;
     const { isActiveNotifi, columns } = this.getSettings();
     const changesLength = changes.length;
     const assignIndex = columns.findIndex(column => column.data === 'assign');
@@ -515,15 +516,19 @@ export const hotConf = {
       if (oldVal !== newVal) {
         // 下記の処理で割当以外が全て空だった場合に割当を自動的に削除する
         if (prop !== 'assign' && !newVal && this.getDataAtRow(row).every((data, index) => (index === assignIndex ? data : !data))) {
-          this.setDataAtRowProp(row, 'assign', '');
+          this.setDataAtRowProp(row, 'assign', '', 'code');
         }
         if (prop === 'startTime' || prop === 'endTime') {
           if (newVal) {
             const startTimeVal = prop === 'startTime' ? newVal : this.getDataAtRowProp(row, 'startTime');
             const endTimeVal = prop === 'endTime' ? newVal : this.getDataAtRowProp(row, 'endTime');
-            if (startTimeVal && endTimeVal) this.setDataAtRowProp(row, 'actually', util.getTimeDiffMinute(startTimeVal, endTimeVal));
+            if (startTimeVal && endTimeVal) {
+              const newActually = util.getTimeDiffMinute(startTimeVal, endTimeVal);
+              const oldActually = this.getDataAtRowProp(row, 'actually');
+              if (oldActually !== newActually) this.setDataAtRowProp(row, 'actually', newActually, 'code');
+            }
           } else if (oldVal) {
-            this.setDataAtRowProp(row, 'actually', null);
+            this.setDataAtRowProp(row, 'actually', null, 'code');
           }
         }
         if (isActiveNotifi && (prop === 'startTime' || prop === 'endTime' || prop === 'estimate' || prop === 'assign')) {
