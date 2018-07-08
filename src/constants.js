@@ -26,6 +26,7 @@ export default {
   SUPPORTEDBROWSERS: ['Chrome'],
   METAKEY: osName === 'Mac OS' ? '⌘' : 'ctrl',
   URL: 'https://taskontable.com',
+  DEMO_URL: 'https://taskontable.com/demo',
   DEVURL1: 'http://localhost:3000',
   DEVURL2: 'http://192.168.0.104:3000', // lanの別端末で検証を行う場合に必要。
   GA_ID,

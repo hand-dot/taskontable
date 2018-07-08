@@ -138,8 +138,13 @@ function Top(props) {
         <Divider />
         <div className={classes.center}>
           <div className={classes.content}>
-            <Typography style={{ fontWeight: 'bold' }} variant="display3" align="center">
-              Try it out!
+            <Typography style={{ fontWeight: 'bold', display: 'inline-block' }} variant="display3" align="center">
+              <a href={constants.DEMO_URL}>
+                Try it out!
+                <Typography>
+                  (demo)
+                </Typography>
+              </a>
             </Typography>
           </div>
         </div>
