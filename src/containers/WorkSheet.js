@@ -213,7 +213,6 @@ class WorkSheet extends Component {
    */
   setSortedTableTasks(tableTasks) {
     const sortedTableTask = tasksUtil.getSortedTasks(tableTasks);
-    if (!this.state.isMobile && this.taskTable) this.taskTable.setDataForHot(this.state.taskTableFilterBy ? tasksUtil.getTasksByAssign(sortedTableTask, this.state.taskTableFilterBy) : sortedTableTask);
     this.setState({ tableTasks: sortedTableTask });
     return sortedTableTask;
   }
@@ -337,8 +336,7 @@ class WorkSheet extends Component {
       }
       // タスクプールからテーブルタスクに移動したらテーブルタスクを保存する
       this.setState({ tableTasks });
-      if (!this.state.isMobile) this.taskTable.setDataForHot(this.state.taskTableFilterBy ? tasksUtil.getTasksByAssign(tableTasks, this.state.taskTableFilterBy) : tableTasks);
-      setTimeout(() => { this.saveTableTasks(); });
+      setTimeout(() => { this.saveTableTasks(); }, constants.RENDER_DELAY);
     }
     setTimeout(() => {
       this.savePoolTasks().then(() => {
@@ -690,14 +688,9 @@ class WorkSheet extends Component {
       this.detachWorkSheet().then(() => {
         if (userId && editingUserId === userId) database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
         this.setState({
-          date: newDate, isSyncedTableTasks: false, isSyncedMemo: false, editingUserId: null,
+          date: newDate, taskTableFilterBy: '', isSyncedTableTasks: false, isSyncedMemo: false, editingUserId: null,
         });
-        if (!isMobile) {
-          this.taskTable.updateIsActive(util.isToday(newDate));
-          this.taskTable.setDataForHot([{
-            id: '', assign: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
-          }]);
-        }
+        if (!isMobile) this.taskTable.updateIsActive(util.isToday(newDate));
         setTimeout(() => { this.attachWorkSheet(); });
       });
     }
