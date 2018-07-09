@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
-import i18n from '../i18n/';
+import i18n from '../i18n';
 
 const styles = theme => ({
   content: {

@@ -24,7 +24,7 @@ import Close from '@material-ui/icons/Close';
 
 import '../styles/keyframes.css';
 import util from '../util';
-import i18n from '../i18n/';
+import i18n from '../i18n';
 import constants from '../constants';
 
 import GlobalHeader from './GlobalHeader';

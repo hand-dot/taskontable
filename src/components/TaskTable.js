@@ -34,9 +34,6 @@ class TaskTable extends Component {
     const self = this;
     const isActiveNotifi = this.props.isActive;
     this.hot = new Handsontable(this.hotDom, Object.assign(hotConf, {
-      data: [{
-        id: '', assign: '', title: 'loading...', estimate: '0', startTime: '', endTime: '', memo: 'please wait...',
-      }],
       isActiveNotifi,
       contextMenu: {
         callback(key, selections) {

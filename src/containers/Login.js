@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button';
 import google from '../images/google.svg';
 import constants from '../constants';
 import util from '../util';
-import i18n from '../i18n/';
+import i18n from '../i18n';
 
 const styles = {
   root: {

@@ -16,7 +16,7 @@ import Help from '@material-ui/icons/Help';
 import Notifications from '@material-ui/icons/Notifications';
 import HelpDialog from '../components/HelpDialog';
 import constants from '../constants';
-import i18n from '../i18n/';
+import i18n from '../i18n';
 import title from '../images/title.png';
 
 const styles = theme => ({

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import constants from '../constants';
-import i18n from '../i18n/';
+import i18n from '../i18n';
 
 function UnderDevelopment(props) {
   const { theme } = props;
