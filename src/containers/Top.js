@@ -7,11 +7,9 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 
-import pcMan from '../images/illust/pc_man.jpg';
 import desk from '../images/illust/desk.png';
 import skateboard from '../images/illust/skateboard.jpg';
 import teamMens from '../images/illust/team_mens.jpg';
-import Title from '../components/Title';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
@@ -45,56 +43,40 @@ const styles = theme => ({
 });
 
 function Top(props) {
+  const isMobile = util.isMobile();
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="center" justify="center">
-      <Grid item xs={12}>
+      <Grid className={classes.center} item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
         <div className={classes.content} style={{ paddingTop: '6em' }}>
-          <Title />
-        </div>
-      </Grid>
-      <Grid className={classes.center} item xs={12}>
-        <img style={{ display: 'inline-block', maxWidth: 300, paddingBottom: '2em' }} src={pcMan} alt="pcMan" />
-        <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
-          {i18n.t('top.toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer')}
-        </Typography>
-        <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
-          {i18n.t('top.whyDontYouFinishWorkEarly')}
-        </Typography>
-        <Link style={{ margin: '1em 0 3em' }} className={classes.link} to="/signup">
-          <Button variant="raised" className={classes.button} color="primary">
-            {i18n.t('top.signUpItsFree')}
-          </Button>
-        </Link>
-      </Grid>
-      <Grid item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
-        <Divider />
-        <div className={classes.content}>
-          <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+          <Typography variant="headline" align="center" style={{ marginBottom: '2em' }}>
             {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
           </Typography>
           <iframe
-            style={{ display: 'block', margin: '0 auto 1em' }}
+            style={{ display: 'block', margin: '0 auto 2em' }}
             title="Getting Started Taskontable"
-            width={util.isMobile() ? 'inherit' : '960'}
-            height={util.isMobile() ? 'inherit' : '540'}
-            src="https://www.youtube.com/embed/rttbn7PNyBY?rel=0&amp;showinfo=0"
+            width={isMobile ? window.innerWidth : '960'}
+            height={isMobile ? window.innerWidth * 0.56 : '540'} // 16:9
+            src={`https://www.youtube.com/embed/${constants.YOUTUBE_MOVIE_ID}?rel=0&showinfo=0&modestbranding=1`}
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen
           />
-          <Typography style={{ fontWeight: 'bold', display: util.isMobile() ? 'none' : 'block' }} variant="display3" align="center">
-            <a href={constants.DEMO_URL}>
-              Try it out!
-              <Typography>
-                (demo)
-              </Typography>
-            </a>
+          <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
+            {i18n.t('top.toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer')}
           </Typography>
+          <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
+            {i18n.t('top.whyDontYouFinishWorkEarly')}
+          </Typography>
+          <Link className={classes.link} to="/signup">
+            <Button variant="raised" className={classes.button} color="primary">
+              {i18n.t('top.signUpItsFree')}
+            </Button>
+          </Link>
         </div>
-        <Divider />
       </Grid>
       <Grid item xs={12}>
+        <Divider />
         <div className={classes.center}>
           <div className={classes.content}>
             <Grid spacing={0} container alignItems="center" justify="center">
@@ -116,7 +98,7 @@ function Top(props) {
         <div className={classes.center}>
           <div className={classes.content}>
             <Grid spacing={0} container alignItems="center" justify="center">
-              <Grid item xs={12} md={7}>
+              <Grid style={{ display: isMobile ? 'none' : 'block' }} item xs={12} md={7}>
                 <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
                   {i18n.t('top.modernAndClassicalInterface')}
                   <br />
@@ -125,6 +107,13 @@ function Top(props) {
               </Grid>
               <Grid item xs={12} md={5}>
                 <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={skateboard} alt="skateboard" />
+              </Grid>
+              <Grid style={{ display: !isMobile ? 'none' : 'block' }} item xs={12} md={7}>
+                <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+                  {i18n.t('top.modernAndClassicalInterface')}
+                  <br />
+                  {i18n.t('top.SimpleFastBeautifulMoreFun')}
+                </Typography>
               </Grid>
             </Grid>
           </div>
@@ -140,6 +129,22 @@ function Top(props) {
               {i18n.t('top.canCollaborateInRealtime')}
             </Typography>
           </div>
+        </div>
+      </Grid>
+      <Grid item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
+        <Divider />
+        <div className={classes.content}>
+          <Typography style={{ fontWeight: 'bold' }} variant={isMobile ? 'display1' : 'display3'} align="center">
+            <a href={constants.DEMO_URL}>
+              {i18n.t('top.checkDemo')}
+              {isMobile && (
+              <Typography>
+                *
+                {i18n.t('top.appForPc')}
+              </Typography>
+              )}
+            </a>
+          </Typography>
         </div>
       </Grid>
       <Footer />

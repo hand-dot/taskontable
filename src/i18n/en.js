@@ -102,7 +102,9 @@ export default {
     modernAndClassicalInterface: 'Modern & classical interface.',
     SimpleFastBeautifulMoreFun: 'Simple, fast, beautiful, more fun.',
     developedForIndividualsAndTeams: 'Developed for individuals and teams.',
-    canCollaborateInRealtime: 'Can collaborate in realtime.',
+    canCollaborateInRealtime: 'Can collaborate in realtime!',
+    checkDemo: 'Check it out demo!',
+    appForPc: 'This App is for PC',
   },
   howTouse: {
     createWorksheet: 'At first, create worksheet.',

@@ -102,7 +102,9 @@ export default {
     modernAndClassicalInterface: 'モダン&クラシカルなインターフェース。',
     SimpleFastBeautifulMoreFun: 'シンプルで、速く、美しく、しかも楽しい。',
     developedForIndividualsAndTeams: '個人とチーム向けに開発されました。',
-    canCollaborateInRealtime: 'リアルタイムにコラボレーションできます。',
+    canCollaborateInRealtime: 'リアルタイムにコラボレーションできます！',
+    checkDemo: 'デモをチェック!',
+    appForPc: 'このアプリはPC用です',
   },
   howTouse: {
     createWorksheet: 'はじめにワークシートを作成してください。',
