@@ -34,6 +34,8 @@ import editing from '../images/editing.gif';
 
 const database = util.getDatabase();
 
+const openEditingIsNotAllowedSnackbar = { isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR };
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -357,7 +359,7 @@ class WorkSheet extends Component {
    */
   savePoolTasks() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR });
+      this.setState(openEditingIsNotAllowedSnackbar);
       return Promise.resolve();
     }
     // IDの生成処理
@@ -377,7 +379,7 @@ class WorkSheet extends Component {
     } = this.state;
     const { userId } = this.props;
     if (readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR });
+      this.setState(openEditingIsNotAllowedSnackbar);
       return Promise.resolve();
     }
     const user = members[members.findIndex(member => member.uid === editingUserId)];
@@ -404,7 +406,7 @@ class WorkSheet extends Component {
    */
   saveTableTasks() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR });
+      this.setState(openEditingIsNotAllowedSnackbar);
       return Promise.resolve();
     }
     // IDを生成し無駄なプロパティを削除する。また、hotで並び変えられたデータを取得するために処理が入っている。
@@ -425,7 +427,7 @@ class WorkSheet extends Component {
    */
   saveMemo() {
     if (this.state.readOnly) {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.editingIsNotAllowedBecauseItIsNotAMember'), snackbarType: constants.messageType.ERROR });
+      this.setState(openEditingIsNotAllowedSnackbar);
       return Promise.resolve();
     }
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/memos/${this.state.date}`).set(this.state.memo ? this.state.memo : null);
