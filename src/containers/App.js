@@ -260,15 +260,15 @@ class App extends Component {
   }
 
   logout() {
+    // userの初期化
+    this.setState({
+      user: {
+        displayName: '', photoURL: '', uid: '', email: '', fcmToken: '',
+      },
+      worksheets: [],
+      isOpenSidebar: false,
+    });
     auth.signOut().then(() => {
-      // userの初期化
-      this.setState({
-        user: {
-          displayName: '', photoURL: '', uid: '', email: '', fcmToken: '',
-        },
-        worksheets: [],
-        isOpenSidebar: false,
-      });
       this.props.history.push('/logout');
     }).catch((error) => {
       throw new Error(error);

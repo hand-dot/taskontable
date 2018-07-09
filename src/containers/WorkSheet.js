@@ -163,12 +163,15 @@ class WorkSheet extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { userId } = this.props;
+    const { editingUserId, worksheetId, date } = this.state;
     if (nextProps.userId) {
       database.ref(`/${constants.API_VERSION}/worksheets/${encodeURI(this.props.match.params.id)}/members/`).once('value').then((userIds) => {
         if (userIds.exists() && userIds.val() !== []) {
           this.setState({ readOnly: !userIds.val().includes(userId) });
         }
       });
+    } else if (editingUserId === userId) {
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(null);
     }
   }
 
