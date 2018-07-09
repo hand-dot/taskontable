@@ -384,7 +384,7 @@ class WorkSheet extends Component {
     }
     const user = members[members.findIndex(member => member.uid === editingUserId)];
     if (editingUserId && editingUserId !== userId && user) {
-      this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。入力内容は上書きされるかも...画面上部の[X]ボタンを押して制御を奪うこともできます。😎', snackbarType: constants.messageType.ERROR });
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.locked'), snackbarType: constants.messageType.ERROR });
       return Promise.resolve();
     }
     return Promise.all([this.saveTableTasks(), this.saveMemo()]).then((snackbarTexts) => {
@@ -596,7 +596,7 @@ class WorkSheet extends Component {
       if (editingUserId !== snapshot.val()) {
         if (editingUserId === userId && snapshot.val()) {
           const user = members[members.findIndex(member => member.uid === editingUserId)];
-          alert(`${user.displayName}さんに制御を奪われちまった！`);
+          alert(i18n.t('worksheet.tookLock_target', { target: user.displayName }));
         }
         this.setState({ editingUserId: snapshot.val() });
       } else {
@@ -833,7 +833,7 @@ class WorkSheet extends Component {
               handleTableTasks={(newTableTasks) => {
                 this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
                 this.saveEditingUserId().catch(() => {
-                  if (userId) this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。入力内容は上書きされるかも...画面上部の[X]ボタンを押して制御を奪うこともできます。😎', snackbarType: constants.messageType.ERROR });
+                  if (userId) this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.locked'), snackbarType: constants.messageType.ERROR });
                 });
               }}
               handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
@@ -851,7 +851,7 @@ class WorkSheet extends Component {
                 this.setState({ memo: newMemo, saveable: true });
                 setTimeout(() => {
                   this.saveEditingUserId().catch(() => {
-                    if (userId) this.setState({ isOpenSnackbar: true, snackbarText: '編集中のためロックされています。入力内容は上書きされるかも...画面上部の[X]ボタンを押して制御を奪うこともできます。😎', snackbarType: constants.messageType.ERROR });
+                    if (userId) this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.locked'), snackbarType: constants.messageType.ERROR });
                   });
                 });
               }}
@@ -924,8 +924,9 @@ class WorkSheet extends Component {
               message={(
                 <span id="editing-user-id" style={{ display: 'flex', alignItems: 'center' }}>
                   <Avatar className={classes.userPhoto} src={editing} />
-                  <span style={{ paddingLeft: theme.spacing.unit, paddingRight: theme.spacing.unit }}>
-                    {user.uid === userId ? '編集を終えたら保存してロックを解除してください。' : `${user.displayName}さんが編集中です。`}
+                  <span style={{ paddingLeft: theme.spacing.unit, paddingRight: theme.spacing.unit }} role="img" aria-label="lock">
+                    🔒&nbsp;
+                    {user.uid === userId ? i18n.t('worksheet.pleaseSaveAndUnlock') : i18n.t('worksheet.isEditing_target', { target: user.displayName })}
                   </span>
                 </span>
               )}
@@ -935,8 +936,8 @@ class WorkSheet extends Component {
                   key="close"
                   color="inherit"
                   onClick={() => {
-                    if (userId && window.confirm(`${user.displayName}さんのロックを奪いますか？\n${user.displayName}さんに保存していない変更があれば悲しい気持ちになるかもしれませんよ？`)) {
-                      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(userId).then(() => alert(`${user.displayName}さんの制御を奪ったぜ！`));
+                    if (userId && window.confirm(i18n.t('worksheet.takeLock_target', { target:  user.displayName }))) {
+                      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(userId).then(() => alert(i18n.t('worksheet.tookLock', { target: user.displayName })));
                     }
                   }}
                 >

@@ -193,6 +193,12 @@ export default {
         thereAreNoStartingTasks: '開始しているタスクはありません。',
       },
     },
+    locked: '編集中のためロックされています。入力内容は上書きされるかも... 画面上部の[X]を押してロックを奪うこともできます😎',
+    tookLock_target: '%{target}さんにロックを奪われちまった！',
+    pleaseSaveAndUnlock: '編集を終えたら保存してロックを解除してください。',
+    isEditing_target: '%{target}さんが編集しているためロックしています。',
+    takeLock_target: '%{target}さんのロックを奪いますか？\n%{target}さんに保存していない変更があれば%{target}さんが悲しい気持ちになるかもしれません...',
+    tookLock: '%{target}さんのロックを奪ったぜ！',
   },
   dashBoad: {
     summary: 'サマリ',
