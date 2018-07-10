@@ -27,7 +27,7 @@ const styles = theme => ({
   },
 });
 
-class OpenRange extends Component {
+class DisclosureRange extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,37 +35,37 @@ class OpenRange extends Component {
     };
   }
 
-  handleWorksheetOpenRange(event) {
-    if (!window.confirm(i18n.t('openRange.areYouSureSetOpenRangeTo_target', { target: event.target.value === constants.worksheetOpenRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }))) return;
-    this.props.handleWorksheetOpenRange(event.target.value);
+  handleWorksheetDisclosureRange(event) {
+    if (!window.confirm(i18n.t('disclosureRange.areYouSureSetDisclosureRangeTo_target', { target: event.target.value === constants.worksheetDisclosureRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }))) return;
+    this.props.handleWorksheetDisclosureRange(event.target.value);
   }
 
   render() {
-    const { worksheetOpenRange, classes } = this.props;
+    const { worksheetDisclosureRange, classes } = this.props;
     return (
       <FormControl component="fieldset" required className={classes.formControl}>
         <Typography variant="subheading">
-          {i18n.t('openRange.changeOpenRange')}
+          {i18n.t('disclosureRange.changeDisclosureRange')}
         </Typography>
         <RadioGroup
-          aria-label="worksheetOpenRange"
-          name="worksheetOpenRange"
+          aria-label="worksheetDisclosureRange"
+          name="worksheetDisclosureRange"
           className={classes.group}
-          value={worksheetOpenRange}
-          onChange={this.handleWorksheetOpenRange.bind(this)}
+          value={worksheetDisclosureRange}
+          onChange={this.handleWorksheetDisclosureRange.bind(this)}
         >
           <FormControlLabel
-            value={constants.worksheetOpenRange.PUBLIC}
+            value={constants.worksheetDisclosureRange.PUBLIC}
             control={<Radio color="primary" />}
             label={
-              <span>{i18n.t('common.public')}: {i18n.t('openRange.anyoneCanRead')}</span>
+              <span>{i18n.t('common.public')}: {i18n.t('disclosureRange.anyoneCanRead')}</span>
           }
           />
           <FormControlLabel
-            value={constants.worksheetOpenRange.PRIVATE}
+            value={constants.worksheetDisclosureRange.PRIVATE}
             control={<Radio color="primary" />}
             label={
-              <span>{i18n.t('common.private')}: {i18n.t('openRange.onlyMembersCanReadAndEdit')}</span>}
+              <span>{i18n.t('common.private')}: {i18n.t('disclosureRange.onlyMembersCanReadAndEdit')}</span>}
           />
         </RadioGroup>
         <Typography variant="subheading">
@@ -77,7 +77,7 @@ class OpenRange extends Component {
           value={window.location.href}
           endAdornment={
             <InputAdornment position="end">
-              <Tooltip open={this.state.isOpenTooltip} onClose={() => { this.setState({ isOpenTooltip: false }); }} id="tooltip-copied" title={i18n.t('openRange.copied')}>
+              <Tooltip open={this.state.isOpenTooltip} onClose={() => { this.setState({ isOpenTooltip: false }); }} id="tooltip-copied" title={i18n.t('disclosureRange.copied')}>
                 <IconButton
                   aria-label="URL"
                   onClick={() => {
@@ -97,11 +97,11 @@ class OpenRange extends Component {
   }
 }
 
-OpenRange.propTypes = {
-  worksheetOpenRange: PropTypes.string.isRequired,
-  handleWorksheetOpenRange: PropTypes.func.isRequired,
+DisclosureRange.propTypes = {
+  worksheetDisclosureRange: PropTypes.string.isRequired,
+  handleWorksheetDisclosureRange: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
-export default withStyles(styles, { withTheme: true })(OpenRange);
+export default withStyles(styles, { withTheme: true })(DisclosureRange);
 

@@ -294,7 +294,7 @@ class App extends Component {
       } else {
         Promise.all([
           database.ref(`/${constants.API_VERSION}/users/${this.state.user.uid}/worksheets/`).set(this.state.worksheets.map(worksheet => worksheet.id).concat([newWorksheetId])),
-          database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.state.user.uid], name: this.state.newWorksheetName, openRange: constants.worksheetOpenRange.PRIVATE }),
+          database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.state.user.uid], name: this.state.newWorksheetName, disclosureRange: constants.worksheetDisclosureRange.PRIVATE }),
         ]).then(() => {
           this.setState({
             worksheets: this.state.worksheets.concat([{ id: newWorksheetId, name: this.state.newWorksheetName }]),

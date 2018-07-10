@@ -18,8 +18,8 @@ const rgb = {
   GREY: '201, 203, 207',
 };
 export default {
-  APP_VERSION: '1.0.0-closedβ',
-  API_VERSION: process.env.NODE_ENV === 'development' ? 'development' : 'beta',
+  APP_VERSION: '0.0.0',
+  API_VERSION: process.env.NODE_ENV === 'development' ? 'development' : '0',
   BMC_ID: 'handdot',
   YOUTUBE_MOVIE_ID: 'QwCtcFsx15g',
   TITLE: 'Taskontable',
@@ -72,7 +72,7 @@ export default {
     BLOG: 'blog',
     COMMUNITY: 'community',
   },
-  worksheetOpenRange: {
+  worksheetDisclosureRange: {
     PRIVATE: 'private',
     PUBLIC: 'public',
   },

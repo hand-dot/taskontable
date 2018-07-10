@@ -59,7 +59,7 @@ class WorkSheet extends Component {
     this.attachEditingUserId = debounce(this.attachEditingUserId, constants.REQEST_DELAY_FAST);
     this.state = {
       worksheetId: '',
-      worksheetOpenRange: '', // public or private
+      worksheetDisclosureRange: '', // public or private
       worksheetName: '',
       editingUserId: null,
       members: [],
@@ -104,14 +104,14 @@ class WorkSheet extends Component {
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).once('value'),
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value'),
       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/name/`).once('value'),
-      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/openRange/`).once('value'),
+      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/disclosureRange/`).once('value'),
     ]).then((snapshots) => {
-      const [invitedEmails, memberIds, worksheetName, worksheetOpenRange] = snapshots;
-      if (!worksheetOpenRange.exists()) {
+      const [invitedEmails, memberIds, worksheetName, worksheetDisclosureRange] = snapshots;
+      if (!worksheetDisclosureRange.exists()) {
         // 公開範囲が存在しない(そもそもワークシートが存在しない)ワークシートには参加できない
         this.props.history.push('/');
         return;
-      } if (worksheetOpenRange.val() === constants.worksheetOpenRange.PRIVATE && (!memberIds.exists() || !memberIds.val().includes(this.props.userId))) {
+      } if (worksheetDisclosureRange.val() === constants.worksheetDisclosureRange.PRIVATE && (!memberIds.exists() || !memberIds.val().includes(this.props.userId))) {
         // 自分がいないプライベートワークシートには参加できない
         this.props.history.push('/');
         return;
@@ -121,7 +121,7 @@ class WorkSheet extends Component {
           this.setState({
             readOnly: !memberIds.val().includes(this.props.userId),
             worksheetId,
-            worksheetOpenRange: worksheetOpenRange.exists() ? worksheetOpenRange.val() : constants.worksheetOpenRange.PUBLIC,
+            worksheetDisclosureRange: worksheetDisclosureRange.exists() ? worksheetDisclosureRange.val() : constants.worksheetDisclosureRange.PUBLIC,
             worksheetName: worksheetName.exists() ? worksheetName.val() : 'Unknown',
             members: members.filter(member => member.exists()).map(member => member.val()),
             invitedEmails: invitedEmails.exists() ? invitedEmails.val() : [],
@@ -722,10 +722,10 @@ class WorkSheet extends Component {
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/invitedEmails/`).set(newEmails);
   }
 
-  handleWorksheetOpenRange(worksheetOpenRange) {
-    this.setState({ worksheetOpenRange });
-    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/openRange/`).set(worksheetOpenRange).then(() => {
-      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.setOpenRangeTo_target', { target: worksheetOpenRange === constants.worksheetOpenRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }), snackbarType: constants.messageType.SUCCESS });
+  handleWorksheetDisclosureRange(worksheetDisclosureRange) {
+    this.setState({ worksheetDisclosureRange });
+    return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/disclosureRange/`).set(worksheetDisclosureRange).then(() => {
+      this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.setDisclosureRangeTo_target', { target: worksheetDisclosureRange === constants.worksheetDisclosureRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }), snackbarType: constants.messageType.SUCCESS });
       return Promise.resolve();
     });
   }
@@ -737,7 +737,7 @@ class WorkSheet extends Component {
       isOpenDashboard,
       tab,
       readOnly,
-      worksheetOpenRange,
+      worksheetDisclosureRange,
       worksheetId,
       taskTableFilterBy,
       tableTasks,
@@ -786,7 +786,7 @@ class WorkSheet extends Component {
             isMobile={isMobile}
             tab={tab}
             readOnly={readOnly}
-            worksheetOpenRange={worksheetOpenRange}
+            worksheetDisclosureRange={worksheetDisclosureRange}
             worksheetId={worksheetId}
             taskTableFilterBy={taskTableFilterBy}
             tableTasks={tableTasks}
@@ -798,7 +798,7 @@ class WorkSheet extends Component {
             handleTab={this.handleTab.bind(this)}
             handleMembers={this.handleMembers.bind(this)}
             handleInvitedEmails={this.handleInvitedEmails.bind(this)}
-            handleWorksheetOpenRange={this.handleWorksheetOpenRange.bind(this)}
+            handleWorksheetDisclosureRange={this.handleWorksheetDisclosureRange.bind(this)}
             history={history}
           />
           <Paper elevation={1}>

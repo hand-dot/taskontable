@@ -12,7 +12,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import Dashboard from './Dashboard';
 import TaskPool from './TaskPool';
 import Members from './Members';
-import OpenRange from './OpenRange';
+import DisclosureRange from './DisclosureRange';
 
 import constants from '../constants';
 import tasksUtil from '../tasksUtil';
@@ -27,7 +27,7 @@ function WorkSheetPanels(props) {
     isMobile,
     tab,
     readOnly,
-    worksheetOpenRange,
+    worksheetDisclosureRange,
     worksheetId,
     taskTableFilterBy,
     tableTasks,
@@ -39,7 +39,7 @@ function WorkSheetPanels(props) {
     handleTab,
     handleMembers,
     handleInvitedEmails,
-    handleWorksheetOpenRange,
+    handleWorksheetDisclosureRange,
     history,
   } = props;
   return (
@@ -106,12 +106,12 @@ function WorkSheetPanels(props) {
             disabled={readOnly}
             label={(
               <span role="img" aria-label="openrange">
-                {worksheetOpenRange === constants.worksheetOpenRange.PUBLIC
+                {worksheetDisclosureRange === constants.worksheetDisclosureRange.PUBLIC
                   ? '🔓'
                   : '🔒'}
                 {isMobile
                   ? ''
-                  : i18n.t('worksheet.openRange')}
+                  : i18n.t('worksheet.disclosureRange')}
               </span>
           )}
           />
@@ -206,9 +206,9 @@ function WorkSheetPanels(props) {
             overflow: 'auto',
           }}
           >
-            <OpenRange
-              worksheetOpenRange={worksheetOpenRange}
-              handleWorksheetOpenRange={handleWorksheetOpenRange}
+            <DisclosureRange
+              worksheetDisclosureRange={worksheetDisclosureRange}
+              handleWorksheetDisclosureRange={handleWorksheetDisclosureRange}
             />
           </div>
         )}
@@ -225,7 +225,7 @@ WorkSheetPanels.propTypes = {
   isMobile: PropTypes.bool.isRequired,
   tab: PropTypes.number.isRequired,
   readOnly: PropTypes.bool.isRequired,
-  worksheetOpenRange: PropTypes.string.isRequired,
+  worksheetDisclosureRange: PropTypes.string.isRequired,
   worksheetId: PropTypes.string.isRequired,
   taskTableFilterBy: PropTypes.string.isRequired,
   tableTasks: PropTypes
@@ -255,7 +255,7 @@ WorkSheetPanels.propTypes = {
   handleTab: PropTypes.func.isRequired,
   handleMembers: PropTypes.func.isRequired,
   handleInvitedEmails: PropTypes.func.isRequired,
-  handleWorksheetOpenRange: PropTypes.func.isRequired,
+  handleWorksheetDisclosureRange: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired, // eslint-disable-line
 };
 

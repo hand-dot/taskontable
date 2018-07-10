@@ -172,7 +172,7 @@ export default {
     memo: 'メモ',
     dashBoad: 'ダッシュボード',
     members: 'メンバー',
-    openRange: '公開範囲',
+    disclosureRange: '公開範囲',
     plugIns: 'プラグイン',
     activity: 'アクティビティ',
     movedTableTasksToTaskPool: 'テーブルタスクをタスクプールに移動しました。',
@@ -183,7 +183,7 @@ export default {
     memoHasBeenUpdated: 'メモが更新されました。',
     loadedRegularTask: '定期タスクを読み込みました。',
     membersHaveBeenUpdated: 'メンバーを更新しました。',
-    setOpenRangeTo_target: '公開範囲を%{target}に設定しました。',
+    setDisclosureRangeTo_target: '公開範囲を%{target}に設定しました。',
     doYouHaveATaskontableAccount: 'Taskontableのアカウントはお持ちですか?',
     showMoreAboutTaskontable: 'Taskontableについて詳しく見る',
     tableCtl: {
@@ -256,9 +256,9 @@ export default {
     notifyOtherMembers: 'ほかのメンバーにも通知する',
     doNotNoifyMeAndNotificationBlockingMembers: '自分と通知を拒否しているメンバーには通知されません。',
   },
-  openRange: {
-    areYouSureSetOpenRangeTo_target: '公開範囲を%{target}に設定してもよろしいですか？',
-    changeOpenRange: '公開範囲を変更',
+  disclosureRange: {
+    areYouSureSetDisclosureRangeTo_target: '公開範囲を%{target}に設定してもよろしいですか？',
+    changeDisclosureRange: '公開範囲を変更',
     copied: 'コピーしました',
     anyoneCanRead: 'URLを知っている人は誰でも閲覧でき、Googleのような検索エンジンにも表示されます。編集可能なのはメンバーのみです。',
     onlyMembersCanReadAndEdit: 'メンバーのみ、閲覧、編集できます。',
