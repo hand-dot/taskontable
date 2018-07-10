@@ -60,6 +60,7 @@ export default {
   external: {
     contact: 'コンタクト',
     roadMap: 'ロードマップ',
+    pressKit: 'プレスキット',
     blog: 'ブログ',
     community: 'コミュニティ',
     github: 'Github',
@@ -323,7 +324,7 @@ export default {
 
 %{signupUrl}  からアカウントを作成してください。
 
-Taskontableとは--Taskontableはスプレットシート上のTo-Doリストとタイムキーパーです。`,
+Taskontableとは - Taskontableはスプレットシート上のTo-Doリストとタイムキーパーです。`,
     },
     footer: `
 

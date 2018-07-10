@@ -60,6 +60,7 @@ export default {
   external: {
     contact: 'Contact',
     roadMap: 'RoadMap',
+    pressKit: 'Presskit',
     blog: 'Blog',
     community: 'Community',
     github: 'Github',
