@@ -12,6 +12,18 @@
                 ".write": "auth != null"
             }
         },
+        "v0": {
+            "users": {
+                "$uid": {
+                    ".read": true,
+                    ".write": "auth != null"
+                }
+            },
+            "worksheets": {
+                ".read": true,
+                ".write": "auth != null"
+            }
+        },
         "development": {
             "users": {
                 "$uid": {
