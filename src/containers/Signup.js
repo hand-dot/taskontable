@@ -142,6 +142,9 @@ class Signup extends Component {
                 <img src={google} alt="google" height="20" />　{i18n.t('common.signUpWithG')}
               </Button>
               <div style={{ fontSize: 12, marginBottom: 10 }}>
+                <Link to="/privacy-and-terms">{i18n.t('signUpAndLogIn.privacyAndTerms')}</Link>
+              </div>
+              <div style={{ fontSize: 12, marginBottom: 10 }}>
                 <Link to="/">{i18n.t('common.backToTop')}</Link>
               </div>
             </div>
