@@ -19,7 +19,7 @@ const rgb = {
 };
 export default {
   APP_VERSION: '0.0.0',
-  API_VERSION: process.env.NODE_ENV === 'development' ? 'development' : '0',
+  API_VERSION: process.env.NODE_ENV === 'development' ? 'development' : 'v0',
   BMC_ID: 'handdot',
   YOUTUBE_MOVIE_ID: 'QwCtcFsx15g',
   TITLE: 'Taskontable',
