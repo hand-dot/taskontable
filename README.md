@@ -1,11 +1,13 @@
 [![Build Status](https://travis-ci.org/hand-dot/taskontable.svg?branch=master)](https://travis-ci.org/hand-dot/taskontable)  
 [![Greenkeeper badge](https://badges.greenkeeper.io/hand-dot/taskontable.svg)](https://greenkeeper.io/)  
-![head](https://user-images.githubusercontent.com/24843808/38695957-c07a2db0-3ec8-11e8-88b0-ce060cfdf5ef.png)  
+![ogp](https://user-images.githubusercontent.com/24843808/42593160-ab34125e-8586-11e8-911e-99a7d084c638.png)
+## Taskontable is To-Do List & Time keeper on Spreadsheet.   
+[https://taskontable.com/](https://taskontable.com/)
 
 At the moment, while considering the development of desktop version · mobile version application,  
 It exposes the Web version as a beta version.
 
-## Architecture
+### Architecture
  * BaaS - [firebase](https://firebase.google.com/)
  * Frontend - [react](https://reactjs.org/)
  * UI - [material-ui](https://material-ui-next.com/) / [handsontable](https://handsontable.com/)
