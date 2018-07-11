@@ -87,8 +87,6 @@ export default {
   signUpAndLogIn: {
     createAnAccount: 'アカウント作成',
     logIn_title: '%{title}にログインする',
-    NoteForBeta1: '*現在β版のため一部の機能を除いてアプリをお試しできます。(データがクリアさせる可能性があります。)',
-    NoteForBeta2: '*現在ログインしていただくと2018年7~8月の正式リリース時にお知らせメールを送信させていただきます。',
     privacyAndTerms: 'プライバシーポリシー / 利用規約',
   },
   logOut: {

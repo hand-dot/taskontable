@@ -87,8 +87,6 @@ export default {
   signUpAndLogIn: {
     createAnAccount: 'Create an account',
     logIn_title: 'Log in to %{title}',
-    NoteForBeta1: '*This application is beta version, you can try except for some functions. ',
-    NoteForBeta2: '*If you log in now I will send you a notification e-mail during the official release from July to August 2018.',
     privacyAndTerms: 'Privacy Policy / Terms Of Service',
   },
   logOut: {

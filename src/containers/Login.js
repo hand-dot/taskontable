@@ -35,12 +35,14 @@ class Login extends Component {
       password: '',
     };
   }
+
   componentWillMount() {
     // 招待されたメールからメールアドレスを設定する処理。
     if (this.props.location.search) {
       this.setState({ email: util.getQueryVariable('email') });
     }
   }
+
   login(type) {
     const obj = {
       email: '',
@@ -55,6 +57,7 @@ class Login extends Component {
     }
     this.props.login(obj);
   }
+
   render() {
     const { classes } = this.props;
     return (
@@ -65,18 +68,12 @@ class Login extends Component {
               <Typography variant="headline" gutterBottom>
                 {i18n.t('signUpAndLogIn.logIn_title', { title: constants.TITLE })}
               </Typography>
-              <div style={{ fontSize: 12, marginBottom: 20 }}>
+              <div style={{ fontSize: 12 }}>
                 {i18n.t('common.or')}&nbsp;
                 <Link to={this.props.location.search === '' ? '/signup' : `/signup${this.props.location.search}`}>
                   {i18n.t('signUpAndLogIn.createAnAccount')}
                 </Link>
               </div>
-              <Typography variant="caption" gutterBottom>
-                {i18n.t('signUpAndLogIn.NoteForBeta1')}
-              </Typography>
-              <Typography variant="caption" gutterBottom>
-                {i18n.t('signUpAndLogIn.NoteForBeta2')}
-              </Typography>
               <form style={{ marginTop: '2em' }}>
                 <TextField
                   value={this.state.email}
@@ -100,23 +97,33 @@ class Login extends Component {
                   type="password"
                   label={i18n.t('common.password')}
                   InputLabelProps={{
-                  shrink: true,
-                }}
+                    shrink: true,
+                  }}
                   placeholder={i18n.t('validation.minLength_num', { num: 6 })}
                   fullWidth
                   margin="normal"
                 />
-                <Button onClick={this.login.bind(this, constants.authType.EMAIL_AND_PASSWORD)} variant="raised" className={classes.button}>{i18n.t('common.logIn')}</Button>
+                <Button onClick={this.login.bind(this, constants.authType.EMAIL_AND_PASSWORD)} variant="raised" className={classes.button}>
+                  {i18n.t('common.logIn')}
+                                </Button>
               </form>
               <Typography gutterBottom>
                 {i18n.t('common.or')}
               </Typography>
-              <Button onClick={this.login.bind(this, constants.authType.GOOGLE)} variant="raised" color="primary" className={classes.button}><img src={google} alt="google" height="20" />　{i18n.t('common.logInWithG')}</Button>
+              <Button onClick={this.login.bind(this, constants.authType.GOOGLE)} variant="raised" color="primary" className={classes.button}>
+                <img src={google} alt="google" height="20" />
+                {' '}
+                {i18n.t('common.logInWithG')}
+                            </Button>
               <div style={{ fontSize: 12, marginBottom: 10 }}>
-                <Link to="/privacy-and-terms">{i18n.t('signUpAndLogIn.privacyAndTerms')}</Link>
+                <Link to="/privacy-and-terms">
+                  {i18n.t('signUpAndLogIn.privacyAndTerms')}
+                                </Link>
               </div>
               <div style={{ fontSize: 12, marginBottom: 10 }}>
-                <Link to="/">{i18n.t('common.backToTop')}</Link>
+                <Link to="/">
+                  {i18n.t('common.backToTop')}
+                                </Link>
               </div>
             </div>
           </div>
@@ -133,4 +140,3 @@ Login.propTypes = {
 };
 
 export default withStyles(styles)(Login);
-
