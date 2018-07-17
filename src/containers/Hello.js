@@ -20,6 +20,7 @@ import constants from '../constants';
 import util from '../util';
 import i18n from '../i18n';
 import '../styles/helpdialog.css';
+import chromeWebstore from '../images/chrome-webstore.png';
 
 const styles = {
   root: {
@@ -40,7 +41,6 @@ const styles = {
     margin: 5,
   },
 };
-
 
 class Hello extends Component {
   constructor(props) {
@@ -64,6 +64,7 @@ class Hello extends Component {
   }
 
   render() {
+    const isMobile = util.isMobile();
     const { classes } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch">
@@ -103,7 +104,29 @@ class Hello extends Component {
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
               <Typography gutterBottom variant="body2">
-              Please
+                {i18n.t('common.chromeWebstore')}
+                {isMobile && (
+                <span>
+                  (PC)
+                </span>
+                )}
+                &nbsp;
+                <img src={chromeWebstore} alt="chrome webstore" width={20} />
+              </Typography>
+              <p>
+                {i18n.t('hello.afterInstalling')}
+              </p>
+              <a href={`https://chrome.google.com/webstore/detail/${constants.CHROME_EXTENTION_ID}`} target="_blank">
+                {i18n.t('common.install')}
+                <span role="img" aria-label="Help">
+                  🚀
+                </span>
+              </a>
+            </div>
+            <Divider />
+            <div style={{ marginTop: 30, marginBottom: 30 }}>
+              <Typography gutterBottom variant="body2">
+                Please
                 <span role="img" aria-label="Help">
                   🙏
                 </span>

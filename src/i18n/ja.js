@@ -56,6 +56,8 @@ export default {
     next: '次へ',
     back: '戻る',
     join: '参加する',
+    install: 'インストールする',
+    chromeWebstore: 'Chrome ウェブストア',
   },
   external: {
     contact: 'コンタクト',
@@ -125,6 +127,7 @@ export default {
     please1: '使ってみて、もし気に入ったらお友達や同僚にシェアしてほしいです！',
     please2: 'それともしgithubのアカウントを持っていたら、Taskontableにスターをくれると嬉しいです！',
     please3: 'サポートしてくれますか？私にコーヒーを買ってください！',
+    afterInstalling: 'Chrome拡張機能のインストール後、Chromeを起動するとTaskontableが自動的に起動されます。',
   },
   help: {
     title: 'ヘルプ',

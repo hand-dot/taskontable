@@ -32,6 +32,11 @@ function Footer(props) {
             <Title />
             <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '4em' }}>
               <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <a style={{ fontSize: 12, margin: '0 .4em' }} href={`https://chrome.google.com/webstore/detail/${constants.CHROME_EXTENTION_ID}`} target="_blank">
+                  {i18n.t('common.chromeWebstore')}
+                </a>
+              </Grid>
+              <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                 <a style={{ fontSize: 12, margin: '0 .4em' }} href={constants.CONTACT_URL} target="_blank">
                   {i18n.t('external.contact')}
                 </a>

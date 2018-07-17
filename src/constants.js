@@ -22,6 +22,7 @@ export default {
   API_VERSION: process.env.NODE_ENV === 'development' ? 'development' : 'v0',
   BMC_ID: 'handdot',
   YOUTUBE_MOVIE_ID: 'QwCtcFsx15g',
+  CHROME_EXTENTION_ID: 'almilenhamndbeaajhfpmiffjhilkgfi',
   TITLE: 'Taskontable',
   EMAIL: 'info@taskontable.com',
   SUPPORTEDBROWSERS: ['Chrome'],

@@ -56,6 +56,8 @@ export default {
     next: 'Next',
     back: 'Back',
     join: 'Join',
+    install: 'Install',
+    chromeWebstore: 'Chrome Webstore',
   },
   external: {
     contact: 'Contact',
@@ -125,6 +127,7 @@ Feel free to feedback! We are always waiting for your feedback !`,
     please1: 'Please use it and share it with your friends and colleagues if you like!',
     please2: 'Do you have a github account? I am glad if you give a star to taskontable!',
     please3: 'Can you support me? Buy me a coffee!',
+    afterInstalling: 'After installing Chrome extension, Taskontable can be launched automatically when Chrome is started.',
   },
   help: {
     title: 'Help',
