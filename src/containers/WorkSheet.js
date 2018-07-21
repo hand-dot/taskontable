@@ -595,7 +595,7 @@ class WorkSheet extends Component {
       const { userId } = this.props;
       if (editingUserId !== snapshot.val()) {
         if (editingUserId === userId && snapshot.val()) {
-          const user = members[members.findIndex(member => member.uid === editingUserId)];
+          const user = members[members.findIndex(member => member.uid === snapshot.val())];
           alert(i18n.t('worksheet.tookLock_target', { target: user.displayName }));
         }
         this.setState({ editingUserId: snapshot.val() });
@@ -936,7 +936,7 @@ class WorkSheet extends Component {
                   key="close"
                   color="inherit"
                   onClick={() => {
-                    if (userId && window.confirm(i18n.t('worksheet.takeLock_target', { target:  user.displayName }))) {
+                    if (userId && window.confirm(i18n.t('worksheet.takeLock_target', { target: user.displayName }))) {
                       database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(userId).then(() => alert(i18n.t('worksheet.tookLock', { target: user.displayName })));
                     }
                   }}
