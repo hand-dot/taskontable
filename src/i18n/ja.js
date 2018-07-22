@@ -58,6 +58,7 @@ export default {
     join: '参加する',
     install: 'インストールする',
     chromeWebstore: 'Chrome ウェブストア',
+    goBack: '戻る',
   },
   external: {
     contact: 'コンタクト',

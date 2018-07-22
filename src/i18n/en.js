@@ -58,6 +58,7 @@ export default {
     join: 'Join',
     install: 'Install',
     chromeWebstore: 'Chrome Webstore',
+    goBack: 'Go Back',
   },
   external: {
     contact: 'Contact',

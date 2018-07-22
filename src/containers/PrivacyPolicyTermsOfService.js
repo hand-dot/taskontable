@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import i18n from '../i18n';
 
 const styles = {
   content: {
@@ -16,7 +19,7 @@ const styles = {
 };
 
 function PrivacyPolicyTermsOfService(props) {
-  const { classes } = props;
+  const { theme, classes, history } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
       <Grid item xs={12}>
@@ -52,14 +55,24 @@ function PrivacyPolicyTermsOfService(props) {
                 title, and under this license you may not:
 
                 <ol type="i">
-                  <li>modify or copy the materials;</li>
-                  <li>use the materials for any commercial purpose, or for any public display
-                    (commercial or non-commercial);</li>
-                  <li>attempt to decompile or reverse engineer any software contained on
-                    Taskontable's web site;</li>
-                  <li>remove any copyright or other proprietary notations from the materials; or</li>
-                  <li>transfer the materials to another person or "mirror" the materials on any
-                    other server.</li>
+                  <li>
+                    modify or copy the materials;
+                  </li>
+                  <li>
+                    use the materials for any commercial purpose, or for any public display
+                    (commercial or non-commercial);
+                  </li>
+                  <li>
+                    attempt to decompile or reverse engineer any software contained on
+                    Taskontable's web site;
+                  </li>
+                  <li>
+                    remove any copyright or other proprietary notations from the materials; or
+                  </li>
+                  <li>
+                    transfer the materials to another person or "mirror" the materials on any
+                    other server.
+                  </li>
                 </ol>
               </li>
               <li>
@@ -199,7 +212,10 @@ function PrivacyPolicyTermsOfService(props) {
               in order to ensure that the confidentiality of personal information is protected
               and maintained.
             </p>
-
+            <Divider />
+            <Button style={{ marginTop: theme.spacing.unit }} onClick={history.goBack.bind(this)}>
+              {i18n.t('common.goBack')}
+            </Button>
           </div>
         </Paper>
       </Grid>
@@ -210,6 +226,7 @@ function PrivacyPolicyTermsOfService(props) {
 PrivacyPolicyTermsOfService.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
+  history: PropTypes.object.isRequired, // eslint-disable-line
 };
 
-export default withStyles(styles, {withTheme: true})(PrivacyPolicyTermsOfService);
+export default withStyles(styles, { withTheme: true })(PrivacyPolicyTermsOfService);
