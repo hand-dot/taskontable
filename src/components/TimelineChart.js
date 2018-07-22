@@ -43,12 +43,14 @@ class TimelineChart extends Component {
 
   componentDidMount() {
     if (!this.timeline) return;
-    this.draw(this.props.tableTasks);
+    const { tableTasks } = this.props;
+    this.draw(tableTasks);
   }
 
   componentDidUpdate() {
     if (!this.timeline) return;
-    this.draw(this.props.tableTasks);
+    const { tableTasks } = this.props;
+    this.draw(tableTasks);
   }
 
   componentWillUnmount() {
@@ -56,12 +58,13 @@ class TimelineChart extends Component {
 
   draw(data) {
     if (!this.timeline) return;
-    d3.selectAll(`#timeline-${this.state.id} > *`).remove();
+    const { id } = this.state;
+    d3.selectAll(`#timeline-${id} > *`).remove();
     const labels = d3.nest().key(d => d.key).entries(data);
     const w = this.timeline.parentNode ? this.timeline.parentNode.clientWidth : 0;
 
     // svg
-    const svg = d3.select(`#timeline-${this.state.id}`).attr('width', w).attr('height', h);
+    const svg = d3.select(`#timeline-${id}`).attr('width', w).attr('height', h);
     // xAxis
     const x = d3.scaleTime().domain([today, tomorrow]).clamp(true).range([0, w - (margin.left + margin.right)]);
     const xAxis = d3.axisBottom(x).ticks(d3.timeHour.every(util.isMobile() ? 2 : 1)).tickFormat(d3.timeFormat(util.isMobile() ? '%_H' : '%H:00')).tickSizeInner(-(h - (margin.top + margin.bottom)))
@@ -94,7 +97,7 @@ class TimelineChart extends Component {
       .attr('x', d => x(d.start) + margin.left + 1)
       .attr('y', d => y(d.key))
       .style('width', d => x(d.end) - x(d.start) - 1)
-      .style('height', 20)
+      .style('height', 30)
       .attr('stroke-width', 0.5)
       .attr('stroke', (d, i) => strokeColors[i % strokeColors.length])
       .style('fill', (d, i) => fillColors[i % fillColors.length])
@@ -107,9 +110,35 @@ class TimelineChart extends Component {
         tooltip.attr('transform', `translate(${xPosition},${yPosition})`);
         tooltip.select('text').text(d.title);
       });
+
+    const pointerData = [{
+      start: new Date(),
+    }];
+    // Pointer
+    svg.selectAll('.now').data(pointerData).enter().append('rect')
+      .attr('x', d => x(d.start) + margin.left)
+      .attr('y', 10)
+      .style('width', 1)
+      .style('height', 30)
+      .style('fill', 'red')
+      .attr('class', 'now');
+
+    const pointX = Math.floor(svg.select('.now').attr('x')) + 1;
+    // Pointer
+    svg.selectAll('point')
+      .data(pointerData)
+      .enter()
+      .append('path')
+      .attr('d', () => `M${pointX - 5} ${5} L${pointX} ${10} L${pointX + 5} ${5} Z`)
+      .attr('fill', 'red')
+      .style('width', 30)
+      .style('height', 30)
+      .attr('class', 'point');
   }
+
   render() {
-    return (<svg id={`timeline-${this.state.id}`} ref={(node) => { this.timeline = node; }} />);
+    const { id } = this.state;
+    return (<svg id={`timeline-${id}`} ref={(node) => { this.timeline = node; }} />);
   }
 }
 
