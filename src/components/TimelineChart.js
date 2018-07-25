@@ -59,7 +59,6 @@ class TimelineChart extends Component {
   }
 
   draw(data) {
-    console.log(strokeColors);
     if (!this.timeline) return;
     const { id } = this.state;
     d3.selectAll(`#timeline-${id} > *`).remove();
