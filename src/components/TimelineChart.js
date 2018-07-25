@@ -17,11 +17,13 @@ const margin = {
   bottom: 10,
 };
 
-// 灰色は重なった時に色が分かりにくいので消す
+// 灰色と透明の色は重なった時に色が分かりにくいので消す
 const brandColorLight = util.cloneDeep(constants.brandColor.light);
 delete brandColorLight.GREY;
+delete brandColorLight.SKIN;
 const brandColorBase = util.cloneDeep(constants.brandColor.base);
 delete brandColorBase.GREY;
+delete brandColorBase.SKIN;
 
 const today = moment('00:00', constants.TIMEFMT).toDate();
 const tomorrow = moment('00:00', constants.TIMEFMT).add(1, 'days').toDate();
@@ -57,6 +59,7 @@ class TimelineChart extends Component {
   }
 
   draw(data) {
+    console.log(strokeColors);
     if (!this.timeline) return;
     const { id } = this.state;
     d3.selectAll(`#timeline-${id} > *`).remove();
