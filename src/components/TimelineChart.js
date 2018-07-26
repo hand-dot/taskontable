@@ -34,19 +34,18 @@ class TimelineChart extends Component {
   constructor(props) {
     super(props);
     this.draw = debounce(this.draw, constants.RENDER_DELAY);
+    this.intervalID = '';
     this.state = {
       id: `${uuid()}`,
     };
   }
 
-  componentWillMount() {
-
-  }
-
   componentDidMount() {
     if (!this.timeline) return;
-    const { tableTasks } = this.props;
-    this.draw(tableTasks);
+    this.intervalID = setInterval(()=>{
+      const { tableTasks } = this.props;
+      this.draw(tableTasks)
+    }, 60000);
   }
 
   componentDidUpdate() {
@@ -56,6 +55,7 @@ class TimelineChart extends Component {
   }
 
   componentWillUnmount() {
+    if(this.intervalID) clearInterval(this.intervalID)
   }
 
   draw(data) {
