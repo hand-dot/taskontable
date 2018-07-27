@@ -12,6 +12,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Hidden from '@material-ui/core/Hidden';
 import Drawer from '@material-ui/core/Drawer';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -56,7 +57,6 @@ const styles = theme => ({
     position: 'relative',
     minHeight: '100vh',
     width: constants.SIDEBAR_WIDTH,
-    backgroundColor: 'transparent',
   },
   circularProgress: {
     overflow: 'hidden',
@@ -331,9 +331,11 @@ class App extends Component {
           goSettings={() => { this.props.history.push(`/${this.state.user.uid}/settings`); }}
           history={history}
         />
-        <Drawer variant="persistent" open={this.state.isOpenSidebar} style={{ display: this.state.isOpenSidebar ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }} >
-          <div style={{ height: theme.spacing.unit }} />
-          <div className={classes.toolbar} />
+        <Drawer variant={util.isMobile() ? 'temporary' : 'persistent'} open={this.state.isOpenSidebar} style={{ display: this.state.isOpenSidebar ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }}>
+          <Hidden xsDown>
+            <div style={{ height: theme.spacing.unit }} />
+            <div className={classes.toolbar} />
+          </Hidden>
           <List component="nav">
             <ListItem divider button onClick={() => { this.setState({ isOpenSidebar: false }); }}>
               <ListItemIcon>
@@ -343,7 +345,9 @@ class App extends Component {
             </ListItem>
             <ListItem divider button onClick={this.goWorkSheet.bind(this, '')} disabled={location.pathname === '/'} style={{ backgroundColor: location.pathname === '/' ? 'rgba(0, 0, 0, 0.08)' : '' }}>
               <ListItemIcon>
-                <span role="img" aria-label="Hello" >😜</span>
+                <span role="img" aria-label="Hello">
+                  😜
+                </span>
               </ListItemIcon>
               <ListItemText primary="Hello" />
             </ListItem>
@@ -374,13 +378,15 @@ class App extends Component {
               exact
               strict
               path="/:id"
-              render={props => (<WorkSheet
-                userId={this.state.user.uid}
-                userName={this.state.user.displayName}
-                userPhotoURL={this.state.user.photoURL}
-                toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
-                {...props}
-              />)}
+              render={props => (
+                <WorkSheet
+                  userId={this.state.user.uid}
+                  userName={this.state.user.displayName}
+                  userPhotoURL={this.state.user.photoURL}
+                  toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !this.state.isOpenHelpDialog }); }}
+                  {...props}
+                />
+              )}
             />
             <Route exact strict path="/:id/scripts" render={(props) => { if (this.state.user.uid !== '') { return <Scripts userId={this.state.user.uid} {...props} />; } return null; }} />
             <Route exact strict path="/:id/activity" render={(props) => { if (this.state.user.uid !== '') { return <Activity userId={this.state.user.uid} {...props} />; } return null; }} />
@@ -388,10 +394,14 @@ class App extends Component {
           </Switch>
         </main>
         <Dialog open={this.state.processing}>
-          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>
+          <div style={{ padding: this.props.theme.spacing.unit }}>
+            <CircularProgress className={classes.circularProgress} />
+          </div>
         </Dialog>
         <Dialog open={this.state.isOpenSupportBrowserDialog}>
-          <DialogTitle>{i18n.t('app.unsupportedBrowser')}</DialogTitle>
+          <DialogTitle>
+            {i18n.t('app.unsupportedBrowser')}
+          </DialogTitle>
           <DialogContent>
             <DialogContentText>
               {i18n.t('app.thisServiceCurrentlySupportsOperationAt_target', { target: constants.SUPPORTEDBROWSERS })}
@@ -418,7 +428,9 @@ class App extends Component {
           onClose={() => { this.setState({ newWorksheetName: '', isOpenCreateWorksheetModal: false }); }}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">{i18n.t('app.createWorksheet')}</DialogTitle>
+          <DialogTitle id="form-dialog-title">
+            {i18n.t('app.createWorksheet')}
+          </DialogTitle>
           <DialogContent>
             <TextField
               onChange={(e) => { this.setState({ newWorksheetName: e.target.value }); }}
@@ -431,8 +443,12 @@ class App extends Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button size="small" onClick={() => { this.setState({ isOpenCreateWorksheetModal: false }); }} color="primary">{i18n.t('common.cancel')}</Button>
-            <Button size="small" onClick={this.createWorksheet.bind(this)} color="primary">{i18n.t('common.create')}</Button>
+            <Button size="small" onClick={() => { this.setState({ isOpenCreateWorksheetModal: false }); }} color="primary">
+              {i18n.t('common.cancel')}
+            </Button>
+            <Button size="small" onClick={this.createWorksheet.bind(this)} color="primary">
+              {i18n.t('common.create')}
+            </Button>
           </DialogActions>
         </Dialog>
         <Snackbar
@@ -455,4 +471,3 @@ App.propTypes = {
 
 
 export default withRouter(withStyles(styles, { withTheme: true })(App));
-
