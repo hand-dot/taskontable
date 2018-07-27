@@ -165,9 +165,9 @@ class TableCtl extends Component {
                 placement="top"
               >
                 <div style={{ display: 'inline-block' }}>
-                  <Button className={classes.tableCtlButton} disabled={!saveable} onClick={saveWorkSheet} color="default">
+                  <Button className={classes.tableCtlButton} onClick={saveWorkSheet} color="default">
                     <span role="img" aria-label="save">
-                    💾(
+                      💾(
                       {saveable ? <Error style={{ verticalAlign: 'bottom', fontSize: 16, color: constants.brandColor.base.YELLOW }} /> : <CheckCircle style={{ verticalAlign: 'bottom', fontSize: 16, color: constants.brandColor.base.GREEN }} />}
                       )
                     </span>
