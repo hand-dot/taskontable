@@ -2,15 +2,22 @@
   "name": "taskontable",
   "version": "0.1.0",
   "private": true,
+  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
-    "start": "react-scripts start",
+    "web": "react-scripts start",
+    "mobile": "react-native-scripts start",
     "build": "react-scripts build",
     "deploy": "react-scripts build && firebase deploy",
     "test": "react-scripts test --env=jsdom --coverage",
     "test_watch": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "analyze": "source-map-explorer build/static/js/main.*",
-    "storybook": "start-storybook -p 9001 -c .storybook"
+    "storybook": "start-storybook -p 9001 -c .storybook",
+    "android": "react-native-scripts android",
+    "ios": "react-native-scripts ios"
+  },
+  "jest": {
+    "preset": "jest-expo"
   },
   "dependencies": {
     "@firebase/app": "^0.3.3",
@@ -23,6 +30,7 @@
     "codemirror": "^5.39.0",
     "cropperjs": "^1.4.1",
     "d3": "^5.5.0",
+    "expo": "^27.0.1",
     "fast-clone": "^1.5.3",
     "fast-equals": "^1.5.3",
     "handsontable": "^5.0.0",
@@ -39,6 +47,7 @@
     "react-dom": "^16.4.1",
     "react-ga": "^2.5.3",
     "react-router-dom": "^4.3.1",
+    "react-native": "~0.55.2",
     "react-scripts": "1.1.4",
     "react-share": "^2.2.0",
     "ua-parser-js": "^0.7.18",
@@ -52,6 +61,9 @@
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.10.0",
-    "source-map-explorer": "^1.5.0"
+    "source-map-explorer": "^1.5.0",
+    "react-native-scripts": "1.14.0",
+    "jest-expo": "~27.0.0",
+    "react-test-renderer": "16.3.1"
   }
 }
