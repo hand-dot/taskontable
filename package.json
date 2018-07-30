@@ -16,9 +16,6 @@
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios"
   },
-  "jest": {
-    "preset": "jest-expo"
-  },
   "dependencies": {
     "@firebase/app": "^0.3.3",
     "@firebase/auth": "^0.7.0",
