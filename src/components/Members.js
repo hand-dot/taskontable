@@ -156,35 +156,46 @@ class Members extends Component {
    * メンバーもしくは招待中のメンバーを削除します。
    */
   removeMember() {
-    if (this.state.target.type === constants.handleUserType.MEMBER) {
+    const { target } = this.state;
+    const {
+      type,
+      uid,
+      email,
+    } = target;
+    const {
+      userId,
+      worksheetId,
+      worksheetName,
+      members,
+      handleMembers,
+      invitedEmails,
+      handleInvitedEmails,
+    } = this.props;
+    if (type === constants.handleUserType.MEMBER) {
+      const newMembers = members.filter(member => member.email !== email);
+      if ((userId === uid && !window.confirm(i18n.t('members.deletingMyselfFrom_worksheetName', { worksheetName }))) || (newMembers.length === 0 && !window.confirm(i18n.t('members.noMembersFrom_worksheetName', { worksheetName })))) {
+        this.setState({ isOpenRemoveMemberModal: false });
+        return;
+      }
       this.setState({ processing: true });
-      database.ref(`/${constants.API_VERSION}/users/${this.state.target.uid}/worksheets/`).once('value').then((myWorksheetIds) => {
-        if (!myWorksheetIds.exists() && !Array.isArray(myWorksheetIds.val())) throw new Error('The member who tried to delete did not exist.');
-        return myWorksheetIds.val().filter(worksheetId => worksheetId !== this.props.worksheetId);
-      }).then((newWorksheetIds) => {
-        if (this.props.userId === this.state.target.uid && !window.confirm(i18n.t('members.deletingMyselfFrom_worksheetName', { worksheetName: this.props.worksheetName }))) {
-          this.setState({ isOpenRemoveMemberModal: false, processing: false });
-          return;
-        }
-        const newMembers = this.props.members.filter(member => member.email !== this.state.target.email);
-        if (newMembers.length === 0 && !window.confirm(i18n.t('members.noMembersFrom_worksheetName', { worksheetName: this.props.worksheetName }))) {
-          this.setState({ isOpenRemoveMemberModal: false, processing: false });
-          return;
-        }
-        // TODO ここはcloudfunctionでusersのワークシートから値を削除し、realtimeデータベースのusers/$uid/.writeは自分しか書き込み出来ないようにしたほうがよさそう。
-        database.ref(`/${constants.API_VERSION}/users/${this.state.target.uid}/worksheets/`).set(newWorksheetIds).then(() => {
-          this.props.handleMembers(newMembers);
-          if (this.props.userId === this.state.target.uid) setTimeout(() => { window.location.reload(); });
-          this.setState({
-            processing: false,
-            isOpenRemoveMemberModal: false,
-            target: getBlankTarget(),
-          });
+      fetch('https://us-central1-taskontable.cloudfunctions.net/removeUserWorksheetsById',
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json; charset=utf-8' },
+          mode: 'no-cors',
+          body: JSON.stringify({ userId: uid, apiVersion: constants.API_VERSION, worksheetId }),
+        }).then(() => {
+        handleMembers(newMembers);
+        if (userId === uid) setTimeout(() => { window.location.reload(); });
+        this.setState({
+          processing: false,
+          isOpenRemoveMemberModal: false,
+          target: getBlankTarget(),
         });
       });
-    } else if (this.state.target.type === constants.handleUserType.INVITED) {
-      const newEmails = this.props.invitedEmails.filter(invitedEmail => invitedEmail !== this.state.target.email);
-      this.props.handleInvitedEmails(newEmails);
+    } else if (type === constants.handleUserType.INVITED) {
+      const newEmails = invitedEmails.filter(invitedEmail => invitedEmail !== email);
+      handleInvitedEmails(newEmails);
       this.setState({
         isOpenRemoveMemberModal: false,
         target: getBlankTarget(),
@@ -269,32 +280,38 @@ class Members extends Component {
     return (
       <div>
         <div style={{
-        padding: theme.spacing.unit, display: 'inline-flex', flexDirection: 'row', alignItems: 'center',
-      }}
+          padding: theme.spacing.unit, display: 'inline-flex', flexDirection: 'row', alignItems: 'center',
+        }}
         >
           <div>
             <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit }}>
               {i18n.t('worksheet.members')}
             </Typography>
             <div className={classes.membersContainer}>
-              {members.length === 0 ? <div style={{ minHeight: 100, display: 'flex', alignItems: 'center' }}><Typography align="center" variant="caption">{i18n.t('members.noMembers')}</Typography></div> : members.map(member => (
+              {members.length === 0 ? (
+                <div style={{ minHeight: 100, display: 'flex', alignItems: 'center' }}>
+                  <Typography align="center" variant="caption">
+                    {i18n.t('members.noMembers')}
+                  </Typography>
+                </div>
+              ) : members.map(member => (
                 <div className={classes.member} key={member.uid}>
                   <IconButton
                     className={classes.actionIcon}
                     color="default"
                     onClick={() => {
-                  this.setState({
-                    isOpenRemoveMemberModal: true,
-                    target: {
-                      type: constants.handleUserType.MEMBER,
-                      uid: member.uid,
-                      displayName: member.displayName,
-                      email: member.email,
-                      photoURL: member.photoURL,
-                      fcmToken: member.fcmToken,
-                    },
-                  });
-                }}
+                      this.setState({
+                        isOpenRemoveMemberModal: true,
+                        target: {
+                          type: constants.handleUserType.MEMBER,
+                          uid: member.uid,
+                          displayName: member.displayName,
+                          email: member.email,
+                          photoURL: member.photoURL,
+                          fcmToken: member.fcmToken,
+                        },
+                      });
+                    }}
                   >
                     <Delete style={{ fontSize: 16 }} />
                   </IconButton>
@@ -321,8 +338,14 @@ class Members extends Component {
                       <Sms style={{ fontSize: 16 }} />
                     </IconButton>
                   </span>
-                  <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">{member.displayName}</Typography>
-                  {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : <div className={classes.userPhoto}><Person /></div>}
+                  <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">
+                    {member.displayName}
+                  </Typography>
+                  {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : (
+                    <div className={classes.userPhoto}>
+                      <Person />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -332,8 +355,16 @@ class Members extends Component {
               {i18n.t('members.inviting')}
             </Typography>
             <div className={classes.membersContainer}>
-              <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
-              {invitedEmails.length === 0 ? <div style={{ minHeight: 100, display: 'flex', alignItems: 'center' }}><Typography align="center" variant="caption" style={{ minWidth: 150 }}>{i18n.t('members.noOneIsInvited')}</Typography></div> : invitedEmails.map(invitedEmail => (
+              <span style={{ padding: theme.spacing.unit * 4 }}>
+/
+              </span>
+              {invitedEmails.length === 0 ? (
+                <div style={{ minHeight: 100, display: 'flex', alignItems: 'center' }}>
+                  <Typography align="center" variant="caption" style={{ minWidth: 150 }}>
+                    {i18n.t('members.noOneIsInvited')}
+                  </Typography>
+                </div>
+              ) : invitedEmails.map(invitedEmail => (
                 <div className={classes.member} key={invitedEmail}>
                   <IconButton
                     className={classes.actionIcon}
@@ -366,14 +397,20 @@ class Members extends Component {
                   >
                     <Email style={{ fontSize: 16 }} />
                   </IconButton>
-                  <Typography className={classes.memberText} align="center" variant="caption">{invitedEmail}</Typography>
-                  <div className={classes.userPhoto}><Person /></div>
+                  <Typography className={classes.memberText} align="center" variant="caption">
+                    {invitedEmail}
+                  </Typography>
+                  <div className={classes.userPhoto}>
+                    <Person />
+                  </div>
                 </div>
               ))}
             </div>
           </div>
           <div style={{ marginTop: '2em' }}>
-            <span style={{ padding: theme.spacing.unit * 4 }}>/</span>
+            <span style={{ padding: theme.spacing.unit * 4 }}>
+/
+            </span>
             <IconButton color="default" onClick={() => { this.setState({ isOpenAddMemberModal: true }); }}>
               <PersonAdd />
             </IconButton>
@@ -385,7 +422,9 @@ class Members extends Component {
             aria-labelledby="add-member-dialog-title"
             fullWidth
           >
-            <DialogTitle id="add-member-dialog-title">{i18n.t('members.addMembers')}</DialogTitle>
+            <DialogTitle id="add-member-dialog-title">
+              {i18n.t('members.addMembers')}
+            </DialogTitle>
             <DialogContent>
               <ChipInput
                 autoFocus
@@ -413,16 +452,25 @@ class Members extends Component {
             onClose={() => { this.setState({ isOpenRemoveMemberModal: false }); }}
             aria-labelledby="remove-member-dialog-title"
           >
-            <DialogTitle id="remove-member-dialog-title">{i18n.t('common.remove_target', { target: i18n.t('worksheet.members') })}</DialogTitle>
+            <DialogTitle id="remove-member-dialog-title">
+              {i18n.t('common.remove_target', { target: i18n.t('worksheet.members') })}
+            </DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>{i18n.t('common.areYouSureRemove_target', { target: this.state.target.type === constants.handleUserType.MEMBER ? this.state.target.displayName : this.state.target.email })}</Typography>
-              <Typography variant="caption">*{i18n.t('members.afterRemoveCantAccess')}</Typography>
+              <Typography variant="body1" gutterBottom>
+                {i18n.t('common.areYouSureRemove_target', { target: this.state.target.type === constants.handleUserType.MEMBER ? this.state.target.displayName : this.state.target.email })}
+              </Typography>
+              <Typography variant="caption">
+*
+                {i18n.t('members.afterRemoveCantAccess')}
+              </Typography>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => { this.setState({ isOpenRemoveMemberModal: false }); }} color="primary">
                 {i18n.t('common.cancel')}
               </Button>
-              <Button onClick={this.removeMember.bind(this)} color="primary">{i18n.t('common.remove')}</Button>
+              <Button onClick={this.removeMember.bind(this)} color="primary">
+                {i18n.t('common.remove')}
+              </Button>
             </DialogActions>
           </Dialog>
           {/* 招待中のメンバーメール再送信モーダル */}
@@ -431,15 +479,21 @@ class Members extends Component {
             onClose={() => { this.setState({ isOpenResendEmailModal: false }); }}
             aria-labelledby="resend-email-dialog-title"
           >
-            <DialogTitle id="resend-email-dialog-title">{i18n.t('members.resendAnInvitationEmail')}</DialogTitle>
+            <DialogTitle id="resend-email-dialog-title">
+              {i18n.t('members.resendAnInvitationEmail')}
+            </DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>{i18n.t('members.areYouSureResendInvitationEmailTo_target', { target: this.state.target.email })}</Typography>
+              <Typography variant="body1" gutterBottom>
+                {i18n.t('members.areYouSureResendInvitationEmailTo_target', { target: this.state.target.email })}
+              </Typography>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => { this.setState({ isOpenResendEmailModal: false }); }} color="primary">
                 {i18n.t('common.cancel')}
               </Button>
-              <Button onClick={this.resendEmail.bind(this)} color="primary">{i18n.t('common.resend')}</Button>
+              <Button onClick={this.resendEmail.bind(this)} color="primary">
+                {i18n.t('common.resend')}
+              </Button>
             </DialogActions>
           </Dialog>
           {/* メンバー通知モーダル */}
@@ -448,9 +502,13 @@ class Members extends Component {
             onClose={() => { this.setState({ isOpenSendNotificationModal: false }); }}
             aria-labelledby="send-notification-dialog-title"
           >
-            <DialogTitle id="send-notification-dialog-title">{i18n.t('members.sendNotification')}</DialogTitle>
+            <DialogTitle id="send-notification-dialog-title">
+              {i18n.t('members.sendNotification')}
+            </DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>{i18n.t('members.areYouSureSendNotificationTo_target', { target: this.state.target.displayName })}</Typography>
+              <Typography variant="body1" gutterBottom>
+                {i18n.t('members.areYouSureSendNotificationTo_target', { target: this.state.target.displayName })}
+              </Typography>
               <TextField
                 maxLength={100}
                 onChange={(e) => { this.setState({ notificationMessage: e.target.value }); }}
@@ -465,28 +523,36 @@ class Members extends Component {
               />
               <FormGroup row>
                 <FormControlLabel
-                  control={
+                  control={(
                     <Checkbox
                       color="primary"
                       checked={this.state.isNotificateAllMember}
                       onChange={() => { this.setState({ isNotificateAllMember: !this.state.isNotificateAllMember }); }}
                       value="isNotificateAllMember"
                     />
-                }
+)}
                   label={i18n.t('members.notifyOtherMembers')}
                 />
-                <Typography variant="caption" gutterBottom>(*{i18n.t('members.doNotNoifyMeAndNotificationBlockingMembers')})</Typography>
+                <Typography variant="caption" gutterBottom>
+(*
+                  {i18n.t('members.doNotNoifyMeAndNotificationBlockingMembers')}
+)
+                </Typography>
               </FormGroup>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => { this.setState({ isOpenSendNotificationModal: false }); }} color="primary">
                 {i18n.t('common.cancel')}
               </Button>
-              <Button onClick={this.sendNotification.bind(this)} color="primary">{i18n.t('common.send')}</Button>
+              <Button onClick={this.sendNotification.bind(this)} color="primary">
+                {i18n.t('common.send')}
+              </Button>
             </DialogActions>
           </Dialog>
           <Dialog open={this.state.processing}>
-            <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>
+            <div style={{ padding: this.props.theme.spacing.unit }}>
+              <CircularProgress className={classes.circularProgress} />
+            </div>
           </Dialog>
         </div>
         <Snackbar
@@ -494,12 +560,14 @@ class Members extends Component {
           open={this.state.isOpenSnackbar}
           onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
           ContentProps={{ 'aria-describedby': 'info-id' }}
-          message={
+          message={(
             <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
               <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
-              <span style={{ paddingLeft: theme.spacing.unit }}>{this.state.snackbarText}</span>
+              <span style={{ paddingLeft: theme.spacing.unit }}>
+                {this.state.snackbarText}
+              </span>
             </span>
-          }
+)}
         />
       </div>
     );
@@ -526,4 +594,3 @@ Members.propTypes = {
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 export default withStyles(styles, { withTheme: true })(Members);
-

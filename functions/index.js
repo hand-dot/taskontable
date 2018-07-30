@@ -44,7 +44,7 @@ function getPayload(requestBody) {
 }
 // [END functions_get_payload]
 
-// [START functions_sendgrid_email]
+// [START sendgridEmail]
 /**
  * Send an email using SendGrid.
  *
@@ -89,4 +89,49 @@ exports.sendgridEmail = functions.https.onRequest((req, res) => Promise.resolve(
         res.status(500).send({ success: false, message: error });
       });
   }));
-// [END functions_sendgrid_email]
+// [END sendgridEmail]
+
+// [START removeUserWorksheetsById]
+/**
+ * Send an email using SendGrid.
+ *
+ * Trigger this function by making a POST request with a payload to:
+ * https://[YOUR_REGION].[YOUR_PROJECT_ID].cloudfunctions.net/removeUserWorksheetsById
+ *
+ * @example
+ * curl -X POST "https://us-central1.your-project-id.cloudfunctions.net/removeUserWorksheetsById" --data '{ "userId":"userId", "worksheetId":"worksheetId", "apiVersion":"apiVersion" }' --header "Content-Type: application/json"
+ *
+ * @param {object} req Cloud Function request context.
+ * @param {object} req.body The request payload.
+ * @param {string} req.body.userId userId.
+ * @param {string} req.body.worksheetId worksheetId.
+ * @param {string} req.body.apiVersion API Version.
+ * @param {object} res Cloud Function response context.
+ */
+exports.removeUserWorksheetsById = functions.https.onRequest((req, res) => Promise.resolve()
+  .then(() => {
+    if (req.method !== 'POST') {
+      const error = new Error('Only POST requests are accepted');
+      error.code = 405;
+      throw error;
+    }
+    const { apiVersion, userId, worksheetId } = JSON.parse(req.body);
+    if (userId && worksheetId) {
+      admin.database().ref(`/${apiVersion}/users/${userId}/worksheets/`).once('value').then((worksheetIds) => {
+        if (!worksheetIds.exists() && !Array.isArray(worksheetIds.val())) {
+          const error = new Error('The member who tried to delete did not exist.');
+          error.code = 500;
+          throw error;
+        }
+        admin.database().ref(`/${apiVersion}/users/${userId}/worksheets/`).set(worksheetIds.val().filter(_worksheetId => _worksheetId !== worksheetId)).then(() => {
+          console.log('Successfully removeUserWorksheetsById:', { apiVersion, userId, worksheetId });
+          res.status(200).send({ success: true });
+        });
+      });
+    } else {
+      const message = `${userId ? 'worksheetId' : 'userId'} is not set`;
+      console.log('Error sending message:', message);
+      res.status(500).send({ success: false, message });
+    }
+  }));
+// [END removeUserWorksheetsById]

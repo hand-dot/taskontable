@@ -16,7 +16,7 @@
             "users": {
                 "$uid": {
                     ".read": true,
-                    ".write": "auth != null"
+                    ".write": "$uid === auth.uid"
                 }
             },
             "worksheets": {
@@ -28,7 +28,7 @@
             "users": {
                 "$uid": {
                     ".read": true,
-                    ".write": "auth != null"
+                    ".write": "$uid === auth.uid"
                 }
             },
             "worksheets": {

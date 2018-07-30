@@ -18,6 +18,10 @@
         "function": "sendgridEmail"
       },
       {
+        "source": "/removeUserWorksheetsById",
+        "function": "removeUserWorksheetsById"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
