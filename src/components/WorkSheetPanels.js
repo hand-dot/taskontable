@@ -25,6 +25,7 @@ function WorkSheetPanels(props) {
     userPhotoURL,
     isOpenDashboard,
     isMobile,
+    isToday,
     tab,
     readOnly,
     worksheetDisclosureRange,
@@ -170,6 +171,7 @@ function WorkSheetPanels(props) {
               tableTasks={taskTableFilterBy
                 ? tasksUtil.getTasksByAssign(tableTasks, taskTableFilterBy)
                 : tableTasks}
+              isToday={isToday}
             />
           </div>
         )}
@@ -223,6 +225,7 @@ WorkSheetPanels.propTypes = {
   userPhotoURL: PropTypes.string.isRequired,
   isOpenDashboard: PropTypes.bool.isRequired,
   isMobile: PropTypes.bool.isRequired,
+  isToday: PropTypes.bool.isRequired,
   tab: PropTypes.number.isRequired,
   readOnly: PropTypes.bool.isRequired,
   worksheetDisclosureRange: PropTypes.string.isRequired,

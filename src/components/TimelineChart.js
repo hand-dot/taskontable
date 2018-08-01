@@ -61,6 +61,7 @@ class TimelineChart extends Component {
   draw(data) {
     if (!this.timeline) return;
     const { id } = this.state;
+    const { pointer } = this.props;
     d3.selectAll(`#timeline-${id} > *`).remove();
     const labels = d3.nest().key(d => d.key).entries(data);
     const w = this.timeline.parentNode ? this.timeline.parentNode.clientWidth : 0;
@@ -116,6 +117,8 @@ class TimelineChart extends Component {
     const pointerData = [{
       start: new Date(),
     }];
+
+    if(pointer){
     // Pointer
     svg.selectAll('.now').data(pointerData).enter().append('rect')
       .attr('x', d => x(d.start) + margin.left)
@@ -124,9 +127,7 @@ class TimelineChart extends Component {
       .style('height', 30)
       .style('fill', 'red')
       .attr('class', 'now');
-
     const pointX = Math.floor(svg.select('.now').attr('x')) + 1;
-    // Pointer
     svg.selectAll('point')
       .data(pointerData)
       .enter()
@@ -136,8 +137,8 @@ class TimelineChart extends Component {
       .style('width', 30)
       .style('height', 30)
       .attr('class', 'point');
+    }
   }
-
   render() {
     const { id } = this.state;
     return (<svg id={`timeline-${id}`} ref={(node) => { this.timeline = node; }} />);
@@ -151,6 +152,7 @@ TimelineChart.propTypes = {
     start: PropTypes.object.isRequired,
     end: PropTypes.object.isRequired,
   })).isRequired,
+  pointer: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
 };
 

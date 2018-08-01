@@ -73,7 +73,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { tableTasks, theme } = this.props;
+    const { tableTasks, isToday, theme } = this.props;
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} sm={6}>
@@ -104,8 +104,8 @@ class Dashboard extends Component {
           <Typography gutterBottom variant="subheading">{i18n.t('dashBoad.timeline')}</Typography>
           <Grid container>
             <Grid item xs={12}>
-              <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)} />
-              <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(tableTasks)} />
+              <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)}  pointer={isToday} />
+              <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(tableTasks)}  pointer={isToday} />
             </Grid>
           </Grid>
         </Grid>
@@ -124,6 +124,7 @@ Dashboard.propTypes = {
     startTime: PropTypes.string.isRequired,
     memo: PropTypes.string.isRequired,
   })).isRequired,
+  isToday: PropTypes.bool.isRequired, 
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

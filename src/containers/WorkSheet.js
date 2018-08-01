@@ -784,6 +784,7 @@ class WorkSheet extends Component {
             userPhotoURL={userPhotoURL}
             isOpenDashboard={isOpenDashboard}
             isMobile={isMobile}
+            isToday={util.isToday(date)}
             tab={tab}
             readOnly={readOnly}
             worksheetDisclosureRange={worksheetDisclosureRange}

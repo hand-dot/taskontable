@@ -47,6 +47,7 @@ storiesOf('DashBoad', module)
     task.title = tableTask.title || '無名タスク';
     return task;
   })}
+  pointer={true}
   />))
   .add('ActivityChart', () => (<ActivityChart tableTasks={activityChartTasks} />));
 
