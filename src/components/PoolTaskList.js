@@ -142,31 +142,31 @@ class TaskList extends Component {
               <CustomTableCell className={classes.cellInput} padding="none">
                 {i18n.t('columns.title')}
               </CustomTableCell>
-              <CustomTableCell className={classes.miniCellInput} padding="none">
+              <CustomTableCell className={classes.cellInput} padding="none">
                 {i18n.t('columns.memo')}
               </CustomTableCell>
               <CustomTableCell className={classes.miniCellInput} padding="none">
                 {i18n.t('columns.estimate')}
               </CustomTableCell>
               {isRegularTask && (
-              <CustomTableCell className={classes.miniCellInput} padding="none">
-                {i18n.t('columns.assign')}
-              </CustomTableCell>
+                <CustomTableCell className={classes.miniCellInput} padding="none">
+                  {i18n.t('columns.assign')}
+                </CustomTableCell>
               )}
               {isRegularTask && (
-              <CustomTableCell className={classes.miniCellInput} padding="none">
-                {i18n.t('columns.startTime')}
-              </CustomTableCell>
+                <CustomTableCell className={classes.miniCellInput} padding="none">
+                  {i18n.t('columns.startTime')}
+                </CustomTableCell>
               )}
               {isRegularTask && (
-              <CustomTableCell className={classes.miniCellInput} padding="none">
-                {i18n.t('taskPool.weekNumber')}
-              </CustomTableCell>
+                <CustomTableCell className={classes.miniCellInput} padding="none">
+                  {i18n.t('taskPool.weekNumber')}
+                </CustomTableCell>
               )}
               {isRegularTask && (
-              <CustomTableCell className={classes.miniCellInput} padding="none">
-                {i18n.t('taskPool.dayOfWeek')}
-              </CustomTableCell>
+                <CustomTableCell className={classes.miniCellInput} padding="none">
+                  {i18n.t('taskPool.dayOfWeek')}
+                </CustomTableCell>
               )}
               <CustomTableCell className={classes.miniCellInput} padding="none">
                 {i18n.t('common.edit')}
@@ -189,7 +189,7 @@ class TaskList extends Component {
                 <CustomTableCell padding="none">
                   <Input
                     fullWidth
-                    className={classes.miniCellInput}
+                    className={classes.cellInput}
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'memo')}
                     value={this.state.editingTaskIndex !== index ? task.memo : this.state[constants.taskStateType.edit].memo}
                     disabled={this.state.editingTaskIndex !== index}
@@ -207,46 +207,46 @@ class TaskList extends Component {
                   />
                 </CustomTableCell>
                 {isRegularTask && (
-                <CustomTableCell padding="none">
-                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                    <FormControl>
-                      <Select
-                        style={{ fontSize: 12 }}
-                        native
-                        value={this.state.editingTaskIndex !== index ? task.assign : this.state[constants.taskStateType.edit].assign}
-                        onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'assign')}
-                        disabled={this.state.editingTaskIndex !== index}
-                        disableUnderline={this.state.editingTaskIndex !== index}
-                      >
-                        <option value="" />
-                        {members.map(member => (
-                          <option
-                            key={member.uid}
-                            value={member.uid}
-                            style={{
-                              fontSize: 12,
-                            }}
-                          >
-                            {member.displayName}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </div>
-                </CustomTableCell>
+                  <CustomTableCell padding="none">
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                      <FormControl>
+                        <Select
+                          style={{ fontSize: 12 }}
+                          native
+                          value={this.state.editingTaskIndex !== index ? task.assign : this.state[constants.taskStateType.edit].assign}
+                          onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'assign')}
+                          disabled={this.state.editingTaskIndex !== index}
+                          disableUnderline={this.state.editingTaskIndex !== index}
+                        >
+                          <option value="" />
+                          {members.map(member => (
+                            <option
+                              key={member.uid}
+                              value={member.uid}
+                              style={{
+                                fontSize: 12,
+                              }}
+                            >
+                              {member.displayName}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </div>
+                  </CustomTableCell>
                 )}
                 {isRegularTask && (
-                <CustomTableCell padding="none">
-                  <TextField
-                    type="time"
-                    className={classes.miniCellInput}
-                    InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
-                    onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'startTime')}
-                    value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
-                    placeholder={i18n.t('columns.startTime')}
-                    disabled={this.state.editingTaskIndex !== index}
-                  />
-                </CustomTableCell>
+                  <CustomTableCell padding="none">
+                    <TextField
+                      type="time"
+                      className={classes.miniCellInput}
+                      InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
+                      onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'startTime')}
+                      value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
+                      placeholder={i18n.t('columns.startTime')}
+                      disabled={this.state.editingTaskIndex !== index}
+                    />
+                  </CustomTableCell>
                 )}
                 {isRegularTask && (
                   <CustomTableCell padding="none">
@@ -336,7 +336,7 @@ class TaskList extends Component {
               <CustomTableCell padding="none">
                 <Input
                   fullWidth
-                  className={classes.miniCellInput}
+                  className={classes.cellInput}
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'memo')}
                   value={this.state[constants.taskStateType.add].memo}
                   placeholder={i18n.t('columns.memo')}
