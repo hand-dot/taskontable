@@ -85,7 +85,7 @@ class App extends Component {
       isOpenCreateWorksheetModal: false,
       isOpenSupportBrowserDialog: false,
       isOpenHelpDialog: false,
-      processing: true,
+      processing: props.location.pathname !== '/',
     };
   }
 
