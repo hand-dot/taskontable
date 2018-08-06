@@ -59,7 +59,7 @@ export default {
   },
   shortcuts: {
     SAVE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && !e.shiftKey && e.keyCode === 83,
-    HOT_CURRENTTIME: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.key === ':',
+    HOT_CURRENTTIME: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && (e.key === ':' || e.key === ';'),
     NEXTDATE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 190,
     PREVDATE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 188,
     NEXTTAB: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 221,
