@@ -42,8 +42,9 @@ class TimelineChart extends Component {
 
   componentDidMount() {
     if (!this.timeline) return;
+    const { tableTasks } = this.props;
+    this.draw(tableTasks)
     this.intervalID = setInterval(()=>{
-      const { tableTasks } = this.props;
       this.draw(tableTasks)
     }, 60000);
   }
