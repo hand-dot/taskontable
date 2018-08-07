@@ -18,7 +18,7 @@ const rgb = {
   GREY: '201, 203, 207',
 };
 export default {
-  APP_VERSION: '0.0.1',
+  APP_VERSION: '0.0.2',
   API_VERSION: process.env.NODE_ENV === 'development' ? 'development' : 'v0',
   BMC_ID: 'handdot',
   YOUTUBE_MOVIE_ID: 'QwCtcFsx15g',
