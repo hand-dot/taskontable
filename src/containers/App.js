@@ -105,9 +105,7 @@ class App extends Component {
           isOpenSidebar: !util.isMobile(),
         });
         // dimension1はgaではuidとしている
-        if (process.env.NODE_ENV !== 'development') {
-          ReactGA.set({ dimension1: user.uid });
-        }
+        if (process.env.NODE_ENV !== 'development') ReactGA.set({ dimension1: user.uid });
 
         // トークン更新のモニタリング
         if (messaging) { // iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこのifが必要。
@@ -147,6 +145,8 @@ class App extends Component {
             if (fcmToken) database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/fcmToken`).set(fcmToken);
           } else {
             // アカウント作成後の処理
+            // GAにアカウント作成イベントを送信
+            if (process.env.NODE_ENV !== 'development') ReactGA.event({ category: 'User', action: 'Register', value: 100 });
             mySettings = {
               displayName: user.displayName || tmpDisplayName, photoURL: user.photoURL || '', uid: user.uid, email: user.email, fcmToken,
             };
@@ -191,7 +191,7 @@ class App extends Component {
                 return Promise.all(promises);
               }).then(() => {
                 database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value').then((worksheetIds) => {
-                // ワークシートの一覧を再取得
+                  // ワークシートの一覧を再取得
                   if (worksheetIds.exists() && worksheetIds.val() !== []) {
                     Promise.all(worksheetIds.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((worksheetNames) => {
                       this.setState({ worksheets: worksheetNames.map((worksheetName, index) => ({ id: worksheetIds.val()[index], name: worksheetName.exists() && worksheetName.val() ? worksheetName.val() : 'Unknown' })) });

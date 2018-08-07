@@ -40,7 +40,8 @@ class Signup extends Component {
 
   componentWillMount() {
     // 招待されたメールからメールアドレスを設定する処理。
-    if (this.props.location.search) {
+    const { location } = this.props;
+    if (location.search) {
       this.setState({ email: util.getQueryVariable('email') });
     }
   }
@@ -52,20 +53,24 @@ class Signup extends Component {
       password: '',
     };
     if (type === constants.authType.EMAIL_AND_PASSWORD) {
+      const { username, email, password } = this.state;
       obj.type = type;
-      obj.username = this.state.username;
-      obj.email = this.state.email;
-      obj.password = this.state.password;
+      obj.username = username;
+      obj.email = email;
+      obj.password = password;
     }
-    this.props.signup(obj);
+    const { signup } = this.props;
+    signup(obj);
   }
 
   login(type) {
-    this.props.login({ type });
+    const { login } = this.props;
+    login({ type });
   }
 
   render() {
-    const { classes } = this.props;
+    const { username, email, password } = this.state;
+    const { location, classes } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
         <Grid item xs={12}>
@@ -76,15 +81,15 @@ class Signup extends Component {
               </Typography>
               <div style={{ fontSize: 12 }}>
                 {i18n.t('common.or')}&nbsp;
-                <Link to={this.props.location.search === '' ? '/login' : `/login${this.props.location.search}`}>
+                <Link to={location.search === '' ? '/login' : `/login${location.search}`}>
                   {i18n.t('signUpAndLogIn.logIn_title', { title: constants.TITLE })}
                 </Link>
               </div>
               <form style={{ marginTop: '2em' }}>
                 <TextField
-                  value={this.state.username}
+                  value={username}
                   onChange={(e) => { this.setState({ username: e.target.value }); }}
-                  autoFocus={this.props.location.search !== ''}
+                  autoFocus={location.search !== ''}
                   autoComplete="username"
                   id="username"
                   label={i18n.t('common.userName')}
@@ -96,9 +101,9 @@ class Signup extends Component {
                   margin="normal"
                 />
                 <TextField
-                  value={this.state.email}
+                  value={email}
                   onChange={(e) => { this.setState({ email: e.target.value }); }}
-                  disabled={this.props.location.search !== ''}
+                  disabled={location.search !== ''}
                   autoComplete="email"
                   id="email"
                   label={i18n.t('common.emailAddress')}
@@ -110,7 +115,7 @@ class Signup extends Component {
                   margin="normal"
                 />
                 <TextField
-                  value={this.state.password}
+                  value={password}
                   onChange={(e) => { this.setState({ password: e.target.value }); }}
                   autoComplete="password"
                   id="password"
@@ -135,7 +140,7 @@ class Signup extends Component {
                 variant="raised"
                 color="primary"
                 className={classes.button}
-                disabled={this.props.location.search !== ''}
+                disabled={location.search !== ''}
               >
                 <img src={google} alt="google" height="20" />
                 {' '}
