@@ -28,8 +28,6 @@ import i18n from '../i18n';
 import constants from '../constants';
 import notifiIcon from '../images/notifiIcon.png';
 
-const database = util.getDatabase();
-
 const URL = `${window.location.protocol}//${window.location.host}`;
 
 const styles = theme => ({
