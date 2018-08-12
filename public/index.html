@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1, maximum-scale=1">
@@ -14,7 +15,8 @@
   <meta property="og:site_name" content="Taskontable">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="https://taskontable.com">
-  <meta name="twitter:image" content="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fogp.png?alt=media&token=d4739072-55cf-4ea3-b88d-d07269e303bb" />
+  <meta name="twitter:image" content="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fogp.png?alt=media&token=d4739072-55cf-4ea3-b88d-d07269e303bb"
+  />
   <meta name="twitter:title" content="Taskontable">
   <meta name="twitter:description" content="Taskontable is To-Do List &amp; Time keeper on Spreadsheet. Why don't you finish work early?">
   <!--
@@ -47,35 +49,51 @@
     }
 
     .update-hint {
-      animation: fadeIn 3s ease 0s 1 normal;
-      -webkit-animation: fadeIn 3s ease 0s 1 normal;
-    }
-    .initial-text {
-      animation: fadeOut 3s ease 0s 1 normal;
-      -webkit-animation: fadeOut 3s ease 0s 1 normal;
-    }
-
-    @keyframes fadeIn {
-      0% {
-        opacity: 0
-      }
-      99% {
-        opacity: 0
-      }
-      100% {
-        opacity: 1
-      }
+      margin: 0 auto;
+      width: 70%;
+      border: 1px solid;
+      padding: 10px;
+      opacity: 1;
+      animation-name: fade-in;
+      animation-duration: 5s;
     }
 
-    @-webkit-keyframes fadeIn {
+    .loading {
+      opacity: 0;
+      animation-name: fade-out;
+      animation-duration: 5s;
+    }
+
+    .close {
+      float: right;
+      background: red;
+      color: white;
+      text-align: center;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    @keyframes fade-in {
       0% {
-        opacity: 0
+        opacity: 0;
       }
       99% {
-        opacity: 0
+        opacity: 0;
       }
       100% {
-        opacity: 1
+        opacity: 1;
+      }
+    }
+
+    @keyframes fade-out {
+      0% {
+        opacity: 1;
+      }
+      99% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
       }
     }
   </style>
@@ -83,17 +101,20 @@
 
 <body>
   <div id="root">
-    <p class="initial-text">loading...⌛</p>
+    <p class="loading">loading...⌛</p>
+    <h3 class="update-hint" style="border-bottom: none;">
+      Taskontable
+      <button class="close" onclick="window.location.reload(true)">X</button>
+    </h3>
     <p class="update-hint">
       Hello, my friend😁!
-      <br /> This is not Error!
-      <br /> chill, I'm not done.
+      <br>Taskontable have updated. So you have to clean cache.
       <br />
       <br /> ・Are you using the latest Chrome now?
-      <br /> →Yes: Please reload.
-      <a href="javascript:void(0)" onclick="window.location.reload(true)">click me!</a>
-      <br /> →No: Please access with the latest Chrome.
-      <a href="https://www.google.co.jp/chrome/" target="_blank">click me!</a>
+      <br />　Yes:
+      <a href="javascript:void(0)" onclick="window.location.reload(true)">Click me!(SuperReload)</a>
+      <br />　No:
+      <a href="https://www.google.co.jp/chrome/" target="_blank">Click me!(Download Chrome)</a>
       <br />
       <br /> If you see this page over and over, please give me feedback.
       <br />
@@ -121,4 +142,5 @@
     })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
   </script>
 </body>
+
 </html>
