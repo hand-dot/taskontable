@@ -39,17 +39,17 @@ class Footer extends Component {
             <div className={classes.content}>
               <Title />
               <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '4em' }}>
-                <Grid item xs={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <Grid item xs={12} sm={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                   <a style={{ fontSize: 12, margin: '0 .4em' }} href={`https://chrome.google.com/webstore/detail/${constants.CHROME_EXTENTION_ID}`} target="_blank">
                     <img src={chromeWebstore} alt="ChromeWebstore" />
                   </a>
                 </Grid>
-                <Grid item xs={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <Grid item xs={12} sm={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                   <a style={{ fontSize: 12, margin: '0 .4em' }} href={`${constants.SUBSCRIBE_URL}`} target="_blank">
                     <img src={appStore} alt="AppStore" />
                   </a>
                 </Grid>
-                <Grid item xs={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <Grid item xs={12} sm={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                   <a style={{ fontSize: 12, margin: '0 .4em' }} href={`${constants.SUBSCRIBE_URL}`} target="_blank">
                     <img src={googlePlay} alt="GooglePlay" />
                   </a>
