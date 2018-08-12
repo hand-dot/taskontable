@@ -37,6 +37,7 @@ export default {
   FCM_KEY,
   SUBSCRIBE_URL: 'https://taskontable.us18.list-manage.com/subscribe/post?u=1aa080a163a45466467898e8e&amp;id=ad56aad382',
   CHROME_DL_URL: 'https://www.google.co.jp/chrome/',
+  TWITTER_URL: 'https://twitter.com/taskontable',
   CONTACT_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSd12kJ8lJ79_669Ymzx8QyRksfZ0LvmwasK99Ual7HdUOvNVg/viewform',
   REPOSITORY_URL: 'https://github.com/hand-dot/taskontable',
   ROADMAP_URL: 'https://trello.com/b/fFhYhlCu/taskontable-roadmap',
