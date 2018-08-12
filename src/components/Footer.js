@@ -10,6 +10,9 @@ import Bmc from './Bmc';
 import GithubStart from './GithubStart';
 import constants from '../constants';
 import i18n from '../i18n';
+import appStore from '../images/app_store.png';
+import googlePlay from '../images/google_play.png';
+import chromeWebstore from '../images/chrome_webstore.png';
 
 const styles = {
   content: {
@@ -31,9 +34,19 @@ function Footer(props) {
           <div className={classes.content}>
             <Title />
             <Grid spacing={0} container alignItems="stretch" justify="center" style={{ paddingTop: '4em' }}>
-              <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+              <Grid item xs={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
                 <a style={{ fontSize: 12, margin: '0 .4em' }} href={`https://chrome.google.com/webstore/detail/${constants.CHROME_EXTENTION_ID}`} target="_blank">
-                  {i18n.t('common.chromeWebstore')}
+                  <img src={chromeWebstore} alt="ChromeWebstore" />
+                </a>
+              </Grid>
+              <Grid item xs={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <a style={{ fontSize: 12, margin: '0 .4em' }} href={`${constants.SUBSCRIBE_URL}`} target="_blank">
+                  <img src={appStore} alt="AppStore" />
+                </a>
+              </Grid>
+              <Grid item xs={4} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
+                <a style={{ fontSize: 12, margin: '0 .4em' }} href={`${constants.SUBSCRIBE_URL}`} target="_blank">
+                  <img src={googlePlay} alt="GooglePlay" />
                 </a>
               </Grid>
               <Grid item xs={12} sm={2} style={{ marginBottom: '2em', textAlign: 'center' }} className={classes.center}>
