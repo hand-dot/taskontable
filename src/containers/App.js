@@ -44,6 +44,10 @@ const messaging = util.getMessaging();
 const auth = util.getAuth();
 const database = util.getDatabase();
 
+const getInitialStateUser = () => util.cloneDeep({
+  displayName: '', photoURL: '', uid: '', email: '', fcmToken: '',
+});
+
 const styles = theme => ({
   root: {
     minHeight: '100vh',
@@ -76,9 +80,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {
-        displayName: '', photoURL: '', uid: '', email: '', fcmToken: '',
-      },
+      user: getInitialStateUser(),
       worksheets: [], // 自分の所属しているワークシートの一覧
       newWorksheetName: '',
       isOpenSidebar: false,
@@ -97,117 +99,115 @@ class App extends Component {
     }
 
     auth.onAuthStateChanged((user) => {
-      if (user) {
-        this.setState({
-          user: {
-            displayName: '', photoURL: '', uid: user.uid, email: '', fcmToken: '',
-          },
-          isOpenSidebar: !util.isMobile(),
-        });
-        // dimension1はgaではuidとしている
-        if (process.env.NODE_ENV !== 'development') ReactGA.set({ dimension1: user.uid });
+      if (!user) {
+        this.setState({ processing: false });
+        return;
+      }
+      this.setState({
+        user: getInitialStateUser(),
+        isOpenSidebar: !util.isMobile(),
+      });
+      // dimension1はgaではuidとしている
+      if (process.env.NODE_ENV !== 'development') ReactGA.set({ dimension1: user.uid });
 
-        // トークン更新のモニタリング
-        if (messaging) { // iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこのifが必要。
-          messaging.onTokenRefresh(() => {
-            messaging.getToken().then((refreshedToken) => {
-              database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/fcmToken`).set(refreshedToken);
-            }).catch((err) => {
-              throw new Error(`Fail Token Update Monitoring: ${err}`);
-            });
+      // トークン更新のモニタリング
+      if (messaging) { // iOSはPush Notificationsが未実装なので、firebase.messaging();で落ちるためこのifが必要。
+        messaging.onTokenRefresh(() => {
+          messaging.getToken().then((refreshedToken) => {
+            database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/fcmToken`).set(refreshedToken);
+          }).catch((err) => {
+            throw new Error(`Fail Token Update Monitoring: ${err}`);
           });
-          // フォアグラウンド時に通知をハンドリングする処理
-          messaging.onMessage((payload) => {
-            const { data } = payload;
-            const url = new URL(payload.data.url);
-            localforage.setItem(`recentMessage.${url.pathname.replace('/', '')}`, { icon: payload.data.icon, body: payload.data.body, createdAt: new Date() });
-            const notifi = new Notification(data.title, { icon: data.icon, body: data.body });
-            notifi.onclick = () => {
-              notifi.close();
-              // url.pathnameに直に飛ばしたいがルーターがうまく動かないので一度ルートに飛ばす
-              this.props.history.push('/');
-              setTimeout(() => { this.props.history.push(`${url.pathname}`); });
-            };
+        });
+        // フォアグラウンド時に通知をハンドリングする処理
+        messaging.onMessage((payload) => {
+          const { data } = payload;
+          const url = new URL(payload.data.url);
+          localforage.setItem(`recentMessage.${url.pathname.replace('/', '')}`, { icon: payload.data.icon, body: payload.data.body, createdAt: new Date() });
+          const notifi = new Notification(data.title, { icon: data.icon, body: data.body });
+          notifi.onclick = () => {
+            notifi.close();
+            // url.pathnameに直に飛ばしたいがルーターがうまく動かないので一度ルートに飛ばす
+            this.props.history.push('/');
+            setTimeout(() => { this.props.history.push(`${url.pathname}`); });
+          };
+        });
+      }
+      // ログイン後にどこのページからスタートするかをハンドリングする。
+      // また、招待されている場合、この処理でワークシートに参加する。
+      let mySettings;
+      Promise.all([
+        database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).once('value'),
+        database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'),
+        messaging ? messaging.requestPermission().then(() => messaging.getToken()).catch(() => '') : '',
+      ]).then((snapshots) => {
+        const [settings, worksheets, fcmToken] = snapshots;
+        if (settings.exists()) {
+          mySettings = settings.val();
+          // fcmTokenは更新されている可能性を考えて空じゃない場合ログイン後、必ず更新する。
+          if (fcmToken) database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/fcmToken`).set(fcmToken);
+        } else {
+          // アカウント作成後の処理
+          // GAにアカウント作成イベントを送信
+          if (process.env.NODE_ENV !== 'development') ReactGA.event({ category: 'User', action: 'Register', value: 100 });
+          mySettings = {
+            displayName: user.displayName || tmpDisplayName, photoURL: user.photoURL || '', uid: user.uid, email: user.email, fcmToken,
+          };
+          // EMAIL_AND_PASSWORDでユーザーを作成した場合、displayNameがnullなので、firebaseのauthで管理しているユーザーのプロフィールを更新する
+          if (!user.displayName) user.updateProfile({ displayName: tmpDisplayName });
+          database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).set(mySettings);
+        }
+        // ワークシートの一覧を取得
+        if (worksheets.exists() && worksheets.val() !== []) {
+          Promise.all(worksheets.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((worksheetNames) => {
+            this.setState({ worksheets: worksheetNames.map((worksheetName, index) => ({ id: worksheets.val()[index], name: worksheetName.exists() && worksheetName.val() ? worksheetName.val() : 'Unknown' })) });
           });
         }
-        // ログイン後にどこのページからスタートするかをハンドリングする。
-        // また、招待されている場合、この処理でワークシートに参加する。
-        let mySettings;
-        Promise.all([
-          database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).once('value'),
-          database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'),
-          messaging ? messaging.requestPermission().then(() => messaging.getToken()).catch(() => '') : '',
-        ]).then((snapshots) => {
-          const [settings, worksheets, fcmToken] = snapshots;
-          if (settings.exists()) {
-            mySettings = settings.val();
-            // fcmTokenは更新されている可能性を考えて空じゃない場合ログイン後、必ず更新する。
-            if (fcmToken) database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/fcmToken`).set(fcmToken);
-          } else {
-            // アカウント作成後の処理
-            // GAにアカウント作成イベントを送信
-            if (process.env.NODE_ENV !== 'development') ReactGA.event({ category: 'User', action: 'Register', value: 100 });
-            mySettings = {
-              displayName: user.displayName || tmpDisplayName, photoURL: user.photoURL || '', uid: user.uid, email: user.email, fcmToken,
-            };
-            // EMAIL_AND_PASSWORDでユーザーを作成した場合、displayNameがnullなので、firebaseのauthで管理しているユーザーのプロフィールを更新する
-            if (!user.displayName) user.updateProfile({ displayName: tmpDisplayName });
-            database.ref(`/${constants.API_VERSION}/users/${user.uid}/settings/`).set(mySettings);
-          }
-          // ワークシートの一覧を取得
-          if (worksheets.exists() && worksheets.val() !== []) {
-            Promise.all(worksheets.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((worksheetNames) => {
-              this.setState({ worksheets: worksheetNames.map((worksheetName, index) => ({ id: worksheets.val()[index], name: worksheetName.exists() && worksheetName.val() ? worksheetName.val() : 'Unknown' })) });
-            });
-          }
-          return (worksheets.exists() && worksheets.val() !== []) ? worksheets.val() : []; // 自分のワークシートのid
-        }).then((workSheetListIds) => {
-          const pathname = util.formatURLString(this.props.location.pathname.replace('/', ''));
-          const fromInviteEmail = util.getQueryVariable('worksheet') !== '';
-          if (!fromInviteEmail && ['login', 'signup'].includes(pathname)) { // ■ログイン時
-            this.props.history.push('/');
-            return Promise.resolve();
-          } if (workSheetListIds.includes(pathname)) { // ■既に参加しているワークシートの場合
-            return Promise.resolve();
-          } if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
-            const worksheetId = fromInviteEmail ? util.formatURLString(util.getQueryVariable('worksheet')) : pathname;
-            return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).once('value').then((invitedEmails) => {
-              // 自分のメールアドレスがワークシートの招待中メールアドレスリストに存在するかチェックする。
-              if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || !(invitedEmails.val().includes(user.email))) {
-                this.props.history.push('/'); // 違った場合はワークシートの選択に飛ばす
+        return (worksheets.exists() && worksheets.val() !== []) ? worksheets.val() : []; // 自分のワークシートのid
+      }).then((workSheetListIds) => {
+        const pathname = util.formatURLString(this.props.location.pathname.replace('/', ''));
+        const fromInviteEmail = util.getQueryVariable('worksheet') !== '';
+        if (!fromInviteEmail && ['login', 'signup'].includes(pathname)) { // ■ログイン時
+          this.props.history.push('/');
+          return Promise.resolve();
+        } if (workSheetListIds.includes(pathname)) { // ■既に参加しているワークシートの場合
+          return Promise.resolve();
+        } if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
+          const worksheetId = fromInviteEmail ? util.formatURLString(util.getQueryVariable('worksheet')) : pathname;
+          return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).once('value').then((invitedEmails) => {
+            // 自分のメールアドレスがワークシートの招待中メールアドレスリストに存在するかチェックする。
+            if (!invitedEmails.exists() || !Array.isArray(invitedEmails.val()) || !(invitedEmails.val().includes(user.email))) {
+              this.props.history.push('/'); // 違った場合はワークシートの選択に飛ばす
+              return Promise.resolve();
+            }
+            // 自分が招待されていた場合は自分のワークシートに加え、ワークシートのメンバーに自分を加える
+            return Promise.all([
+              database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'),
+              database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value'),
+            ]).then((snapshots) => {
+              const [worksheetIds, worksheetUserIds] = snapshots;
+              const promises = [
+                database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set((worksheetIds.exists() ? worksheetIds.val() : []).concat([worksheetId])), // 自分の参加しているワークシートにワークシートのidを追加
+                database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).set((worksheetUserIds.exists() ? worksheetUserIds.val() : []).concat([user.uid])), // 参加しているワークシートのユーザーに自分のidを追加
+                database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているワークシート招待中メールアドレスリストから削除
+              ];
+              return Promise.all(promises);
+            }).then(() => {
+              database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value').then((worksheetIds) => {
+                // ワークシートの一覧を再取得
+                if (worksheetIds.exists() && worksheetIds.val() !== []) {
+                  Promise.all(worksheetIds.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((worksheetNames) => {
+                    this.setState({ worksheets: worksheetNames.map((worksheetName, index) => ({ id: worksheetIds.val()[index], name: worksheetName.exists() && worksheetName.val() ? worksheetName.val() : 'Unknown' })) });
+                  });
+                }
+                this.props.history.push(`/${worksheetId}`);
                 return Promise.resolve();
-              }
-              // 自分が招待されていた場合は自分のワークシートに加え、ワークシートのメンバーに自分を加える
-              return Promise.all([
-                database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value'),
-                database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value'),
-              ]).then((snapshots) => {
-                const [worksheetIds, worksheetUserIds] = snapshots;
-                const promises = [
-                  database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set((worksheetIds.exists() ? worksheetIds.val() : []).concat([worksheetId])), // 自分の参加しているワークシートにワークシートのidを追加
-                  database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).set((worksheetUserIds.exists() ? worksheetUserIds.val() : []).concat([user.uid])), // 参加しているワークシートのユーザーに自分のidを追加
-                  database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/invitedEmails/`).set(invitedEmails.val().filter(email => email !== user.email)), // 参加しているワークシート招待中メールアドレスリストから削除
-                ];
-                return Promise.all(promises);
-              }).then(() => {
-                database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).once('value').then((worksheetIds) => {
-                  // ワークシートの一覧を再取得
-                  if (worksheetIds.exists() && worksheetIds.val() !== []) {
-                    Promise.all(worksheetIds.val().map(id => database.ref(`/${constants.API_VERSION}/worksheets/${id}/name/`).once('value'))).then((worksheetNames) => {
-                      this.setState({ worksheets: worksheetNames.map((worksheetName, index) => ({ id: worksheetIds.val()[index], name: worksheetName.exists() && worksheetName.val() ? worksheetName.val() : 'Unknown' })) });
-                    });
-                  }
-                  this.props.history.push(`/${worksheetId}`);
-                  return Promise.resolve();
-                });
               });
             });
-          }
-          return Promise.resolve();
-        }).then(() => { this.setState({ processing: false, user: mySettings }); });
-      } else {
-        this.setState({ processing: false });
-      }
+          });
+        }
+        return Promise.resolve();
+      }).then(() => { this.setState({ processing: false, user: mySettings }); });
     });
   }
 
@@ -265,9 +265,7 @@ class App extends Component {
   logout() {
     // userの初期化
     this.setState({
-      user: {
-        displayName: '', photoURL: '', uid: '', email: '', fcmToken: '',
-      },
+      user: getInitialStateUser(),
       worksheets: [],
       isOpenSidebar: false,
     });

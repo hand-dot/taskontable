@@ -67,7 +67,6 @@ class WorkSheet extends Component {
       isOpenSnackbar: false,
       snackbarText: '',
       snackbarType: constants.messageType.SUCCESS,
-      isMobile: util.isMobile(),
       readOnly: true,
       saveable: false,
       tab: 0,
@@ -137,7 +136,7 @@ class WorkSheet extends Component {
     this.getRecentMessage(worksheetId);
     window.onfocus = () => { this.getRecentMessage(worksheetId); };
 
-    if (!this.state.isMobile) {
+    if (!util.isMobile()) {
       setTimeout(() => {
         window.onkeydown = (e) => { this.fireShortcut(e); };
       });
@@ -178,11 +177,9 @@ class WorkSheet extends Component {
   }
 
   componentWillUnmount() {
-    const {
-      isMobile, editingUserId, worksheetId, date,
-    } = this.state;
+    const { editingUserId, worksheetId, date } = this.state;
     const { userId } = this.props;
-    if (!isMobile) window.onkeydown = '';
+    if (!util.isMobile()) window.onkeydown = '';
     window.onbeforeunload = '';
     window.onunload = '';
     window.onfocus = '';
@@ -410,7 +407,7 @@ class WorkSheet extends Component {
       return Promise.resolve();
     }
     // IDを生成し無駄なプロパティを削除する。また、hotで並び変えられたデータを取得するために処理が入っている。
-    const tableTasks = !this.state.isMobile ? this.getHotTaskIgnoreFilter(this.taskTable.getTasksIgnoreEmptyTaskAndProp()) : this.state.tableTasks;
+    const tableTasks = !util.isMobile() ? this.getHotTaskIgnoreFilter(this.taskTable.getTasksIgnoreEmptyTaskAndProp()) : this.state.tableTasks;
     // 開始時刻順に並び替える
     const sortedTableTask = this.setSortedTableTasks(tableTasks.map(tableTask => tasksUtil.deleteUselessTaskProp(tableTask)));
     return this.fireScript(sortedTableTask, 'exportScript')
@@ -435,11 +432,11 @@ class WorkSheet extends Component {
 
   saveEditingUserId() {
     const {
-      isMobile, members, saveable, isSyncedTableTasks, isSyncedMemo, editingUserId, worksheetId, date,
+      members, saveable, isSyncedTableTasks, isSyncedMemo, editingUserId, worksheetId, date,
     } = this.state;
     const { userId } = this.props;
     if (members.length === 1 || editingUserId === userId || !isSyncedTableTasks || !isSyncedMemo) return Promise.resolve();
-    if (!editingUserId && userId && !isMobile && members.length > 1 && saveable && isSyncedTableTasks && isSyncedMemo) {
+    if (!editingUserId && userId && !util.isMobile() && members.length > 1 && saveable && isSyncedTableTasks && isSyncedMemo) {
       return database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/editingUserIds/${date}`).set(userId);
     }
     return Promise.reject();
@@ -481,7 +478,7 @@ class WorkSheet extends Component {
    */
   attachTableTasks() {
     return database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${this.state.date}`).on('value', (snapshot) => {
-      const prevTableTasks = (!this.state.isMobile ? this.getHotTaskIgnoreFilter(this.taskTable.getTasksIgnoreEmptyTaskAndProp()) : this.state.tableTasks);
+      const prevTableTasks = (!util.isMobile() ? this.getHotTaskIgnoreFilter(this.taskTable.getTasksIgnoreEmptyTaskAndProp()) : this.state.tableTasks);
       if (snapshot.exists() && util.equal(tasksUtil.getSortedTasks(prevTableTasks).map(tableTask => tasksUtil.deleteUselessTaskProp(tableTask)), snapshot.val())) {
         // 同期したがテーブルのデータと差分がなかった場合(自分の更新)
         this.setState({ saveable: false });
@@ -687,7 +684,6 @@ class WorkSheet extends Component {
       worksheetId,
       date,
       editingUserId,
-      isMobile,
     } = this.state;
     const { userId } = this.props;
     if (!saveable || window.confirm(i18n.t('common.someContentsAreNotSaved'))) {
@@ -696,7 +692,7 @@ class WorkSheet extends Component {
         this.setState({
           date: newDate, taskTableFilterBy: '', isSyncedTableTasks: false, isSyncedMemo: false, editingUserId: null,
         });
-        if (!isMobile) this.taskTable.updateIsActive(util.isToday(newDate));
+        if (!util.isMobile()) this.taskTable.updateIsActive(util.isToday(newDate));
         setTimeout(() => { this.attachWorkSheet(); });
       });
     }
@@ -733,7 +729,6 @@ class WorkSheet extends Component {
 
   render() {
     const {
-      isMobile,
       isOpenDashboard,
       tab,
       readOnly,
@@ -767,7 +762,7 @@ class WorkSheet extends Component {
       theme,
     } = this.props;
     return (
-      <Grid container spacing={0} className={classes.root} style={{ padding: isMobile ? 0 : theme.spacing.unit, paddingTop: (isMobile ? 0 : 17) + theme.mixins.toolbar.minHeight }}>
+      <Grid container spacing={0} className={classes.root} style={{ padding: util.isMobile() ? 0 : theme.spacing.unit, paddingTop: (util.isMobile() ? 0 : 17) + theme.mixins.toolbar.minHeight }}>
         <Grid
           item
           xs={12}
@@ -783,7 +778,6 @@ class WorkSheet extends Component {
             userName={userName}
             userPhotoURL={userPhotoURL}
             isOpenDashboard={isOpenDashboard}
-            isMobile={isMobile}
             isToday={util.isToday(date)}
             tab={tab}
             readOnly={readOnly}
@@ -815,32 +809,32 @@ class WorkSheet extends Component {
               saveWorkSheet={this.saveWorkSheet.bind(this)}
               handleTaskTableFilter={(value) => { this.setState({ taskTableFilterBy: value }); }}
             />
-            {isMobile && (
-            <TaskTableMobile
-              userId={userId}
-              tableTasks={tableTasks}
-              changeTableTasks={this.changeTableTasksByMobile.bind(this)}
-              isActive={util.isToday(date)}
-              readOnly={readOnly}
-            />
+            {util.isMobile() && (
+              <TaskTableMobile
+                userId={userId}
+                tableTasks={tableTasks}
+                changeTableTasks={this.changeTableTasksByMobile.bind(this)}
+                isActive={util.isToday(date)}
+                readOnly={readOnly}
+              />
             )}
-            {!isMobile && (
-            <TaskTable
-              onRef={ref => (this.taskTable = ref)} // eslint-disable-line
-              userId={userId}
-              taskTableFilterBy={taskTableFilterBy}
-              members={members}
-              tableTasks={tableTasks}
-              handleTableTasks={(newTableTasks) => {
-                this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
-                this.saveEditingUserId().catch(() => {
-                  if (userId) this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.locked'), snackbarType: constants.messageType.ERROR });
-                });
-              }}
-              handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
-              isActive={util.isToday(date)}
-              moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
-            />
+            {!util.isMobile() && (
+              <TaskTable
+                onRef={ref => (this.taskTable = ref)} // eslint-disable-line
+                userId={userId}
+                taskTableFilterBy={taskTableFilterBy}
+                members={members}
+                tableTasks={tableTasks}
+                handleTableTasks={(newTableTasks) => {
+                  this.setState({ tableTasks: this.getHotTaskIgnoreFilter(newTableTasks) });
+                  this.saveEditingUserId().catch(() => {
+                    if (userId) this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('worksheet.locked'), snackbarType: constants.messageType.ERROR });
+                  });
+                }}
+                handleSaveable={(newVal) => { this.setState({ saveable: newVal }); }}
+                isActive={util.isToday(date)}
+                moveTableTaskToPoolTask={this.moveTableTaskToPoolTask.bind(this)}
+              />
             )}
             <Divider />
             <TextField
@@ -857,7 +851,7 @@ class WorkSheet extends Component {
                 });
               }}
               onBlur={() => {
-                if (isMobile && saveable) {
+                if (util.isMobile() && saveable) {
                   this.saveMemo().then(() => {
                     this.setState({
                       isOpenSnackbar: true,
