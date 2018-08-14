@@ -35,7 +35,7 @@ const styles = {
 Raven.config(constants.SENTRY_URL, {
   release: constants.APP_VERSION,
   environment: process.env.NODE_ENV,
-  shouldSendCallback: () => ['development', 'production', 'staging'].indexOf(process.env.NODE_ENV) !== -1,
+  shouldSendCallback: () => ['production', 'staging'].indexOf(process.env.NODE_ENV) !== -1,
 }).install();
 
 class ErrorBoundary extends Component {
@@ -84,8 +84,8 @@ class ErrorBoundary extends Component {
   }
 }
 ErrorBoundary.propTypes = {
-    classes: PropTypes.object.isRequired, // eslint-disable-line
-    children: PropTypes.object.isRequired, // eslint-disable-line
+  classes: PropTypes.object.isRequired, // eslint-disable-line
+  children: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default withStyles(styles)(ErrorBoundary);
