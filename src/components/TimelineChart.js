@@ -43,9 +43,9 @@ class TimelineChart extends Component {
   componentDidMount() {
     if (!this.timeline) return;
     const { tableTasks } = this.props;
-    this.draw(tableTasks)
-    this.intervalID = setInterval(()=>{
-      this.draw(tableTasks)
+    this.draw(tableTasks);
+    this.intervalID = setInterval(() => {
+      this.draw(this.props.tableTasks);
     }, 60000);
   }
 
@@ -56,7 +56,7 @@ class TimelineChart extends Component {
   }
 
   componentWillUnmount() {
-    if(this.intervalID) clearInterval(this.intervalID)
+    if (this.intervalID) clearInterval(this.intervalID);
   }
 
   draw(data) {
@@ -119,27 +119,28 @@ class TimelineChart extends Component {
       start: new Date(),
     }];
 
-    if(pointer){
+    if (pointer) {
     // Pointer
-    svg.selectAll('.now').data(pointerData).enter().append('rect')
-      .attr('x', d => x(d.start) + margin.left)
-      .attr('y', 10)
-      .style('width', 1)
-      .style('height', 30)
-      .style('fill', 'red')
-      .attr('class', 'now');
-    const pointX = Math.floor(svg.select('.now').attr('x')) + 1;
-    svg.selectAll('point')
-      .data(pointerData)
-      .enter()
-      .append('path')
-      .attr('d', () => `M${pointX - 5} ${5} L${pointX} ${10} L${pointX + 5} ${5} Z`)
-      .attr('fill', 'red')
-      .style('width', 30)
-      .style('height', 30)
-      .attr('class', 'point');
+      svg.selectAll('.now').data(pointerData).enter().append('rect')
+        .attr('x', d => x(d.start) + margin.left)
+        .attr('y', 10)
+        .style('width', 1)
+        .style('height', 30)
+        .style('fill', 'red')
+        .attr('class', 'now');
+      const pointX = Math.floor(svg.select('.now').attr('x')) + 1;
+      svg.selectAll('point')
+        .data(pointerData)
+        .enter()
+        .append('path')
+        .attr('d', () => `M${pointX - 5} ${5} L${pointX} ${10} L${pointX + 5} ${5} Z`)
+        .attr('fill', 'red')
+        .style('width', 30)
+        .style('height', 30)
+        .attr('class', 'point');
     }
   }
+
   render() {
     const { id } = this.state;
     return (<svg id={`timeline-${id}`} ref={(node) => { this.timeline = node; }} />);
