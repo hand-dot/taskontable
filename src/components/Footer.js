@@ -26,7 +26,7 @@ const styles = {
 
 class Footer extends Component {
   componentDidMount() {
-    window.twttr.widgets.load(this.twitterFollowButton);
+    window.twttr && window.twttr.widgets.load(this.twitterFollowButton);
   }
 
   render() {
