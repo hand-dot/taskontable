@@ -16,15 +16,16 @@ import DisclosureRange from './DisclosureRange';
 
 import constants from '../constants';
 import tasksUtil from '../tasksUtil';
+import util from '../util';
 import i18n from '../i18n';
 
 function WorkSheetPanels(props) {
+  const isMobile = util.isMobile();
   const {
     userId,
     userName,
     userPhotoURL,
     isOpenDashboard,
-    isMobile,
     isToday,
     tab,
     readOnly,
@@ -59,7 +60,7 @@ function WorkSheetPanels(props) {
           <IconButton onClick={(e) => { handleTab(e, tab); }}>
             <ExpandMore />
           </IconButton>
-      )}
+        )}
       >
         <Tabs
           value={tab}
@@ -71,37 +72,37 @@ function WorkSheetPanels(props) {
           <Tab
             label={(
               <span role="img" aria-label="dashboad">
-              🚩
+                🚩
                 {' '}
                 {isMobile
                   ? ''
                   : i18n.t('worksheet.dashBoad')}
               </span>
-          )}
+            )}
           />
           <Tab
             disabled={readOnly}
             label={(
               <span role="img" aria-label="taskpool">
-              📁
+                📁
                 {' '}
                 {isMobile
                   ? ''
                   : i18n.t('worksheet.taskPool')}
               </span>
-          )}
+            )}
           />
           <Tab
             disabled={readOnly}
             label={(
               <span role="img" aria-label="members">
-              👫
+                👫
                 {' '}
                 {isMobile
                   ? ''
                   : i18n.t('worksheet.members')}
               </span>
-          )}
+            )}
           />
           <Tab
             disabled={readOnly}
@@ -114,48 +115,48 @@ function WorkSheetPanels(props) {
                   ? ''
                   : i18n.t('worksheet.disclosureRange')}
               </span>
-          )}
+            )}
           />
           {' '}
           {!isMobile && (
-          <Tab
-            disabled={readOnly}
-            onClick={() => {
-              history.push(`/${worksheetId}/scripts`);
-            }}
-            label={(
-              <span role="img" aria-label="plugins">
-              🔌
+            <Tab
+              disabled={readOnly}
+              onClick={() => {
+                history.push(`/${worksheetId}/scripts`);
+              }}
+              label={(
+                <span role="img" aria-label="plugins">
+                  🔌
                 {' '}
-                {i18n.t('worksheet.plugIns')}
-              (
+                  {i18n.t('worksheet.plugIns')}
+                  (
                 <span role="img" aria-label="stop">
-                ⛔
+                    ⛔
                 </span>
-              )
+                  )
               </span>
-          )}
-          />
+              )}
+            />
           )}
           {!isMobile && (
-          <Tab
-            disabled={readOnly}
-            onClick={() => {
-              history.push(`/${worksheetId}/activity`);
-            }}
-            label={(
-              <span role="img" aria-label="activity">
-              📈
+            <Tab
+              disabled={readOnly}
+              onClick={() => {
+                history.push(`/${worksheetId}/activity`);
+              }}
+              label={(
+                <span role="img" aria-label="activity">
+                  📈
                 {' '}
-                {i18n.t('worksheet.activity')}
-              (
+                  {i18n.t('worksheet.activity')}
+                  (
                 <span role="img" aria-label="stop">
-                ⛔
+                    ⛔
                 </span>
-              )
+                  )
               </span>
-          )}
-          />
+              )}
+            />
           )}
         </Tabs>
       </ExpansionPanelSummary>
@@ -224,7 +225,6 @@ WorkSheetPanels.propTypes = {
   userName: PropTypes.string.isRequired,
   userPhotoURL: PropTypes.string.isRequired,
   isOpenDashboard: PropTypes.bool.isRequired,
-  isMobile: PropTypes.bool.isRequired,
   isToday: PropTypes.bool.isRequired,
   tab: PropTypes.number.isRequired,
   readOnly: PropTypes.bool.isRequired,

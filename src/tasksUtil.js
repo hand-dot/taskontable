@@ -19,15 +19,15 @@ export default {
    * @param  {Array} tasks
    */
   getOpenTasks(tasks) {
-    const doneTask = t => !t.startTime || !t.endTime;
-    return R.compose(R.filter(doneTask, R))(tasks);
+    const openTask = t => !t.startTime || !t.endTime;
+    return R.compose(R.filter(openTask, R))(tasks);
   },
   /**
    * タスクの配列を受け取り見積時間の合計を取得します。
    * @param  {Array} tasks
    */
   getTotalEstimateMinute(tasks) {
-    return R.compose(R.sum, R.map(R.prop('estimate'), R))(tasks);
+    return R.compose(R.sum, R.map(R.propOr(0, 'estimate'), R))(tasks);
   },
   /**
    * タスクの配列を受け取り実績の時間の合計を取得します。

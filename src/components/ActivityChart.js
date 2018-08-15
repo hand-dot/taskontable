@@ -48,13 +48,15 @@ class ActivityChart extends Component {
   }
 
   componentDidMount() {
-    if (!this.activity || !Array.isArray(this.props.tableTasks)) return;
-    this.draw(formatDatas(this.props.tableTasks));
+    const { tableTasks } = this.props;
+    if (!this.activity || !Array.isArray(tableTasks)) return;
+    this.draw(formatDatas(tableTasks));
   }
 
   componentDidUpdate() {
-    if (!this.activity || !Array.isArray(this.props.tableTasks)) return;
-    this.draw(formatDatas(this.props.tableTasks));
+    const { tableTasks } = this.props;
+    if (!this.activity || !Array.isArray(tableTasks)) return;
+    this.draw(formatDatas(tableTasks));
   }
 
   componentWillUnmount() {
@@ -62,13 +64,15 @@ class ActivityChart extends Component {
 
 
   draw(datas) {
-    if (!this.activity || !Array.isArray(this.props.tableTasks)) return;
-    d3.selectAll(`#activity-${this.state.id} > *`).remove();
+    const { tableTasks } = this.props;
+    const { id } = this.state;
+    if (!this.activity || !Array.isArray(tableTasks)) return;
+    d3.selectAll(`#activity-${id} > *`).remove();
     const padding = 40;
     const width = this.activity.parentNode ? this.activity.parentNode.clientWidth : 0;
 
     const height = 300;
-    const svg = d3.select(`#activity-${this.state.id}`).attr('width', width).attr('height', height);
+    const svg = d3.select(`#activity-${id}`).attr('width', width).attr('height', height);
     const timeparser = d3.timeParse('%Y-%m-%d');
 
     const dataset = datas.map(data => ({
@@ -141,9 +145,8 @@ class ActivityChart extends Component {
       .attr('stroke-linecap', 'round')
       .attr('d', remainingLine);
   }
-  render() {
-    return (<svg id={`activity-${this.state.id}`} ref={(node) => { this.activity = node; }} />);
-  }
+
+  render() { return (<svg id={`activity-${this.state.id}`} ref={(node) => { this.activity = node; }} />); }
 }
 
 ActivityChart.propTypes = {
