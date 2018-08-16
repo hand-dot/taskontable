@@ -59,8 +59,9 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     position: 'relative',
-    minHeight: '100vh',
+    minHeight: '100%',
     width: constants.SIDEBAR_WIDTH,
+    borderRight: '1px solid rgba(0, 0, 0, 0.12)',
   },
   circularProgress: {
     overflow: 'hidden',
