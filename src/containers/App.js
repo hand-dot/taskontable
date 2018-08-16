@@ -40,6 +40,8 @@ import Settings from './Settings';
 import WorkSheet from './WorkSheet';
 import Hello from './Hello';
 
+import sharp from '../images/sharp.svg';
+
 const messaging = util.getMessaging();
 const auth = util.getAuth();
 const database = util.getDatabase();
@@ -368,6 +370,9 @@ class App extends Component {
               const isActive = util.formatURLString(location.pathname.replace('/', '')) === util.formatURLString(worksheet.name);
               return (
                 <ListItem divider key={worksheet.id} button onClick={this.goWorkSheet.bind(this, worksheet.id)} disabled={isActive} style={{ backgroundColor: isActive ? 'rgba(0, 0, 0, 0.08)' : '' }}>
+                  <ListItemIcon>
+                    <img src={sharp} alt="channel" width="21" height="26" />
+                  </ListItemIcon>
                   <ListItemText key={worksheet.id} primary={worksheet.name} />
                 </ListItem>
               );
