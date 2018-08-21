@@ -20,10 +20,8 @@ const margin = {
 // 灰色と透明の色は重なった時に色が分かりにくいので消す
 const brandColorLight = util.cloneDeep(constants.brandColor.light);
 delete brandColorLight.GREY;
-delete brandColorLight.SKIN;
 const brandColorBase = util.cloneDeep(constants.brandColor.base);
 delete brandColorBase.GREY;
-delete brandColorBase.SKIN;
 
 const today = moment('00:00', constants.TIMEFMT).toDate();
 const tomorrow = moment('00:00', constants.TIMEFMT).add(1, 'days').toDate();
@@ -120,7 +118,7 @@ class TimelineChart extends Component {
     }];
 
     if (pointer) {
-    // Pointer
+      // Pointer
       svg.selectAll('.now').data(pointerData).enter().append('rect')
         .attr('x', d => x(d.start) + margin.left)
         .attr('y', 10)
