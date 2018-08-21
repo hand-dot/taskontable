@@ -10,7 +10,9 @@ import google from '../images/google.svg';
 import constants from '../constants';
 import util from '../util';
 import i18n from '../i18n';
+import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
 import Footer from '../components/Footer';
+
 
 const styles = {
   root: {
@@ -63,6 +65,7 @@ class Login extends Component {
     const { classes } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
+        <ScrollToTopOnMount />
         <Grid item xs={12}>
           <div className={classes.content}>
             <Typography variant="headline" gutterBottom>
