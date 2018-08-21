@@ -123,7 +123,6 @@ export default {
   ],
   brandColor: {
     base: {
-      SKIN: `rgb(${rgb.SKIN})`,
       RED: `rgb(${rgb.RED})`,
       YELLOW: `rgb(${rgb.YELLOW})`,
       GREEN: `rgb(${rgb.GREEN})`,
@@ -132,7 +131,6 @@ export default {
       GREY: `rgb(${rgb.GREY})`,
     },
     light: {
-      SKIN: `rgba(${rgb.SKIN},0.2)`,
       RED: `rgba(${rgb.RED},0.2)`,
       YELLOW: `rgba(${rgb.YELLOW},0.2)`,
       GREEN: `rgba(${rgb.GREEN},0.2)`,

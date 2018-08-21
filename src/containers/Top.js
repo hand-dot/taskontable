@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import desk from '../images/illust/desk.png';
 import skateboard from '../images/illust/skateboard.jpg';
 import teamMens from '../images/illust/team_mens.jpg';
+import example from '../images/example.png';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
@@ -47,7 +48,7 @@ function Top(props) {
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="center" justify="center">
-      <Grid className={classes.center} item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
+      <Grid className={classes.center} item xs={12}>
         <div className={classes.content} style={{ paddingTop: '6em' }}>
           <Typography variant="headline" align="center" style={{ marginBottom: '2em' }}>
             {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
@@ -131,20 +132,26 @@ function Top(props) {
           </div>
         </div>
       </Grid>
-      <Grid item xs={12} style={{ backgroundColor: constants.brandColor.base.SKIN }}>
+      <Grid className={classes.center} item xs={12}>
         <Divider />
         <div className={classes.content}>
           <Typography style={{ fontWeight: 'bold' }} variant={isMobile ? 'display1' : 'display3'} align="center">
             <a href={constants.DEMO_URL}>
               {i18n.t('top.checkDemo')}
               {isMobile && (
-              <Typography>
-                *
-                {i18n.t('top.appForPc')}
-              </Typography>
+                <Typography>
+                  *
+                  {i18n.t('top.appForPc')}
+                </Typography>
               )}
             </a>
           </Typography>
+          <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 757 }} src={example} alt="example" />
+          <Link className={classes.link} to="/signup">
+            <Button variant="raised" className={classes.button} color="primary">
+              {i18n.t('top.signUpItsFree')}
+            </Button>
+          </Link>
         </div>
       </Grid>
       <Footer />
