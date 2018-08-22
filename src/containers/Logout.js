@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../util';
@@ -41,6 +42,7 @@ function Logout(props) {
   const { classes } = props;
   return (
     <Grid spacing={0} container alignItems="stretch" justify="center">
+      <ScrollToTopOnMount />
       <Grid item xs={12}>
         <div className={classes.center}>
           <div className={classes.content}>
