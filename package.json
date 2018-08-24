@@ -45,7 +45,7 @@
     "react-ga": "^2.5.3",
     "react-router-dom": "^4.3.1",
     "react-native": "~0.55.2",
-    "react-scripts": "1.1.4",
+    "react-scripts": "1.1.5",
     "react-share": "^2.2.0",
     "ua-parser-js": "^0.7.18",
     "uuid": "^3.3.2"
