@@ -77,7 +77,9 @@ class Dashboard extends Component {
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} sm={6}>
-          <Typography variant="subheading">{i18n.t('dashBoad.summary')}</Typography>
+          <Typography variant="subheading">
+            {i18n.t('dashBoad.summary')}
+          </Typography>
           <TodaySummary
             data={{
               estimateTasks: this.state.estimateTasks,
@@ -89,7 +91,9 @@ class Dashboard extends Component {
         </Grid>
         {!util.isMobile() && (
           <Grid item xs={12} sm={6}>
-            <Typography gutterBottom variant="subheading">{i18n.t('dashBoad.clock')}</Typography>
+            <Typography gutterBottom variant="subheading">
+              {i18n.t('dashBoad.clock')}
+            </Typography>
             <Grid container>
               <Grid item xs={6}>
                 <Clock title={i18n.t('dashBoad.currentTime')} time={this.state.currentTime} />
@@ -101,11 +105,13 @@ class Dashboard extends Component {
           </Grid>
         )}
         <Grid item xs={12}>
-          <Typography gutterBottom variant="subheading">{i18n.t('dashBoad.timeline')}</Typography>
+          <Typography gutterBottom variant="subheading">
+            {i18n.t('dashBoad.timeline')}
+          </Typography>
           <Grid container>
             <Grid item xs={12}>
-              <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)}  pointer={isToday} />
-              <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(tableTasks)}  pointer={isToday} />
+              <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)} pointer={isToday} />
+              <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(tableTasks)} pointer={isToday} />
             </Grid>
           </Grid>
         </Grid>
@@ -124,7 +130,7 @@ Dashboard.propTypes = {
     startTime: PropTypes.string.isRequired,
     memo: PropTypes.string.isRequired,
   })).isRequired,
-  isToday: PropTypes.bool.isRequired, 
+  isToday: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };

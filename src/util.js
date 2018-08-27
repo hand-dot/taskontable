@@ -72,8 +72,8 @@ export default {
     if (startTimeVal === '' || endTimeVal === '') return 0;
     const [startTimeHour, startTimeMinute] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute] = endTimeVal.split(':');
-    if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) &&
-      Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute)) {
+    if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute)
+      && Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute)) {
       const end = `${endTimeHour}:${endTimeMinute}`;
       const start = `${startTimeHour}:${startTimeMinute}`;
       return moment(end, constants.TIMEFMT).diff(moment(start, constants.TIMEFMT), 'minutes');
@@ -89,8 +89,8 @@ export default {
     if (startTimeVal === '' || endTimeVal === '') return 0;
     const [startTimeHour, startTimeMinute, startTimeSec] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute, endTimeSec] = endTimeVal.split(':');
-    if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSec) &&
-      Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSec)) {
+    if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSec)
+      && Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSec)) {
       const end = `${endTimeHour}:${endTimeMinute}:${endTimeSec}`;
       const start = `${startTimeHour}:${startTimeMinute}:${startTimeSec}`;
       return moment(end, 'HH:mm:ss').diff(moment(start, 'HH:mm:ss'), 'seconds');
@@ -177,12 +177,12 @@ export default {
    */
   validateDatabaseKey(key) {
     // Paths must be non-empty strings and can't contain ".", "#", "$", "[", or "]"
-    if (key.indexOf(' ') !== -1 ||
-      key.indexOf('/') !== -1 ||
-      key.indexOf('.') !== -1 ||
-      key.indexOf('#') !== -1 ||
-      key.indexOf('[') !== -1 ||
-      key.indexOf(']') !== -1
+    if (key.indexOf(' ') !== -1
+      || key.indexOf('/') !== -1
+      || key.indexOf('.') !== -1
+      || key.indexOf('#') !== -1
+      || key.indexOf('[') !== -1
+      || key.indexOf(']') !== -1
     ) {
       return false;
     }
@@ -283,4 +283,3 @@ export default {
     return encodeURI((str || '').toLowerCase());
   },
 };
-

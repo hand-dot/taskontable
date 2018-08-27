@@ -225,7 +225,9 @@ class Scripts extends Component {
         <Grid item xs={12}>
           <Typography gutterBottom variant="subheading">
             スクリプトの利用(ON/OFF)
-            <span className={classes.divider}>/</span>
+            <span className={classes.divider}>
+/
+            </span>
             <div style={{ display: 'inline-block' }}>
               <Switch
                 color="primary"
@@ -240,15 +242,21 @@ class Scripts extends Component {
           <Divider style={{ margin: '1.5em 0' }} />
           <Typography gutterBottom variant="subheading">
               ワークシートのデータの例
-            <span className={classes.divider}>/</span>
+            <span className={classes.divider}>
+/
+            </span>
             <Tooltip title="リセット" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default"><Refresh style={{ fontSize: 13 }} /></Button>
+                <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default">
+                  <Refresh style={{ fontSize: 13 }} />
+                </Button>
               </div>
             </Tooltip>
           </Typography>
           <Typography gutterBottom variant="caption">
-              タスクのスキーマは　{JSON.stringify(tableTaskSchema)}　このようになっております。
+              タスクのスキーマは
+            {JSON.stringify(tableTaskSchema)}
+　このようになっております。
           </Typography>
           <Typography gutterBottom variant="caption">
               ワークシートのデータは左のテーブルに対して右のJSON形式(配列)で保存されます。
@@ -298,7 +306,9 @@ class Scripts extends Component {
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">
+            {i18n.t('common.backToPreviousPage')}
+          </Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -325,4 +335,3 @@ Scripts.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(Scripts);
-

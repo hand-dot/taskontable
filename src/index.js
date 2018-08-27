@@ -26,7 +26,7 @@ ReactDOM.render(
         </div>
       </ErrorBoundary>
     </MuiThemeProvider>
-  </BrowserRouter>
-  , document.getElementById('root'),
+  </BrowserRouter>,
+  document.getElementById('root'),
 );
 registerServiceWorker();

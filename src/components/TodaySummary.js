@@ -17,14 +17,30 @@ function TodaySummary(props) {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell padding="none">{i18n.t('dashBoad.estimate')}</TableCell>
-              <TableCell padding="none">{(data.estimateTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.estimateTasks.taskNum}{i18n.t('common.tasks')}</TableCell>
+              <TableCell padding="none">
+                {i18n.t('dashBoad.estimate')}
+              </TableCell>
+              <TableCell padding="none">
+                {(data.estimateTasks.minute / 60).toFixed(1)}
+h
+              </TableCell>
+              <TableCell padding="none">
+                {data.estimateTasks.taskNum}
+                {i18n.t('common.tasks')}
+              </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none">{i18n.t('dashBoad.actually')}</TableCell>
-              <TableCell padding="none">{(data.actuallyTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.actuallyTasks.taskNum}{i18n.t('common.tasks')}</TableCell>
+              <TableCell padding="none">
+                {i18n.t('dashBoad.actually')}
+              </TableCell>
+              <TableCell padding="none">
+                {(data.actuallyTasks.minute / 60).toFixed(1)}
+h
+              </TableCell>
+              <TableCell padding="none">
+                {data.actuallyTasks.taskNum}
+                {i18n.t('common.tasks')}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -33,14 +49,30 @@ function TodaySummary(props) {
         <Table>
           <TableBody>
             <TableRow>
-              <TableCell padding="none">{i18n.t('dashBoad.done')}</TableCell>
-              <TableCell padding="none">{(data.doneTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.doneTasks.taskNum}{i18n.t('common.tasks')}</TableCell>
+              <TableCell padding="none">
+                {i18n.t('dashBoad.done')}
+              </TableCell>
+              <TableCell padding="none">
+                {(data.doneTasks.minute / 60).toFixed(1)}
+h
+              </TableCell>
+              <TableCell padding="none">
+                {data.doneTasks.taskNum}
+                {i18n.t('common.tasks')}
+              </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell padding="none">{i18n.t('dashBoad.remaining')}</TableCell>
-              <TableCell padding="none">{(data.remainingTasks.minute / 60).toFixed(1)}h</TableCell>
-              <TableCell padding="none">{data.remainingTasks.taskNum}{i18n.t('common.tasks')}</TableCell>
+              <TableCell padding="none">
+                {i18n.t('dashBoad.remaining')}
+              </TableCell>
+              <TableCell padding="none">
+                {(data.remainingTasks.minute / 60).toFixed(1)}
+h
+              </TableCell>
+              <TableCell padding="none">
+                {data.remainingTasks.taskNum}
+                {i18n.t('common.tasks')}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>

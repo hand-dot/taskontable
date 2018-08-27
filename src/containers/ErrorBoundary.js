@@ -73,7 +73,9 @@ class ErrorBoundary extends Component {
                 {i18n.t('errorBoundary.reportError')}
               </Button>
               <div style={{ fontSize: 12, marginBottom: 10 }}>
-                <a href="" onClick={() => { auth.signOut().then(() => { window.location.replace(`${window.location.protocol}//${window.location.host}/`); }); return false; }}>{i18n.t('common.backToTop')}</a>
+                <a href="" onClick={() => { auth.signOut().then(() => { window.location.replace(`${window.location.protocol}//${window.location.host}/`); }); return false; }}>
+                  {i18n.t('common.backToTop')}
+                </a>
               </div>
             </div>
           </Grid>
@@ -89,4 +91,3 @@ ErrorBoundary.propTypes = {
 };
 
 export default withStyles(styles)(ErrorBoundary);
-
