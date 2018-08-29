@@ -57,15 +57,26 @@ class DisclosureRange extends Component {
           <FormControlLabel
             value={constants.worksheetDisclosureRange.PUBLIC}
             control={<Radio color="primary" />}
-            label={
-              <span>{i18n.t('common.public')}: {i18n.t('disclosureRange.anyoneCanRead')}</span>
-          }
+            label={(
+              <span>
+                {i18n.t('common.public')}
+                :
+                {' '}
+                {i18n.t('disclosureRange.anyoneCanRead')}
+              </span>
+            )}
           />
           <FormControlLabel
             value={constants.worksheetDisclosureRange.PRIVATE}
             control={<Radio color="primary" />}
-            label={
-              <span>{i18n.t('common.private')}: {i18n.t('disclosureRange.onlyMembersCanReadAndEdit')}</span>}
+            label={(
+              <span>
+                {i18n.t('common.private')}
+                :
+                {' '}
+                {i18n.t('disclosureRange.onlyMembersCanReadAndEdit')}
+              </span>
+            )}
           />
         </RadioGroup>
         <Typography variant="subheading">
@@ -75,7 +86,7 @@ class DisclosureRange extends Component {
           id="urlInput"
           type="text"
           value={window.location.href}
-          endAdornment={
+          endAdornment={(
             <InputAdornment position="end">
               <Tooltip open={this.state.isOpenTooltip} onClose={() => { this.setState({ isOpenTooltip: false }); }} id="tooltip-copied" title={i18n.t('disclosureRange.copied')}>
                 <IconButton
@@ -90,7 +101,7 @@ class DisclosureRange extends Component {
                 </IconButton>
               </Tooltip>
             </InputAdornment>
-              }
+)}
         />
       </FormControl>
     );
@@ -104,4 +115,3 @@ DisclosureRange.propTypes = {
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
 export default withStyles(styles, { withTheme: true })(DisclosureRange);
-

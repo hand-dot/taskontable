@@ -126,7 +126,9 @@ class Clock extends Component {
             <div ref={(node) => { this.second = node; }} className={classes.second} />
           </div>
         </div>
-        <Typography gutterBottom variant="body1" align="center">{`${(`00${this.state.moment.hour()}`).slice(-2)}:${(`00${this.state.moment.minute()}`).slice(-2)}`}</Typography>
+        <Typography gutterBottom variant="body1" align="center">
+          {`${(`00${this.state.moment.hour()}`).slice(-2)}:${(`00${this.state.moment.minute()}`).slice(-2)}`}
+        </Typography>
       </div>
     );
   }

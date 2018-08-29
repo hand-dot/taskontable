@@ -50,7 +50,9 @@ function Logout(props) {
               {i18n.t('logOut.thanksForUsing_title', { title: constants.TITLE })}
             </Typography>
             <div style={{ fontSize: 12, marginTop: 20 }}>
-              <Link to="/">{i18n.t('common.backToTop')}</Link>
+              <Link to="/">
+                {i18n.t('common.backToTop')}
+              </Link>
             </div>
           </div>
         </div>
@@ -66,4 +68,3 @@ Logout.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(Logout);
-

@@ -218,7 +218,7 @@ class Settings extends Component {
             {(() => {
               if (this.state.loginProviderId === constants.loginProviderId.PASSWORD) {
                 return <img src={email} alt="email" height="20" />;
-              } else if (this.state.loginProviderId === constants.loginProviderId.GOOGLE) {
+              } if (this.state.loginProviderId === constants.loginProviderId.GOOGLE) {
                 return <img src={google} alt="google" height="20" />;
               }
               return null;
@@ -235,11 +235,15 @@ class Settings extends Component {
                 onClose={() => { this.setState({ isOpenEditPhotoDialog: false }); }}
                 aria-labelledby="edit-photo-dialog"
               >
-                <DialogTitle id="edit-photo-dialog">{i18n.t('settings.changeProfilePhoto')}</DialogTitle>
+                <DialogTitle id="edit-photo-dialog">
+                  {i18n.t('settings.changeProfilePhoto')}
+                </DialogTitle>
                 <DialogContent>
                   <DialogContentText />
                   <img ref={(node) => { this.editingPhoto = node; }} style={{ maxWidth: 300, maxHeight: 300 }} src={this.state.photoURL} crossOrigin="" alt={`${i18n.t('settings.profilePhoto') + (this.state.photoURL ? '' : `: ${i18n.t('settings.notSet')}`)}`} />
-                  <div><input type="file" name="image" accept="image/*" onChange={this.changePhotoInput.bind(this)} /></div>
+                  <div>
+                    <input type="file" name="image" accept="image/*" onChange={this.changePhotoInput.bind(this)} />
+                  </div>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={() => { this.setState({ isOpenEditPhotoDialog: false }); }} color="primary">
@@ -295,26 +299,34 @@ class Settings extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">{i18n.t('common.save')}</Button>
+          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">
+            {i18n.t('common.save')}
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
+          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">
+            {i18n.t('common.backToPreviousPage')}
+          </Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           open={this.state.isOpenSaveSnackbar}
           onClose={() => { this.setState({ isOpenSaveSnackbar: false }); }}
           ContentProps={{ 'aria-describedby': 'info-id' }}
-          message={
+          message={(
             <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
               <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
-              <span style={{ paddingLeft: theme.spacing.unit }}>{i18n.t('common.saved_target', { target: i18n.t('common.userInformation') })}</span>
+              <span style={{ paddingLeft: theme.spacing.unit }}>
+                {i18n.t('common.saved_target', { target: i18n.t('common.userInformation') })}
+              </span>
             </span>
-          }
+)}
         />
         <Dialog open={this.state.processing}>
-          <div style={{ padding: this.props.theme.spacing.unit }}><CircularProgress className={classes.circularProgress} /></div>
+          <div style={{ padding: this.props.theme.spacing.unit }}>
+            <CircularProgress className={classes.circularProgress} />
+          </div>
         </Dialog>
       </Grid>
     );
@@ -334,4 +346,3 @@ Settings.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(Settings);
-

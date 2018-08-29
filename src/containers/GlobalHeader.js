@@ -121,17 +121,33 @@ class GlobalHeader extends Component {
           <Grid item xs={12}>
             <Toolbar style={{ paddingLeft: 0 }} className={classes.root}>
               {(() => {
-                  if (this.state.login) {
-                    return (<Button className={classes.title} onClick={openSideBar} ><img src={title} alt="taskontable" height="18" /></Button>);
-                  }
-                  return (<Button className={classes.title} onClick={() => { history.push('/'); }}><img src={title} alt="taskontable" height="18" /></Button>);
+                if (this.state.login) {
+                  return (
+                    <Button className={classes.title} onClick={openSideBar}>
+                      <img src={title} alt="taskontable" height="18" />
+                    </Button>
+                  );
+                }
+                return (
+                  <Button className={classes.title} onClick={() => { history.push('/'); }}>
+                    <img src={title} alt="taskontable" height="18" />
+                  </Button>
+                );
               })()}
               {(() => {
                 if (!this.state.login) {
                   return (
                     <div style={{ display: 'inline-flex' }}>
-                      <Link className={classes.link} to="/login"><Button className={classes.button}>{i18n.t('common.logIn')}</Button></Link>
-                      <Link className={classes.link} to="/signup"><Button className={classes.button} >{i18n.t('common.signUp')}</Button></Link>
+                      <Link className={classes.link} to="/login">
+                        <Button className={classes.button}>
+                          {i18n.t('common.logIn')}
+                        </Button>
+                      </Link>
+                      <Link className={classes.link} to="/signup">
+                        <Button className={classes.button}>
+                          {i18n.t('common.signUp')}
+                        </Button>
+                      </Link>
                     </div>);
                 }
                 return (
@@ -145,9 +161,18 @@ class GlobalHeader extends Component {
                         open={this.state.openMenuKey === 'user'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem title={user.email}>{i18n.t('common.userName')}: {user.displayName}</MenuItem>
-                        <MenuItem onClick={this.goSettings.bind(this)}>{i18n.t('common.accountSettings')}</MenuItem>
-                        <MenuItem onClick={this.logout.bind(this)}>{i18n.t('common.logOut')}</MenuItem>
+                        <MenuItem title={user.email}>
+                          {i18n.t('common.userName')}
+:
+                          {' '}
+                          {user.displayName}
+                        </MenuItem>
+                        <MenuItem onClick={this.goSettings.bind(this)}>
+                          {i18n.t('common.accountSettings')}
+                        </MenuItem>
+                        <MenuItem onClick={this.logout.bind(this)}>
+                          {i18n.t('common.logOut')}
+                        </MenuItem>
                       </Menu>
                     </div>
                     <div>
@@ -164,12 +189,25 @@ class GlobalHeader extends Component {
                         open={this.state.openMenuKey === 'info'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>{i18n.t('external.contact')}</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>{i18n.t('external.roadMap')}</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>{i18n.t('external.blog')}</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>{i18n.t('external.community')}</MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>{i18n.t('external.github')}</MenuItem>
-                        <MenuItem disabled>version:{constants.APP_VERSION}</MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>
+                          {i18n.t('external.contact')}
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>
+                          {i18n.t('external.roadMap')}
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>
+                          {i18n.t('external.blog')}
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>
+                          {i18n.t('external.community')}
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>
+                          {i18n.t('external.github')}
+                        </MenuItem>
+                        <MenuItem disabled>
+version:
+                          {constants.APP_VERSION}
+                        </MenuItem>
                       </Menu>
                     </div>
                   </div>);

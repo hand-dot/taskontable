@@ -72,40 +72,43 @@ class TaskProcessing extends Component {
   }
 
   /**
-   * 開始しているタスクを見つけ、経過時間をタイトルに反映する
+   * 開始しているタスクを見つけ、stateに反映します。
    * @param  {Array} tasks タスクの配列
    */
   bindProcessingTaskProcessing(tasks) {
-    if (this.state.isMobile) return;
+    const { isMobile } = this.state;
+    const { date } = this.props;
+    if (isMobile) return;
     if (this.bindProcessingTaskIntervalID) clearInterval(this.bindProcessingTaskIntervalID);
     const processingTask = tasksUtil.getSortedTasks(tasks).find(task => task.startTime && task.endTime === '');
-    if (util.isToday(this.props.date) && processingTask) {
+    if (util.isToday(date) && processingTask) {
       this.bindProcessingTaskIntervalID = setInterval(() => {
         const now = moment();
         const newTimeDiffMinute = util.getTimeDiffMinute(processingTask.startTime, now.format(constants.TIMEFMT));
         if (newTimeDiffMinute >= 0) {
           processingTask.now = now.format('HH:mm:ss');
           this.setState({ processingTask: util.setIdIfNotExist(processingTask) });
-        } else if (!util.equal(this.state.processingTask, getProcessingTaskSchema)) {
+        } else if (!util.equal(processingTask, getProcessingTaskSchema)) {
           this.setState({ processingTask: getProcessingTaskSchema() });
         }
-        document.title = getTitle(processingTask, constants.TITLE, false);
         this.oldTimeDiffMinute = newTimeDiffMinute;
       }, 1000);
     } else {
       this.bindProcessingTaskIntervalID = '';
       document.title = constants.TITLE;
-      if (!util.equal(this.state.processingTask, processingTaskSchema)) this.setState({ processingTask: getProcessingTaskSchema() });
+      if (!util.equal(processingTask, processingTaskSchema)) this.setState({ processingTask: getProcessingTaskSchema() });
     }
   }
 
   render() {
+    const { processingTask } = this.state;
     const { classes, theme } = this.props;
+    document.title = getTitle(processingTask, constants.TITLE, false);
     let remainPercent = 0;
     let color = '';
-    if (this.state.processingTask.id) {
-      if (this.state.processingTask.estimate) {
-        remainPercent = Math.floor(util.getTimeDiffSec(`${this.state.processingTask.startTime}:00`, this.state.processingTask.now) * (100 / (this.state.processingTask.estimate * 60)));
+    if (processingTask.id) {
+      if (processingTask.estimate) {
+        remainPercent = Math.floor(util.getTimeDiffSec(`${processingTask.startTime}:00`, processingTask.now) * (100 / (processingTask.estimate * 60)));
         if (remainPercent < 50) {
           color = 'green';
         } else if (remainPercent >= 50 && remainPercent < 75) {
@@ -125,13 +128,13 @@ class TaskProcessing extends Component {
           style={{
             fontSize: 15,
             marginRight: theme.spacing.unit,
-            color: this.state.processingTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
-            animation: this.state.processingTask.id ? 'heartbeat 2s infinite' : '',
+            color: processingTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
+            animation: processingTask.id ? 'heartbeat 2s infinite' : '',
           }}
         />
-        <div style={{ width: '90%', display: 'inline-block' }} title={this.state.processingTask.title}>
+        <div style={{ width: '90%', display: 'inline-block' }} title={processingTask.title}>
           <Typography variant="caption" align="center">
-            {getTitle(this.state.processingTask, i18n.t('worksheet.tableCtl.taskProcessing.thereAreNoStartingTasks'), true)}
+            {getTitle(processingTask, i18n.t('worksheet.tableCtl.taskProcessing.thereAreNoStartingTasks'), true)}
           </Typography>
           <LinearProgress
             classes={{ root: classes.progress, barColorPrimary: classes[color], colorPrimary: classes.grey }}

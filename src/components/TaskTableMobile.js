@@ -129,11 +129,21 @@ class TaskTableMobile extends Component {
         <Table>
           <TableHead>
             <TableRow className={classes.taskRow}>
-              <CustomTableCell padding="none">{i18n.t('columns.title')}</CustomTableCell>
-              <CustomTableCell padding="none">{i18n.t('columns.estimate')}</CustomTableCell>
-              <CustomTableCell padding="none">{i18n.t('columns.startTime')}</CustomTableCell>
-              <CustomTableCell padding="none">{i18n.t('columns.endTime')}</CustomTableCell>
-              <CustomTableCell padding="none">{i18n.t('common.edit')}</CustomTableCell>
+              <CustomTableCell padding="none">
+                {i18n.t('columns.title')}
+              </CustomTableCell>
+              <CustomTableCell padding="none">
+                {i18n.t('columns.estimate')}
+              </CustomTableCell>
+              <CustomTableCell padding="none">
+                {i18n.t('columns.startTime')}
+              </CustomTableCell>
+              <CustomTableCell padding="none">
+                {i18n.t('columns.endTime')}
+              </CustomTableCell>
+              <CustomTableCell padding="none">
+                {i18n.t('common.edit')}
+              </CustomTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -206,7 +216,9 @@ class TaskTableMobile extends Component {
                     <IconButton disabled={readOnly} className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
                       {this.state.editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
                     </IconButton>
-                    <span>/</span>
+                    <span>
+/
+                    </span>
                     <IconButton disabled={readOnly} className={classes.actionIcon} color="default" onClick={this.openTaskAction.bind(this, index)}>
                       <MoreHoriz style={{ fontSize: 16 }} />
                     </IconButton>
@@ -216,25 +228,39 @@ class TaskTableMobile extends Component {
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
                       <MenuItem key="movePoolHighPriority" disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_HIGHPRIORITY)}>
-                        <Typography variant="caption">{i18n.t('hot.reverseTaskpoolHight')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('hot.reverseTaskpoolHight')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="movePoolLowPriority" disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_LOWPRIORITY)}>
-                        <Typography variant="caption">{i18n.t('hot.reverseTaskpoolLow')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('hot.reverseTaskpoolLow')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="topToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.TOP)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveToTop')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveToTop')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="upTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.UP)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveUpOne')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveUpOne')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="downTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.DOWN)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveOneDown')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveOneDown')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="bottomToTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.BOTTOM)}>
-                        <Typography variant="caption">{i18n.t('taskPool.moveToBottom')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('taskPool.moveToBottom')}
+                        </Typography>
                       </MenuItem>
                       <MenuItem key="removeTask" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.REMOVE)}>
-                        <Typography variant="caption">{i18n.t('common.remove')}</Typography>
+                        <Typography variant="caption">
+                          {i18n.t('common.remove')}
+                        </Typography>
                       </MenuItem>
                     </Menu>
                   </div>

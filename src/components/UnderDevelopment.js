@@ -13,10 +13,12 @@ function UnderDevelopment(props) {
         display: 'inline-block',
         backgroundColor: constants.brandColor.light.YELLOW,
         borderLeft: `5px ${constants.brandColor.base.YELLOW} solid`,
-        }}
+      }}
     >
       <p>
-        <span role="img" aria-label="stop">⛔</span>
+        <span role="img" aria-label="stop">
+⛔
+        </span>
         {i18n.t('common.underDevelopment')}
       </p>
     </div>
@@ -29,4 +31,3 @@ UnderDevelopment.propTypes = {
 };
 
 export default withStyles({}, { withTheme: true })(UnderDevelopment);
-

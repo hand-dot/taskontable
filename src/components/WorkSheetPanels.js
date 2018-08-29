@@ -127,14 +127,14 @@ function WorkSheetPanels(props) {
               label={(
                 <span role="img" aria-label="plugins">
                   🔌
-                {' '}
+                  {' '}
                   {i18n.t('worksheet.plugIns')}
                   (
-                <span role="img" aria-label="stop">
+                  <span role="img" aria-label="stop">
                     ⛔
-                </span>
+                  </span>
                   )
-              </span>
+                </span>
               )}
             />
           )}
@@ -147,14 +147,14 @@ function WorkSheetPanels(props) {
               label={(
                 <span role="img" aria-label="activity">
                   📈
-                {' '}
+                  {' '}
                   {i18n.t('worksheet.activity')}
                   (
-                <span role="img" aria-label="stop">
+                  <span role="img" aria-label="stop">
                     ⛔
-                </span>
+                  </span>
                   )
-              </span>
+                </span>
               )}
             />
           )}

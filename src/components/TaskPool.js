@@ -98,4 +98,3 @@ TaskPool.propTypes = {
 };
 
 export default TaskPool;
-

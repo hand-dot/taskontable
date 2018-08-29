@@ -40,28 +40,44 @@ function ScriptsEditor(props) {
               }
               return 'エクスポートスクリプト';
             })()}
-            <span className={classes.divider}>/</span>
+            <span className={classes.divider}>
+/
+            </span>
             <Tooltip title="保存前に戻す" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === scriptBk} onClick={resetScript} variant="raised"><Undo style={{ fontSize: 13 }} /></Button>
+                <Button className={classes.button} disabled={script === scriptBk} onClick={resetScript} variant="raised">
+                  <Undo style={{ fontSize: 13 }} />
+                </Button>
               </div>
             </Tooltip>
-            <span className={classes.divider}>/</span>
+            <span className={classes.divider}>
+/
+            </span>
             <Tooltip title="保存する" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === scriptBk} onClick={saveScript} variant="raised"><Save style={{ fontSize: 13 }} /></Button>
+                <Button className={classes.button} disabled={script === scriptBk} onClick={saveScript} variant="raised">
+                  <Save style={{ fontSize: 13 }} />
+                </Button>
               </div>
             </Tooltip>
-            <span className={classes.divider}>/</span>
+            <span className={classes.divider}>
+/
+            </span>
             <Tooltip title="実行" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === ''} onClick={fireScript} variant="raised"><FlashOn style={{ fontSize: 13 }} /></Button>
+                <Button className={classes.button} disabled={script === ''} onClick={fireScript} variant="raised">
+                  <FlashOn style={{ fontSize: 13 }} />
+                </Button>
               </div>
             </Tooltip>
-            <span className={classes.divider}>/</span>
+            <span className={classes.divider}>
+/
+            </span>
             <Tooltip title="サンプルを読み込む" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === exampleScript.toString()} onClick={loadExampleScript} variant="raised"><CloudDownload style={{ fontSize: 13 }} /></Button>
+                <Button className={classes.button} disabled={script === exampleScript.toString()} onClick={loadExampleScript} variant="raised">
+                  <CloudDownload style={{ fontSize: 13 }} />
+                </Button>
               </div>
             </Tooltip>
           </Typography>
@@ -88,7 +104,8 @@ function ScriptsEditor(props) {
           </Typography>
           <br />
           <Typography gutterBottom variant="caption">
-            ＊サンプルのスクリプトを読み込んでみてください。<br />
+            ＊サンプルのスクリプトを読み込んでみてください。
+            <br />
             {(() => {
               if (scriptType === 'importScript') {
                 return 'githubの特定のラベルが付いたissueをインポートしている例です。';
@@ -96,7 +113,10 @@ function ScriptsEditor(props) {
               return '完了したタスクをgithubのissueでクローズしている例です。';
             })()}
             <Typography gutterBottom variant="caption">
-              参考:<a href="https://developer.github.com/v3/issues/#list-issues-for-a-repository" target="_blank" rel="noopener noreferrer">https://developer.github.com/v3/issues/#list-issues-for-a-repository</a>
+              参考:
+              <a href="https://developer.github.com/v3/issues/#list-issues-for-a-repository" target="_blank" rel="noopener noreferrer">
+https://developer.github.com/v3/issues/#list-issues-for-a-repository
+              </a>
             </Typography>
           </Typography>
         </div>
@@ -132,4 +152,3 @@ ScriptsEditor.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(ScriptsEditor);
-

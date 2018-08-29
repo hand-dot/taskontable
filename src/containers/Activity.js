@@ -176,7 +176,7 @@ class Activity extends Component {
     const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
-        <Grid item xs={12} style={{ paddingBottom: '3em' }} >
+        <Grid item xs={12} style={{ paddingBottom: '3em' }}>
           <Typography variant="title">
             {i18n.t('worksheet.activity')}
           </Typography>
@@ -187,19 +187,35 @@ class Activity extends Component {
         </Grid>
         <Grid item xs={12}>
           <Typography gutterBottom variant="caption">
-            本日({moment().format(constants.DATEFMT)})
+            本日(
+            {moment().format(constants.DATEFMT)}
+)
           </Typography>
           <DatePicker value={this.state.startDate} changeDate={(e) => { this.changeDate('startDate', e.target.value); }} label="開始" />
-          <span style={{ margin: `0 ${theme.spacing.unit * 2}px` }}><ArrowForward /></span>
+          <span style={{ margin: `0 ${theme.spacing.unit * 2}px` }}>
+            <ArrowForward />
+          </span>
           <DatePicker value={this.state.endDate} changeDate={(e) => { this.changeDate('endDate', e.target.value); }} label="終了" />
         </Grid>
         <Grid item xs={12}>
           {this.state.taskData !== '' && (
             <div>
               <Typography gutterBottom variant="caption">
-                見積:<span className={classes.block} style={{ color: constants.brandColor.base.GREEN }}>■</span>(緑色) /
-                実績:<span className={classes.block} style={{ color: constants.brandColor.base.BLUE }}>■</span>(青色) /
-                残:<span className={classes.block} style={{ color: constants.brandColor.base.RED }}>■</span>(赤色)
+                見積:
+                <span className={classes.block} style={{ color: constants.brandColor.base.GREEN }}>
+■
+                </span>
+(緑色) /
+                実績:
+                <span className={classes.block} style={{ color: constants.brandColor.base.BLUE }}>
+■
+                </span>
+(青色) /
+                残:
+                <span className={classes.block} style={{ color: constants.brandColor.base.RED }}>
+■
+                </span>
+(赤色)
               </Typography>
               <ActivityChart tableTasks={JSON.parse(this.state.taskData)} />
             </div>
@@ -216,7 +232,9 @@ class Activity extends Component {
         </Grid>
         <Grid item xs={12} style={{ marginTop: theme.spacing.unit * 2 }}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">{i18n.t('common.backToPreviousPage')}</Button>
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">
+            {i18n.t('common.backToPreviousPage')}
+          </Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -237,4 +255,3 @@ Activity.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(Activity);
-
