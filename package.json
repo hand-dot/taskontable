@@ -39,9 +39,9 @@
     "prop-types": "^15.6.2",
     "ramda": "^0.25.0",
     "raven-js": "^3.26.3",
-    "react": "^16.4.2",
+    "react": "^16.5.0",
     "react-codemirror2": "^5.1.0",
-    "react-dom": "^16.4.2",
+    "react-dom": "^16.5.0",
     "react-ga": "^2.5.3",
     "react-native": "~0.55.2",
     "react-router-dom": "^4.3.1",
@@ -60,7 +60,7 @@
     "eslint-plugin-react": "^7.11.1",
     "jest-expo": "~27.0.0",
     "react-native-scripts": "1.14.0",
-    "react-test-renderer": "16.4.2",
+    "react-test-renderer": "16.5.0",
     "source-map-explorer": "^1.6.0"
   }
 }
