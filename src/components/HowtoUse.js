@@ -12,15 +12,15 @@ import i18n from '../i18n';
 const tutorialSteps = [
   {
     label: i18n.t('howTouse.createWorksheet'),
-    imgPath: 'https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2FgettingStarted%2FcreateWorksheet.gif?alt=media&token=7e5af4ad-b112-4e65-bb51-7becac62f0f9',
+    resourcePath: 'https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2FgettingStarted%2FcreateWorksheet.mp4?alt=media&token=8f22b641-6090-4f3a-8e6c-fa1e567c8703',
   },
   {
     label: i18n.t('howTouse.createTask'),
-    imgPath: 'https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2FgettingStarted%2FcreateTask.gif?alt=media&token=6a715f63-7349-460b-a63a-fcc239ba6285',
+    resourcePath: 'https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2FgettingStarted%2FcreateTask.mp4?alt=media&token=4b94cbc0-3254-4e14-87f8-bf9fcc135e00',
   },
   {
     label: i18n.t('howTouse.createTasks'),
-    imgPath: 'https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2FgettingStarted%2FcreateTasks.gif?alt=media&token=c8dea872-1ebb-4dfb-981a-2ea9f3ffcc3e',
+    resourcePath: 'https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2FgettingStarted%2FcreateTasks.mp4?alt=media&token=6beeab1b-5771-4cd8-b54a-b6a94b38a11e',
   },
 ];
 
@@ -37,7 +37,7 @@ const styles = theme => ({
     paddingLeft: theme.spacing.unit * 4,
     backgroundColor: theme.palette.background.default,
   },
-  img: {
+  video: {
     maxWidth: 900,
     overflow: 'hidden',
     width: '100%',
@@ -74,11 +74,7 @@ class GettingStarted extends React.Component {
             {tutorialSteps[activeStep].label}
           </Typography>
         </Paper>
-        <img
-          className={classes.img}
-          src={tutorialSteps[activeStep].imgPath}
-          alt={tutorialSteps[activeStep].label}
-        />
+        <video autoPlay loop muted playsInline className={classes.video} track={tutorialSteps[activeStep].label} src={tutorialSteps[activeStep].resourcePath} type="video/mp4" />
         <MobileStepper
           steps={maxSteps}
           position="static"
