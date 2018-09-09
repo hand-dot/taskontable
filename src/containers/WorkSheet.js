@@ -27,8 +27,8 @@ import TaskTable from '../components/TaskTable';
 import TaskTableMobile from '../components/TaskTableMobile';
 
 import constants from '../constants';
-import tasksUtil from '../tasksUtil';
-import util from '../util';
+import tasksUtil from '../utils/tasksUtil';
+import util from '../utils/util';
 import i18n from '../i18n';
 import editing from '../images/editing.gif';
 

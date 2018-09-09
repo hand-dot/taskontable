@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import google from '../images/google.svg';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
 import Footer from '../components/Footer';

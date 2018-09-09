@@ -25,7 +25,7 @@ import exampleTaskData from '../exampleDatas/exampleTaskData';
 import exampleImportScript from '../exampleDatas/exampleImportScript';
 import exampleExportScript from '../exampleDatas/exampleExportScript';
 import tableTaskSchema from '../schemas/tableTaskSchema';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 const database = util.getDatabase();

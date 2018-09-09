@@ -1,9 +1,7 @@
-import chai from 'chai';
+import { assert } from 'chai';
 import moment from 'moment';
-import util from '../util';
-import constants from '../constants';
-
-const { assert } = chai;
+import util from '../../utils/util';
+import constants from '../../constants';
 
 it('isToday - 今日の文字列をconstants.DATEFMT形式で指定してtrueになること', () => {
   assert.isTrue(util.isToday(moment().format(constants.DATEFMT)));

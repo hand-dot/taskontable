@@ -15,8 +15,8 @@ import Members from './Members';
 import DisclosureRange from './DisclosureRange';
 
 import constants from '../constants';
-import tasksUtil from '../tasksUtil';
-import util from '../util';
+import tasksUtil from '../utils/tasksUtil';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 function WorkSheetPanels(props) {

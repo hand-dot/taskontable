@@ -9,11 +9,11 @@ import {
   hotConf, contextMenuCallback, contextMenuItems, getHotTasksIgnoreEmptyTask, setDataForHot,
 } from '../hot';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 import '../styles/handsontable-custom.css';
-import tasksUtil from '../tasksUtil';
+import tasksUtil from '../utils/tasksUtil';
 
 const styles = {
 };

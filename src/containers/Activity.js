@@ -18,7 +18,7 @@ import 'codemirror/mode/javascript/javascript';
 import constants from '../constants';
 import '../styles/handsontable-custom.css';
 import { hotConf, getHotTasksIgnoreEmptyTask, setDataForHot } from '../hot';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 import DatePicker from '../components/DatePicker';
 import UnderDevelopment from '../components/UnderDevelopment';

@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 import PoolTaskList from './PoolTaskList';

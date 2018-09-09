@@ -8,8 +8,8 @@ import uuid from 'uuid';
 import fastclone from 'fast-clone';
 import { deepEqual } from 'fast-equals';
 import UAParser from 'ua-parser-js';
-import constants from './constants';
-import firebaseConf from './configs/firebase';
+import constants from '../constants';
+import firebaseConf from '../configs/firebase';
 
 const parser = new UAParser();
 const browserName = parser.getBrowser().name;

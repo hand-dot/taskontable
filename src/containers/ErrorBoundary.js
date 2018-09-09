@@ -8,7 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 import error from '../images/error.gif';
 

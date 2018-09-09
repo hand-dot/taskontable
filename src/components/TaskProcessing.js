@@ -5,9 +5,9 @@ import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
 import Favorite from '@material-ui/icons/Favorite';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
-import tasksUtil from '../tasksUtil';
+import tasksUtil from '../utils/tasksUtil';
 import constants from '../constants';
 import processingTaskSchema from '../schemas/processingTaskSchema';
 

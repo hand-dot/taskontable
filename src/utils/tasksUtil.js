@@ -1,9 +1,9 @@
 import moment from 'moment';
 import * as R from 'ramda';
-import constants from './constants';
+import constants from '../constants';
 import util from './util';
-import i18n from './i18n';
-import tableTaskSchema from './schemas/tableTaskSchema';
+import i18n from '../i18n';
+import tableTaskSchema from '../schemas/tableTaskSchema';
 
 export default {
   /**

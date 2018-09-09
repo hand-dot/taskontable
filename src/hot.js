@@ -3,7 +3,7 @@ import Handsontable from 'handsontable';
 import debounce from 'lodash.debounce';
 import tableTaskSchema from './schemas/tableTaskSchema';
 import constants from './constants';
-import util from './util';
+import util from './utils/util';
 import i18n from './i18n';
 import notifiIcon from './images/notifiIcon.png';
 import person from './images/person.svg';

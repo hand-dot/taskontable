@@ -17,7 +17,7 @@ import GithubStart from '../components/GithubStart';
 import Bmc from '../components/Bmc';
 import HowtoUse from '../components/HowtoUse';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 import '../styles/helpdialog.css';
 import chromeWebstore from '../images/chrome-webstore.png';

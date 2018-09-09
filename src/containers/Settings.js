@@ -22,7 +22,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import constants from '../constants';
 import google from '../images/google.svg';
 import email from '../images/email.svg';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 const database = util.getDatabase();

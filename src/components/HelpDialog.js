@@ -13,7 +13,7 @@ import Close from '@material-ui/icons/Close';
 
 import '../styles/helpdialog.css';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 const styles = {

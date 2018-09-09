@@ -22,7 +22,7 @@ import Add from '@material-ui/icons/Add';
 import MultipleSelect from './MultipleSelect';
 import poolTaskSchema from '../schemas/poolTaskSchema';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 import style from '../assets/style';
 

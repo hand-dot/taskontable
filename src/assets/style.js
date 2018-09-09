@@ -1,4 +1,4 @@
-import util from '../util';
+import util from '../utils/util';
 
 export default {
   table: theme => ({

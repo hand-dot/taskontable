@@ -13,7 +13,7 @@ import teamMens from '../images/illust/team_mens.jpg';
 import example from '../images/example.png';
 import Footer from '../components/Footer';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 const styles = theme => ({

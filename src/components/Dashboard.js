@@ -7,9 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import TodaySummary from './TodaySummary';
 import Clock from './Clock';
 import TimelineChart from './TimelineChart';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
-import tasksUtil from '../tasksUtil';
+import tasksUtil from '../utils/tasksUtil';
 
 const styles = {};
 class Dashboard extends Component {

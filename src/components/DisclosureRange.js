@@ -13,7 +13,7 @@ import FormControl from '@material-ui/core/FormControl';
 import AssignmentReturn from '@material-ui/icons/AssignmentReturn';
 import constants from '../constants';
 import i18n from '../i18n';
-import util from '../util';
+import util from '../utils/util';
 
 const styles = theme => ({
   root: {

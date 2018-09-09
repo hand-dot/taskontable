@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 import uuid from 'uuid';
 import { withStyles } from '@material-ui/core/styles';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 
 
 const h = 50;

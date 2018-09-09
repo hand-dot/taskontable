@@ -7,7 +7,7 @@ import TimelineChart from '../src/components/TimelineChart';
 import ActivityChart from '../src/components/ActivityChart';
 import exampleTaskData from '../src/exampleDatas/exampleTaskData';
 import constants from '../src/constants';
-import util from '../src/util';
+import util from '../src/utils/util';
 
 const activityChartTasks = [
   ...util.cloneDeep(exampleTaskData).map((tableTask) => {

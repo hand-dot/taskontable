@@ -20,7 +20,7 @@ import Add from '@material-ui/icons/Add';
 import tableTaskSchema from '../schemas/tableTaskSchema';
 import constants from '../constants';
 import style from '../assets/style';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 const styles = style.table;

@@ -17,9 +17,9 @@ import NavigateNext from '@material-ui/icons/NavigateNext';
 import DatePicker from './DatePicker';
 import TaskProcessing from './TaskProcessing';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
-import tasksUtil from '../tasksUtil';
+import tasksUtil from '../utils/tasksUtil';
 
 const styles = {
   progress: {

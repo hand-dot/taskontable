@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
 import Footer from '../components/Footer';
 import constants from '../constants';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 
 const styles = theme => ({

@@ -23,7 +23,7 @@ import Person from '@material-ui/icons/Person';
 import Email from '@material-ui/icons/Email';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import util from '../util';
+import util from '../utils/util';
 import i18n from '../i18n';
 import constants from '../constants';
 import notifiIcon from '../images/notifiIcon.png';

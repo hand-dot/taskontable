@@ -1,11 +1,10 @@
-import chai from 'chai';
+import { assert } from 'chai';
 import moment from 'moment';
-import exampleTaskData from '../exampleDatas/exampleTaskData';
-import tasksUtil from '../tasksUtil';
-import util from '../util';
-import constants from '../constants';
+import exampleTaskData from '../../exampleDatas/exampleTaskData';
+import tasksUtil from '../../utils/tasksUtil';
+import util from '../../utils/util';
+import constants from '../../constants';
 
-const assert = chai.assert;
 it('getDoneTasks - exampleTaskDataで完了したタスクは4つであること', () => {
   assert.equal(tasksUtil.getDoneTasks(exampleTaskData).length, 4);
 });
