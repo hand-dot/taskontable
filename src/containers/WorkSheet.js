@@ -18,7 +18,6 @@ import Dialog from '@material-ui/core/Dialog';
 import Close from '@material-ui/icons/Close';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Error from '@material-ui/icons/Error';
-import Person from '@material-ui/icons/Person';
 
 import NotLoginSection from '../components/NotLoginSection';
 import WorkSheetPanels from '../components/WorkSheetPanels';
@@ -31,6 +30,7 @@ import tasksUtil from '../utils/tasksUtil';
 import util from '../utils/util';
 import i18n from '../i18n';
 import editing from '../images/editing.gif';
+import person from '../images/person.svg';
 
 const database = util.getDatabase();
 
@@ -894,7 +894,7 @@ class WorkSheet extends Component {
           ContentProps={{ 'aria-describedby': 'message-id' }}
           message={(
             <span id="message-id" style={{ display: 'flex', alignItems: 'center' }}>
-              {receiveMessage.icon ? <Avatar className={classes.userPhoto} src={receiveMessage.icon} /> : <Person className={classes.userPhoto} />}
+              <Avatar className={classes.userPhoto} src={receiveMessage.icon ? receiveMessage.icon : person} />
               <span style={{ paddingLeft: theme.spacing.unit }}>
                 {receiveMessage.body}
               </span>

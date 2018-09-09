@@ -12,7 +12,6 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
-import Person from '@material-ui/icons/Person';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -22,6 +21,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import constants from '../constants';
 import google from '../images/google.svg';
 import email from '../images/email.svg';
+import person from '../images/person.svg';
 import util from '../utils/util';
 import i18n from '../i18n';
 
@@ -225,7 +225,7 @@ class Settings extends Component {
             })()}
             <div style={{ textAlign: 'center' }}>
               <IconButton className={classes.iconButton} data-menu-key="user" onClick={() => { this.setState({ isOpenEditPhotoDialog: true }); }}>
-                {this.state.photoURL ? <Avatar className={classes.userPhoto} src={this.state.photoURL} /> : <Person style={{ fontSize: 100 }} />}
+                <Avatar className={classes.userPhoto} src={this.state.photoURL ? this.state.photoURL : person} />
               </IconButton>
               <Dialog
                 fullScreen
