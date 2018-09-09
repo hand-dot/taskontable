@@ -72,8 +72,12 @@ class Hello extends Component {
           <div className={classes.content}>
             <Typography gutterBottom variant="title">
               {i18n.t('hello.wellcome')}
+              {'   '}
               <Button onClick={() => { this.setState({ isOpenHowtoUseDialog: true }); }} color="primary">
-                {i18n.t('hello.seeHowTouse')}
+                <strong>
+                *
+                  {i18n.t('hello.seeHowTouse')}
+                </strong>
               </Button>
             </Typography>
             <div style={{ marginTop: 30, marginBottom: 30 }}>
