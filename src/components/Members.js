@@ -19,10 +19,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Delete from '@material-ui/icons/Delete';
 import Sms from '@material-ui/icons/Sms';
-import Person from '@material-ui/icons/Person';
 import Email from '@material-ui/icons/Email';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import person from '../images/person.svg';
 import util from '../utils/util';
 import i18n from '../i18n';
 import constants from '../constants';
@@ -339,11 +339,7 @@ class Members extends Component {
                   <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">
                     {member.displayName}
                   </Typography>
-                  {member.photoURL ? <Avatar className={classes.userPhoto} src={member.photoURL} /> : (
-                    <div className={classes.userPhoto}>
-                      <Person />
-                    </div>
-                  )}
+                  <Avatar className={classes.userPhoto} src={member.photoURL ? member.photoURL : person} />
                 </div>
               ))}
             </div>
@@ -398,9 +394,7 @@ class Members extends Component {
                   <Typography className={classes.memberText} align="center" variant="caption">
                     {invitedEmail}
                   </Typography>
-                  <div className={classes.userPhoto}>
-                    <Person />
-                  </div>
+                  <Avatar className={classes.userPhoto} src={person} />
                 </div>
               ))}
             </div>

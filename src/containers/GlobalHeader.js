@@ -10,7 +10,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Avatar from '@material-ui/core/Avatar';
-import Person from '@material-ui/icons/Person';
 import Info from '@material-ui/icons/Info';
 import Help from '@material-ui/icons/Help';
 import Notifications from '@material-ui/icons/Notifications';
@@ -18,6 +17,7 @@ import HelpDialog from '../components/HelpDialog';
 import constants from '../constants';
 import i18n from '../i18n';
 import title from '../images/title.png';
+import person from '../images/person.svg';
 
 const styles = theme => ({
   root: {
@@ -154,7 +154,7 @@ class GlobalHeader extends Component {
                   <div style={{ display: 'inline-flex' }}>
                     <div>
                       <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
-                        {user.photoURL ? <Avatar className={classes.userPhoto} src={user.photoURL} /> : <Person className={classes.userPhoto} />}
+                        <Avatar className={classes.userPhoto} src={user.photoURL ? user.photoURL : person} />
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
