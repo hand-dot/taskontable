@@ -33,6 +33,33 @@ const styles = {
   },
 };
 
+const tableColors = [
+  { tableColor: 'yellow', cellColor: 'WARNING' },
+  { tableColor: 'green', cellColor: 'RESERVATION' },
+  { tableColor: 'blue', cellColor: 'RUNNING' },
+  { tableColor: 'red', cellColor: 'OUT' },
+];
+
+const keyboardShortcuts = {
+  application: [
+    { keys: ['ctrl', '?'], label: 'showHelp' },
+    { keys: [constants.METAKEY, 'S'], label: 'save' },
+    { keys: [constants.METAKEY, 'J'], label: 'dashboardOpenAndClose' },
+    { keys: [constants.METAKEY, '>'], label: 'moveToNextDay' },
+    { keys: [constants.METAKEY, '<'], label: 'moveToPreviousDay' },
+    { keys: [constants.METAKEY, ']'], label: 'moveToNextTab' },
+    { keys: [constants.METAKEY, '['], label: 'moveToPreviousTab' },
+  ],
+  table: [
+    { keys: [constants.METAKEY, 'C'], label: 'copy' },
+    { keys: [constants.METAKEY, 'X'], label: 'cut' },
+    { keys: [constants.METAKEY, 'V'], label: 'paste' },
+    { keys: [constants.METAKEY, 'Z'], label: 'back' },
+    { keys: [constants.METAKEY, 'Y'], label: 'forward' },
+    { keys: [constants.METAKEY, ':'], label: 'enterCurrentTime' },
+  ],
+};
+
 function HelpDialog(props) {
   const {
     open, onClose, classes, theme,
@@ -60,46 +87,16 @@ function HelpDialog(props) {
         <DialogContent className={classes.content}>
           <Grid container>
             <Grid item xs={12}>
-              <Typography gutterBottom variant="caption">
-                {i18n.t('help.tableColors.yellow')}
-                {' '}
-/
-                <span className={classes.block} style={{ color: constants.cellColor.WARNING }}>
-■
-                </span>
-              </Typography>
-              <Typography gutterBottom variant="caption">
-                {i18n.t('help.tableColors.green')}
-                {' '}
-/
-                <span className={classes.block} style={{ color: constants.cellColor.RESERVATION }}>
-■
-                </span>
-              </Typography>
-              <Typography gutterBottom variant="caption">
-                {i18n.t('help.tableColors.blue')}
-                {' '}
-/
-                <span className={classes.block} style={{ color: constants.cellColor.RUNNING }}>
-■
-                </span>
-              </Typography>
-              <Typography gutterBottom variant="caption">
-                {i18n.t('help.tableColors.red')}
-                {' '}
-/
-                <span className={classes.block} style={{ color: constants.cellColor.OUT }}>
-■
-                </span>
-              </Typography>
-              <Typography gutterBottom variant="caption">
-                {i18n.t('help.tableColors.gray')}
-                {' '}
-/
-                <span className={classes.block} style={{ color: constants.cellColor.DONE }}>
-■
-                </span>
-              </Typography>
+              {tableColors.map(_ => (
+                <Typography gutterBottom variant="caption">
+                  {i18n.t(`help.tableColors.${_.tableColor}`)}
+                  {' '}
+                  /
+                  <span className={classes.block} style={{ color: constants.cellColor[_.cellColor] }}>
+                  ■
+                  </span>
+                </Typography>
+              ))}
             </Grid>
           </Grid>
         </DialogContent>
@@ -116,111 +113,22 @@ function HelpDialog(props) {
                   {i18n.t('help.keyboardShortcuts.application')}
                 </h5>
                 {/* ヘルプだけはmacOSでクロームのヘルプがアプリのレベルで割り当てられていてctrlにしなければいけない */}
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-ctrl
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-?
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.showHelp')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-S
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.save')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-J
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.dashboardOpenAndClose')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-&gt;
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.moveToNextDay')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-&lt;
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.moveToPreviousDay')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-]
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.moveToNextTab')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-[
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.moveToPreviousTab')}
-                </Typography>
+                {keyboardShortcuts.application.map(_ => (
+                  <Typography gutterBottom variant="caption">
+                    {_.keys.map((key, index) => (
+                      <span>
+                        {index !== 0 && ' + '}
+                        <kbd>
+                          {key}
+                        </kbd>
+                      </span>
+                    ))}
+                    {' '}
+                      –
+                    {' '}
+                    {i18n.t(`help.keyboardShortcuts.${_.label}`)}
+                  </Typography>
+                ))}
               </Grid>
               <Grid className={classes.shotcut} item xs={6}>
                 <h5 style={{ margin: theme.spacing.unit }}>
@@ -231,100 +139,26 @@ J
                     {i18n.t('help.keyboardShortcuts.rightClick')}
                   </kbd>
                   {' '}
-–
+                    –
                   {' '}
                   {i18n.t('help.keyboardShortcuts.showContextMenu')}
                 </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-C
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.copy')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-X
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.cut')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-V
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.paste')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-Z
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.back')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-Y
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.forward')}
-                </Typography>
-                <Typography gutterBottom variant="caption">
-                  <kbd>
-                    {constants.METAKEY}
-                  </kbd>
-                  {' '}
-+
-                  {' '}
-                  <kbd>
-:
-                  </kbd>
-                  {' '}
-–
-                  {' '}
-                  {i18n.t('help.keyboardShortcuts.enterCurrentTime')}
-                </Typography>
+                {keyboardShortcuts.table.map(_ => (
+                  <Typography gutterBottom variant="caption">
+                    {_.keys.map((key, index) => (
+                      <span>
+                        {index !== 0 && ' + '}
+                        <kbd>
+                          {key}
+                        </kbd>
+                      </span>
+                    ))}
+                    {' '}
+                      –
+                    {' '}
+                    {i18n.t(`help.keyboardShortcuts.${_.label}`)}
+                  </Typography>
+                ))}
               </Grid>
             </Grid>
           </DialogContent>
