@@ -27,7 +27,18 @@ const styles = {
 
 function ScriptsEditor(props) {
   const {
-    scriptType, script, scriptBk, exampleScript, editorOptions, resetScript, saveScript, fireScript, loadExampleScript, handleScript, theme, classes,
+    scriptType,
+    script,
+    scriptBk,
+    exampleScript,
+    editorOptions,
+    resetScript,
+    saveScript,
+    fireScript,
+    loadExampleScript,
+    handleScript,
+    theme,
+    classes,
   } = props;
   return (
     <Grid container>

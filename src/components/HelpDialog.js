@@ -88,7 +88,7 @@ function HelpDialog(props) {
           <Grid container>
             <Grid item xs={12}>
               {tableColors.map(_ => (
-                <Typography gutterBottom variant="caption">
+                <Typography key={_.tableColor} gutterBottom variant="caption">
                   {i18n.t(`help.tableColors.${_.tableColor}`)}
                   {' '}
                   /
@@ -114,9 +114,9 @@ function HelpDialog(props) {
                 </h5>
                 {/* ヘルプだけはmacOSでクロームのヘルプがアプリのレベルで割り当てられていてctrlにしなければいけない */}
                 {keyboardShortcuts.application.map(_ => (
-                  <Typography gutterBottom variant="caption">
+                  <Typography key={_.label} gutterBottom variant="caption">
                     {_.keys.map((key, index) => (
-                      <span>
+                      <span key={key}>
                         {index !== 0 && ' + '}
                         <kbd>
                           {key}
@@ -144,9 +144,9 @@ function HelpDialog(props) {
                   {i18n.t('help.keyboardShortcuts.showContextMenu')}
                 </Typography>
                 {keyboardShortcuts.table.map(_ => (
-                  <Typography gutterBottom variant="caption">
+                  <Typography key={_.label} gutterBottom variant="caption">
                     {_.keys.map((key, index) => (
-                      <span>
+                      <span key={key}>
                         {index !== 0 && ' + '}
                         <kbd>
                           {key}
@@ -191,7 +191,7 @@ function HelpDialog(props) {
                 </Typography>
                 <Typography gutterBottom variant="caption">
                   {i18n.t('help.notificationNotDisplayed')}
-                  <a href={constants.CHROME_HELP_PERMISSION_URL} target="_blank">
+                  <a href={constants.CHROME_HELP_PERMISSION_URL} target="_blank" rel="noreferrer noopener">
                     {i18n.t('help.changeGoogleChromeSitePermissions')}
                   </a>
                 </Typography>

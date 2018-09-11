@@ -54,32 +54,43 @@ class TaskTableMobile extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (!util.equal(this.state.anchorEl, nextState.anchorEl)) return true;
+    const {
+      anchorEl,
+      editingTaskIndex,
+    } = this.state;
+    const { tableTasks } = this.props;
+    if (!util.equal(anchorEl, nextState.anchorEl)) return true;
     if (!util.equal(this.state[constants.taskStateType.add], nextState[constants.taskStateType.add])) return true;
     if (!util.equal(this.state[constants.taskStateType.edit], nextState[constants.taskStateType.edit])) return true;
-    if (this.state.editingTaskIndex !== nextState.editingTaskIndex) return true;
-    if (util.equal(this.props.tableTasks, nextProps.tableTasks)) return false;
+    if (editingTaskIndex !== nextState.editingTaskIndex) return true;
+    if (util.equal(tableTasks, nextProps.tableTasks)) return false;
     return true;
   }
 
   openTaskAction(index, e) {
-    const anchorEl = Object.assign([], this.state.anchorEl);
-    anchorEl[index] = e.currentTarget;
-    this.setState({ anchorEl, editingTaskIndex: -1 });
+    const { anchorEl } = this.state;
+    const anchorElCopy = Object.assign([], anchorEl);
+    anchorElCopy[index] = e.currentTarget;
+    this.setState({ anchorEl: anchorElCopy, editingTaskIndex: -1 });
   }
 
   closeTaskAction(index) {
-    const anchorEl = Object.assign([], this.state.anchorEl);
-    anchorEl[index] = null;
-    this.setState({ anchorEl });
+    const { anchorEl } = this.state;
+    const anchorElCopy = Object.assign([], anchorEl);
+    anchorElCopy[index] = null;
+    this.setState({ anchorEl: anchorElCopy });
   }
 
   doTaskAction(index, taskActionType) {
+    const {
+      tableTasks,
+      changeTableTasks,
+    } = this.props;
     this.closeTaskAction(index);
-    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${i18n.t('taskPool.areYouSureDelete_target', { target: this.props.tableTasks[index].title })}`)) {
-      this.props.changeTableTasks(constants.taskActionType.REMOVE, index);
+    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${i18n.t('taskPool.areYouSureDelete_target', { target: tableTasks[index].title })}`)) {
+      changeTableTasks(constants.taskActionType.REMOVE, index);
     } else if (taskActionType !== constants.taskActionType.REMOVE) {
-      this.props.changeTableTasks(taskActionType, index);
+      changeTableTasks(taskActionType, index);
     }
   }
 
@@ -90,40 +101,55 @@ class TaskTableMobile extends Component {
   }
 
   addTask() {
+    const {
+      userId,
+      changeTableTasks,
+    } = this.props;
     if (this.state[constants.taskStateType.add].title === '') {
       alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
       return;
     }
     // タスクを追加した場合には割当を自動的に自分にする
-    this.state[constants.taskStateType.add].assign = this.props.userId;
-    this.props.changeTableTasks(constants.taskActionType.ADD, this.state[constants.taskStateType.add]);
+    this.state[constants.taskStateType.add].assign = userId;
+    changeTableTasks(constants.taskActionType.ADD, this.state[constants.taskStateType.add]);
     this.setState({ [constants.taskStateType.add]: getTableTaskSchema() });
     setTimeout(() => { this.root.scrollTop = this.root.scrollHeight; });
   }
 
   editTask(index) {
-    if (this.state.editingTaskIndex === index) {
+    const { editingTaskIndex } = this.state;
+    const {
+      tableTasks,
+      changeTableTasks,
+    } = this.props;
+    if (editingTaskIndex === index) {
       // 編集を保存する場合
       if (this.state[constants.taskStateType.edit].title === '') {
         alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
         return;
       }
-      if (!util.equal(this.props.tableTasks[index], this.state[constants.taskStateType.edit])) {
-        this.props.changeTableTasks(constants.taskActionType.EDIT, { task: this.state[constants.taskStateType.edit], index });
+      if (!util.equal(tableTasks[index], this.state[constants.taskStateType.edit])) {
+        changeTableTasks(constants.taskActionType.EDIT, { task: this.state[constants.taskStateType.edit], index });
       }
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getTableTaskSchema() });
     } else {
       // 編集スタート
       this.setState({
         editingTaskIndex: index,
-        [constants.taskStateType.edit]: this.props.tableTasks[index],
+        [constants.taskStateType.edit]: tableTasks[index],
         [constants.taskStateType.add]: getTableTaskSchema(),
       });
     }
   }
 
   render() {
-    const { tableTasks, readOnly, classes } = this.props;
+    const {
+      isActive, tableTasks, readOnly, classes,
+    } = this.props;
+    const {
+      editingTaskIndex,
+      anchorEl,
+    } = this.state;
     return (
       <div ref={(root) => { this.root = root; }} className={classes.root}>
         <Table>
@@ -157,7 +183,7 @@ class TaskTableMobile extends Component {
                     obj.backgroundColor = constants.cellColor.DONE;
                   } else if (task.estimate === '') {
                     obj.backgroundColor = constants.cellColor.WARNING;
-                  } else if (this.props.isActive && task.startTime) {
+                  } else if (isActive && task.startTime) {
                     // 本日のタスクの場合,開始時刻、見積もりが設定してあるタスクなので、実行中の色,予約の色,終了が近づいている色をつける処理
                     const nowTimeVal = moment().format(constants.TIMEFMT);
                     const expectedEndTimeVal = moment(task.startTime, constants.TIMEFMT).add(task.estimate, 'minutes').format(constants.TIMEFMT);
@@ -165,7 +191,8 @@ class TaskTableMobile extends Component {
                     if (timeDiffMinute < 1) {
                       obj.backgroundColor = constants.cellColor.OUT;
                     } else {
-                      obj.backgroundColor = util.getTimeDiffMinute(nowTimeVal, task.startTime) < 1 ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
+                      obj.backgroundColor = util.getTimeDiffMinute(nowTimeVal, task.startTime) < 1
+                        ? constants.cellColor.RUNNING : constants.cellColor.RESERVATION;
                     }
                   }
                   return obj;
@@ -176,9 +203,9 @@ class TaskTableMobile extends Component {
                     className={classes.cellInput}
                     fullWidth
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'title')}
-                    value={this.state.editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
-                    disabled={this.state.editingTaskIndex !== index}
-                    disableUnderline={this.state.editingTaskIndex !== index}
+                    value={editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
+                    disabled={editingTaskIndex !== index}
+                    disableUnderline={editingTaskIndex !== index}
                   />
                 </CustomTableCell>
                 <CustomTableCell padding="none">
@@ -186,35 +213,35 @@ class TaskTableMobile extends Component {
                     className={classes.miniCellInput}
                     type="number"
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'estimate')}
-                    value={this.state.editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
-                    disabled={this.state.editingTaskIndex !== index}
-                    disableUnderline={this.state.editingTaskIndex !== index}
+                    value={editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
+                    disabled={editingTaskIndex !== index}
+                    disableUnderline={editingTaskIndex !== index}
                   />
                 </CustomTableCell>
                 <CustomTableCell padding="none">
                   <TextField
                     type="time"
                     className={classes.miniCellInput}
-                    InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
+                    InputProps={{ style: { fontSize: 11 }, disableUnderline: editingTaskIndex !== index }}
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'startTime')}
-                    value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
-                    disabled={this.state.editingTaskIndex !== index}
+                    value={editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
+                    disabled={editingTaskIndex !== index}
                   />
                 </CustomTableCell>
                 <CustomTableCell padding="none">
                   <TextField
                     type="time"
                     className={classes.miniCellInput}
-                    InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
+                    InputProps={{ style: { fontSize: 11 }, disableUnderline: editingTaskIndex !== index }}
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'endTime')}
-                    value={this.state.editingTaskIndex !== index ? task.endTime : this.state[constants.taskStateType.edit].endTime}
-                    disabled={this.state.editingTaskIndex !== index}
+                    value={editingTaskIndex !== index ? task.endTime : this.state[constants.taskStateType.edit].endTime}
+                    disabled={editingTaskIndex !== index}
                   />
                 </CustomTableCell>
                 <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                   <div className={classes.actionIcons}>
                     <IconButton disabled={readOnly} className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
-                      {this.state.editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
+                      {editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
                     </IconButton>
                     <span>
 /
@@ -223,8 +250,8 @@ class TaskTableMobile extends Component {
                       <MoreHoriz style={{ fontSize: 16 }} />
                     </IconButton>
                     <Menu
-                      anchorEl={this.state.anchorEl[index]}
-                      open={Boolean(this.state.anchorEl[index] || false)}
+                      anchorEl={anchorEl[index]}
+                      open={Boolean(anchorEl[index] || false)}
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
                       <MenuItem key="movePoolHighPriority" disabled={task.endTime !== ''} onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_POOL_HIGHPRIORITY)}>
@@ -275,8 +302,8 @@ class TaskTableMobile extends Component {
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'title')}
                   value={this.state[constants.taskStateType.add].title}
                   placeholder={i18n.t('columns.title')}
-                  disabled={this.state.editingTaskIndex !== -1}
-                  disableUnderline={this.state.editingTaskIndex !== -1}
+                  disabled={editingTaskIndex !== -1}
+                  disableUnderline={editingTaskIndex !== -1}
                 />
               </CustomTableCell>
               <CustomTableCell padding="none">
@@ -286,34 +313,34 @@ class TaskTableMobile extends Component {
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'estimate')}
                   value={this.state[constants.taskStateType.add].estimate}
                   placeholder={i18n.t('columns.estimate')}
-                  disabled={this.state.editingTaskIndex !== -1}
-                  disableUnderline={this.state.editingTaskIndex !== -1}
+                  disabled={editingTaskIndex !== -1}
+                  disableUnderline={editingTaskIndex !== -1}
                 />
               </CustomTableCell>
               <CustomTableCell padding="none">
                 <TextField
                   type="time"
                   className={classes.miniCellInput}
-                  InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
+                  InputProps={{ style: { fontSize: 11 }, disableUnderline: editingTaskIndex !== -1 }}
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'startTime')}
                   value={this.state[constants.taskStateType.add].startTime}
                   placeholder={i18n.t('columns.startTime')}
-                  disabled={this.state.editingTaskIndex !== -1}
+                  disabled={editingTaskIndex !== -1}
                 />
               </CustomTableCell>
               <CustomTableCell padding="none">
                 <TextField
                   type="time"
                   className={classes.miniCellInput}
-                  InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
+                  InputProps={{ style: { fontSize: 11 }, disableUnderline: editingTaskIndex !== -1 }}
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'endTime')}
                   value={this.state[constants.taskStateType.add].endTime}
                   placeholder={i18n.t('columns.endTime')}
-                  disabled={this.state.editingTaskIndex !== -1}
+                  disabled={editingTaskIndex !== -1}
                 />
               </CustomTableCell>
               <CustomTableCell style={{ textAlign: 'center' }} padding="none">
-                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={readOnly || this.state.editingTaskIndex !== -1}>
+                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={readOnly || editingTaskIndex !== -1}>
                   <Add style={{ fontSize: 16 }} />
                 </IconButton>
               </CustomTableCell>

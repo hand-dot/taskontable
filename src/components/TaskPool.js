@@ -19,18 +19,24 @@ class TaskPool extends Component {
   }
 
   addTask(task) {
-    this.props.changePoolTasks(constants.taskActionType.ADD, this.state.tab, task);
+    const { changePoolTasks } = this.props;
+    const { tab } = this.state;
+    changePoolTasks(constants.taskActionType.ADD, tab, task);
   }
 
   editTask(task, index) {
-    this.props.changePoolTasks(constants.taskActionType.EDIT, this.state.tab, { task, index });
+    const { changePoolTasks } = this.props;
+    const { tab } = this.state;
+    changePoolTasks(constants.taskActionType.EDIT, tab, { task, index });
   }
 
   doTaskAction(index, taskActionType) {
-    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${i18n.t('taskPool.areYouSureDelete_target', { target: this.props.poolTasks[this.state.tab][index].title })}`)) {
-      this.props.changePoolTasks(constants.taskActionType.REMOVE, this.state.tab, index);
+    const { changePoolTasks, poolTasks } = this.props;
+    const { tab } = this.state;
+    if (taskActionType === constants.taskActionType.REMOVE && window.confirm(`${i18n.t('taskPool.areYouSureDelete_target', { target: poolTasks[tab][index].title })}`)) {
+      changePoolTasks(constants.taskActionType.REMOVE, tab, index);
     } else if (taskActionType !== constants.taskActionType.REMOVE) {
-      this.props.changePoolTasks(taskActionType, this.state.tab, index);
+      changePoolTasks(taskActionType, tab, index);
     }
   }
 
@@ -39,13 +45,14 @@ class TaskPool extends Component {
   }
 
   render() {
-    const { userId, poolTasks } = this.props;
+    const { userId, poolTasks, members } = this.props;
+    const { tab } = this.state;
     let tasks = null;
-    if (this.state.tab === constants.taskPoolType.HIGHPRIORITY) {
+    if (tab === constants.taskPoolType.HIGHPRIORITY) {
       tasks = poolTasks.highPriorityTasks;
-    } else if (this.state.tab === constants.taskPoolType.LOWPRIORITY) {
+    } else if (tab === constants.taskPoolType.LOWPRIORITY) {
       tasks = poolTasks.lowPriorityTasks;
-    } else if (this.state.tab === constants.taskPoolType.REGULAR) {
+    } else if (tab === constants.taskPoolType.REGULAR) {
       tasks = poolTasks.regularTasks;
     }
     return (
@@ -54,7 +61,7 @@ class TaskPool extends Component {
           {(() => {
             if (!util.isMobile()) {
               return (
-                <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="secondary" textColor="inherit">
+                <Tabs scrollable scrollButtons="on" fullWidth value={tab} onChange={this.handleTabChange.bind(this)} indicatorColor="secondary" textColor="inherit">
                   <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.highPriority')} />
                   <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.lowPriority')} />
                   <Tab value={constants.taskPoolType.REGULAR} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.regular')} />
@@ -62,7 +69,7 @@ class TaskPool extends Component {
               );
             }
             return (
-              <Tabs scrollable scrollButtons="on" fullWidth value={this.state.tab} onChange={this.handleTabChange.bind(this)} indicatorColor="secondary" textColor="inherit">
+              <Tabs scrollable scrollButtons="on" fullWidth value={tab} onChange={this.handleTabChange.bind(this)} indicatorColor="secondary" textColor="inherit">
                 <Tab value={constants.taskPoolType.HIGHPRIORITY} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.highPriority')} />
                 <Tab value={constants.taskPoolType.LOWPRIORITY} fullWidth style={{ maxWidth: 'none' }} label={i18n.t('taskPool.lowPriority')} />
               </Tabs>
@@ -75,8 +82,8 @@ class TaskPool extends Component {
           editTask={this.editTask.bind(this)}
           doTaskAction={this.doTaskAction.bind(this)}
           tasks={tasks}
-          members={this.props.members}
-          isRegularTask={this.state.tab === constants.taskPoolType.REGULAR}
+          members={members}
+          isRegularTask={tab === constants.taskPoolType.REGULAR}
         />
       </div>
     );

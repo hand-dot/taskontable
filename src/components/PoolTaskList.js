@@ -57,20 +57,23 @@ class TaskList extends Component {
   }
 
   openTaskAction(index, e) {
-    const anchorEl = Object.assign([], this.state.anchorEl);
-    anchorEl[index] = e.currentTarget;
-    this.setState({ anchorEl, editingTaskIndex: -1 });
+    const { anchorEl } = this.state;
+    const anchorElCopy = Object.assign([], anchorEl);
+    anchorElCopy[index] = e.currentTarget;
+    this.setState({ anchorEl: anchorElCopy, editingTaskIndex: -1 });
   }
 
   closeTaskAction(index) {
-    const anchorEl = Object.assign([], this.state.anchorEl);
-    anchorEl[index] = null;
-    this.setState({ anchorEl });
+    const { anchorEl } = this.state;
+    const anchorElCopy = Object.assign([], anchorEl);
+    anchorElCopy[index] = null;
+    this.setState({ anchorEl: anchorElCopy });
   }
 
   doTaskAction(index, taskActionType) {
+    const { doTaskAction } = this.props;
     this.closeTaskAction(index);
-    this.props.doTaskAction(index, taskActionType);
+    doTaskAction(index, taskActionType);
   }
 
   changeTask(type, prop, e) {
@@ -80,13 +83,15 @@ class TaskList extends Component {
   }
 
   editTask(index) {
-    if (this.state.editingTaskIndex === index) {
+    const { tasks, isRegularTask, editTask } = this.props;
+    const { editingTaskIndex } = this.state;
+    if (editingTaskIndex === index) {
       // 編集を保存する場合
       if (this.state[constants.taskStateType.edit].title === '') {
         alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
         return;
       }
-      if (this.props.isRegularTask) {
+      if (isRegularTask) {
         if (this.state[constants.taskStateType.edit].week.length === 0) {
           alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.weekNumber') })}`);
           return;
@@ -95,26 +100,31 @@ class TaskList extends Component {
           return;
         }
       }
-      if (!util.equal(this.props.tasks[index], this.state[constants.taskStateType.edit])) {
-        this.props.editTask(this.state[constants.taskStateType.edit], index);
+      if (!util.equal(tasks[index], this.state[constants.taskStateType.edit])) {
+        editTask(this.state[constants.taskStateType.edit], index);
       }
       this.setState({ editingTaskIndex: -1, [constants.taskStateType.edit]: getPoolTaskSchema() });
     } else {
       // 編集スタート
       this.setState({
         editingTaskIndex: index,
-        [constants.taskStateType.edit]: this.props.tasks[index],
+        [constants.taskStateType.edit]: tasks[index],
         [constants.taskStateType.add]: getPoolTaskSchema(),
       });
     }
   }
 
   addTask() {
+    const {
+      isRegularTask,
+      userId,
+      addTask,
+    } = this.props;
     if (this.state[constants.taskStateType.add].title === '') {
       alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.title') })}`);
       return;
     }
-    if (this.props.isRegularTask) {
+    if (isRegularTask) {
       if (this.state[constants.taskStateType.add].week.length === 0) {
         alert(`${i18n.t('taskPool.cantSaveWhenIsEmpty_target', { target: i18n.t('taskPool.weekNumber') })}`);
         return;
@@ -124,13 +134,17 @@ class TaskList extends Component {
       }
     }
     // 割り当てを指定せずにタスクを追加した場合には割当を自動的に自分にする
-    if (this.state[constants.taskStateType.add].assign === '') this.state[constants.taskStateType.add].assign = this.props.userId;
-    this.props.addTask(this.state[constants.taskStateType.add]);
+    if (this.state[constants.taskStateType.add].assign === '') this.state[constants.taskStateType.add].assign = userId;
+    addTask(this.state[constants.taskStateType.add]);
     this.setState({ [constants.taskStateType.add]: getPoolTaskSchema() });
     setTimeout(() => { this.root.scrollTop = this.root.scrollHeight; });
   }
 
   render() {
+    const {
+      editingTaskIndex,
+      anchorEl,
+    } = this.state;
     const {
       tasks, isRegularTask, members, classes,
     } = this.props;
@@ -181,9 +195,9 @@ class TaskList extends Component {
                     fullWidth
                     className={classes.cellInput}
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'title')}
-                    value={this.state.editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
-                    disabled={this.state.editingTaskIndex !== index}
-                    disableUnderline={this.state.editingTaskIndex !== index}
+                    value={editingTaskIndex !== index ? task.title : this.state[constants.taskStateType.edit].title}
+                    disabled={editingTaskIndex !== index}
+                    disableUnderline={editingTaskIndex !== index}
                   />
                 </CustomTableCell>
                 <CustomTableCell padding="none">
@@ -191,9 +205,9 @@ class TaskList extends Component {
                     fullWidth
                     className={classes.cellInput}
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'memo')}
-                    value={this.state.editingTaskIndex !== index ? task.memo : this.state[constants.taskStateType.edit].memo}
-                    disabled={this.state.editingTaskIndex !== index}
-                    disableUnderline={this.state.editingTaskIndex !== index}
+                    value={editingTaskIndex !== index ? task.memo : this.state[constants.taskStateType.edit].memo}
+                    disabled={editingTaskIndex !== index}
+                    disableUnderline={editingTaskIndex !== index}
                   />
                 </CustomTableCell>
                 <CustomTableCell padding="none">
@@ -201,9 +215,9 @@ class TaskList extends Component {
                     className={classes.miniCellInput}
                     type="number"
                     onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'estimate')}
-                    value={this.state.editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
-                    disabled={this.state.editingTaskIndex !== index}
-                    disableUnderline={this.state.editingTaskIndex !== index}
+                    value={editingTaskIndex !== index ? task.estimate : this.state[constants.taskStateType.edit].estimate}
+                    disabled={editingTaskIndex !== index}
+                    disableUnderline={editingTaskIndex !== index}
                   />
                 </CustomTableCell>
                 {isRegularTask && (
@@ -213,10 +227,10 @@ class TaskList extends Component {
                         <Select
                           style={{ fontSize: 12 }}
                           native
-                          value={this.state.editingTaskIndex !== index ? task.assign : this.state[constants.taskStateType.edit].assign}
+                          value={editingTaskIndex !== index ? task.assign : this.state[constants.taskStateType.edit].assign}
                           onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'assign')}
-                          disabled={this.state.editingTaskIndex !== index}
-                          disableUnderline={this.state.editingTaskIndex !== index}
+                          disabled={editingTaskIndex !== index}
+                          disableUnderline={editingTaskIndex !== index}
                         >
                           <option value="" />
                           {members.map(member => (
@@ -240,11 +254,11 @@ class TaskList extends Component {
                     <TextField
                       type="time"
                       className={classes.miniCellInput}
-                      InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== index }}
+                      InputProps={{ style: { fontSize: 11 }, disableUnderline: editingTaskIndex !== index }}
                       onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'startTime')}
-                      value={this.state.editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
+                      value={editingTaskIndex !== index ? task.startTime : this.state[constants.taskStateType.edit].startTime}
                       placeholder={i18n.t('columns.startTime')}
-                      disabled={this.state.editingTaskIndex !== index}
+                      disabled={editingTaskIndex !== index}
                     />
                   </CustomTableCell>
                 )}
@@ -252,10 +266,10 @@ class TaskList extends Component {
                   <CustomTableCell padding="none">
                     <MultipleSelect
                       className={classes.miniCellInput}
-                      value={this.state.editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
+                      value={editingTaskIndex !== index ? task.week : this.state[constants.taskStateType.edit].week}
                       options={[1, 2, 3, 4, 5].map(w => ({ key: w.toString(), value: w }))}
                       onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'week')}
-                      disabled={this.state.editingTaskIndex !== index}
+                      disabled={editingTaskIndex !== index}
                     />
                   </CustomTableCell>
                 )}
@@ -263,17 +277,17 @@ class TaskList extends Component {
                   <CustomTableCell padding="none">
                     <MultipleSelect
                       className={classes.miniCellInput}
-                      value={this.state.editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
+                      value={editingTaskIndex !== index ? task.dayOfWeek : this.state[constants.taskStateType.edit].dayOfWeek}
                       options={[0, 1, 2, 3, 4, 5, 6].map(d => ({ key: constants.DAY_OF_WEEK_STR[d], value: d }))}
                       onChange={this.changeTask.bind(this, constants.taskStateType.edit, 'dayOfWeek')}
-                      disabled={this.state.editingTaskIndex !== index}
+                      disabled={editingTaskIndex !== index}
                     />
                   </CustomTableCell>
                 )}
                 <CustomTableCell style={{ textAlign: 'center' }} padding="none">
                   <div className={classes.actionIcons}>
                     <IconButton className={classes.actionIcon} color="default" onClick={this.editTask.bind(this, index)}>
-                      {this.state.editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
+                      {editingTaskIndex !== index ? <Edit style={{ fontSize: 16 }} /> : <Save style={{ fontSize: 16 }} />}
                     </IconButton>
                     <span>
                       /
@@ -282,8 +296,8 @@ class TaskList extends Component {
                       <MoreHoriz style={{ fontSize: 16 }} />
                     </IconButton>
                     <Menu
-                      anchorEl={this.state.anchorEl[index]}
-                      open={Boolean(this.state.anchorEl[index] || false)}
+                      anchorEl={anchorEl[index]}
+                      open={Boolean(anchorEl[index] || false)}
                       onClose={this.closeTaskAction.bind(this, index)}
                     >
                       <MenuItem key="moveTable" onClick={this.doTaskAction.bind(this, index, constants.taskActionType.MOVE_TABLE)}>
@@ -329,8 +343,8 @@ class TaskList extends Component {
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'title')}
                   value={this.state[constants.taskStateType.add].title}
                   placeholder={i18n.t('columns.title')}
-                  disabled={this.state.editingTaskIndex !== -1}
-                  disableUnderline={this.state.editingTaskIndex !== -1}
+                  disabled={editingTaskIndex !== -1}
+                  disableUnderline={editingTaskIndex !== -1}
                 />
               </CustomTableCell>
               <CustomTableCell padding="none">
@@ -340,8 +354,8 @@ class TaskList extends Component {
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'memo')}
                   value={this.state[constants.taskStateType.add].memo}
                   placeholder={i18n.t('columns.memo')}
-                  disabled={this.state.editingTaskIndex !== -1}
-                  disableUnderline={this.state.editingTaskIndex !== -1}
+                  disabled={editingTaskIndex !== -1}
+                  disableUnderline={editingTaskIndex !== -1}
                 />
               </CustomTableCell>
               <CustomTableCell padding="none">
@@ -351,8 +365,8 @@ class TaskList extends Component {
                   onChange={this.changeTask.bind(this, constants.taskStateType.add, 'estimate')}
                   value={this.state[constants.taskStateType.add].estimate}
                   placeholder={i18n.t('columns.estimate')}
-                  disabled={this.state.editingTaskIndex !== -1}
-                  disableUnderline={this.state.editingTaskIndex !== -1}
+                  disabled={editingTaskIndex !== -1}
+                  disableUnderline={editingTaskIndex !== -1}
                 />
               </CustomTableCell>
               {isRegularTask && (
@@ -364,8 +378,8 @@ class TaskList extends Component {
                         native
                         value={this.state[constants.taskStateType.add].assign}
                         onChange={this.changeTask.bind(this, constants.taskStateType.add, 'assign')}
-                        disabled={this.state.editingTaskIndex !== -1}
-                        disableUnderline={this.state.editingTaskIndex !== -1}
+                        disabled={editingTaskIndex !== -1}
+                        disableUnderline={editingTaskIndex !== -1}
                       >
                         <option value="" />
                         {members.map(member => (
@@ -387,11 +401,11 @@ class TaskList extends Component {
                   <TextField
                     type="time"
                     className={classes.miniCellInput}
-                    InputProps={{ style: { fontSize: 11 }, disableUnderline: this.state.editingTaskIndex !== -1 }}
+                    InputProps={{ style: { fontSize: 11 }, disableUnderline: editingTaskIndex !== -1 }}
                     onChange={this.changeTask.bind(this, constants.taskStateType.add, 'startTime')}
                     value={this.state[constants.taskStateType.add].startTime}
                     placeholder={i18n.t('columns.startTime')}
-                    disabled={this.state.editingTaskIndex !== -1}
+                    disabled={editingTaskIndex !== -1}
                   />
                 </CustomTableCell>
               )}
@@ -402,7 +416,7 @@ class TaskList extends Component {
                     value={this.state[constants.taskStateType.add].week}
                     options={[1, 2, 3, 4, 5].map(w => ({ key: w.toString(), value: w }))}
                     onChange={this.changeTask.bind(this, constants.taskStateType.add, 'week')}
-                    disabled={this.state.editingTaskIndex !== -1}
+                    disabled={editingTaskIndex !== -1}
                   />
                 </CustomTableCell>
               )}
@@ -413,12 +427,12 @@ class TaskList extends Component {
                     value={this.state[constants.taskStateType.add].dayOfWeek}
                     options={[0, 1, 2, 3, 4, 5, 6].map(d => ({ key: constants.DAY_OF_WEEK_STR[d], value: d }))}
                     onChange={this.changeTask.bind(this, constants.taskStateType.add, 'dayOfWeek')}
-                    disabled={this.state.editingTaskIndex !== -1}
+                    disabled={editingTaskIndex !== -1}
                   />
                 </CustomTableCell>
               )}
               <CustomTableCell style={{ textAlign: 'center' }} padding="none">
-                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={this.state.editingTaskIndex !== -1}>
+                <IconButton className={classes.actionIcon} color="default" onClick={this.addTask.bind(this)} disabled={editingTaskIndex !== -1}>
                   <Add style={{ fontSize: 16 }} />
                 </IconButton>
               </CustomTableCell>

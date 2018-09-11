@@ -30,9 +30,13 @@ class TaskTable extends Component {
   }
 
   componentDidMount() {
-    this.props.onRef(this);
+    const {
+      onRef,
+      isActive,
+    } = this.props;
+    onRef(this);
     const self = this;
-    const isActiveNotifi = this.props.isActive;
+    const isActiveNotifi = isActive;
     this.hot = new Handsontable(this.hotDom, Object.assign(hotConf, {
       isActiveNotifi,
       contextMenu: {
@@ -60,20 +64,29 @@ class TaskTable extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!util.equal(this.props.members, prevProps.members)) {
-      hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = this.props.members.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
+    const {
+      members,
+      userId,
+      taskTableFilterBy,
+      tableTasks,
+    } = this.props;
+    if (!util.equal(members, prevProps.members)) {
+      hotConf.columns[hotConf.columns.findIndex(column => column.data === 'assign')].selectOptions = members.reduce((obj, member) => Object.assign(obj, { [member.uid]: member.displayName }), {});
       this.hot.updateSettings(Object.assign(hotConf, {
-        userId: this.props.userId,
-        members: this.props.members,
+        userId,
+        members,
       }));
     }
-    if (this.props.taskTableFilterBy !== prevProps.taskTableFilterBy || !util.equal(this.props.tableTasks, prevProps.tableTasks)) {
-      this.setDataForHot(this.props.taskTableFilterBy ? tasksUtil.getTasksByAssign(this.props.tableTasks, this.props.taskTableFilterBy) : this.props.tableTasks);
+    if (taskTableFilterBy !== prevProps.taskTableFilterBy
+      || !util.equal(tableTasks, prevProps.tableTasks)) {
+      this.setDataForHot(taskTableFilterBy
+        ? tasksUtil.getTasksByAssign(tableTasks, taskTableFilterBy) : tableTasks);
     }
   }
 
   componentWillUnmount() {
-    this.props.onRef(undefined);
+    const { onRef } = this.props;
+    onRef(undefined);
     if (!this.hot) return;
     this.hot.destroy();
     this.hot = null;
@@ -88,36 +101,49 @@ class TaskTable extends Component {
   }
 
   moveTableTaskToPoolTask(taskPoolType, index, hotInstance) {
+    const { moveTableTaskToPoolTask } = this.props;
     const task = hotInstance.getSourceDataAtRow(hotInstance.toPhysicalRow(index));
     if (!task.title) {
       alert(i18n.t('worksheet.cantMoveToTaskPoolWithNoTitleTask'));
       return;
     }
     hotInstance.alter('remove_row', index);
-    this.props.moveTableTaskToPoolTask(taskPoolType, task);
+    moveTableTaskToPoolTask(taskPoolType, task);
   }
 
   syncPropByRender() {
+    const {
+      handleSaveable,
+      handleTableTasks,
+    } = this.props;
     if (!this.hot) return;
     if (!this.isSamePropTaskAndHotData()) {
-      this.props.handleSaveable(true);
-      this.props.handleTableTasks(getHotTasksIgnoreEmptyTask(this.hot).map(task => tasksUtil.deleteUselessTaskProp(task)));
+      handleSaveable(true);
+      const tableTasks = getHotTasksIgnoreEmptyTask(this.hot);
+      handleTableTasks(tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task)));
     }
   }
 
   syncPropByUpdate() {
+    const { handleSaveable } = this.props;
     if (!this.hot) return;
     if (!this.isSamePropTaskAndHotData()) {
-      this.props.handleSaveable(false);
+      handleSaveable(false);
     }
   }
 
   isSamePropTaskAndHotData() {
-    const hotTasks = getHotTasksIgnoreEmptyTask(this.hot).map(task => tasksUtil.deleteUselessTaskProp(task));
-    const propTasks = this.props.tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task));
+    const {
+      tableTasks,
+      taskTableFilterBy,
+    } = this.props;
+    const hotTasks = getHotTasksIgnoreEmptyTask(this.hot)
+      .map(task => tasksUtil.deleteUselessTaskProp(task));
+    const propTasks = tableTasks.map(task => tasksUtil.deleteUselessTaskProp(task));
     let same = false;
-    if (this.props.taskTableFilterBy) {
-      same = util.equal(tasksUtil.getTasksByAssign(hotTasks, this.props.taskTableFilterBy), tasksUtil.getTasksByAssign(propTasks, this.props.taskTableFilterBy));
+    if (taskTableFilterBy) {
+      same = util.equal(tasksUtil.getTasksByAssign(hotTasks, taskTableFilterBy),
+        tasksUtil.getTasksByAssign(propTasks, taskTableFilterBy));
     } else {
       same = util.equal(hotTasks, propTasks);
     }

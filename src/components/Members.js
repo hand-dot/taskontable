@@ -129,15 +129,20 @@ class Members extends Component {
   }
 
   addMember() {
-    if (this.state.invitationEmails.length === 0) {
+    const { state } = this;
+    const stateInvitationEmails = state.invitationEmails;
+    const { handleInvitedEmails, invitedEmails } = this.props;
+    if (stateInvitationEmails.length === 0) {
       alert(i18n.t('validation.must_target', { target: i18n.t('common.emailAddress') }));
       return;
     }
     this.setState({ processing: true });
-    Promise.all(this.state.invitationEmails.map(invitationEmail => this.sendInviteEmail(invitationEmail)))
+    Promise.all(stateInvitationEmails.map(invitationEmail => this.sendInviteEmail(invitationEmail)))
       .then(
         () => {
-          this.props.handleInvitedEmails(this.props.invitedEmails.concat(this.state.invitationEmails).filter((x, i, self) => self.indexOf(x) === i)).then(() => {
+          const allInvitedEmails = invitedEmails.concat(stateInvitationEmails);
+          const uniqueEmails = allInvitedEmails.filter((x, i, self) => self.indexOf(x) === i);
+          handleInvitedEmails(uniqueEmails).then(() => {
             this.setState({
               isOpenSnackbar: true, snackbarText: i18n.t('members.sentAnInvitationEmail'), invitationEmails: [], isOpenAddMemberModal: false, processing: false,
             });
@@ -205,10 +210,11 @@ class Members extends Component {
    * 招待中のメンバーにメールを再送信します。
    */
   resendEmail() {
-    if (this.state.target.type === constants.handleUserType.INVITED) {
+    const { target } = this.state;
+    if (target.type === constants.handleUserType.INVITED) {
       this.setState({ processing: true });
       // 招待メールの再送信
-      this.sendInviteEmail(this.state.target.email).then(
+      this.sendInviteEmail(target.email).then(
         () => {
           this.setState({
             isOpenSnackbar: true, snackbarText: i18n.t('members.resentAnInvitationEmail'), processing: false, isOpenResendEmailModal: false,
@@ -225,17 +231,27 @@ class Members extends Component {
    * メンバーに通知を送信します。
    */
   sendNotification() {
-    if (this.state.target.type === constants.handleUserType.MEMBER) {
+    const { target, notificationMessage, isNotificateAllMember } = this.state;
+    const {
+      userName,
+      worksheetId,
+      userPhotoURL,
+      members,
+      userId,
+    } = this.props;
+    if (target.type === constants.handleUserType.MEMBER) {
       const promises = [];
-      const title = `🔔 ${i18n.t('members.notificationFrom_userName', { userName: this.props.userName })}`;
-      const message = `${this.props.userName}: ${this.state.notificationMessage ? `${this.state.notificationMessage}` : i18n.t('members.pleaseCheckTheSchedule')}`;
-      const url = `${URL}/${this.props.worksheetId}`;
-      const icon = this.props.userPhotoURL || notifiIcon; // TODO notifiIconじゃなくてデフォルトのユーザーアイコンを決めるべき
+      const title = `🔔 ${i18n.t('members.notificationFrom_userName', { userName })}`;
+      const message = `${userName}: ${notificationMessage ? `${notificationMessage}` : i18n.t('members.pleaseCheckTheSchedule')}`;
+      const url = `${URL}/${worksheetId}`;
+      const icon = userPhotoURL || notifiIcon; // TODO notifiIconじゃなくてデフォルトのユーザーアイコンを決めるべき
       promises.push(util.sendNotification({
-        title, body: message, url, icon, to: this.state.target.fcmToken,
+        title, body: message, url, icon, to: target.fcmToken,
       }).then(res => res.ok));
-      if (this.state.isNotificateAllMember) {
-        const otherFcmTokens = this.props.members.filter(member => member.uid !== this.props.userId && member.fcmToken !== this.state.target.fcmToken && member.fcmToken).map(member => member.fcmToken);
+      if (isNotificateAllMember) {
+        const others = members.filter(member => member.uid !== userId
+           && member.fcmToken !== target.fcmToken && member.fcmToken);
+        const otherFcmTokens = others.map(member => member.fcmToken);
         promises.push(...otherFcmTokens.map(otherFcmToken => util.sendNotification({
           title, body: message, url, icon, to: otherFcmToken,
         }).then(res => res.ok)));
@@ -257,14 +273,16 @@ class Members extends Component {
   }
 
   addEmail(email) {
+    const { members } = this.props;
+    const { invitationEmails } = this.state;
     if (email === '') {
       return;
     }
     if (util.validateEmail(email)) {
-      if (this.props.members.map(member => member.email).includes(email)) {
+      if (members.map(member => member.email).includes(email)) {
         this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('members.emailAlreadyExistsInTheMember') });
       } else {
-        this.state.invitationEmails.push(email);
+        invitationEmails.push(email);
       }
     } else {
       this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('validation.invalid_target', { target: i18n.t('common.emailAddress') }) });
@@ -273,8 +291,21 @@ class Members extends Component {
 
   render() {
     const {
-      members, invitedEmails, classes, theme,
+      members, invitedEmails, userId, classes, theme,
     } = this.props;
+    const {
+      isOpenAddMemberModal,
+      invitationEmails,
+      isOpenRemoveMemberModal,
+      isOpenResendEmailModal,
+      isOpenSendNotificationModal,
+      target,
+      notificationMessage,
+      isNotificateAllMember,
+      processing,
+      isOpenSnackbar,
+      snackbarText,
+    } = this.state;
     return (
       <div>
         <div style={{
@@ -316,7 +347,7 @@ class Members extends Component {
                   /
                   <span>
                     <IconButton
-                      disabled={!member.fcmToken || member.uid === this.props.userId}
+                      disabled={!member.fcmToken || member.uid === userId}
                       className={classes.actionIcon}
                       color="default"
                       onClick={() => {
@@ -339,7 +370,10 @@ class Members extends Component {
                   <Typography title={member.displayName} className={classes.memberText} align="center" variant="caption">
                     {member.displayName}
                   </Typography>
-                  <Avatar className={classes.userPhoto} src={member.photoURL ? member.photoURL : person} />
+                  <Avatar
+                    className={classes.userPhoto}
+                    src={member.photoURL ? member.photoURL : person}
+                  />
                 </div>
               ))}
             </div>
@@ -409,7 +443,7 @@ class Members extends Component {
           </div>
           {/* メンバーの追加モーダル */}
           <Dialog
-            open={this.state.isOpenAddMemberModal}
+            open={isOpenAddMemberModal}
             onClose={() => { this.setState({ isOpenAddMemberModal: false }); }}
             aria-labelledby="add-member-dialog-title"
             fullWidth
@@ -420,10 +454,15 @@ class Members extends Component {
             <DialogContent>
               <ChipInput
                 autoFocus
-                value={this.state.invitationEmails}
+                value={invitationEmails}
                 onAdd={(email) => { this.addEmail(email); }}
                 onBlur={(e) => { this.addEmail(e.target.value); }}
-                onDelete={(email) => { this.setState({ invitationEmails: this.state.invitationEmails.filter(invitationEmail => invitationEmail !== email) }); }}
+                onDelete={(email) => {
+                  this.setState({
+                    invitationEmails:
+                  invitationEmails.filter(invitationEmail => invitationEmail !== email),
+                  });
+                }}
                 label={i18n.t('common.emailAddress')}
                 fullWidthInput
                 fullWidth
@@ -440,7 +479,7 @@ class Members extends Component {
           </Dialog>
           {/* メンバーの削除モーダル */}
           <Dialog
-            open={this.state.isOpenRemoveMemberModal}
+            open={isOpenRemoveMemberModal}
             onClose={() => { this.setState({ isOpenRemoveMemberModal: false }); }}
             aria-labelledby="remove-member-dialog-title"
           >
@@ -449,7 +488,7 @@ class Members extends Component {
             </DialogTitle>
             <DialogContent>
               <Typography variant="body1" gutterBottom>
-                {i18n.t('common.areYouSureRemove_target', { target: this.state.target.type === constants.handleUserType.MEMBER ? this.state.target.displayName : this.state.target.email })}
+                {i18n.t('common.areYouSureRemove_target', { target: target.type === constants.handleUserType.MEMBER ? target.displayName : target.email })}
               </Typography>
               <Typography variant="caption">
 *
@@ -467,7 +506,7 @@ class Members extends Component {
           </Dialog>
           {/* 招待中のメンバーメール再送信モーダル */}
           <Dialog
-            open={this.state.isOpenResendEmailModal}
+            open={isOpenResendEmailModal}
             onClose={() => { this.setState({ isOpenResendEmailModal: false }); }}
             aria-labelledby="resend-email-dialog-title"
           >
@@ -476,7 +515,7 @@ class Members extends Component {
             </DialogTitle>
             <DialogContent>
               <Typography variant="body1" gutterBottom>
-                {i18n.t('members.areYouSureResendInvitationEmailTo_target', { target: this.state.target.email })}
+                {i18n.t('members.areYouSureResendInvitationEmailTo_target', { target: target.email })}
               </Typography>
             </DialogContent>
             <DialogActions>
@@ -490,7 +529,7 @@ class Members extends Component {
           </Dialog>
           {/* メンバー通知モーダル */}
           <Dialog
-            open={this.state.isOpenSendNotificationModal}
+            open={isOpenSendNotificationModal}
             onClose={() => { this.setState({ isOpenSendNotificationModal: false }); }}
             aria-labelledby="send-notification-dialog-title"
           >
@@ -499,12 +538,12 @@ class Members extends Component {
             </DialogTitle>
             <DialogContent>
               <Typography variant="body1" gutterBottom>
-                {i18n.t('members.areYouSureSendNotificationTo_target', { target: this.state.target.displayName })}
+                {i18n.t('members.areYouSureSendNotificationTo_target', { target: target.displayName })}
               </Typography>
               <TextField
                 maxLength={100}
                 onChange={(e) => { this.setState({ notificationMessage: e.target.value }); }}
-                value={this.state.notificationMessage}
+                value={notificationMessage}
                 autoFocus
                 margin="dense"
                 id="message"
@@ -518,17 +557,22 @@ class Members extends Component {
                   control={(
                     <Checkbox
                       color="primary"
-                      checked={this.state.isNotificateAllMember}
-                      onChange={() => { this.setState({ isNotificateAllMember: !this.state.isNotificateAllMember }); }}
+                      checked={isNotificateAllMember}
+                      onChange={() => {
+                        this.setState({
+                          isNotificateAllMember:
+                        !isNotificateAllMember,
+                        });
+                      }}
                       value="isNotificateAllMember"
                     />
-)}
+                  )}
                   label={i18n.t('members.notifyOtherMembers')}
                 />
                 <Typography variant="caption" gutterBottom>
-(*
+                  (*
                   {i18n.t('members.doNotNoifyMeAndNotificationBlockingMembers')}
-)
+                  )
                 </Typography>
               </FormGroup>
             </DialogContent>
@@ -541,25 +585,25 @@ class Members extends Component {
               </Button>
             </DialogActions>
           </Dialog>
-          <Dialog open={this.state.processing}>
-            <div style={{ padding: this.props.theme.spacing.unit }}>
+          <Dialog open={processing}>
+            <div style={{ padding: theme.spacing.unit }}>
               <CircularProgress className={classes.circularProgress} />
             </div>
           </Dialog>
         </div>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSnackbar}
+          open={isOpenSnackbar}
           onClose={() => { this.setState({ isOpenSnackbar: false, snackbarText: '' }); }}
           ContentProps={{ 'aria-describedby': 'info-id' }}
           message={(
             <span id="info-id" style={{ display: 'flex', alignItems: 'center' }}>
               <CheckCircleIcon style={{ color: constants.brandColor.base.GREEN }} />
               <span style={{ paddingLeft: theme.spacing.unit }}>
-                {this.state.snackbarText}
+                {snackbarText}
               </span>
             </span>
-)}
+          )}
         />
       </div>
     );

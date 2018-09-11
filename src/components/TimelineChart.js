@@ -68,13 +68,16 @@ class TimelineChart extends Component {
     // svg
     const svg = d3.select(`#timeline-${id}`).attr('width', w).attr('height', h);
     // xAxis
-    const x = d3.scaleTime().domain([today, tomorrow]).clamp(true).range([0, w - (margin.left + margin.right)]);
-    const xAxis = d3.axisBottom(x).ticks(d3.timeHour.every(util.isMobile() ? 2 : 1)).tickFormat(d3.timeFormat(util.isMobile() ? '%_H' : '%H:00')).tickSizeInner(-(h - (margin.top + margin.bottom)))
+    const x = d3.scaleTime().domain([today, tomorrow])
+      .clamp(true).range([0, w - (margin.left + margin.right)]);
+    const xAxis = d3.axisBottom(x).ticks(d3.timeHour.every(util.isMobile() ? 2 : 1))
+      .tickFormat(d3.timeFormat(util.isMobile() ? '%_H' : '%H:00')).tickSizeInner(-(h - (margin.top + margin.bottom)))
       .tickSizeOuter(0);
     svg.append('g').attr('class', 'axis x-axis').attr('transform', `translate(${margin.left}, ${h - margin.bottom})`).call(xAxis)
       .selectAll('text');
     // yAxis
-    const y = d3.scaleBand(0.5).rangeRound([margin.top, h - margin.bottom]).domain(labels.map(d => d.key));
+    const y = d3.scaleBand(0.5).rangeRound([margin.top, h - margin.bottom])
+      .domain(labels.map(d => d.key));
     const yAxis = d3.axisLeft(y).tickSizeInner(0).tickSizeOuter(0);
     svg.append('g').attr('class', 'axis y-axis').attr('transform', `translate(${margin.left}, 0)`).call(yAxis)
       .selectAll('text')

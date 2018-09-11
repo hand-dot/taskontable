@@ -36,11 +36,16 @@ class DisclosureRange extends Component {
   }
 
   handleWorksheetDisclosureRange(event) {
-    if (!window.confirm(i18n.t('disclosureRange.areYouSureSetDisclosureRangeTo_target', { target: event.target.value === constants.worksheetDisclosureRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }))) return;
-    this.props.handleWorksheetDisclosureRange(event.target.value);
+    const { handleWorksheetDisclosureRange } = this.props;
+    if (!window.confirm(
+      i18n.t('disclosureRange.areYouSureSetDisclosureRangeTo_target',
+        { target: event.target.value === constants.worksheetDisclosureRange.PUBLIC ? i18n.t('common.public') : i18n.t('common.private') }),
+    )) return;
+    handleWorksheetDisclosureRange(event.target.value);
   }
 
   render() {
+    const { isOpenTooltip } = this.state;
     const { worksheetDisclosureRange, classes } = this.props;
     return (
       <FormControl component="fieldset" required className={classes.formControl}>
@@ -88,7 +93,12 @@ class DisclosureRange extends Component {
           value={window.location.href}
           endAdornment={(
             <InputAdornment position="end">
-              <Tooltip open={this.state.isOpenTooltip} onClose={() => { this.setState({ isOpenTooltip: false }); }} id="tooltip-copied" title={i18n.t('disclosureRange.copied')}>
+              <Tooltip
+                open={isOpenTooltip}
+                onClose={() => { this.setState({ isOpenTooltip: false }); }}
+                id="tooltip-copied"
+                title={i18n.t('disclosureRange.copied')}
+              >
                 <IconButton
                   aria-label="URL"
                   onClick={() => {

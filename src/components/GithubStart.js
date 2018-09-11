@@ -6,7 +6,14 @@ function GithubStart(props) {
     title, user, repo, size, width, height,
   } = props;
   return (
-    <iframe title={title} src={`https://ghbtns.com/github-btn.html?user=${user}&repo=${repo}&type=star&count=true&size=${size}`} width={width} height={height} frameBorder="0" scrolling="0" />
+    <iframe
+      title={title}
+      src={`https://ghbtns.com/github-btn.html?user=${user}&repo=${repo}&type=star&count=true&size=${size}`}
+      width={width}
+      height={height}
+      frameBorder="0"
+      scrolling="0"
+    />
   );
 }
 

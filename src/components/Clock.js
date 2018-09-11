@@ -71,7 +71,7 @@ class Clock extends Component {
     super(props);
     this.timerId = '';
     this.state = {
-      moment: moment(),
+      stateMoment: moment(),
     };
   }
 
@@ -79,11 +79,12 @@ class Clock extends Component {
   }
 
   componentDidMount() {
+    const { stateMoment } = this.state;
     const $hour = this.hour;
     const $minute = this.minute;
     const $second = this.second;
     const timedUpdate = () => {
-      const newMoment = this.state.moment.add(1, 'seconds');
+      const newMoment = stateMoment.add(1, 'seconds');
       const hour = newMoment.hour();
       const minute = newMoment.minute();
       const second = newMoment.second();
@@ -91,7 +92,7 @@ class Clock extends Component {
       $minute.style.transform = getMinuteRotate(minute, second);
       $second.style.transform = getSecondRotate(second);
       this.setState({
-        moment: newMoment,
+        stateMoment: newMoment,
       });
       this.timerId = setTimeout(timedUpdate, 1000);
     };
@@ -104,7 +105,7 @@ class Clock extends Component {
     myMoment.minute(nextProps.time.minute);
     myMoment.second(nextProps.time.second);
     this.setState({
-      moment: myMoment,
+      stateMoment: myMoment,
     });
   }
 
@@ -113,6 +114,7 @@ class Clock extends Component {
   }
 
   render() {
+    const { stateMoment } = this.state;
     const { classes, title } = this.props;
     return (
       <div>
@@ -127,7 +129,7 @@ class Clock extends Component {
           </div>
         </div>
         <Typography gutterBottom variant="body1" align="center">
-          {`${(`00${this.state.moment.hour()}`).slice(-2)}:${(`00${this.state.moment.minute()}`).slice(-2)}`}
+          {`${(`00${stateMoment.hour()}`).slice(-2)}:${(`00${stateMoment.minute()}`).slice(-2)}`}
         </Typography>
       </div>
     );

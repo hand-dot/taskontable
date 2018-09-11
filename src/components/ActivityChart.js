@@ -13,7 +13,8 @@ const formatDatas = tableTasks => tableTasks.reduce((result, current) => {
 
   const estimate = current.estimate ? current.estimate : 0;
   const actually = util.getTimeDiffMinute(current.startTime, current.endTime);
-  const remaining = (!current.startTime || !current.endTime) && current.estimate ? current.estimate : 0;
+  const remaining = (!current.startTime || !current.endTime)
+  && current.estimate ? current.estimate : 0;
   if (element) {
     element.estimates.push(estimate);
     element.actuallys.push(actually);
@@ -77,13 +78,15 @@ class ActivityChart extends Component {
 
     const dataset = datas.map(data => ({
       date: timeparser(data.date),
-      estimate: data.estimates.reduce((accumulator, currentValue) => accumulator + currentValue, 0) / 60,
-      actually: data.actuallys.reduce((accumulator, currentValue) => accumulator + currentValue, 0) / 60,
-      remaining: data.remainings.reduce((accumulator, currentValue) => accumulator + currentValue, 0) / 60,
+      estimate: data.estimates.reduce((accumu, current) => accumu + current, 0) / 60,
+      actually: data.actuallys.reduce((accumu, current) => accumu + current, 0) / 60,
+      remaining: data.remainings.reduce((accumu, current) => accumu + current, 0) / 60,
     }));
 
     const xScale = d3.scaleTime()
-      .domain([d3.min(dataset, d => moment(d.date).toDate()), d3.max(dataset, d => moment(d.date).toDate())])
+      .domain([
+        d3.min(dataset, d => moment(d.date).toDate()),
+        d3.max(dataset, d => moment(d.date).toDate())])
       .range([padding, width - padding]);
 
     const yScale = d3.scaleLinear()
@@ -146,7 +149,10 @@ class ActivityChart extends Component {
       .attr('d', remainingLine);
   }
 
-  render() { return (<svg id={`activity-${this.state.id}`} ref={(node) => { this.activity = node; }} />); }
+  render() {
+    const { id } = this.state;
+    return <svg id={`activity-${id}`} ref={(node) => { this.activity = node; }} />;
+  }
 }
 
 ActivityChart.propTypes = {

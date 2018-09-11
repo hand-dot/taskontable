@@ -29,10 +29,14 @@ function getTitle(processingTask, defaultTitle, isShortTitle) {
   const actuallyMinute = util.getTimeDiffMinute(processingTask.startTime, processingTask.now);
   let title = '';
   if (processingTask.id) {
-    title = isShortTitle ? `${(processingTask.title.length < 18 ? processingTask.title || '' : `${processingTask.title.substring(0, 15)}...`) || i18n.t('common.anonymousTask')}` : processingTask.title || i18n.t('common.anonymousTask');
+    title = isShortTitle ? `${(processingTask.title.length < 18 ? processingTask.title
+      || '' : `${processingTask.title.substring(0, 15)}...`)
+      || i18n.t('common.anonymousTask')}` : processingTask.title
+      || i18n.t('common.anonymousTask');
     if (processingTask.estimate) {
       const isOver = actuallyMinute >= processingTask.estimate;
-      if (processingTask.estimate - actuallyMinute === 1 || actuallyMinute - processingTask.estimate === 0) {
+      if (processingTask.estimate - actuallyMinute === 1
+         || actuallyMinute - processingTask.estimate === 0) {
         const sec = moment(processingTask.now, 'HH:mm:ss').format('s');
         title = `${i18n.t(`worksheet.tableCtl.taskProcessing.${isOver ? 'over_target' : 'remaining_target'}`, { target: (isOver ? sec : 60 - sec) + i18n.t('common.sec') })} - ${title}`;
       } else if (isOver) {
@@ -80,15 +84,16 @@ class TaskProcessing extends Component {
     const { date } = this.props;
     if (isMobile) return;
     if (this.bindProcessingTaskIntervalID) clearInterval(this.bindProcessingTaskIntervalID);
-    const processingTask = tasksUtil.getSortedTasks(tasks).find(task => task.startTime && task.endTime === '');
-    if (util.isToday(date) && processingTask) {
-      this.bindProcessingTaskIntervalID = setInterval(() => {
+    const prcesTask = tasksUtil.getSortedTasks(tasks).find(task => task.startTime && task.endTime === '');
+    if (util.isToday(date) && prcesTask) {
+      this.bindprcesTaskIntervalID = setInterval(() => {
         const now = moment();
-        const newTimeDiffMinute = util.getTimeDiffMinute(processingTask.startTime, now.format(constants.TIMEFMT));
+        const newTimeDiffMinute = util.getTimeDiffMinute(prcesTask.startTime,
+          now.format(constants.TIMEFMT));
         if (newTimeDiffMinute >= 0) {
-          processingTask.now = now.format('HH:mm:ss');
-          this.setState({ processingTask: util.setIdIfNotExist(processingTask) });
-        } else if (!util.equal(processingTask, getProcessingTaskSchema)) {
+          prcesTask.now = now.format('HH:mm:ss');
+          this.setState({ processingTask: util.setIdIfNotExist(prcesTask) });
+        } else if (!util.equal(prcesTask, getProcessingTaskSchema)) {
           this.setState({ processingTask: getProcessingTaskSchema() });
         }
         this.oldTimeDiffMinute = newTimeDiffMinute;
@@ -96,7 +101,9 @@ class TaskProcessing extends Component {
     } else {
       this.bindProcessingTaskIntervalID = '';
       document.title = constants.TITLE;
-      if (!util.equal(processingTask, processingTaskSchema)) this.setState({ processingTask: getProcessingTaskSchema() });
+      if (!util.equal(prcesTask, processingTaskSchema)) {
+        this.setState({ processingTask: getProcessingTaskSchema() });
+      }
     }
   }
 
@@ -128,7 +135,8 @@ class TaskProcessing extends Component {
           style={{
             fontSize: 15,
             marginRight: theme.spacing.unit,
-            color: processingTask.id ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
+            color: processingTask.id
+              ? constants.brandColor.base.RED : constants.brandColor.base.GREY,
             animation: processingTask.id ? 'heartbeat 2s infinite' : '',
           }}
         />
@@ -137,7 +145,11 @@ class TaskProcessing extends Component {
             {getTitle(processingTask, i18n.t('worksheet.tableCtl.taskProcessing.thereAreNoStartingTasks'), true)}
           </Typography>
           <LinearProgress
-            classes={{ root: classes.progress, barColorPrimary: classes[color], colorPrimary: classes.grey }}
+            classes={{
+              root: classes.progress,
+              barColorPrimary: classes[color],
+              colorPrimary: classes.grey,
+            }}
             variant="determinate"
             value={100 - remainPercent <= 0 ? 100 : 100 - remainPercent}
           />

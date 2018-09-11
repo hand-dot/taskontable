@@ -11,6 +11,11 @@ import util from '../utils/util';
 import i18n from '../i18n';
 import tasksUtil from '../utils/tasksUtil';
 
+const {
+  getTotalEstimateMinute,
+  getTotalActuallyMinute,
+} = tasksUtil;
+
 const styles = {};
 class Dashboard extends Component {
   constructor(props) {
@@ -46,19 +51,23 @@ class Dashboard extends Component {
     this.updateStateByTableTasks(nextProps.tableTasks);
   }
 
-  updateStateByTableTasks(tableTasks) {
-    const remainingData = tableTasks.filter(data => !data.startTime || !data.endTime);
-    const remainingMinute = tasksUtil.getTotalEstimateMinute(remainingData);
-    const doneData = tableTasks.filter(data => data.startTime && data.endTime);
-    this.setState({
-      estimateTasks: { minute: tasksUtil.getTotalEstimateMinute(tableTasks), taskNum: tableTasks.length },
-      remainingTasks: { minute: remainingMinute, taskNum: remainingData.length },
-      doneTasks: { minute: tasksUtil.getTotalEstimateMinute(doneData), taskNum: doneData.length },
-      actuallyTasks: { minute: tasksUtil.getTotalActuallyMinute(doneData), taskNum: doneData.length },
-    });
+  updateStateByTableTasks(task) {
+    const remainingData = task.filter(data => !data.startTime || !data.endTime);
+    const remainingMinute = getTotalEstimateMinute(remainingData);
+    const doneData = task.filter(data => data.startTime && data.endTime);
+
+    const estimateTasks = { minute: getTotalEstimateMinute(task), taskNum: task.length };
+    const remainingTasks = { minute: remainingMinute, taskNum: remainingData.length };
+    const doneTasks = { minute: getTotalEstimateMinute(doneData), taskNum: doneData.length };
+    const actuallyTasks = { minute: getTotalActuallyMinute(doneData), taskNum: doneData.length };
+
     const currentMoment = moment();
     const endMoment = moment().add(remainingMinute, 'minutes');
     this.setState({
+      estimateTasks,
+      remainingTasks,
+      doneTasks,
+      actuallyTasks,
       currentTime: {
         hour: currentMoment.hour(),
         minute: currentMoment.minute(),
@@ -73,6 +82,14 @@ class Dashboard extends Component {
   }
 
   render() {
+    const {
+      estimateTasks,
+      doneTasks,
+      actuallyTasks,
+      remainingTasks,
+      currentTime,
+      endTime,
+    } = this.state;
     const { tableTasks, isToday, theme } = this.props;
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
@@ -82,10 +99,10 @@ class Dashboard extends Component {
           </Typography>
           <TodaySummary
             data={{
-              estimateTasks: this.state.estimateTasks,
-              doneTasks: this.state.doneTasks,
-              actuallyTasks: this.state.actuallyTasks,
-              remainingTasks: this.state.remainingTasks,
+              estimateTasks,
+              doneTasks,
+              actuallyTasks,
+              remainingTasks,
             }}
           />
         </Grid>
@@ -96,10 +113,10 @@ class Dashboard extends Component {
             </Typography>
             <Grid container>
               <Grid item xs={6}>
-                <Clock title={i18n.t('dashBoad.currentTime')} time={this.state.currentTime} />
+                <Clock title={i18n.t('dashBoad.currentTime')} time={currentTime} />
               </Grid>
               <Grid item xs={6}>
-                <Clock title={i18n.t('dashBoad.endTime')} time={this.state.endTime} />
+                <Clock title={i18n.t('dashBoad.endTime')} time={endTime} />
               </Grid>
             </Grid>
           </Grid>
@@ -110,8 +127,14 @@ class Dashboard extends Component {
           </Typography>
           <Grid container>
             <Grid item xs={12}>
-              <TimelineChart tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)} pointer={isToday} />
-              <TimelineChart tableTasks={tasksUtil.getActuallyTimelineChartTasks(tableTasks)} pointer={isToday} />
+              <TimelineChart
+                tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)}
+                pointer={isToday}
+              />
+              <TimelineChart
+                tableTasks={tasksUtil.getActuallyTimelineChartTasks(tableTasks)}
+                pointer={isToday}
+              />
             </Grid>
           </Grid>
         </Grid>

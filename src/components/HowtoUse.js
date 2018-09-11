@@ -74,7 +74,16 @@ class GettingStarted extends React.Component {
             {tutorialSteps[activeStep].label}
           </Typography>
         </Paper>
-        <video autoPlay loop muted playsInline className={classes.video} track={tutorialSteps[activeStep].label} src={tutorialSteps[activeStep].resourcePath} type="video/mp4" />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className={classes.video}
+          track={tutorialSteps[activeStep].label}
+          src={tutorialSteps[activeStep].resourcePath}
+          type="video/mp4"
+        />
         <MobileStepper
           steps={maxSteps}
           position="static"

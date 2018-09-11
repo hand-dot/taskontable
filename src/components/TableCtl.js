@@ -47,7 +47,9 @@ class TableCtl extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { target } = this.state;
-    if (target !== nextProps.taskTableFilterBy) this.setState({ target: nextProps.taskTableFilterBy });
+    if (target !== nextProps.taskTableFilterBy) {
+      this.setState({ target: nextProps.taskTableFilterBy });
+    }
   }
 
   /**
@@ -71,7 +73,16 @@ class TableCtl extends Component {
 
   render() {
     const {
-      userId, members, tableTasks, date, savedAt, saveable, saveWorkSheet, handleTaskTableFilter, classes, theme,
+      userId,
+      members,
+      tableTasks,
+      date,
+      savedAt,
+      saveable,
+      saveWorkSheet,
+      handleTaskTableFilter,
+      classes,
+      theme,
     } = this.props;
     const { target, isOpenSavedAtTooltip } = this.state;
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
@@ -109,7 +120,10 @@ class TableCtl extends Component {
           </Grid>
           <Hidden xsDown>
             <Grid item xs={3}>
-              <TaskProcessing tableTasks={tasksUtil.getTasksByAssign(tableTasks, target || userId)} date={date} />
+              <TaskProcessing
+                tableTasks={tasksUtil.getTasksByAssign(tableTasks, target || userId)}
+                date={date}
+              />
             </Grid>
           </Hidden>
           <Grid style={{ textAlign: 'center' }} item xs={4} sm={2}>
