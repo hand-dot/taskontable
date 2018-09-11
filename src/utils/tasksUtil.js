@@ -12,7 +12,7 @@ export default {
    */
   getDoneTasks(tasks) {
     const doneTask = t => t.startTime && t.endTime;
-    return R.compose(R.filter(doneTask, R))(tasks);
+    return R.curry(R.filter)(doneTask)(tasks);
   },
   /**
    * 開始時刻or終了時刻の入力されていないタスクを取得します。
@@ -20,7 +20,7 @@ export default {
    */
   getOpenTasks(tasks) {
     const openTask = t => !t.startTime || !t.endTime;
-    return R.compose(R.filter(openTask, R))(tasks);
+    return R.curry(R.filter)(openTask)(tasks);
   },
   /**
    * タスクの配列を受け取り見積時間の合計を取得します。
@@ -45,7 +45,7 @@ export default {
     const getTimelineChartTask = t => ({
       key: i18n.t('dashBoad.estimate'), start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.startTime, constants.TIMEFMT).add(t.estimate || 0, 'minutes').toDate(), title: t.title || i18n.t('common.anonymousTask'),
     });
-    return R.compose(R.map(r => getTimelineChartTask(r)), R.filter(hasStartTime, R))(tasks);
+    return R.compose(R.map(getTimelineChartTask), R.filter(hasStartTime, R))(tasks);
   },
   /**
    * タスクの配列を受け取り実績のタイムラインチャートの生成に必要な配列にして返します。
@@ -55,7 +55,7 @@ export default {
     const getTimelineChartTask = t => ({
       key: i18n.t('dashBoad.actually'), start: moment(t.startTime, constants.TIMEFMT).toDate(), end: moment(t.endTime, constants.TIMEFMT).toDate(), title: t.title || i18n.t('common.anonymousTask'),
     });
-    return R.compose(R.map(r => getTimelineChartTask(r)), this.getDoneTasks(R))(tasks);
+    return R.compose(R.map(getTimelineChartTask), this.getDoneTasks(R))(tasks);
   },
   /**
    * タスクを開始時刻順に並び替えます。
@@ -107,7 +107,7 @@ export default {
    */
   getTasksByAssign(tasks, assign) {
     const assignedTask = t => t.assign === '' || t.assign === assign;
-    return R.compose(R.filter(assignedTask, R))(tasks);
+    return R.curry(R.filter)(assignedTask)(tasks);
   },
   /**
    * タスクの配列を受け取り、assignプロパティが指定したassign以外のタスクを返します。
@@ -116,6 +116,6 @@ export default {
    */
   getTasksByNotAssign(tasks, assign) {
     const notAssignedTask = t => t.assign !== assign;
-    return R.compose(R.filter(notAssignedTask, R))(tasks);
+    return R.curry(R.filter)(notAssignedTask)(tasks);
   },
 };

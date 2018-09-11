@@ -137,19 +137,27 @@ class Members extends Component {
       return;
     }
     this.setState({ processing: true });
-    Promise.all(stateInvitationEmails.map(invitationEmail => this.sendInviteEmail(invitationEmail)))
+    Promise.all(stateInvitationEmails.map(this.sendInviteEmail.bind(this)))
       .then(
         () => {
           const allInvitedEmails = invitedEmails.concat(stateInvitationEmails);
           const uniqueEmails = allInvitedEmails.filter((x, i, self) => self.indexOf(x) === i);
           handleInvitedEmails(uniqueEmails).then(() => {
             this.setState({
-              isOpenSnackbar: true, snackbarText: i18n.t('members.sentAnInvitationEmail'), invitationEmails: [], isOpenAddMemberModal: false, processing: false,
+              isOpenSnackbar: true,
+              snackbarText: i18n.t('members.sentAnInvitationEmail'),
+              invitationEmails: [],
+              isOpenAddMemberModal: false,
+              processing: false,
             });
           });
         },
         () => {
-          this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('members.failedToSendInvitationMail'), processing: false });
+          this.setState({
+            isOpenSnackbar: true,
+            snackbarText: i18n.t('members.failedToSendInvitationMail'),
+            processing: false,
+          });
         },
       );
   }
@@ -176,7 +184,8 @@ class Members extends Component {
     } = this.props;
     if (type === constants.handleUserType.MEMBER) {
       const newMembers = members.filter(member => member.email !== email);
-      if ((userId === uid && !window.confirm(i18n.t('members.deletingMyselfFrom_worksheetName', { worksheetName }))) || (newMembers.length === 0 && !window.confirm(i18n.t('members.noMembersFrom_worksheetName', { worksheetName })))) {
+      if ((userId === uid && !window.confirm(i18n.t('members.deletingMyselfFrom_worksheetName', { worksheetName })))
+      || (newMembers.length === 0 && !window.confirm(i18n.t('members.noMembersFrom_worksheetName', { worksheetName })))) {
         this.setState({ isOpenRemoveMemberModal: false });
         return;
       }
@@ -217,11 +226,18 @@ class Members extends Component {
       this.sendInviteEmail(target.email).then(
         () => {
           this.setState({
-            isOpenSnackbar: true, snackbarText: i18n.t('members.resentAnInvitationEmail'), processing: false, isOpenResendEmailModal: false,
+            isOpenSnackbar: true,
+            snackbarText: i18n.t('members.resentAnInvitationEmail'),
+            processing: false,
+            isOpenResendEmailModal: false,
           });
         },
         () => {
-          this.setState({ isOpenSnackbar: true, snackbarText: i18n.t('members.failedToResendInvitationMail'), processing: false });
+          this.setState({
+            isOpenSnackbar: true,
+            snackbarText: i18n.t('members.failedToResendInvitationMail'),
+            processing: false,
+          });
         },
       );
     }
