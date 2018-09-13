@@ -218,7 +218,8 @@ class App extends Component {
   }
 
   handleUser({ displayName, email, photoURL }) {
-    this.setState({ user: Object.assign(this.state.user, { displayName, email, photoURL }) });
+    const { user } = this.state;
+    this.setState({ user: Object.assign(user, { displayName, email, photoURL }) });
   }
 
   signup({
@@ -273,38 +274,44 @@ class App extends Component {
       isOpenSidebar: false,
     });
     auth.signOut().then(() => {
-      this.props.history.push('/logout');
+      const { history } = this.props;
+      history.push('/logout');
     }).catch((error) => {
       throw new Error(error);
     });
   }
 
   createWorksheet() {
-    if (this.state.newWorksheetName === '') {
+    const {
+      newWorksheetName,
+      user,
+      worksheets,
+    } = this.state;
+    if (newWorksheetName === '') {
       alert(i18n.t('validation.must_target', { target: i18n.t('common.worksheetName') }));
       return;
     }
-    if (!util.validateDatabaseKey(this.state.newWorksheetName)) {
+    if (!util.validateDatabaseKey(newWorksheetName)) {
       alert(i18n.t('validation.containsForbiddenCharacter_target', { target: i18n.t('common.worksheetName') }));
       return;
     }
     // ワークシートのIDはシート名をtoLowerCaseしてencodeURIしたものにするシート名はシート名で別管理する
-    const newWorksheetId = util.formatURLString(this.state.newWorksheetName);
+    const newWorksheetId = util.formatURLString(newWorksheetName);
     // ワークシートのIDが存在しない場合は作成できる。
     database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).once('value').then((snapshot) => {
       if (snapshot.exists()) {
         alert(i18n.t('validation.cantCreate_target', { target: i18n.t('common.worksheetName') }));
       } else {
         Promise.all([
-          database.ref(`/${constants.API_VERSION}/users/${this.state.user.uid}/worksheets/`).set(this.state.worksheets.map(worksheet => worksheet.id).concat([newWorksheetId])),
-          database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [this.state.user.uid], name: this.state.newWorksheetName, disclosureRange: constants.worksheetDisclosureRange.PRIVATE }),
+          database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set(worksheets.map(worksheet => worksheet.id).concat([newWorksheetId])),
+          database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [user.uid], name: newWorksheetName, disclosureRange: constants.worksheetDisclosureRange.PRIVATE }),
         ]).then(() => {
           this.setState({
-            worksheets: this.state.worksheets.concat([{ id: newWorksheetId, name: this.state.newWorksheetName }]),
+            worksheets: worksheets.concat([{ id: newWorksheetId, name: newWorksheetName }]),
             newWorksheetName: '',
             isOpenCreateWorksheetModal: false,
             isOpenSnackbar: true,
-            snackbarText: i18n.t('common.wasCreated_target', { target: this.state.newWorksheetName }),
+            snackbarText: i18n.t('common.wasCreated_target', { target: newWorksheetName }),
           });
           this.goWorkSheet(newWorksheetId);
         });
@@ -313,8 +320,9 @@ class App extends Component {
   }
 
   goWorkSheet(id) {
-    this.props.history.push('/');
-    setTimeout(() => { this.props.history.push(`/${id}`); });
+    const { history } = this.props;
+    history.push('/');
+    setTimeout(() => { history.push(`/${id}`); });
     if (util.isMobile()) this.setState({ isOpenSidebar: false });
   }
 
@@ -377,7 +385,13 @@ class App extends Component {
                 </ListItem>
               );
             })}
-            <ListItem divider button onClick={() => { this.setState({ isOpenCreateWorksheetModal: true }); }}>
+            <ListItem
+              divider
+              button
+              onClick={() => {
+                this.setState({ isOpenCreateWorksheetModal: true });
+              }}
+            >
               <ListItemIcon>
                 <Add />
               </ListItemIcon>
@@ -401,7 +415,9 @@ class App extends Component {
                   userId={user.uid}
                   userName={user.displayName}
                   userPhotoURL={user.photoURL}
-                  toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !isOpenHelpDialog }); }}
+                  toggleHelpDialog={() => {
+                    this.setState({ isOpenHelpDialog: !isOpenHelpDialog });
+                  }}
                   {...props}
                 />
               )}

@@ -44,14 +44,15 @@ class ErrorBoundary extends Component {
     this.state = { hasError: false };
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch(errorEvent, info) {
     this.setState({ hasError: true });
-    Raven.captureException(error, { extra: info });
+    Raven.captureException(errorEvent, { extra: info });
   }
 
   render() {
-    const { classes } = this.props;
-    if (this.state.hasError) {
+    const { hasError } = this.state;
+    const { classes, children } = this.props;
+    if (hasError) {
       // render fallback UI
       return (
         <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
@@ -82,7 +83,7 @@ class ErrorBoundary extends Component {
         </Grid>
       );
     }
-    return this.props.children;
+    return children;
   }
 }
 ErrorBoundary.propTypes = {

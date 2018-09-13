@@ -25,7 +25,8 @@ const withTracker = (WrappedComponent, options = {}) => {
     }
 
     componentWillReceiveProps(nextProps) {
-      const currentPage = this.props.location.pathname;
+      const { location } = this.props;
+      const currentPage = location.pathname;
       const nextPage = nextProps.location.pathname;
 
       if (currentPage !== nextPage) {

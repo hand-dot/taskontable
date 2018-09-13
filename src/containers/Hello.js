@@ -56,7 +56,8 @@ class Hello extends Component {
         window.onkeydown = (e) => {
           if (constants.shortcuts.TOGGLE_HELP(e)) {
             e.preventDefault();
-            this.props.toggleHelpDialog();
+            const { toggleHelpDialog } = this.props;
+            toggleHelpDialog();
           }
         };
       }
@@ -65,6 +66,7 @@ class Hello extends Component {
 
   render() {
     const isMobile = util.isMobile();
+    const { isOpenHowtoUseDialog } = this.state;
     const { classes } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch">
@@ -88,7 +90,7 @@ class Hello extends Component {
                 </span>
               </Typography>
               <p dangerouslySetInnerHTML={{ __html: i18n.t('hello.community') }} />
-              <a href={constants.COMMUNITY_URL} target="_blank">
+              <a href={constants.COMMUNITY_URL} target="_blank" rel="noreferrer noopener">
                 {i18n.t('common.join')}
                 <span role="img" aria-label="Help">
                   🚀
@@ -120,7 +122,7 @@ class Hello extends Component {
               <p>
                 {i18n.t('hello.afterInstalling')}
               </p>
-              <a href={`https://chrome.google.com/webstore/detail/${constants.CHROME_EXTENTION_ID}`} target="_blank">
+              <a href={`https://chrome.google.com/webstore/detail/${constants.CHROME_EXTENTION_ID}`} target="_blank" rel="noreferrer noopener">
                 {i18n.t('common.install')}
                 <span role="img" aria-label="Help">
                   🚀
@@ -163,7 +165,7 @@ class Hello extends Component {
         </Grid>
         <Dialog
           fullScreen
-          open={this.state.isOpenHowtoUseDialog}
+          open={isOpenHowtoUseDialog}
           onClose={() => { this.setState({ isOpenHowtoUseDialog: false }); }}
           aria-labelledby="how-to-use-dialog"
         >
@@ -172,7 +174,10 @@ class Hello extends Component {
               <Typography variant="title" color="inherit" className={classes.flex}>
                 {i18n.t('hello.howTouse')}
               </Typography>
-              <IconButton className={classes.closeBtn} onClick={() => { this.setState({ isOpenHowtoUseDialog: false }); }}>
+              <IconButton
+                className={classes.closeBtn}
+                onClick={() => { this.setState({ isOpenHowtoUseDialog: false }); }}
+              >
                 <Close />
               </IconButton>
             </Toolbar>

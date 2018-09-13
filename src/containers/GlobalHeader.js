@@ -101,19 +101,29 @@ class GlobalHeader extends Component {
 
   logout() {
     this.closeMenu();
-    setTimeout(() => this.props.logout());
+    setTimeout(() => {
+      const { logout } = this.props;
+      logout();
+    });
   }
 
   goSettings() {
     this.closeMenu();
-    setTimeout(() => this.props.goSettings());
+    setTimeout(() => {
+      const { goSettings } = this.props;
+      goSettings();
+    });
   }
 
   render() {
     const {
       user, openSideBar, isOpenHelpDialog, openHelpDialog, closeHelpDialog, history, classes,
     } = this.props;
-    const { anchorEl } = this.state;
+    const {
+      anchorEl,
+      login,
+      openMenuKey,
+    } = this.state;
 
     return (
       <AppBar color="default" className={classes.appBar}>
@@ -121,7 +131,7 @@ class GlobalHeader extends Component {
           <Grid item xs={12}>
             <Toolbar style={{ paddingLeft: 0 }} className={classes.root}>
               {(() => {
-                if (this.state.login) {
+                if (login) {
                   return (
                     <Button className={classes.title} onClick={openSideBar}>
                       <img src={title} alt="taskontable" height="18" />
@@ -135,7 +145,7 @@ class GlobalHeader extends Component {
                 );
               })()}
               {(() => {
-                if (!this.state.login) {
+                if (!login) {
                   return (
                     <div style={{ display: 'inline-flex' }}>
                       <Link className={classes.link} to="/login">
@@ -154,11 +164,14 @@ class GlobalHeader extends Component {
                   <div style={{ display: 'inline-flex' }}>
                     <div>
                       <IconButton className={classes.iconButton} onClick={this.handleMenu.bind(this)} data-menu-key="user">
-                        <Avatar className={classes.userPhoto} src={user.photoURL ? user.photoURL : person} />
+                        <Avatar
+                          className={classes.userPhoto}
+                          src={user.photoURL ? user.photoURL : person}
+                        />
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
-                        open={this.state.openMenuKey === 'user'}
+                        open={openMenuKey === 'user'}
                         onClose={this.closeMenu.bind(this)}
                       >
                         <MenuItem title={user.email}>
@@ -186,26 +199,41 @@ class GlobalHeader extends Component {
                       </IconButton>
                       <Menu
                         anchorEl={anchorEl}
-                        open={this.state.openMenuKey === 'info'}
+                        open={openMenuKey === 'info'}
                         onClose={this.closeMenu.bind(this)}
                       >
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.CONTACT}>
+                        <MenuItem
+                          onClick={handleMenuItem}
+                          data-menu-item-key={constants.menuItemKey.CONTACT}
+                        >
                           {i18n.t('external.contact')}
                         </MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.ROADMAP}>
+                        <MenuItem
+                          onClick={handleMenuItem}
+                          data-menu-item-key={constants.menuItemKey.ROADMAP}
+                        >
                           {i18n.t('external.roadMap')}
                         </MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.BLOG}>
+                        <MenuItem
+                          onClick={handleMenuItem}
+                          data-menu-item-key={constants.menuItemKey.BLOG}
+                        >
                           {i18n.t('external.blog')}
                         </MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.COMMUNITY}>
+                        <MenuItem
+                          onClick={handleMenuItem}
+                          data-menu-item-key={constants.menuItemKey.COMMUNITY}
+                        >
                           {i18n.t('external.community')}
                         </MenuItem>
-                        <MenuItem onClick={handleMenuItem} data-menu-item-key={constants.menuItemKey.GIT}>
+                        <MenuItem
+                          onClick={handleMenuItem}
+                          data-menu-item-key={constants.menuItemKey.GIT}
+                        >
                           {i18n.t('external.github')}
                         </MenuItem>
                         <MenuItem disabled>
-version:
+                          version:
                           {constants.APP_VERSION}
                         </MenuItem>
                       </Menu>

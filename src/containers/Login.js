@@ -40,29 +40,30 @@ class Login extends Component {
   }
 
   componentWillMount() {
+    const { location } = this.props;
     // 招待されたメールからメールアドレスを設定する処理。
-    if (this.props.location.search) {
+    if (location.search) {
       this.setState({ email: util.getQueryVariable('email') });
     }
   }
 
   login(type) {
-    const obj = {
-      email: '',
-      password: '',
-    };
+    const { email, password } = this.state;
+    const { login } = this.props;
+    const obj = { email: '', password: '' };
     if (type === constants.authType.GOOGLE) {
       obj.type = type;
     } else if (type === constants.authType.EMAIL_AND_PASSWORD) {
       obj.type = type;
-      obj.email = this.state.email;
-      obj.password = this.state.password;
+      obj.email = email;
+      obj.password = password;
     }
-    this.props.login(obj);
+    login(obj);
   }
 
   render() {
-    const { classes } = this.props;
+    const { email, password } = this.state;
+    const { location, classes } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
         <ScrollToTopOnMount />
@@ -73,15 +74,15 @@ class Login extends Component {
             </Typography>
             <div style={{ fontSize: 12 }}>
               {i18n.t('common.or')}&nbsp;
-              <Link to={this.props.location.search === '' ? '/signup' : `/signup${this.props.location.search}`}>
+              <Link to={location.search === '' ? '/signup' : `/signup${location.search}`}>
                 {i18n.t('signUpAndLogIn.createAnAccount')}
               </Link>
             </div>
             <form style={{ marginTop: '2em' }}>
               <TextField
-                value={this.state.email}
+                value={email}
                 onChange={(e) => { this.setState({ email: e.target.value }); }}
-                disabled={this.props.location.search !== ''}
+                disabled={location.search !== ''}
                 id="email"
                 label={i18n.t('common.emailAddress')}
                 InputLabelProps={{
@@ -92,9 +93,9 @@ class Login extends Component {
                 margin="normal"
               />
               <TextField
-                value={this.state.password}
+                value={password}
                 onChange={(e) => { this.setState({ password: e.target.value }); }}
-                autoFocus={this.props.location.search !== ''}
+                autoFocus={location.search !== ''}
                 autoComplete="password"
                 id="password"
                 type="password"

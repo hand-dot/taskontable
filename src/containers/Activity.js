@@ -66,35 +66,35 @@ class Activity extends Component {
     };
   }
 
-  componentWillMount() {
+  async componentWillMount() {
+    const { userId, history, match } = this.props;
     // 認証していないユーザーとメンバー以外をルートに返す
-    const worksheetId = encodeURI(this.props.match.params.id);
-    if (this.props.userId && worksheetId) {
-      database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value').then((memberIds) => {
-        if (memberIds.exists() && Array.isArray(memberIds.val()) && memberIds.val().includes(this.props.userId)) {
-          this.setState({ worksheetId });
-          // メンバーを取得する処理
-          Promise.all(memberIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value'))).then((members) => {
-            const memberDatas = members.filter(member => member.exists()).map(member => member.val());
-            if (this.hot) {
-              this.hot.updateSettings({ members: memberDatas });
-              // データの取得処理
-              this.setActivityData();
-            } else {
-              this.props.history.push('/');
-            }
-          });
-        } else {
-          this.props.history.push('/');
-        }
-      });
+    const worksheetId = encodeURI(match.params.id);
+    if (!userId || !worksheetId) {
+      history.push('/');
+      return;
+    }
+    const memberIds = await database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/members/`).once('value');
+    if (memberIds.exists() && Array.isArray(memberIds.val()) && memberIds.val().includes(userId)) {
+      this.setState({ worksheetId });
+      // メンバーを取得する処理
+      const members = await Promise.all(memberIds.val().map(uid => database.ref(`/${constants.API_VERSION}/users/${uid}/settings/`).once('value')));
+      const memberDatas = members.filter(member => member.exists()).map(member => member.val());
+      if (this.hot) {
+        this.hot.updateSettings({ members: memberDatas });
+        // データの取得処理
+        this.setActivityData();
+      } else {
+        history.push('/');
+      }
     } else {
-      this.props.history.push('/');
+      history.push('/');
     }
   }
 
   componentDidMount() {
-    if (!this.props.userId) return;
+    const { userId } = this.props;
+    if (!userId) return;
     const self = this;
     // この画面だけで使う日付のカラムを追加
     hotConf.columns.unshift({
@@ -105,7 +105,7 @@ class Activity extends Component {
       colWidths: 70,
     });
     this.hot = new Handsontable(this.hotDom, Object.assign({}, hotConf, {
-      userId: this.props.userId,
+      userId,
       isActiveNotifi: false,
       renderAllRows: true,
       height: 300,
@@ -125,9 +125,8 @@ class Activity extends Component {
   }
 
   setActivityData() {
-    const startDate = moment(this.state.startDate);
-    const endDate = moment(this.state.endDate);
-    const diff = endDate.diff(startDate, 'days');
+    const { worksheetId, startDate, endDate } = this.state;
+    const diff = moment(endDate).diff(moment(startDate), 'days');
     if (!util.isNaturalNumber(diff)) {
       this.hot.updateSettings({ data: [] });
       return;
@@ -138,8 +137,8 @@ class Activity extends Component {
       return;
     }
     const promises = [];
-    promises.push(database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${startDate.format(constants.DATEFMT)}`).once('value'));
-    promises.push(...Array(diff).fill('dummy').map(() => database.ref(`/${constants.API_VERSION}/worksheets/${this.state.worksheetId}/tableTasks/${startDate.add(1, 'days').format(constants.DATEFMT)}`).once('value')));
+    promises.push(database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/tableTasks/${moment(startDate).format(constants.DATEFMT)}`).once('value'));
+    promises.push(...Array(diff).fill('dummy').map(() => database.ref(`/${constants.API_VERSION}/worksheets/${worksheetId}/tableTasks/${moment(startDate).add(1, 'days').format(constants.DATEFMT)}`).once('value')));
     Promise.all(promises).then((datas) => {
       const datasVals = datas.map(data => (data.exists() ? data.val() : [{
         id: '', assign: '', title: 'no task', estimate: '', startTime: '', endTime: '', memo: '',
@@ -161,18 +160,28 @@ class Activity extends Component {
   }
 
   syncStateByRender() {
+    const { taskData } = this.state;
     if (!this.hot) return;
     const hotTasks = getHotTasksIgnoreEmptyTask(this.hot);
-    if (!util.equal(hotTasks, this.state.taskData)) {
+    if (!util.equal(hotTasks, taskData)) {
       this.setState({ taskData: JSON.stringify(hotTasks, null, '\t') });
     }
   }
 
   backToWorkSheet() {
-    this.props.history.push(`/${this.state.worksheetId}`);
+    const { history } = this.props;
+    const { worksheetId } = this.state;
+    history.push(`/${worksheetId}`);
   }
 
   render() {
+    const {
+      startDate,
+      endDate,
+      taskData,
+      isOpenSnackbar,
+      snackbarText,
+    } = this.state;
     const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
@@ -189,35 +198,35 @@ class Activity extends Component {
           <Typography gutterBottom variant="caption">
             本日(
             {moment().format(constants.DATEFMT)}
-)
+            )
           </Typography>
-          <DatePicker value={this.state.startDate} changeDate={(e) => { this.changeDate('startDate', e.target.value); }} label="開始" />
+          <DatePicker value={startDate} changeDate={(e) => { this.changeDate('startDate', e.target.value); }} label="開始" />
           <span style={{ margin: `0 ${theme.spacing.unit * 2}px` }}>
             <ArrowForward />
           </span>
-          <DatePicker value={this.state.endDate} changeDate={(e) => { this.changeDate('endDate', e.target.value); }} label="終了" />
+          <DatePicker value={endDate} changeDate={(e) => { this.changeDate('endDate', e.target.value); }} label="終了" />
         </Grid>
         <Grid item xs={12}>
-          {this.state.taskData !== '' && (
+          {taskData !== '' && (
             <div>
               <Typography gutterBottom variant="caption">
                 見積:
                 <span className={classes.block} style={{ color: constants.brandColor.base.GREEN }}>
-■
+                ■
                 </span>
-(緑色) /
+                (緑色) /
                 実績:
                 <span className={classes.block} style={{ color: constants.brandColor.base.BLUE }}>
-■
+                ■
                 </span>
-(青色) /
+                (青色) /
                 残:
                 <span className={classes.block} style={{ color: constants.brandColor.base.RED }}>
-■
+                ■
                 </span>
-(赤色)
+                (赤色)
               </Typography>
-              <ActivityChart tableTasks={JSON.parse(this.state.taskData)} />
+              <ActivityChart tableTasks={JSON.parse(taskData)} />
             </div>
           )}
         </Grid>
@@ -226,7 +235,7 @@ class Activity extends Component {
         </Grid>
         <Grid item xs={4}>
           <CodeMirror
-            value={this.state.taskData}
+            value={taskData}
             options={Object.assign({}, editorOptions, { readOnly: true })}
           />
         </Grid>
@@ -238,9 +247,9 @@ class Activity extends Component {
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSnackbar}
+          open={isOpenSnackbar}
           onClose={() => { this.setState({ isOpenSnackbar: false }); }}
-          message={this.state.snackbarText}
+          message={snackbarText}
         />
       </Grid>
     );
