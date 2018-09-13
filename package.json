@@ -41,7 +41,7 @@
     "raven-js": "^3.27.0",
     "react": "^16.5.1",
     "react-codemirror2": "^5.1.0",
-    "react-dom": "^16.5.0",
+    "react-dom": "^16.5.1",
     "react-ga": "^2.5.3",
     "react-native": "~0.55.2",
     "react-router-dom": "^4.3.1",
