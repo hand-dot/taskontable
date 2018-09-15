@@ -75,6 +75,9 @@ const styles = theme => ({
     overflow: 'hidden',
     padding: 0,
   },
+  input: {
+    width: '100%',
+  },
 });
 
 const getBlankTarget = () => util.cloneDeep({
@@ -478,6 +481,11 @@ class Members extends Component {
                     invitationEmails:
                   invitationEmails.filter(invitationEmail => invitationEmail !== email),
                   });
+                }}
+                InputProps={{
+                  classes: {
+                    input: classes.input,
+                  },
                 }}
                 label={i18n.t('common.emailAddress')}
                 fullWidthInput
