@@ -79,11 +79,11 @@ class Clock extends Component {
   }
 
   componentDidMount() {
-    const { stateMoment } = this.state;
     const $hour = this.hour;
     const $minute = this.minute;
     const $second = this.second;
     const timedUpdate = () => {
+      const { stateMoment } = this.state;
       const newMoment = stateMoment.add(1, 'seconds');
       const hour = newMoment.hour();
       const minute = newMoment.minute();
