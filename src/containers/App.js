@@ -7,21 +7,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
-import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Hidden from '@material-ui/core/Hidden';
-import Drawer from '@material-ui/core/Drawer';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
-import Add from '@material-ui/icons/Add';
-import Close from '@material-ui/icons/Close';
 
 import '../styles/keyframes.css';
 import util from '../utils/util';
@@ -39,8 +30,7 @@ import Activity from './Activity';
 import Settings from './Settings';
 import WorkSheet from './WorkSheet';
 import Hello from './Hello';
-
-import sharp from '../images/sharp.svg';
+import Sidebar from './Sidebar';
 
 const messaging = util.getMessaging();
 const auth = util.getAuth();
@@ -85,9 +75,7 @@ class App extends Component {
     this.state = {
       user: getInitialStateUser(),
       worksheets: [], // 自分の所属しているワークシートの一覧
-      newWorksheetName: '',
       isOpenSidebar: false,
-      isOpenCreateWorksheetModal: false,
       isOpenSupportBrowserDialog: false,
       isOpenHelpDialog: false,
       processing: props.location.pathname !== '/',
@@ -281,54 +269,9 @@ class App extends Component {
     });
   }
 
-  createWorksheet() {
-    const {
-      newWorksheetName,
-      user,
-      worksheets,
-    } = this.state;
-    if (newWorksheetName === '') {
-      alert(i18n.t('validation.must_target', { target: i18n.t('common.worksheetName') }));
-      return;
-    }
-    if (!util.validateDatabaseKey(newWorksheetName)) {
-      alert(i18n.t('validation.containsForbiddenCharacter_target', { target: i18n.t('common.worksheetName') }));
-      return;
-    }
-    // ワークシートのIDはシート名をtoLowerCaseしてencodeURIしたものにするシート名はシート名で別管理する
-    const newWorksheetId = util.formatURLString(newWorksheetName);
-    // ワークシートのIDが存在しない場合は作成できる。
-    database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).once('value').then((snapshot) => {
-      if (snapshot.exists()) {
-        alert(i18n.t('validation.cantCreate_target', { target: i18n.t('common.worksheetName') }));
-      } else {
-        Promise.all([
-          database.ref(`/${constants.API_VERSION}/users/${user.uid}/worksheets/`).set(worksheets.map(worksheet => worksheet.id).concat([newWorksheetId])),
-          database.ref(`/${constants.API_VERSION}/worksheets/${newWorksheetId}/`).set({ members: [user.uid], name: newWorksheetName, disclosureRange: constants.worksheetDisclosureRange.PRIVATE }),
-        ]).then(() => {
-          this.setState({
-            worksheets: worksheets.concat([{ id: newWorksheetId, name: newWorksheetName }]),
-            newWorksheetName: '',
-            isOpenCreateWorksheetModal: false,
-            isOpenSnackbar: true,
-            snackbarText: i18n.t('common.wasCreated_target', { target: newWorksheetName }),
-          });
-          this.goWorkSheet(newWorksheetId);
-        });
-      }
-    });
-  }
-
-  goWorkSheet(id) {
-    const { history } = this.props;
-    history.push('/');
-    setTimeout(() => { history.push(`/${id}`); });
-    if (util.isMobile()) this.setState({ isOpenSidebar: false });
-  }
-
   render() {
     const {
-      classes, theme, location, history,
+      classes, theme, history, location,
     } = this.props;
     const {
       user,
@@ -337,8 +280,6 @@ class App extends Component {
       isOpenHelpDialog,
       processing,
       isOpenSupportBrowserDialog,
-      isOpenCreateWorksheetModal,
-      newWorksheetName,
       isOpenSnackbar,
       snackbarText,
     } = this.state;
@@ -354,51 +295,22 @@ class App extends Component {
           goSettings={() => { history.push(`/${user.uid}/settings`); }}
           history={history}
         />
-        <Drawer variant={util.isMobile() ? 'temporary' : 'persistent'} open={isOpenSidebar} style={{ display: isOpenSidebar ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }}>
-          <Hidden xsDown>
-            <div style={{ height: theme.spacing.unit }} />
-            <div className={classes.toolbar} />
-          </Hidden>
-          <List component="nav">
-            <ListItem divider button onClick={() => { this.setState({ isOpenSidebar: false }); }}>
-              <ListItemIcon>
-                <Close />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('common.close')} />
-            </ListItem>
-            <ListItem divider button onClick={this.goWorkSheet.bind(this, '')} disabled={location.pathname === '/'} style={{ backgroundColor: location.pathname === '/' ? 'rgba(0, 0, 0, 0.08)' : '' }}>
-              <ListItemIcon>
-                <span role="img" aria-label="Hello">
-                  😜
-                </span>
-              </ListItemIcon>
-              <ListItemText primary="Hello" />
-            </ListItem>
-            {worksheets.map((worksheet) => {
-              const isActive = util.formatURLString(location.pathname.replace('/', '')) === util.formatURLString(worksheet.name);
-              return (
-                <ListItem divider key={worksheet.id} button onClick={this.goWorkSheet.bind(this, worksheet.id)} disabled={isActive} style={{ backgroundColor: isActive ? 'rgba(0, 0, 0, 0.08)' : '' }}>
-                  <ListItemIcon>
-                    <img src={sharp} alt="channel" width="21" height="26" />
-                  </ListItemIcon>
-                  <ListItemText key={worksheet.id} primary={worksheet.name} />
-                </ListItem>
-              );
-            })}
-            <ListItem
-              divider
-              button
-              onClick={() => {
-                this.setState({ isOpenCreateWorksheetModal: true });
-              }}
-            >
-              <ListItemIcon>
-                <Add />
-              </ListItemIcon>
-              <ListItemText primary={i18n.t('common.createNew')} />
-            </ListItem>
-          </List>
-        </Drawer>
+        <Sidebar
+          userId={user.uid}
+          open={isOpenSidebar}
+          worksheets={worksheets}
+          handleSnackbar={({ isOpen, message }) => {
+            this.setState({ isOpenSnackbar: isOpen, snackbarText: message });
+          }}
+          handleWorksheets={(newWorksheets) => {
+            this.setState({ worksheets: newWorksheets });
+          }}
+          handleSidebarStatus={({ isOpen }) => {
+            this.setState({ isOpenSidebar: isOpen });
+          }}
+          location={location}
+          history={history}
+        />
         <main className={classes.content}>
           <Switch>
             <Route exact strict path="/" render={(props) => { if (user.uid !== '') { return <Hello user={user} haveWorksheets={worksheets.length !== 0} {...props} toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !isOpenHelpDialog }); }} />; } return (<Top {...props} />); }} />
@@ -453,35 +365,6 @@ class App extends Component {
               autoFocus
             >
               {i18n.t('common.download')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Dialog
-          fullWidth
-          open={isOpenCreateWorksheetModal}
-          onClose={() => { this.setState({ newWorksheetName: '', isOpenCreateWorksheetModal: false }); }}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogTitle id="form-dialog-title">
-            {i18n.t('app.createWorksheet')}
-          </DialogTitle>
-          <DialogContent>
-            <TextField
-              onChange={(e) => { this.setState({ newWorksheetName: e.target.value }); }}
-              value={newWorksheetName}
-              autoFocus
-              margin="dense"
-              id="name"
-              label={i18n.t('common.worksheetName')}
-              fullWidth
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button size="small" onClick={() => { this.setState({ isOpenCreateWorksheetModal: false }); }} color="primary">
-              {i18n.t('common.cancel')}
-            </Button>
-            <Button size="small" onClick={this.createWorksheet.bind(this)} color="primary">
-              {i18n.t('common.create')}
             </Button>
           </DialogActions>
         </Dialog>
