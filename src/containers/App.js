@@ -401,7 +401,7 @@ class App extends Component {
         </Drawer>
         <main className={classes.content}>
           <Switch>
-            <Route exact strict path="/" render={(props) => { if (user.uid !== '') { return <Hello user={user} {...props} toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !isOpenHelpDialog }); }} />; } return (<Top {...props} />); }} />
+            <Route exact strict path="/" render={(props) => { if (user.uid !== '') { return <Hello user={user} haveWorksheets={worksheets.length !== 0} {...props} toggleHelpDialog={() => { this.setState({ isOpenHelpDialog: !isOpenHelpDialog }); }} />; } return (<Top {...props} />); }} />
             <Route exact strict path="/privacy-and-terms" render={props => <PrivacyPolicyTermsOfService {...props} />} />
             <Route exact strict path="/signup" render={props => <Signup signup={this.signup.bind(this)} login={this.login.bind(this)} {...props} />} />
             <Route exact strict path="/login" render={props => <Login login={this.login.bind(this)} {...props} />} />

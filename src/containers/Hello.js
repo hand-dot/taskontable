@@ -9,6 +9,7 @@ import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Close from '@material-ui/icons/Close';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -40,6 +41,14 @@ const styles = {
     fontSize: 22,
     margin: 5,
   },
+  colorPrimary: {
+    color: 'white',
+    backgroundColor: 'red',
+  },
+  colorTransparent: {
+    color: 'transparent',
+    backgroundColor: 'transparent',
+  },
 };
 
 class Hello extends Component {
@@ -67,7 +76,7 @@ class Hello extends Component {
   render() {
     const isMobile = util.isMobile();
     const { isOpenHowtoUseDialog } = this.state;
-    const { classes } = this.props;
+    const { haveWorksheets, classes } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch">
         <Grid item xs={12}>
@@ -75,12 +84,11 @@ class Hello extends Component {
             <Typography gutterBottom variant="title">
               {i18n.t('hello.wellcome')}
               {'   '}
-              <Button onClick={() => { this.setState({ isOpenHowtoUseDialog: true }); }} color="primary">
-                <strong>
-                *
+              <Badge color="primary" classes={{ colorPrimary: haveWorksheets ? classes.colorTransparent : classes.colorPrimary }} badgeContent="!">
+                <Button onClick={() => { this.setState({ isOpenHowtoUseDialog: true }); }} color="primary">
                   {i18n.t('hello.seeHowTouse')}
-                </strong>
-              </Button>
+                </Button>
+              </Badge>
             </Typography>
             <div style={{ marginTop: 30, marginBottom: 30 }}>
               <Typography gutterBottom variant="body2">
@@ -194,6 +202,7 @@ class Hello extends Component {
 
 Hello.propTypes = {
   toggleHelpDialog: PropTypes.func.isRequired,
+  haveWorksheets: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   theme: PropTypes.object.isRequired, // eslint-disable-line
 };
