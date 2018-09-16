@@ -19,9 +19,9 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import constants from '../constants';
-import google from '../images/google.svg';
-import email from '../images/email.svg';
-import person from '../images/person.svg';
+import googleIcon from '../images/google.svg';
+import emailIcon from '../images/email.svg';
+import personIcon from '../images/person.svg';
 import util from '../utils/util';
 import i18n from '../i18n';
 
@@ -112,7 +112,14 @@ class Settings extends Component {
     // 変更したユーザーの情報をサーバーに送信する
     // また、firebaseのauthで管理している情報にも更新を加える。
     this.setState({ processing: true });
-    const { user } = this.props;
+    const {
+      newPassword,
+      newPasswordConf,
+      displayName,
+      email,
+      photoURL,
+    } = this.state;
+    const { user, handleUser } = this.props;
     const propsUser = user;
     const authUser = auth.currentUser;
     if (propsUser.uid !== authUser.uid) {
@@ -122,26 +129,26 @@ class Settings extends Component {
       if (this.newPhotoBlob) {
         storage.ref().child(`profilePhotos/${propsUser.uid}.${this.newPhotoBlob.type.replace('image/', '')}`).put(this.newPhotoBlob).then((snapshot) => {
           this.newPhotoBlob = null;
-          snapshot.ref.getDownloadURL().then((photoURL) => {
-            this.setState({ photoURL });
-            promises.push(database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/photoURL/`).set(photoURL), authUser.updateProfile({ photoURL }));
+          snapshot.ref.getDownloadURL().then((newPhotoURL) => {
+            this.setState({ photoURL: newPhotoURL });
+            promises.push(database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/photoURL/`).set(newPhotoURL), authUser.updateProfile({ photoURL: newPhotoURL }));
           });
         });
       }
-      if (this.state.newPassword !== '') {
-        if (this.state.newPassword.length >= 6 && this.state.newPassword === this.state.newPasswordConf) {
-          promises.push(authUser.updatePassword(this.state.newPassword));
+      if (newPassword !== '') {
+        if (newPassword.length >= 6 && newPassword === newPasswordConf) {
+          promises.push(authUser.updatePassword(newPassword));
         } else {
           alert(i18n.t('validation.correct_target', { target: i18n.t('common.password') }));
           this.setState({ processing: false });
           return;
         }
       }
-      if (propsUser.displayName !== this.state.displayName) {
-        if (this.state.displayName !== '') {
+      if (propsUser.displayName !== displayName) {
+        if (displayName !== '') {
           promises.push(
-            database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/displayName/`).set(this.state.displayName),
-            authUser.updateProfile({ displayName: this.state.displayName }),
+            database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/displayName/`).set(displayName),
+            authUser.updateProfile({ displayName }),
           );
         } else {
           alert(i18n.t('validation.invalid_target', { target: i18n.t('common.userName') }));
@@ -149,11 +156,11 @@ class Settings extends Component {
           return;
         }
       }
-      if (propsUser.email !== this.state.email) {
-        if (util.validateEmail(this.state.email)) {
+      if (propsUser.email !== email) {
+        if (util.validateEmail(email)) {
           promises.push(
-            database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/email/`).set(this.state.email),
-            authUser.updateEmail(this.state.email),
+            database.ref(`/${constants.API_VERSION}/users/${propsUser.uid}/settings/email/`).set(email),
+            authUser.updateEmail(email),
           );
         } else {
           alert(i18n.t('validation.invalid_target', { target: i18n.t('common.emailAddress') }));
@@ -163,10 +170,10 @@ class Settings extends Component {
       }
       Promise.all(promises).then(() => {
         this.setState({ isOpenSaveSnackbar: true, processing: false });
-        this.props.handleUser({
-          displayName: this.state.displayName,
-          email: this.state.email,
-          photoURL: this.state.photoURL,
+        handleUser({
+          displayName,
+          email,
+          photoURL,
         });
       }, () => {
         alert(i18n.t('settings.failedToSave'));
@@ -176,11 +183,16 @@ class Settings extends Component {
   }
 
   backToApp() {
-    const { user } = this.props;
-    if (user.displayName !== this.state.displayName || user.email !== this.state.email || user.photoURL !== this.state.photoURL) {
+    const {
+      displayName,
+      email,
+      photoURL,
+    } = this.state;
+    const { user, history } = this.props;
+    if (user.displayName !== displayName || user.email !== email || user.photoURL !== photoURL) {
       if (!window.confirm(i18n.t('common.someContentsAreNotSaved') + i18n.t('common.areYouSureBackToPreviousPage'))) return;
     }
-    this.props.history.goBack();
+    history.goBack();
   }
 
   changePhotoInput(e) {
@@ -205,6 +217,17 @@ class Settings extends Component {
   }
 
   render() {
+    const {
+      loginProviderId,
+      photoURL,
+      isOpenEditPhotoDialog,
+      displayName,
+      email,
+      newPassword,
+      newPasswordConf,
+      isOpenSaveSnackbar,
+      processing,
+    } = this.state;
     const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
@@ -216,22 +239,22 @@ class Settings extends Component {
         <Grid item xs={4}>
           <div className={classes.content}>
             {(() => {
-              if (this.state.loginProviderId === constants.loginProviderId.PASSWORD) {
-                return <img src={email} alt="email" height="20" />;
-              } if (this.state.loginProviderId === constants.loginProviderId.GOOGLE) {
-                return <img src={google} alt="google" height="20" />;
+              if (loginProviderId === constants.loginProviderId.PASSWORD) {
+                return <img src={emailIcon} alt="email" height="20" />;
+              } if (loginProviderId === constants.loginProviderId.GOOGLE) {
+                return <img src={googleIcon} alt="google" height="20" />;
               }
               return null;
             })()}
             <div style={{ textAlign: 'center' }}>
               <IconButton className={classes.iconButton} data-menu-key="user" onClick={() => { this.setState({ isOpenEditPhotoDialog: true }); }}>
-                <Avatar className={classes.userPhoto} src={this.state.photoURL ? this.state.photoURL : person} />
+                <Avatar className={classes.userPhoto} src={photoURL || personIcon} />
               </IconButton>
               <Dialog
                 fullScreen
                 disableBackdropClick
                 disableEscapeKeyDown
-                open={this.state.isOpenEditPhotoDialog}
+                open={isOpenEditPhotoDialog}
                 onClose={() => { this.setState({ isOpenEditPhotoDialog: false }); }}
                 aria-labelledby="edit-photo-dialog"
               >
@@ -240,7 +263,7 @@ class Settings extends Component {
                 </DialogTitle>
                 <DialogContent>
                   <DialogContentText />
-                  <img ref={(node) => { this.editingPhoto = node; }} style={{ maxWidth: 300, maxHeight: 300 }} src={this.state.photoURL} crossOrigin="" alt={`${i18n.t('settings.profilePhoto') + (this.state.photoURL ? '' : `: ${i18n.t('settings.notSet')}`)}`} />
+                  <img ref={(node) => { this.editingPhoto = node; }} style={{ maxWidth: 300, maxHeight: 300 }} src={photoURL} crossOrigin="" alt={`${i18n.t('settings.profilePhoto') + (photoURL ? '' : `: ${i18n.t('settings.notSet')}`)}`} />
                   <div>
                     <input type="file" name="image" accept="image/*" onChange={this.changePhotoInput.bind(this)} />
                   </div>
@@ -259,7 +282,7 @@ class Settings extends Component {
         </Grid>
         <Grid item xs={8}>
           <TextField
-            value={this.state.displayName}
+            value={displayName}
             onChange={(e) => { this.setState({ displayName: e.target.value }); }}
             id="displayName"
             label={i18n.t('common.userName')}
@@ -267,8 +290,8 @@ class Settings extends Component {
             margin="normal"
           />
           <TextField
-            value={this.state.email}
-            disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
+            value={email}
+            disabled={loginProviderId !== constants.loginProviderId.PASSWORD}
             onChange={(e) => { this.setState({ email: e.target.value }); }}
             id="email"
             label={i18n.t('common.emailAddress')}
@@ -276,8 +299,8 @@ class Settings extends Component {
             margin="normal"
           />
           <TextField
-            value={this.state.newPassword}
-            disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
+            value={newPassword}
+            disabled={loginProviderId !== constants.loginProviderId.PASSWORD}
             onChange={(e) => { this.setState({ newPassword: e.target.value }); }}
             id="newPassword"
             type="password"
@@ -287,8 +310,8 @@ class Settings extends Component {
             margin="normal"
           />
           <TextField
-            value={this.state.newPasswordConf}
-            disabled={this.state.loginProviderId !== constants.loginProviderId.PASSWORD}
+            value={newPasswordConf}
+            disabled={loginProviderId !== constants.loginProviderId.PASSWORD}
             onChange={(e) => { this.setState({ newPasswordConf: e.target.value }); }}
             id="newPasswordConf"
             type="password"
@@ -299,19 +322,19 @@ class Settings extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">
+          <Button style={{ margin: theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">
             {i18n.t('common.save')}
           </Button>
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button style={{ margin: this.props.theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">
+          <Button style={{ margin: theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">
             {i18n.t('common.backToPreviousPage')}
           </Button>
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSaveSnackbar}
+          open={isOpenSaveSnackbar}
           onClose={() => { this.setState({ isOpenSaveSnackbar: false }); }}
           ContentProps={{ 'aria-describedby': 'info-id' }}
           message={(
@@ -323,8 +346,8 @@ class Settings extends Component {
             </span>
 )}
         />
-        <Dialog open={this.state.processing}>
-          <div style={{ padding: this.props.theme.spacing.unit }}>
+        <Dialog open={processing}>
+          <div style={{ padding: theme.spacing.unit }}>
             <CircularProgress className={classes.circularProgress} />
           </div>
         </Dialog>

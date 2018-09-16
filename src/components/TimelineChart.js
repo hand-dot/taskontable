@@ -43,7 +43,7 @@ class TimelineChart extends Component {
     const { tableTasks } = this.props;
     this.draw(tableTasks);
     this.intervalID = setInterval(() => {
-      this.draw(this.props.tableTasks);
+      this.draw(this.props.tableTasks); // eslint-disable-line
     }, 60000);
   }
 

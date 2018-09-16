@@ -67,7 +67,7 @@ export default {
     PREVDATE: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 188,
     NEXTTAB: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 221,
     PREVTAB: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && e.keyCode === 219,
-    TOGGLE_HELP: e => e.ctrlKey && e.shiftKey && e.keyCode === 191, // ヘルプだけはmacOSでクロームのヘルプがアプリのレベルで割り当てられていてctrlにしなければいけない
+    TOGGLE_HELP: e => e.ctrlKey && e.shiftKey && e.keyCode === 191,
     TOGGLE_DASHBOAD: e => (osName === 'Mac OS' ? e.metaKey : e.ctrlKey) && !e.shiftKey && e.keyCode === 74,
   },
   menuItemKey: {

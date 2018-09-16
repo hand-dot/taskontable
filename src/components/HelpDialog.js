@@ -92,7 +92,10 @@ function HelpDialog(props) {
                   {i18n.t(`help.tableColors.${_.tableColor}`)}
                   {' '}
                   /
-                  <span className={classes.block} style={{ color: constants.cellColor[_.cellColor] }}>
+                  <span
+                    className={classes.block}
+                    style={{ color: constants.cellColor[_.cellColor] }}
+                  >
                   ■
                   </span>
                 </Typography>

@@ -30,7 +30,7 @@ export default function register() {
 
       if (isLocalhost) {
         // This is running on localhost. Lets check if a service worker still exists or not.
-        checkValidServiceWorker(swUrl);
+        checkValidServiceWorker(swUrl); // eslint-disable-line
 
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
@@ -40,7 +40,7 @@ export default function register() {
         });
       } else {
         // Is not local host. Just register service worker
-        registerValidSW(swUrl);
+        registerValidSW(swUrl); // eslint-disable-line
       }
     });
   }
@@ -50,7 +50,7 @@ function registerValidSW(swUrl) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
-      registration.onupdatefound = () => {
+      registration.onupdatefound = () => { // eslint-disable-line
         const installingWorker = registration.installing;
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {

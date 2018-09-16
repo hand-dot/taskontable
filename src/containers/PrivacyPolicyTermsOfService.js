@@ -50,7 +50,8 @@ function PrivacyPolicyTermsOfService(props) {
             <ol type="a">
               <li>
                 Permission is granted to temporarily download one copy of the materials
-                (information or software) on Taskontable's web site for personal, non-commercial
+                (information or software) on Taskontable&lsquo;s web site for personal,
+                 non-commercial
                 transitory viewing only. This is the grant of a license, not a transfer of
                 title, and under this license you may not:
 
@@ -64,13 +65,14 @@ function PrivacyPolicyTermsOfService(props) {
                   </li>
                   <li>
                     attempt to decompile or reverse engineer any software contained on
-                    Taskontable's web site;
+                    Taskontable&lsquo;s web site;
                   </li>
                   <li>
                     remove any copyright or other proprietary notations from the materials; or
                   </li>
                   <li>
-                    transfer the materials to another person or "mirror" the materials on any
+                    transfer the materials to another person
+                    or &quot;mirror&quot; the materials on any
                     other server.
                   </li>
                 </ol>
@@ -90,7 +92,8 @@ function PrivacyPolicyTermsOfService(props) {
 
             <ol type="a">
               <li>
-                The materials on Taskontable's web site are provided "as is". Taskontable makes
+                The materials on Taskontable&lsquo;s
+                web site are provided &quot;as is&quot;. Taskontable makes
                 no warranties, expressed or implied, and hereby disclaims and negates all other
                 warranties, including without limitation, implied warranties or conditions of
                 merchantability, fitness for a particular purpose, or non-infringement of
@@ -109,7 +112,7 @@ function PrivacyPolicyTermsOfService(props) {
               In no event shall Taskontable or its suppliers be liable for any damages
               (including, without limitation, damages for loss of data or profit, or due to
               business interruption,) arising out of the use or inability to use the materials
-              on Taskontable's Internet site, even if Taskontable or a Taskontable authorized
+              on Taskontable&lsquo;s Internet site, even if Taskontable or a Taskontable authorized
               representative has been notified orally or in writing of the possibility of such
               damage. Because some jurisdictions do not allow limitations on implied
               warranties, or limitations of liability for consequential or incidental damages,
@@ -121,7 +124,7 @@ function PrivacyPolicyTermsOfService(props) {
             </h3>
 
             <p>
-              The materials appearing on Taskontable's web site could include technical,
+              The materials appearing on Taskontable&lsquo;s web site could include technical,
               typographical, or photographic errors. Taskontable does not warrant that any of
               the materials on its web site are accurate, complete, or current. Taskontable
               may make changes to the materials contained on its web site at any time without
@@ -137,7 +140,7 @@ function PrivacyPolicyTermsOfService(props) {
               Taskontable has not reviewed all of the sites linked to its Internet web site
               and is not responsible for the contents of any such linked site. The inclusion
               of any link does not imply endorsement by Taskontable of the site. Use of any
-              such linked web site is at the user's own risk.
+              such linked web site is at the user&lsquo;s own risk.
             </p>
 
             <h3>
@@ -155,7 +158,7 @@ function PrivacyPolicyTermsOfService(props) {
             </h3>
 
             <p>
-              Any claim relating to Taskontable's web site shall be governed by the laws of
+              Any claim relating to Taskontable&lsquo;s web site shall be governed by the laws of
               the State of Tokyo without regard to its conflict of law provisions.
             </p>
 

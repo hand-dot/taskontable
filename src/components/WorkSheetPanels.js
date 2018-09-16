@@ -243,11 +243,19 @@ WorkSheetPanels.propTypes = {
     }))
     .isRequired,
   poolTasks: PropTypes
-    .shape({ highPriorityTasks: PropTypes.array.isRequired, lowPriorityTasks: PropTypes.array.isRequired, regularTasks: PropTypes.array.isRequired })
+    .shape({
+      highPriorityTasks: PropTypes.array.isRequired,
+      lowPriorityTasks: PropTypes.array.isRequired,
+      regularTasks: PropTypes.array.isRequired,
+    })
     .isRequired,
   members: PropTypes
     .arrayOf(PropTypes.shape({
-      displayName: PropTypes.string.isRequired, photoURL: PropTypes.string.isRequired, uid: PropTypes.string.isRequired, email: PropTypes.string.isRequired, fcmToken: PropTypes.string.isRequired,
+      displayName: PropTypes.string.isRequired,
+      photoURL: PropTypes.string.isRequired,
+      uid: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      fcmToken: PropTypes.string.isRequired,
     }))
     .isRequired,
   worksheetName: PropTypes.string.isRequired,

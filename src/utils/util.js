@@ -89,8 +89,10 @@ export default {
     if (startTimeVal === '' || endTimeVal === '') return 0;
     const [startTimeHour, startTimeMinute, startTimeSec] = startTimeVal.split(':');
     const [endTimeHour, endTimeMinute, endTimeSec] = endTimeVal.split(':');
-    if (Number.isInteger(+startTimeHour) && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSec)
-      && Number.isInteger(+endTimeHour) && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSec)) {
+    if (Number.isInteger(+startTimeHour)
+     && Number.isInteger(+startTimeMinute) && Number.isInteger(+startTimeSec)
+      && Number.isInteger(+endTimeHour)
+      && Number.isInteger(+endTimeMinute) && Number.isInteger(+endTimeSec)) {
       const end = `${endTimeHour}:${endTimeMinute}:${endTimeSec}`;
       const start = `${startTimeHour}:${startTimeMinute}:${startTimeSec}`;
       return moment(end, 'HH:mm:ss').diff(moment(start, 'HH:mm:ss'), 'seconds');

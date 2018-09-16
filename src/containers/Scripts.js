@@ -210,6 +210,16 @@ class Scripts extends Component {
   }
 
   render() {
+    const {
+      scriptEnable,
+      importScript,
+      importScriptBk,
+      exportScript,
+      exportScriptBk,
+      isOpenSaveSnackbar,
+      isOpenScriptSnackbar,
+      scriptSnackbarText,
+    } = this.state;
     const { classes, theme } = this.props;
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
@@ -226,12 +236,12 @@ class Scripts extends Component {
           <Typography gutterBottom variant="subheading">
             スクリプトの利用(ON/OFF)
             <span className={classes.divider}>
-/
+              /
             </span>
             <div style={{ display: 'inline-block' }}>
               <Switch
                 color="primary"
-                checked={this.state.scriptEnable}
+                checked={scriptEnable}
                 onChange={this.handleScriptEnable.bind(this)}
                 value="scriptEnable"
               />
@@ -243,7 +253,7 @@ class Scripts extends Component {
           <Typography gutterBottom variant="subheading">
               ワークシートのデータの例
             <span className={classes.divider}>
-/
+              /
             </span>
             <Tooltip title="リセット" placement="top">
               <div style={{ display: 'inline-block' }}>
@@ -256,7 +266,7 @@ class Scripts extends Component {
           <Typography gutterBottom variant="caption">
               タスクのスキーマは
             {JSON.stringify(tableTaskSchema)}
-　このようになっております。
+            このようになっております。
           </Typography>
           <Typography gutterBottom variant="caption">
               ワークシートのデータは左のテーブルに対して右のJSON形式(配列)で保存されます。
@@ -278,8 +288,8 @@ class Scripts extends Component {
           <Divider style={{ margin: '1.5em 0' }} />
           <ScriptsEditor
             scriptType="importScript"
-            script={this.state.importScript}
-            scriptBk={this.state.importScriptBk}
+            script={importScript}
+            scriptBk={importScriptBk}
             exampleScript={exampleImportScript.toString()}
             editorOptions={editorOptions}
             resetScript={this.resetScript.bind(this, 'importScript')}
@@ -293,8 +303,8 @@ class Scripts extends Component {
           <Divider style={{ margin: '1.5em 0' }} />
           <ScriptsEditor
             scriptType="exportScript"
-            script={this.state.exportScript}
-            scriptBk={this.state.exportScriptBk}
+            script={exportScript}
+            scriptBk={exportScriptBk}
             exampleScript={exampleExportScript.toString()}
             editorOptions={editorOptions}
             resetScript={this.resetScript.bind(this, 'exportScript')}
@@ -312,15 +322,15 @@ class Scripts extends Component {
         </Grid>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenSaveSnackbar}
+          open={isOpenSaveSnackbar}
           onClose={this.closeSnackbars.bind(this)}
           message="保存しました。"
         />
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={this.state.isOpenScriptSnackbar}
+          open={isOpenScriptSnackbar}
           onClose={this.closeSnackbars.bind(this)}
-          message={this.state.scriptSnackbarText}
+          message={scriptSnackbarText}
         />
       </Grid>
     );
