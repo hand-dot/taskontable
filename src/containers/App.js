@@ -1,5 +1,6 @@
 import { firebase } from '@firebase/app';
 import React, { Component } from 'react';
+import Loadable from 'react-loadable';
 import ReactGA from 'react-ga';
 import PropTypes from 'prop-types';
 import localforage from 'localforage';
@@ -20,17 +21,20 @@ import i18n from '../i18n';
 import constants from '../constants';
 
 import GlobalHeader from './GlobalHeader';
-import Top from './Top';
-import PrivacyPolicyTermsOfService from './PrivacyPolicyTermsOfService';
-import Login from './Login';
-import Logout from './Logout';
-import Signup from './Signup';
-import Scripts from './Scripts';
-import Activity from './Activity';
-import Settings from './Settings';
-import WorkSheet from './WorkSheet';
-import Hello from './Hello';
 import Sidebar from './Sidebar';
+
+const Loading = () => (<div />);
+
+const Top = Loadable({ loader: () => import('./Top'), loading: Loading });
+const PrivacyPolicyTermsOfService = Loadable({ loader: () => import('./PrivacyPolicyTermsOfService'), loading: Loading });
+const Login = Loadable({ loader: () => import('./Login'), loading: Loading });
+const Logout = Loadable({ loader: () => import('./Logout'), loading: Loading });
+const Signup = Loadable({ loader: () => import('./Signup'), loading: Loading });
+const Scripts = Loadable({ loader: () => import('./Scripts'), loading: Loading });
+const Activity = Loadable({ loader: () => import('./Activity'), loading: Loading });
+const Settings = Loadable({ loader: () => import('./Settings'), loading: Loading });
+const WorkSheet = Loadable({ loader: () => import('./WorkSheet'), loading: Loading });
+const Hello = Loadable({ loader: () => import('./Hello'), loading: Loading });
 
 const messaging = util.getMessaging();
 const auth = util.getAuth();
