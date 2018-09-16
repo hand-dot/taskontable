@@ -48,9 +48,9 @@ export default {
   HEADWAY_ACCOUNT: '7zwPXJ',
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   SIDEBAR_WIDTH: 240,
-  REQEST_DELAY_FAST: 100,
-  REQEST_DELAY_SLOW: 500,
-  RENDER_DELAY: 150,
+  REQEST_DELAY_FAST: 50,
+  REQEST_DELAY_SLOW: 250,
+  RENDER_DELAY: 50,
   HOT_MINROW: 20,
   authType: {
     GOOGLE: 'google',
