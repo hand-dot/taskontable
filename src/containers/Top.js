@@ -144,9 +144,22 @@ function Top(props) {
                   {i18n.t('top.appForPc')}
                 </Typography>
               )}
+              <img
+                className={classes.center}
+                style={{
+                  marginBottom: '2rem', width: '100%', maxWidth: 757, borderLeft: 'solid 1px #eee',
+                }}
+                src={example}
+                alt="example"
+              />
             </a>
           </Typography>
-          <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 757 }} src={example} alt="example" />
+          <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
+            {i18n.t('top.toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer')}
+          </Typography>
+          <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
+            {i18n.t('top.whyDontYouFinishWorkEarly')}
+          </Typography>
           <Link className={classes.link} to="/signup">
             <Button variant="raised" className={classes.button} color="primary">
               {i18n.t('top.signUpItsFree')}
