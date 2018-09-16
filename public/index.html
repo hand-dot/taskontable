@@ -15,8 +15,7 @@
   <meta property="og:site_name" content="Taskontable">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="https://taskontable.com">
-  <meta name="twitter:image" content="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fogp.png?alt=media&token=d4739072-55cf-4ea3-b88d-d07269e303bb"
-  />
+  <meta name="twitter:image" content="https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/assets%2Fogp.png?alt=media&token=d4739072-55cf-4ea3-b88d-d07269e303bb" />
   <meta name="twitter:title" content="Taskontable">
   <meta name="twitter:description" content="Taskontable is To-Do List &amp; Time keeper on Spreadsheet. Why don't you finish work early?">
   <!--
@@ -51,7 +50,7 @@
     .update-hint {
       margin: 0 auto;
       width: 70%;
-      border: 1px solid;
+      border: 1px solid #666;
       padding: 10px;
       opacity: 1;
       animation-name: fade-in;
@@ -73,13 +72,24 @@
       height: 1.5rem;
     }
 
+    .ok {
+      text-align: right;
+    }
+
+    .sub {
+      font-size: small;
+      color: #999;
+    }
+
     @keyframes fade-in {
       0% {
         opacity: 0;
       }
+
       99% {
         opacity: 0;
       }
+
       100% {
         opacity: 1;
       }
@@ -89,9 +99,11 @@
       0% {
         opacity: 1;
       }
+
       99% {
         opacity: 1;
       }
+
       100% {
         opacity: 0;
       }
@@ -101,24 +113,35 @@
 
 <body>
   <div id="root">
-    <p class="loading">loading...⌛</p>
-    <h3 class="update-hint" style="border-bottom: none;">
-      Taskontable
-      <button class="close" onclick="window.location.reload(true)">X</button>
-    </h3>
-    <p class="update-hint">
-      Welcome back!😁
-      <br>Taskontable have updated. So you have to clean cache.
-      <br />
-      <br /> ・Are you using the latest Chrome now?
-      <br />　Yes:
-      <a href="javascript:void(0)" onclick="window.location.reload(true)">Click me!(SuperReload)</a>
-      <br />　No:
-      <a href="https://www.google.co.jp/chrome/" target="_blank">Click me!(Download Chrome)</a>
-      <br />
-      <br /> If you see this page over and over, please give me feedback.
-      <br />
-    </p>
+    <p class="loading">Loading...</p>
+    <div>
+      <h3 class="update-hint" style="border-bottom: none;">
+        Welcome back! A new version released!
+        <button class="close" onclick="window.location.reload(true)">X</button>
+      </h3>
+      <div class="update-hint">
+        <p>A new version of Taskontable has been
+          <a href="https://github.com/hand-dot/taskontable/releases" target="_blank" rel="noreferrer noopener">
+            released!
+          </a>
+          🎉
+        </p>
+        <p class="sub">
+          *Do not working? check this.
+          <br />
+          &nbsp;&nbsp;・Recommended browser for Taskontable is the latest Chrome.
+          <br />
+          &nbsp;&nbsp;・If you see this page many times on the same day, please give me Feedback.
+          <br />
+          *Do you have a good idea?
+          <br />
+          &nbsp;&nbsp;・Please tell me that you need to improve from Feedback.
+        </p>
+        <div class="ok">
+          <button autofocus onclick="window.location.reload(true)">&nbsp;&nbsp;OK&nbsp;&nbsp;</button>
+        </div>
+      </div>
+    </div>
   </div>
   <!--
       This HTML file is a template.
@@ -133,10 +156,16 @@
   <!-- Hotjar Tracking Code for taskontable.com -->
   <script>
     (function (h, o, t, j, a, r) {
-      h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
-      h._hjSettings = { hjid: 829672, hjsv: 6 };
+      h.hj = h.hj || function () {
+        (h.hj.q = h.hj.q || []).push(arguments)
+      };
+      h._hjSettings = {
+        hjid: 829672,
+        hjsv: 6
+      };
       a = o.getElementsByTagName('head')[0];
-      r = o.createElement('script'); r.async = 1;
+      r = o.createElement('script');
+      r.async = 1;
       r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
       a.appendChild(r);
     })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
