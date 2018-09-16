@@ -106,6 +106,7 @@ export default {
     SimpleFastBeautifulMoreFun: 'シンプルで、速く、美しく、しかも楽しい。',
     developedForIndividualsAndTeams: '個人とチーム向けに開発されました。',
     canCollaborateInRealtime: 'リアルタイムにコラボレーションできます！',
+    ifYouNeedProductionStoryCheckCreatorsInterview: '制作ストーリーが知りたい場合は作成者のインタビューをチェック！',
     checkDemo: 'デモをチェック!',
     appForPc: 'このアプリはPC用です',
   },

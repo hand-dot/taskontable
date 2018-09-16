@@ -132,6 +132,15 @@ function Top(props) {
           </div>
         </div>
       </Grid>
+      <Grid item xs={12}>
+        <div className={classes.center}>
+          <div className={classes.content}>
+            <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+              <a href={constants.INTERVIEW_URL}>{i18n.t('top.ifYouNeedProductionStoryCheckCreatorsInterview')}</a>
+            </Typography>
+          </div>
+        </div>
+      </Grid>
       <Grid className={classes.center} item xs={12}>
         <Divider />
         <div className={classes.content}>

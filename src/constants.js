@@ -44,6 +44,7 @@ export default {
   PRESSKIT_URL: 'https://firebasestorage.googleapis.com/v0/b/taskontable.appspot.com/o/presskit.zip?alt=media&token=12b49590-8ce2-4f72-9082-488ab28e4bf0',
   BLOG_URL: 'https://medium.com/@taskontable',
   COMMUNITY_URL: 'https://join.slack.com/t/taskontable/shared_invite/enQtMzQwMDQ0MjcwOTE1LTZiODZjYmY4OTczNzJjZTU2NDM1NTlmODIyNDdlNTY3MGIzYzE0YTNjZjU0NmM2MzRhOGQ1ZTIyYTA3NmNiODE',
+  INTERVIEW_URL: 'https://handsontable.com/blog/articles/2018/9/interview-taskontable-kyouhei-fukuda',
   HEADWAY_ACCOUNT: '7zwPXJ',
   CHROME_HELP_PERMISSION_URL: 'https://support.google.com/chrome/answer/114662',
   SIDEBAR_WIDTH: 240,

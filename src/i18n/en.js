@@ -106,6 +106,7 @@ export default {
     SimpleFastBeautifulMoreFun: 'Simple, fast, beautiful, more fun.',
     developedForIndividualsAndTeams: 'Developed for individuals and teams.',
     canCollaborateInRealtime: 'Can collaborate in realtime!',
+    ifYouNeedProductionStoryCheckCreatorsInterview: 'If you need a production story, check the creator\'s interview!',
     checkDemo: 'Check it out demo!',
     appForPc: 'This App is for PC',
   },
