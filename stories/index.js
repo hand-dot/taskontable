@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import { storiesOf, ReactiveVar } from '@storybook/react'; // eslint-disable-line
 // import { action } from '@storybook/addon-actions';
 import Clock from '../src/components/Clock';
@@ -7,8 +6,8 @@ import HelpDialog from '../src/components/HelpDialog';
 import TimelineChart from '../src/components/TimelineChart';
 import ActivityChart from '../src/components/ActivityChart';
 import exampleTaskData from '../src/exampleDatas/exampleTaskData';
-import constants from '../src/constants';
 import util from '../src/utils/util';
+import tasksUtil from '../src/utils/tasksUtil';
 
 const activityChartTasks = [
   ...util.cloneDeep(exampleTaskData).map((tableTask) => {
@@ -44,13 +43,15 @@ storiesOf('DashBoad', module)
   .add('HelpDialog', () => (<HelpDialog open onClose={() => {}} />))
   .add('TimelineChart', () => (
     <TimelineChart
-      tableTasks={exampleTaskData.filter(tableTask => tableTask.startTime).map((tableTask) => {
-        const task = { key: '見積' };
-        task.start = moment(tableTask.startTime, constants.TIMEFMT).toDate();
-        task.end = moment(tableTask.startTime, constants.TIMEFMT).add(tableTask.estimate || 0, 'minutes').toDate();
-        task.title = tableTask.title || '無名タスク';
-        return task;
-      })}
+      label="ラベル"
+      tableTasks={tasksUtil.getEstimateTimelineChartTasks(exampleTaskData)}
+      pointer
+    />
+  ))
+  .add('TimelineChart(nodata)', () => (
+    <TimelineChart
+      label="ラベル"
+      tableTasks={tasksUtil.getEstimateTimelineChartTasks([])}
       pointer
     />
   ))

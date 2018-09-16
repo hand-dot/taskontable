@@ -60,9 +60,8 @@ class TimelineChart extends Component {
   draw(data) {
     if (!this.timeline) return;
     const { id } = this.state;
-    const { pointer } = this.props;
+    const { pointer, label } = this.props;
     d3.selectAll(`#timeline-${id} > *`).remove();
-    const labels = d3.nest().key(d => d.key).entries(data);
     const w = this.timeline.parentNode ? this.timeline.parentNode.clientWidth : 0;
 
     // svg
@@ -77,7 +76,7 @@ class TimelineChart extends Component {
       .selectAll('text');
     // yAxis
     const y = d3.scaleBand(0.5).rangeRound([margin.top, h - margin.bottom])
-      .domain(labels.map(d => d.key));
+      .domain([label]);
     const yAxis = d3.axisLeft(y).tickSizeInner(0).tickSizeOuter(0);
     svg.append('g').attr('class', 'axis y-axis').attr('transform', `translate(${margin.left}, 0)`).call(yAxis)
       .selectAll('text')
@@ -100,7 +99,7 @@ class TimelineChart extends Component {
     // Bar
     svg.selectAll('.active').data(data).enter().append('rect')
       .attr('x', d => x(d.start) + margin.left + 1)
-      .attr('y', d => y(d.key))
+      .attr('y', () => y(label))
       .style('width', d => x(d.end) - x(d.start) - 1)
       .style('height', 30)
       .attr('stroke-width', 0.5)
@@ -149,8 +148,8 @@ class TimelineChart extends Component {
 }
 
 TimelineChart.propTypes = {
+  label: PropTypes.string.isRequired,
   tableTasks: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     start: PropTypes.object.isRequired,
     end: PropTypes.object.isRequired,

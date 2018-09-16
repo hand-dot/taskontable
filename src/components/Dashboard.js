@@ -128,10 +128,12 @@ class Dashboard extends Component {
           <Grid container>
             <Grid item xs={12}>
               <TimelineChart
+                label={i18n.t('dashBoad.estimate')}
                 tableTasks={tasksUtil.getEstimateTimelineChartTasks(tableTasks)}
                 pointer={isToday}
               />
               <TimelineChart
+                label={i18n.t('dashBoad.actually')}
                 tableTasks={tasksUtil.getActuallyTimelineChartTasks(tableTasks)}
                 pointer={isToday}
               />
