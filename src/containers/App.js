@@ -166,6 +166,7 @@ class App extends Component {
           this.props.history.push('/');
           return Promise.resolve();
         } if (workSheetListIds.includes(pathname)) { // ■既に参加しているワークシートの場合
+          this.props.history.push(`/${pathname}`);
           return Promise.resolve();
         } if (pathname !== '' && fromInviteEmail) { // ■招待の可能性がある場合の処理
           const worksheetId = fromInviteEmail ? util.formatURLString(util.getQueryVariable('worksheet')) : pathname;
@@ -202,7 +203,10 @@ class App extends Component {
           });
         }
         return Promise.resolve();
-      }).then(() => { this.setState({ processing: false, user: mySettings }); });
+      }).then(() => {
+        this.setState({ processing: false, user: mySettings });
+        setTimeout(() => { this.forceUpdate(); }, constants.RENDER_DELAY);
+      });
     });
   }
 
