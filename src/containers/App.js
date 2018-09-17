@@ -295,7 +295,10 @@ class App extends Component {
       <div className={classes.root}>
         <GlobalHeader
           user={user}
-          openSideBar={() => { this.setState({ isOpenSidebar: true }); }}
+          isOpenSidebar={isOpenSidebar}
+          handleSidebar={({ isOpen }) => {
+            this.setState({ isOpenSidebar: isOpen });
+          }}
           isOpenHelpDialog={isOpenHelpDialog}
           openHelpDialog={() => { this.setState({ isOpenHelpDialog: true }); }}
           closeHelpDialog={() => { this.setState({ isOpenHelpDialog: false }); }}
@@ -313,7 +316,7 @@ class App extends Component {
           handleWorksheets={(newWorksheets) => {
             this.setState({ worksheets: newWorksheets });
           }}
-          handleSidebarStatus={({ isOpen }) => {
+          handleSidebar={({ isOpen }) => {
             this.setState({ isOpenSidebar: isOpen });
           }}
           location={location}

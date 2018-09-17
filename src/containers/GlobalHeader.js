@@ -12,6 +12,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Avatar from '@material-ui/core/Avatar';
 import Info from '@material-ui/icons/Info';
 import Help from '@material-ui/icons/Help';
+import MenuIcon from '@material-ui/icons/Menu';
+import Close from '@material-ui/icons/Close';
 import Notifications from '@material-ui/icons/Notifications';
 import HelpDialog from '../components/HelpDialog';
 import constants from '../constants';
@@ -117,7 +119,13 @@ class GlobalHeader extends Component {
 
   render() {
     const {
-      user, openSideBar, isOpenHelpDialog, openHelpDialog, closeHelpDialog, history, classes,
+      user, handleSidebar,
+      isOpenSidebar,
+      isOpenHelpDialog,
+      openHelpDialog,
+      closeHelpDialog,
+      history,
+      classes,
     } = this.props;
     const {
       anchorEl,
@@ -130,20 +138,14 @@ class GlobalHeader extends Component {
         <Grid container alignItems="stretch" justify="center" spacing={0} className={classes.toolbar}>
           <Grid item xs={12}>
             <Toolbar style={{ paddingLeft: 0 }} className={classes.root}>
-              {(() => {
-                if (login) {
-                  return (
-                    <Button className={classes.title} onClick={openSideBar}>
-                      <img src={title} alt="taskontable" height="18" />
-                    </Button>
-                  );
-                }
-                return (
-                  <Button className={classes.title} onClick={() => { history.push('/'); }}>
-                    <img src={title} alt="taskontable" height="18" />
-                  </Button>
-                );
-              })()}
+              {login && (
+              <IconButton onClick={() => handleSidebar({ isOpen: !isOpenSidebar })}>
+                {isOpenSidebar ? <Close /> : <MenuIcon />}
+              </IconButton>
+              )}
+              <Button className={classes.title} onClick={() => { history.push('/'); }}>
+                <img src={title} alt="taskontable" height="18" />
+              </Button>
               {(() => {
                 if (!login) {
                   return (
@@ -176,7 +178,7 @@ class GlobalHeader extends Component {
                       >
                         <MenuItem title={user.email}>
                           {i18n.t('common.userName')}
-:
+                          :
                           {' '}
                           {user.displayName}
                         </MenuItem>
@@ -266,7 +268,8 @@ GlobalHeader.propTypes = {
     photoURL: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
   }).isRequired,
-  openSideBar: PropTypes.func.isRequired,
+  isOpenSidebar: PropTypes.bool.isRequired,
+  handleSidebar: PropTypes.func.isRequired,
   isOpenHelpDialog: PropTypes.bool.isRequired,
   openHelpDialog: PropTypes.func.isRequired,
   closeHelpDialog: PropTypes.func.isRequired,

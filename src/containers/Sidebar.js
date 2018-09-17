@@ -14,7 +14,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Add from '@material-ui/icons/Add';
-import Close from '@material-ui/icons/Close';
 import util from '../utils/util';
 import i18n from '../i18n';
 import constants from '../constants';
@@ -83,33 +82,33 @@ class Sidebar extends Component {
   }
 
   goWorkSheet(id) {
-    const { history, handleSidebarStatus } = this.props;
+    const { history, handleSidebar } = this.props;
     history.push('/');
     setTimeout(() => { history.push(`/${id}`); });
-    if (util.isMobile()) handleSidebarStatus({ isOpen: false });
+    if (util.isMobile()) handleSidebar({ isOpen: false });
   }
 
   render() {
     const {
-      open, worksheets, handleSidebarStatus, location, classes, theme,
+      open, handleSidebar, worksheets, location, classes, theme,
     } = this.props;
     const {
       isOpenCreateWorksheetModal,
       newWorksheetName,
     } = this.state;
     return (
-      <Drawer variant={util.isMobile() ? 'temporary' : 'persistent'} open={open} style={{ display: open ? 'block' : 'none' }} classes={{ paper: classes.drawerPaper }}>
+      <Drawer
+        variant={util.isMobile() ? 'temporary' : 'persistent'}
+        open={open}
+        onClose={() => handleSidebar({ isOpen: false })}
+        style={{ display: open ? 'block' : 'none' }}
+        classes={{ paper: classes.drawerPaper }}
+      >
         <Hidden xsDown>
           <div style={{ height: theme.spacing.unit }} />
           <div className={classes.toolbar} />
         </Hidden>
         <List component="nav">
-          <ListItem divider button onClick={() => { handleSidebarStatus({ isOpen: false }); }}>
-            <ListItemIcon>
-              <Close />
-            </ListItemIcon>
-            <ListItemText primary={i18n.t('common.close')} />
-          </ListItem>
           <ListItem divider button onClick={this.goWorkSheet.bind(this, '')} disabled={location.pathname === '/'} style={{ backgroundColor: location.pathname === '/' ? 'rgba(0, 0, 0, 0.08)' : '' }}>
             <ListItemIcon>
               <span role="img" aria-label="Hello">
@@ -185,7 +184,7 @@ Sidebar.propTypes = {
   })).isRequired,
   handleWorksheets: PropTypes.func.isRequired,
   handleSnackbar: PropTypes.func.isRequired,
-  handleSidebarStatus: PropTypes.func.isRequired,
+  handleSidebar: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired, // eslint-disable-line
   history: PropTypes.object.isRequired, // eslint-disable-line
   location: PropTypes.object.isRequired, // eslint-disable-line
