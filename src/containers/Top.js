@@ -136,6 +136,9 @@ function Top(props) {
         <div className={classes.center}>
           <div className={classes.content}>
             <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+              <span role="img" aria-label="Help">
+              👀
+              </span>
               <a href={constants.INTERVIEW_URL}>{i18n.t('top.ifYouNeedProductionStoryCheckCreatorsInterview')}</a>
             </Typography>
           </div>
@@ -145,6 +148,9 @@ function Top(props) {
         <Divider />
         <div className={classes.content}>
           <Typography style={{ fontWeight: 'bold' }} variant={isMobile ? 'display1' : 'display3'} align="center">
+            <span role="img" aria-label="Help">
+            👉
+            </span>
             <a href={constants.DEMO_URL}>
               {i18n.t('top.checkDemo')}
               {isMobile && (
