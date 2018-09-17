@@ -76,11 +76,16 @@ class GlobalHeader extends Component {
     };
   }
 
-  componentWillMount() {
-  }
 
   componentDidMount() {
-    if (window.Headway) window.Headway.init({ selector: '#changelog', account: constants.HEADWAY_ACCOUNT });
+    // Headwayのリソースが取得できていない場合は10秒待ってもう一度初期化をする。
+    if (window.Headway) {
+      window.Headway.init({ selector: '#changelog', account: constants.HEADWAY_ACCOUNT });
+    } else {
+      setTimeout(() => {
+        window.Headway.init({ selector: '#changelog', account: constants.HEADWAY_ACCOUNT });
+      }, 100000);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -255,7 +260,6 @@ class GlobalHeader extends Component {
           open={isOpenHelpDialog}
           onClose={closeHelpDialog}
         />
-        <script async src="//cdn.headwayapp.co/widget.js" />
       </AppBar>
     );
   }
