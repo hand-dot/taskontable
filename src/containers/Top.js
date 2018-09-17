@@ -54,11 +54,11 @@ function Top(props) {
             {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
           </Typography>
           <iframe
-            style={{ display: 'block', margin: '0 -10px 2em' }}
+            style={{ display: 'block', margin: '0 0 2em' }}
             title="Getting Started Taskontable"
             width={isMobile ? window.innerWidth : '960'}
             height={isMobile ? window.innerWidth * 0.56 : '540'} // 16:9
-            src={`https://www.youtube.com/embed/${constants.YOUTUBE_MOVIE_ID}?rel=0&showinfo=1&modestbranding=1`}
+            src={`https://www.youtube.com/embed/${constants.YOUTUBE_MOVIE_ID}?rel=0&showinfo=0&modestbranding=1`}
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen
