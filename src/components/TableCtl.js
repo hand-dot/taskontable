@@ -92,7 +92,7 @@ class TableCtl extends Component {
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
       <div>
-        <LinearProgress classes={{ root: classes.progress, bar1Determinate: classes.progressDeterminate }} variant="determinate" value={progressPer} />
+        <LinearProgress classes={{ root: classes.progress, bar1Determinate: classes.progressDeterminate }} variant="determinate" value={Number.isNaN(progressPer) ? 0 : progressPer} />
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems="center" justify="center" spacing={0}>
           <Hidden xsDown>
             <Grid item xs={2} style={{ textAlign: 'center' }}>

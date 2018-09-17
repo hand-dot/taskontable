@@ -16,7 +16,6 @@ export default {
     cellInput: {
       padding: '0 3px',
       fontSize: 10,
-      width: util.isMobile() ? '5.5rem' : null,
     },
     miniCellInput: {
       fontSize: 10,
