@@ -22,6 +22,7 @@ import util from '../utils/util';
 import i18n from '../i18n';
 import '../styles/helpdialog.css';
 import chromeWebstore from '../images/chrome-webstore.png';
+import ScrollToTopOnMount from '../components/ScrollToTopOnMount';
 
 const styles = {
   root: {
@@ -79,6 +80,7 @@ class Hello extends Component {
     const { haveWorksheets, classes } = this.props;
     return (
       <Grid className={classes.root} container spacing={0} alignItems="stretch">
+        <ScrollToTopOnMount />
         <Grid item xs={12}>
           <div className={classes.content}>
             <Typography gutterBottom variant="title">
