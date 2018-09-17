@@ -84,7 +84,7 @@ class GlobalHeader extends Component {
     } else {
       setTimeout(() => {
         window.Headway.init({ selector: '#changelog', account: constants.HEADWAY_ACCOUNT });
-      }, 100000);
+      }, 10000);
     }
   }
 

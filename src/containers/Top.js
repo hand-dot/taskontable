@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 
-import desk from '../images/illust/desk.png';
+import pcMan from '../images/illust/pc_man.jpg';
 import skateboard from '../images/illust/skateboard.jpg';
 import teamMens from '../images/illust/team_mens.jpg';
 import example from '../images/example.png';
@@ -58,7 +58,7 @@ function Top(props) {
             title="Getting Started Taskontable"
             width={isMobile ? window.innerWidth : '960'}
             height={isMobile ? window.innerWidth * 0.56 : '540'} // 16:9
-            src={`https://www.youtube.com/embed/${constants.YOUTUBE_MOVIE_ID}?rel=0&showinfo=0&modestbranding=1`}
+            src={`https://www.youtube.com/embed/${constants.YOUTUBE_MOVIE_ID}?rel=0&showinfo=1&modestbranding=1`}
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen
@@ -82,7 +82,7 @@ function Top(props) {
           <div className={classes.content}>
             <Grid spacing={0} container alignItems="center" justify="center">
               <Grid item xs={12} md={5}>
-                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={desk} alt="desk" />
+                <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={pcMan} alt="pcMan" />
               </Grid>
               <Grid item xs={12} md={7}>
                 <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
