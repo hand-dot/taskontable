@@ -1,6 +1,6 @@
 {
   "name": "taskontable",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
