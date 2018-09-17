@@ -98,7 +98,6 @@ export default {
   top: {
     toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer: 'To the hard worker who spends most of the day in front of computer.',
     whyDontYouFinishWorkEarly: 'Why don\'t you finish work early?',
-    signUpItsFree: 'Sign Up – It’s Free.',
     taskontableIsToDoListAndTimeKeeperOnSpreadsheet: 'Taskontable is To-Do List & Time keeper on Spreadsheet.',
     aToolForClearingTasksOneByOne: 'A tool for clearing tasks one by one.',
     singleTaskIsBoostPersonalProductivity: 'A single task improve concentration, and boost personal productivity.',

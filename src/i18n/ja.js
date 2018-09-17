@@ -98,7 +98,6 @@ export default {
   top: {
     toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer: '一日の大半をコンピュータの前で過ごすあなたへ。',
     whyDontYouFinishWorkEarly: '仕事をはやく終わらせたいですか?',
-    signUpItsFree: '無料でアカウント作成する',
     taskontableIsToDoListAndTimeKeeperOnSpreadsheet: 'Taskontableはスプレットシート上のTo-Doリストとタイムキーパーです。',
     aToolForClearingTasksOneByOne: 'タスクを1つ1つ消化するためのツールです。',
     singleTaskIsBoostPersonalProductivity: 'シングルタスクは集中力を高め、個人の生産性を向上させます。',

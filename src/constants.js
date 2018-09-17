@@ -9,7 +9,6 @@ const parser = new UAParser();
 const osName = parser.getOS().name;
 
 const rgb = {
-  SKIN: '252, 248, 243',
   RED: '255, 99, 132',
   YELLOW: '255, 205, 86',
   GREEN: '75, 192, 192',

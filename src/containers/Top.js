@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -10,7 +9,6 @@ import Button from '@material-ui/core/Button';
 import pcMan from '../images/illust/pc_man.jpg';
 import skateboard from '../images/illust/skateboard.jpg';
 import teamMens from '../images/illust/team_mens.jpg';
-import example from '../images/example.png';
 import Footer from '../components/Footer';
 import constants from '../constants';
 import util from '../utils/util';
@@ -30,8 +28,8 @@ const styles = theme => ({
     margin: '0 auto',
   },
   link: {
+    color: '#fff',
     textDecoration: 'none',
-    display: 'block',
   },
   button: {
     margin: theme.spacing.unit,
@@ -54,11 +52,13 @@ function Top(props) {
             {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
           </Typography>
           <iframe
-            style={{ display: 'block', margin: '0 0 2em' }}
+            style={{
+              display: 'block', marginBottom: '2em', marginLeft: isMobile ? -10 : 0, border: `1px solid ${constants.brandColor.light.GREY}`,
+            }}
             title="Getting Started Taskontable"
             width={isMobile ? window.innerWidth : '960'}
             height={isMobile ? window.innerWidth * 0.56 : '540'} // 16:9
-            src={`https://www.youtube.com/embed/${constants.YOUTUBE_MOVIE_ID}?rel=0&showinfo=0&modestbranding=1`}
+            src={`https://www.youtube.com/embed/${constants.YOUTUBE_MOVIE_ID}?rel=0&showinfo=0&modestbranding=0`}
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen
@@ -69,11 +69,20 @@ function Top(props) {
           <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
             {i18n.t('top.whyDontYouFinishWorkEarly')}
           </Typography>
-          <Link className={classes.link} to="/signup">
+          <span role="img" aria-label="Demo" style={{ marginLeft: -21 }}>
+            👉
+          </span>
+          <a className={classes.link} href={constants.DEMO_URL}>
             <Button variant="raised" className={classes.button} color="primary">
-              {i18n.t('top.signUpItsFree')}
+              {i18n.t('top.checkDemo')}
             </Button>
-          </Link>
+          </a>
+          {isMobile && (
+          <Typography variant="caption">
+            *
+            {i18n.t('top.appForPc')}
+          </Typography>
+          )}
         </div>
       </Grid>
       <Grid item xs={12}>
@@ -142,44 +151,6 @@ function Top(props) {
               <a href={constants.INTERVIEW_URL}>{i18n.t('top.ifYouNeedProductionStoryCheckCreatorsInterview')}</a>
             </Typography>
           </div>
-        </div>
-      </Grid>
-      <Grid className={classes.center} item xs={12}>
-        <Divider />
-        <div className={classes.content}>
-          <Typography style={{ fontWeight: 'bold' }} variant={isMobile ? 'display1' : 'display3'} align="center">
-            <span role="img" aria-label="Help">
-            👉
-            </span>
-            <a href={constants.DEMO_URL}>
-              {i18n.t('top.checkDemo')}
-              {isMobile && (
-                <Typography>
-                  *
-                  {i18n.t('top.appForPc')}
-                </Typography>
-              )}
-              <img
-                className={classes.center}
-                style={{
-                  marginBottom: '2rem', width: '100%', maxWidth: 757, borderLeft: 'solid 1px #eee',
-                }}
-                src={example}
-                alt="example"
-              />
-            </a>
-          </Typography>
-          <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
-            {i18n.t('top.toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer')}
-          </Typography>
-          <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
-            {i18n.t('top.whyDontYouFinishWorkEarly')}
-          </Typography>
-          <Link className={classes.link} to="/signup">
-            <Button variant="raised" className={classes.button} color="primary">
-              {i18n.t('top.signUpItsFree')}
-            </Button>
-          </Link>
         </div>
       </Grid>
       <Footer />
