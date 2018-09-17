@@ -24,6 +24,10 @@ import tasksUtil from '../utils/tasksUtil';
 const styles = {
   progress: {
     height: 2,
+    backgroundColor: constants.brandColor.base.GREY,
+  },
+  progressDeterminate: {
+    background: `linear-gradient(45deg, ${constants.brandColor.base.RED} 30%, ${constants.brandColor.base.YELLOW} 60%, ${constants.brandColor.base.GREEN} 90%)`,
   },
   tableCtlButton: {
     fontSize: 13,
@@ -88,7 +92,7 @@ class TableCtl extends Component {
     const progressPer = (tasksUtil.getDoneTasks(tableTasks).length) * (100 / tableTasks.length);
     return (
       <div>
-        <LinearProgress classes={{ root: classes.progress }} variant="determinate" value={progressPer} />
+        <LinearProgress classes={{ root: classes.progress, bar1Determinate: classes.progressDeterminate }} variant="determinate" value={progressPer} />
         <Grid style={{ padding: `${theme.spacing.unit}px 0` }} container alignItems="center" justify="center" spacing={0}>
           <Hidden xsDown>
             <Grid item xs={2} style={{ textAlign: 'center' }}>
