@@ -61,7 +61,7 @@
     "eslint-plugin-react": "^7.11.1",
     "jest-expo": "~27.0.0",
     "react-native-scripts": "1.14.0",
-    "react-test-renderer": "16.5.0",
+    "react-test-renderer": "16.5.2",
     "source-map-explorer": "^1.6.0"
   }
 }
