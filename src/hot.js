@@ -292,7 +292,8 @@ export const setDataForHot = (hotInstance, datas) => {
   // 不要な行を削除する
   if (needTrim) hotInstance.alter('remove_row', rowIndex, rowCount);
   // 保存ボタンが活性化するのを防ぐ
-  hotInstance.runHooks('afterUpdateSettings');
+  // FIXME handsontable v6ではここをコメントアウトしないと落ちる
+  // hotInstance.runHooks('afterUpdateSettings');
 };
 
 const resetNotifi = debounce((hotInstance) => {
