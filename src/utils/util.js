@@ -8,6 +8,7 @@ import uuid from 'uuid';
 import fastclone from 'fast-clone';
 import { deepEqual } from 'fast-equals';
 import UAParser from 'ua-parser-js';
+import wkn from 'wkn';
 import constants from '../constants';
 import firebaseConf from '../configs/firebase';
 
@@ -127,17 +128,8 @@ export default {
    * @param  {String} script スクリプト
    * @param  {Array} data ワーカーに処理させるデータ
    */
-  runWorker(script, data) {
-    const worker = new Worker(window.URL.createObjectURL(new Blob([`onmessage = ${script}`], { type: 'text/javascript' })));
-    worker.postMessage(data);
-    return new Promise((resolve, reject) => {
-      worker.onerror = (e) => {
-        reject(e.message);
-      };
-      worker.onmessage = (e) => {
-        resolve(e.data);
-      };
-    });
+  runWorker(func, arg) {
+    return wkn(func, arg);
   },
 
   /**
