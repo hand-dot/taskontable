@@ -30,7 +30,7 @@ Click here for other services [you see](https://github.com/hand-dot/taskontable/
 
 3.Launch app on taskontable directory
 ```
-$ npm run start
+$ npm run web
 ```
 
 4.This is optional(Do not commit the configuration files).
