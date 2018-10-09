@@ -69,11 +69,12 @@ class Login extends Component {
         <ScrollToTopOnMount />
         <Grid item xs={12}>
           <div className={classes.content}>
-            <Typography variant="headline" gutterBottom>
+            <Typography variant="h5" gutterBottom>
               {i18n.t('signUpAndLogIn.logIn_title', { title: constants.TITLE })}
             </Typography>
             <div style={{ fontSize: 12 }}>
-              {i18n.t('common.or')}&nbsp;
+              {i18n.t('common.or')}
+              &nbsp;
               <Link to={location.search === '' ? '/signup' : `/signup${location.search}`}>
                 {i18n.t('signUpAndLogIn.createAnAccount')}
               </Link>
@@ -107,14 +108,14 @@ class Login extends Component {
                 fullWidth
                 margin="normal"
               />
-              <Button onClick={this.login.bind(this, constants.authType.EMAIL_AND_PASSWORD)} variant="raised" className={classes.button}>
+              <Button onClick={this.login.bind(this, constants.authType.EMAIL_AND_PASSWORD)} variant="contained" className={classes.button}>
                 {i18n.t('common.logIn')}
               </Button>
             </form>
             <Typography gutterBottom>
               {i18n.t('common.or')}
             </Typography>
-            <Button onClick={this.login.bind(this, constants.authType.GOOGLE)} variant="raised" color="primary" className={classes.button}>
+            <Button onClick={this.login.bind(this, constants.authType.GOOGLE)} variant="contained" color="primary" className={classes.button}>
               <img src={google} alt="google" height="20" />
               {' '}
               {i18n.t('common.logInWithG')}

@@ -72,7 +72,7 @@ function HelpDialog(props) {
     >
       <AppBar position="static" color="default">
         <Toolbar>
-          <Typography variant="title" color="inherit" className={classes.flex}>
+          <Typography variant="h6" color="inherit" className={classes.flex}>
             {i18n.t('help.title')}
           </Typography>
           <IconButton className={classes.closeBtn} onClick={onClose}>

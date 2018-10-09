@@ -78,11 +78,12 @@ class Signup extends Component {
         <ScrollToTopOnMount />
         <Grid item xs={12}>
           <div className={classes.content}>
-            <Typography variant="headline" gutterBottom>
+            <Typography variant="h5" gutterBottom>
               {i18n.t('signUpAndLogIn.createAnAccount')}
             </Typography>
             <div style={{ fontSize: 12 }}>
-              {i18n.t('common.or')}&nbsp;
+              {i18n.t('common.or')}
+              &nbsp;
               <Link to={location.search === '' ? '/login' : `/login${location.search}`}>
                 {i18n.t('signUpAndLogIn.logIn_title', { title: constants.TITLE })}
               </Link>
@@ -130,7 +131,7 @@ class Signup extends Component {
                 fullWidth
                 margin="normal"
               />
-              <Button onClick={this.signup.bind(this, constants.authType.EMAIL_AND_PASSWORD)} variant="raised" className={classes.button}>
+              <Button onClick={this.signup.bind(this, constants.authType.EMAIL_AND_PASSWORD)} variant="contained" className={classes.button}>
                 {i18n.t('signUpAndLogIn.createAnAccount')}
               </Button>
             </form>
@@ -139,7 +140,7 @@ class Signup extends Component {
             </Typography>
             <Button
               onClick={this.login.bind(this, constants.authType.GOOGLE)}
-              variant="raised"
+              variant="contained"
               color="primary"
               className={classes.button}
               disabled={location.search !== ''}

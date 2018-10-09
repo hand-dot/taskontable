@@ -83,7 +83,7 @@ class Hello extends Component {
         <ScrollToTopOnMount />
         <Grid item xs={12}>
           <div className={classes.content}>
-            <Typography gutterBottom variant="title">
+            <Typography gutterBottom variant="h6">
               {i18n.t('hello.wellcome')}
               {'   '}
               <Badge color="primary" classes={{ colorPrimary: haveWorksheets ? classes.colorTransparent : classes.colorPrimary }} badgeContent="!">
@@ -93,7 +93,7 @@ class Hello extends Component {
               </Badge>
             </Typography>
             <div style={{ marginTop: 30, marginBottom: 30 }}>
-              <Typography gutterBottom variant="body2">
+              <Typography variant="body1" gutterBottom>
                 Community
                 <span role="img" aria-label="Community">
                   😉
@@ -109,7 +109,7 @@ class Hello extends Component {
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
-              <Typography gutterBottom variant="body2">
+              <Typography variant="body1" gutterBottom>
                 Help
                 <span role="img" aria-label="Help">
                   😵
@@ -119,7 +119,7 @@ class Hello extends Component {
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
-              <Typography gutterBottom variant="body2">
+              <Typography variant="body1" gutterBottom>
                 {i18n.t('common.chromeWebstore')}
                 {isMobile && (
                 <span>
@@ -141,7 +141,7 @@ class Hello extends Component {
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
-              <Typography gutterBottom variant="body2">
+              <Typography variant="body1" gutterBottom>
                 Please
                 <span role="img" aria-label="Help">
                   🙏
@@ -181,7 +181,7 @@ class Hello extends Component {
         >
           <AppBar position="static" color="default" style={{ marginBottom: '1em' }}>
             <Toolbar>
-              <Typography variant="title" color="inherit" className={classes.flex}>
+              <Typography variant="h6" color="inherit" className={classes.flex}>
                 {i18n.t('hello.howTouse')}
               </Typography>
               <IconButton

@@ -48,7 +48,7 @@ function Top(props) {
     <Grid spacing={0} container alignItems="center" justify="center">
       <Grid className={classes.center} item xs={12}>
         <div className={classes.content} style={{ paddingTop: '6em' }}>
-          <Typography variant="headline" align="center" style={{ marginBottom: '2em' }}>
+          <Typography variant="h5" align="center" style={{ marginBottom: '2em' }}>
             {i18n.t('top.taskontableIsToDoListAndTimeKeeperOnSpreadsheet')}
           </Typography>
           <iframe
@@ -63,17 +63,17 @@ function Top(props) {
             allow="autoplay; encrypted-media"
             allowFullScreen
           />
-          <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
+          <Typography variant="subtitle1" style={{ marginBottom: '1em' }} align="center">
             {i18n.t('top.toTheHardWorkerWhoSpendsMostOfTheDayInFrontOfComputer')}
           </Typography>
-          <Typography variant="subheading" style={{ marginBottom: '1em' }} align="center">
+          <Typography variant="subtitle1" style={{ marginBottom: '1em' }} align="center">
             {i18n.t('top.whyDontYouFinishWorkEarly')}
           </Typography>
           <span role="img" aria-label="Demo" style={{ marginLeft: -21 }}>
             👉
           </span>
           <a className={classes.link} href={constants.DEMO_URL}>
-            <Button variant="raised" className={classes.button} color="primary">
+            <Button variant="contained" className={classes.button} color="primary">
               {i18n.t('top.checkDemo')}
             </Button>
           </a>
@@ -94,7 +94,7 @@ function Top(props) {
                 <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={pcMan} alt="pcMan" />
               </Grid>
               <Grid item xs={12} md={7}>
-                <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+                <Typography variant="subtitle1" align="center" style={{ marginBottom: '2em' }}>
                   {i18n.t('top.aToolForClearingTasksOneByOne')}
                   <br />
                   {i18n.t('top.singleTaskIsBoostPersonalProductivity')}
@@ -109,7 +109,7 @@ function Top(props) {
           <div className={classes.content}>
             <Grid spacing={0} container alignItems="center" justify="center">
               <Grid style={{ display: isMobile ? 'none' : 'block' }} item xs={12} md={7}>
-                <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+                <Typography variant="subtitle1" align="center" style={{ marginBottom: '2em' }}>
                   {i18n.t('top.modernAndClassicalInterface')}
                   <br />
                   {i18n.t('top.SimpleFastBeautifulMoreFun')}
@@ -119,7 +119,7 @@ function Top(props) {
                 <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 300 }} src={skateboard} alt="skateboard" />
               </Grid>
               <Grid style={{ display: !isMobile ? 'none' : 'block' }} item xs={12} md={7}>
-                <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+                <Typography variant="subtitle1" align="center" style={{ marginBottom: '2em' }}>
                   {i18n.t('top.modernAndClassicalInterface')}
                   <br />
                   {i18n.t('top.SimpleFastBeautifulMoreFun')}
@@ -133,7 +133,7 @@ function Top(props) {
         <div className={classes.center}>
           <div className={classes.content}>
             <img className={classes.center} style={{ marginBottom: '2em', width: '100%', maxWidth: 600 }} src={teamMens} alt="teamMens" />
-            <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+            <Typography variant="subtitle1" align="center" style={{ marginBottom: '2em' }}>
               {i18n.t('top.developedForIndividualsAndTeams')}
               <br />
               {i18n.t('top.canCollaborateInRealtime')}
@@ -144,7 +144,7 @@ function Top(props) {
       <Grid item xs={12}>
         <div className={classes.center}>
           <div className={classes.content}>
-            <Typography variant="subheading" align="center" style={{ marginBottom: '2em' }}>
+            <Typography variant="subtitle1" align="center" style={{ marginBottom: '2em' }}>
               <span role="img" aria-label="Help">
               👀
               </span>

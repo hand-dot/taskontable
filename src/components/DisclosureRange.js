@@ -49,7 +49,7 @@ class DisclosureRange extends Component {
     const { worksheetDisclosureRange, classes } = this.props;
     return (
       <FormControl component="fieldset" required className={classes.formControl}>
-        <Typography variant="subheading">
+        <Typography variant="subtitle1">
           {i18n.t('disclosureRange.changeDisclosureRange')}
         </Typography>
         <RadioGroup
@@ -84,7 +84,7 @@ class DisclosureRange extends Component {
             )}
           />
         </RadioGroup>
-        <Typography variant="subheading">
+        <Typography variant="subtitle1">
           URL
         </Typography>
         <Input

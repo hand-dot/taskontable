@@ -332,7 +332,7 @@ class Members extends Component {
         }}
         >
           <div>
-            <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit }}>
+            <Typography variant="subtitle1" style={{ paddingLeft: theme.spacing.unit }}>
               {i18n.t('worksheet.members')}
             </Typography>
             <div className={classes.membersContainer}>
@@ -398,7 +398,7 @@ class Members extends Component {
             </div>
           </div>
           <div>
-            <Typography variant="subheading" style={{ paddingLeft: theme.spacing.unit * 6 }}>
+            <Typography variant="subtitle1" style={{ paddingLeft: theme.spacing.unit * 6 }}>
               {i18n.t('members.inviting')}
             </Typography>
             <div className={classes.membersContainer}>

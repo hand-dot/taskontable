@@ -9,7 +9,7 @@ import i18n from '../i18n';
 function NotLoginSection(props) {
   const { theme } = props;
   return (
-    <Typography align="center" variant="subheading">
+    <Typography align="center" variant="subtitle1">
       <span role="img" aria-label="HandWave">
       👋
       </span>

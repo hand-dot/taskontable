@@ -232,7 +232,7 @@ class Settings extends Component {
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
         <Grid item xs={12}>
-          <Typography gutterBottom variant="title">
+          <Typography gutterBottom variant="h6">
             {i18n.t('common.accountSettings')}
           </Typography>
         </Grid>
@@ -322,13 +322,13 @@ class Settings extends Component {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button style={{ margin: theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="raised" color="primary">
+          <Button style={{ margin: theme.spacing.unit }} size="small" onClick={this.save.bind(this)} variant="contained" color="primary">
             {i18n.t('common.save')}
           </Button>
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button style={{ margin: theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="raised">
+          <Button style={{ margin: theme.spacing.unit }} size="small" onClick={this.backToApp.bind(this)} variant="contained">
             {i18n.t('common.backToPreviousPage')}
           </Button>
         </Grid>

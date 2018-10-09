@@ -216,7 +216,7 @@ function PrivacyPolicyTermsOfService(props) {
               and maintained.
             </p>
             <Divider />
-            <Button style={{ marginTop: theme.spacing.unit }} variant="raised" onClick={history.goBack.bind(this)}>
+            <Button style={{ marginTop: theme.spacing.unit }} variant="contained" onClick={history.goBack.bind(this)}>
               {i18n.t('common.goBack')}
             </Button>
           </div>

@@ -224,7 +224,7 @@ class Scripts extends Component {
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
         <Grid item xs={12} style={{ paddingBottom: '3em' }}>
-          <Typography variant="title">
+          <Typography variant="h6">
             {i18n.t('worksheet.plugIns')}
           </Typography>
           <Typography gutterBottom variant="caption">
@@ -233,7 +233,7 @@ class Scripts extends Component {
           <UnderDevelopment />
         </Grid>
         <Grid item xs={12}>
-          <Typography gutterBottom variant="subheading">
+          <Typography gutterBottom variant="subtitle1">
             スクリプトの利用(ON/OFF)
             <span className={classes.divider}>
               /
@@ -250,14 +250,14 @@ class Scripts extends Component {
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Typography gutterBottom variant="subheading">
+          <Typography gutterBottom variant="subtitle1">
               ワークシートのデータの例
             <span className={classes.divider}>
               /
             </span>
             <Tooltip title="リセット" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="raised" color="default">
+                <Button className={classes.button} onClick={this.resetExampleHot.bind(this)} variant="contained" color="default">
                   <Refresh style={{ fontSize: 13 }} />
                 </Button>
               </div>
@@ -316,7 +316,7 @@ class Scripts extends Component {
         </Grid>
         <Grid item xs={12}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="contained">
             {i18n.t('common.backToPreviousPage')}
           </Button>
         </Grid>

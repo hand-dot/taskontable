@@ -44,7 +44,7 @@ function ScriptsEditor(props) {
     <Grid container>
       <Grid item xs={5} style={{ padding: theme.spacing.unit }}>
         <div>
-          <Typography gutterBottom variant="subheading">
+          <Typography gutterBottom variant="subtitle1">
             {(() => {
               if (scriptType === 'importScript') {
                 return 'インポートスクリプト';
@@ -56,7 +56,7 @@ function ScriptsEditor(props) {
             </span>
             <Tooltip title="保存前に戻す" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === scriptBk} onClick={resetScript} variant="raised">
+                <Button className={classes.button} disabled={script === scriptBk} onClick={resetScript} variant="contained">
                   <Undo style={{ fontSize: 13 }} />
                 </Button>
               </div>
@@ -66,7 +66,7 @@ function ScriptsEditor(props) {
             </span>
             <Tooltip title="保存する" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === scriptBk} onClick={saveScript} variant="raised">
+                <Button className={classes.button} disabled={script === scriptBk} onClick={saveScript} variant="contained">
                   <Save style={{ fontSize: 13 }} />
                 </Button>
               </div>
@@ -76,7 +76,7 @@ function ScriptsEditor(props) {
             </span>
             <Tooltip title="実行" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === ''} onClick={fireScript} variant="raised">
+                <Button className={classes.button} disabled={script === ''} onClick={fireScript} variant="contained">
                   <FlashOn style={{ fontSize: 13 }} />
                 </Button>
               </div>
@@ -86,7 +86,7 @@ function ScriptsEditor(props) {
             </span>
             <Tooltip title="サンプルを読み込む" placement="top">
               <div style={{ display: 'inline-block' }}>
-                <Button className={classes.button} disabled={script === exampleScript.toString()} onClick={loadExampleScript} variant="raised">
+                <Button className={classes.button} disabled={script === exampleScript.toString()} onClick={loadExampleScript} variant="contained">
                   <CloudDownload style={{ fontSize: 13 }} />
                 </Button>
               </div>

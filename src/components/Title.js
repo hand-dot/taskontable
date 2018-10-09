@@ -18,10 +18,10 @@ function Title(props) {
   const { classes } = props;
   return (
     <div className={classes.center}>
-      <Typography style={{ fontWeight: 'bold' }} variant={isMobile ? 'display1' : 'display3'} align="center">
+      <Typography style={{ fontWeight: 'bold' }} variant={isMobile ? 'h4' : 'h2'} align="center">
       タスクオンテーブル
       </Typography>
-      <Typography style={{ fontWeight: 'bold' }} variant={isMobile ? 'display1' : 'display3'} align="center">
+      <Typography style={{ fontWeight: 'bold' }} variant={isMobile ? 'h4' : 'h2'} align="center">
       T a s k o n t a b l e
       </Typography>
     </div>

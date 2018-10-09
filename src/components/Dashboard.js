@@ -94,7 +94,7 @@ class Dashboard extends Component {
     return (
       <Grid container spacing={theme.spacing.unit} style={{ padding: theme.spacing.unit }}>
         <Grid item xs={12} sm={6}>
-          <Typography variant="subheading">
+          <Typography variant="subtitle1">
             {i18n.t('dashBoad.summary')}
           </Typography>
           <TodaySummary
@@ -108,7 +108,7 @@ class Dashboard extends Component {
         </Grid>
         {!util.isMobile() && (
           <Grid item xs={12} sm={6}>
-            <Typography gutterBottom variant="subheading">
+            <Typography gutterBottom variant="subtitle1">
               {i18n.t('dashBoad.clock')}
             </Typography>
             <Grid container>
@@ -122,7 +122,7 @@ class Dashboard extends Component {
           </Grid>
         )}
         <Grid item xs={12}>
-          <Typography gutterBottom variant="subheading">
+          <Typography gutterBottom variant="subtitle1">
             {i18n.t('dashBoad.timeline')}
           </Typography>
           <Grid container>

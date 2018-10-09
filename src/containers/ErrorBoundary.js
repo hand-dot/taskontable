@@ -58,7 +58,7 @@ class ErrorBoundary extends Component {
         <Grid className={classes.root} container spacing={0} alignItems="stretch" justify="center">
           <Grid item xs={12}>
             <div style={{ minHeight: '100vh' }} className={classes.content}>
-              <Typography variant="title" gutterBottom>
+              <Typography variant="h6" gutterBottom>
                 {i18n.t('errorBoundary.sorry')}
               </Typography>
               <img src={error} style={{ width: '100%' }} alt="cat" />
@@ -67,7 +67,7 @@ class ErrorBoundary extends Component {
               </Typography>
               <Button
                 onClick={() => Raven.lastEventId() && Raven.showReportDialog()}
-                variant="raised"
+                variant="contained"
                 color="primary"
                 className={classes.button}
               >

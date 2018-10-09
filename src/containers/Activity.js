@@ -186,7 +186,7 @@ class Activity extends Component {
     return (
       <Grid className={classes.root} container spacing={theme.spacing.unit} alignItems="stretch" justify="center">
         <Grid item xs={12} style={{ paddingBottom: '3em' }}>
-          <Typography variant="title">
+          <Typography variant="h6">
             {i18n.t('worksheet.activity')}
           </Typography>
           <Typography gutterBottom variant="caption">
@@ -241,7 +241,7 @@ class Activity extends Component {
         </Grid>
         <Grid item xs={12} style={{ marginTop: theme.spacing.unit * 2 }}>
           <Divider style={{ margin: '1.5em 0' }} />
-          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="raised">
+          <Button size="small" onClick={this.backToWorkSheet.bind(this)} variant="contained">
             {i18n.t('common.backToPreviousPage')}
           </Button>
         </Grid>
