@@ -21,6 +21,7 @@ const theme = createMuiTheme({
       secondary: 'rgba(0, 0, 0, 0.7)',
     },
     typography: {
+      useNextVariants: true,
       // Use the system font instead of the default Roboto font.
       fontFamily: [
         '-apple-system',

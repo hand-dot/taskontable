@@ -511,7 +511,7 @@ class Members extends Component {
               {i18n.t('common.remove_target', { target: i18n.t('worksheet.members') })}
             </DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>
+              <Typography gutterBottom>
                 {i18n.t('common.areYouSureRemove_target', { target: target.type === constants.handleUserType.MEMBER ? target.displayName : target.email })}
               </Typography>
               <Typography variant="caption">
@@ -538,7 +538,7 @@ class Members extends Component {
               {i18n.t('members.resendAnInvitationEmail')}
             </DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>
+              <Typography gutterBottom>
                 {i18n.t('members.areYouSureResendInvitationEmailTo_target', { target: target.email })}
               </Typography>
             </DialogContent>
@@ -561,7 +561,7 @@ class Members extends Component {
               {i18n.t('members.sendNotification')}
             </DialogTitle>
             <DialogContent>
-              <Typography variant="body1" gutterBottom>
+              <Typography gutterBottom>
                 {i18n.t('members.areYouSureSendNotificationTo_target', { target: target.displayName })}
               </Typography>
               <TextField

@@ -93,7 +93,7 @@ class Hello extends Component {
               </Badge>
             </Typography>
             <div style={{ marginTop: 30, marginBottom: 30 }}>
-              <Typography variant="body1" gutterBottom>
+              <Typography gutterBottom>
                 Community
                 <span role="img" aria-label="Community">
                   😉
@@ -109,7 +109,7 @@ class Hello extends Component {
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
-              <Typography variant="body1" gutterBottom>
+              <Typography gutterBottom>
                 Help
                 <span role="img" aria-label="Help">
                   😵
@@ -119,7 +119,7 @@ class Hello extends Component {
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
-              <Typography variant="body1" gutterBottom>
+              <Typography gutterBottom>
                 {i18n.t('common.chromeWebstore')}
                 {isMobile && (
                 <span>
@@ -141,7 +141,7 @@ class Hello extends Component {
             </div>
             <Divider />
             <div style={{ marginTop: 30, marginBottom: 30 }}>
-              <Typography variant="body1" gutterBottom>
+              <Typography gutterBottom>
                 Please
                 <span role="img" aria-label="Help">
                   🙏
