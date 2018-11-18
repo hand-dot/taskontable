@@ -37,7 +37,7 @@
     "moment": "^2.22.2",
     "node-polyglot": "^2.3.0",
     "prop-types": "^15.6.2",
-    "ramda": "^0.25.0",
+    "ramda": "^0.26.0",
     "raven-js": "^3.27.0",
     "react": "^16.5.2",
     "react-codemirror2": "^5.1.0",
