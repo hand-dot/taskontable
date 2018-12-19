@@ -50,7 +50,7 @@
     "react-share": "^2.3.1",
     "ua-parser-js": "^0.7.18",
     "uuid": "^3.3.2",
-    "wkn": "^1.0.4"
+    "wkn": "^1.0.5"
   },
   "devDependencies": {
     "@storybook/react": "^3.4.11",
