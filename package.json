@@ -62,7 +62,7 @@
     "jest-expo": "~27.0.0",
     "react-native-scripts": "1.14.0",
     "react-test-renderer": "16.5.0",
-    "source-map-explorer": "^1.6.0"
+    "source-map-explorer": "^2.0.1"
   },
   "browserslist": [
     ">0.2%",
