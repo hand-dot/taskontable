@@ -17,7 +17,7 @@
     "ios": "react-native-scripts ios"
   },
   "dependencies": {
-    "@firebase/app": "^0.3.4",
+    "@firebase/app": "^0.4.18",
     "@firebase/auth": "^0.7.7",
     "@firebase/database": "^0.3.6",
     "@firebase/messaging": "^0.3.6",
