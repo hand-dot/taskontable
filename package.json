@@ -30,7 +30,7 @@
     "expo": "^27.0.1",
     "fast-clone": "^1.5.3",
     "fast-equals": "^1.6.1",
-    "handsontable": "^6.0.0",
+    "handsontable": "^7.2.0",
     "localforage": "^1.7.2",
     "lodash.debounce": "^4.0.8",
     "material-ui-chip-input": "^1.0.0-beta.7",
