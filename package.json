@@ -20,7 +20,7 @@
     "@firebase/app": "^0.3.4",
     "@firebase/auth": "^0.7.7",
     "@firebase/database": "^0.3.6",
-    "@firebase/messaging": "^0.3.6",
+    "@firebase/messaging": "^0.6.8",
     "@firebase/storage": "^0.2.3",
     "@material-ui/core": "^3.1.1",
     "@material-ui/icons": "^3.0.1",
