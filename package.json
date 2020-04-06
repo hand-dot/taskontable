@@ -27,7 +27,7 @@
     "codemirror": "^5.40.2",
     "cropperjs": "^1.4.1",
     "d3": "^5.7.0",
-    "expo": "^27.0.1",
+    "expo": "^37.0.5",
     "fast-clone": "^1.5.3",
     "fast-equals": "^1.6.1",
     "handsontable": "^6.0.0",
